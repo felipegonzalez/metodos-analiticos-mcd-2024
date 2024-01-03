@@ -1,0 +1,9 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Métodos analíticos",
+    "section": "",
+    "text": "Temario y referencias\nTodas las notas y material del curso estarán en este repositorio.\n\nParte 1: Principios de estadística bayesiana y Simulación\n\nModelos estadísticos e inferencia\nModelación bayesiana\nMétodos de simulación para modelos bayesianos\nFlujo de trabajo para inferencia bayesiana\nStan\n\nParte 2: Inferencia causal\n\nIntroducción a inferencia causal\nModelos probabilísticos gráficos\nEstimación de efectos causales\nExperimentos y controles\nContrafactuales de Rubin\nOtros métodos de inferencia causal\n\n\n\nEvaluación\n\nTareas semanales (20%)\nExamen parcial (40% teórico)\nUn examen final (40% práctico)\n\n\n\nMaterial\nCada semestre las notas cambian, en algunas partes considerablemente. Las de este semestre están en este repositorio, incluyendo ejemplos, ejercicios y tareas.\n\n\nReferencias principales\nEste curso sigue aproximadamente la primera referencia (Statistical Rethinking).\n\nStatistical Rethinking\nCausal Inference in Statistics: a primer\nCounterfactuals and Causal Inference: Methods and Principles for Social Research\n\n\n\nOtras referencias\n\nPattern Recognition and Machine Learning, Bishop (2006)\nThe Book of Why\nData Analysis Using Regression and Multilevel/Hierarchical Models\n\n\n\nSoftware: R y Rstudio\nPara hacer las tareas y exámenes pueden usar cualquier lenguaje o flujo de trabajo que les convenga (R o Python, por ejemplo) - el único requisito esté basado en código y no point-and-click.\n\n\n\n\nBishop, Christopher M. 2006. Pattern Recognition and Machine Learning (Information Science and Statistics). Secaucus, NJ, USA: Springer-Verlag New York, Inc."
+  }
+]
