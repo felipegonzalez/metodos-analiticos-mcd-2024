@@ -1,0 +1,56 @@
+# Temario y referencias {-}
+
+**Todas las notas y material del curso estarán en este** [repositorio](https://github.com/felipegonzalez/metodos-analiticos-mcd-2024).
+
+- Parte 1: Principios de estadística bayesiana y Simulación
+
+  - Modelos estadísticos e inferencia
+  - Modelación bayesiana
+  - Métodos de simulación para modelos bayesianos
+  - Flujo de trabajo para inferencia bayesiana
+  - Stan
+  
+- Parte 2: Inferencia causal
+
+  - Introducción a inferencia causal
+  - Modelos probabilísticos gráficos
+  - Estimación de efectos causales
+  - Experimentos y controles
+  - Contrafactuales de Rubin
+  - Otros métodos de inferencia causal 
+
+  
+### Evaluación {-}
+
+- Tareas semanales (20%)
+- Examen parcial (40% teórico)
+- Un examen final (40% práctico)
+
+### Material {-}
+
+Cada semestre las notas cambian, en algunas partes considerablemente. Las
+de este semestre están en [este repositorio](https://github.com/felipegonzalez/metodos-analiticos-mcd-2023),
+incluyendo ejemplos, ejercicios y tareas.
+
+### Referencias principales {-}
+
+Este curso sigue aproximadamente la primera referencia (Statistical Rethinking).
+
+  - [Statistical Rethinking](https://xcelab.net/rm/statistical-rethinking/)
+  - [Causal Inference in Statistics: a primer](https://www.wiley.com/en-us/Causal+Inference+in+Statistics:+A+Primer-p-9781119186847)
+  - [Counterfactuals and Causal Inference: Methods and Principles for Social Research](https://www.cambridge.org/core/books/counterfactuals-and-causal-inference/5CC81E6DF63C5E5A8B88F79D45E1D1B7)
+
+### Otras referencias {-}
+
+- [Pattern Recognition and Machine Learning](http://www.springer.com/us/book/9780387310732), @Bishop
+- [The Book of Why](https://dl.acm.org/doi/10.5555/3238230)
+- [Data Analysis Using Regression and Multilevel/Hierarchical Models](https://www.cambridge.org/highereducation/books/data-analysis-using-regression-and-multilevel-hierarchical-models/32A29531C7FD730C3A68951A17C9D983#overview)
+
+
+### Software: R y Rstudio {-}
+
+Para hacer las tareas y exámenes pueden usar cualquier lenguaje o flujo de trabajo
+que les convenga (R o Python, por ejemplo) - el único requisito esté basado en código y no
+point-and-click.
+
+

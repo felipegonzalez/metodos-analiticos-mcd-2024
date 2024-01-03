@@ -1,0 +1,462 @@
+# Introducción (Parte 1) {#introduccion}
+
+```{r}
+#| include: false
+library(tidyverse)
+library(kableExtra)
+library(DiagrammeR)
+ggplot2::theme_set(ggplot2::theme_light())
+```
+
+
+Muchas tareas usuales del análisis de datos requieren de entender
+y definir relaciones de causa-efecto. En esta primera parte del curso buscamos: 
+
+- Dar esquemas de análisis y especificación de **supuestos causales**, que nos
+permita también poder identificar estrategias para estimar efectos causales.
+- Entender cómo se conectan los **modelos estadísticos** con 
+supuestos causales para hacer inferencia causal.
+- Estudiar cómo se conectan los supuestos causales con la experimentación
+y el **diseño de experimentos**.
+
+
+## ¿Qué es inferencia causal?
+
+La inferencia causal consiste en predecir los posibles
+efectos de **intervenciones**, y entender qué pasaría si las condiciones que observamos
+fueran diferentes, es decir, condiciones **contrafactuales**. 
+Tanto en ciencia como en industria, estos dos conceptos son muy importantes:
+
+Intervenciones (acciones):
+
+- ¿Qué efecto tiene sobre las ventas reducir el presupuesto de publicidad?
+- ¿Qué efecto tienen sobre la salud de una persona administrarle un medicamento?
+- ¿Cuáles son las expectativas de un hogar que ponemos en un programa gubernamental relacionado con la educación o la salud?
+
+Contrafactuales (no necesariamente intervenciones que podemos 
+controlar o ejecutar, sino escenarios hipotéticos):
+
+- ¿Cuánto ha contribuido a las ventas de un producto el gasto en publicidad? 
+- ¿Cuál sería el ingreso de una persona si tuviera un año más de estudios?
+- ¿Cómo sería la salud de una persona que ha fumado durante 10 años si no hubiera fumado?
+
+Este tipo de preguntas centrales en la industria y la ciencia generalmente
+no pueden contestarse únicamente usando términos estadísticos y datos disponibles. Las razones
+son:
+
+- Asociaciones entre variables observadas no implican relaciones causales entre
+las variables.
+- La ausencia de asociación entre variables observadas no implica que no hay relación
+causal entre ellas.
+- Relaciones causales no están en los datos: están en el conocimiento experto o teoría
+científica.
+
+La evaluación de intervenciones y de contrafactuales tienen una lógica similar,
+pero su naturaleza conceptual es diferente: en un caso 
+
+## Preguntas y datos
+
+Para entender y poder usar datos para contestar preguntas de
+interés, el paso inicial más importante es entender
+bajo que proceso se generan los datos. Veremos cómo 
+estos procesos generadores se expresan
+en términos causales.
+
+- Cuanto más sepamos de este proceso, mejor podemos contestar
+preguntas de interés
+- En muchos casos, tenemos qué hacer supuestos basados en conocimiento experto acerca de este proceso generador para
+poder producir (o no) respuestas.
+
+En particular, en inferencia causal:
+
+- Si no tenemos los supuestos y hechos relevantes que definen el proceso generador de datos, no es posible dar respuestas a preguntas causales
+
+### Ejemplo (cálculos renales) {-}
+
+Este es un estudio real acerca de tratamientos para cálculos renales (@kidney94). Pacientes se asignaron de una forma no controlada a dos tipos de tratamientos para reducir cálculos renales. Para cada paciente, conocemos el tipo de ćalculos que tenía (grandes o chicos) y si el tratamiento tuvo éxito o no.
+
+La tabla original tiene 700 renglones (cada renglón es un paciente)
+
+```{r, message = FALSE}
+calculos <- read_csv("../datos/kidney_stone_data.csv")
+names(calculos) <- c("tratamiento", "tamaño", "éxito")
+calculos <- calculos |> 
+   mutate(tamaño = ifelse(tamaño == "large", "grandes", "chicos")) |> 
+   mutate(resultado = ifelse(éxito == 1, "mejora", "sin_mejora")) |> 
+   select(tratamiento, tamaño, resultado)
+nrow(calculos)
+```
+
+y se ve como sigue (muestreamos algunos renglones):
+
+```{r, message = FALSE}
+calculos |> 
+   sample_n(10) |> kable() |> 
+   kable_paper(full_width = FALSE)
+```
+
+Aunque estos datos contienen información de 700 pacientes, los datos pueden resumirse sin pérdida de información contando como sigue:
+
+```{r}
+calculos_agregada <- calculos |> 
+   group_by(tratamiento, tamaño, resultado) |> 
+   count()
+calculos_agregada |> kable() |> 
+   kable_paper(full_width = FALSE)
+```
+
+Como en este caso nos interesa principalmente la tasa de éxito de cada tratamiento, podemos mejorar mostrando como sigue:
+
+```{r}
+calculos_agregada |> pivot_wider(names_from = resultado, values_from = n) |> 
+   mutate(total = mejora + sin_mejora) |> 
+   mutate(prop_mejora = round(mejora / total, 2)) |> 
+   select(tratamiento, tamaño, total, prop_mejora) |> 
+   arrange(tamaño) |> 
+   kable() |> 
+   kable_paper(full_width = FALSE)
+```
+
+Esta tabla descriptiva es una reescritura de los datos, y no hemos resumido nada todavía. Pero es apropiada para empezar a contestar la pregunta:
+
+-   ¿Qué indican estos datos acerca de qué tratamiento es mejor? ¿Acerca del tamaño de cálculos grandes o chicos?
+
+Supongamos que otro analista decide comparar los pacientes que recibieron cada tratamiento, ignorando la variable de tamaño:
+
+```{r}
+calculos |> group_by(tratamiento) |> 
+   summarise(prop_mejora = mean(resultado == "mejora") |> round(2)) |> 
+   kable() |> 
+   kable_paper(full_width = FALSE)
+```
+
+y parece ser que el tratamiento $B$ es mejor que el $A$. Esta es una paradoja (un ejemplo de la [paradoja de Simpson](https://es.wikipedia.org/wiki/Paradoja_de_Simpson)) . Si un médico no sabe que tipo de cálculos tiene el paciente, ¿entonces debería recetar $B$? ¿Si sabe debería recetar $A$? Esta discusión parece no tener mucho sentido.
+
+Podemos investigar por qué está pasando esto considerando la siguiente tabla, que solo examina cómo se asignó el tratamiento dependiendo del tipo de cálculos de cada paciente:
+
+```{r}
+calculos |> group_by(tratamiento, tamaño) |> count() |> 
+   kable() |> 
+   kable_paper(full_width = FALSE)
+```
+
+Nuestra hipótesis aquí es que la decisión de qué tratamiento usar depende del tamaño de los cálculos.  En este caso, hay una decisión pues A es una cirugía y B es un procedimiento
+menos invasivo, y se prefiere utilizar el tratamiento $A$ para cálculos grandes, y $B$ para cálculos chicos. Esto quiere decir que en la tabla total *el tratamiento* $A$ está en desventaja porque se usa en casos más difíciles, pero el tratamiento $A$ parece ser en general mejor. La razón es probablemente un proceso de optimización de recursos y riesgo que hacen los doctores.
+
+- Una mejor respuesta a la pregunta
+de qué tratamiento es mejor es la que presenta los datos desagregados
+- La tabla desagregada de asignación del tratamiento nos informa acerca de cómo se está distribuyendo el tratamiento
+en los pacientes.
+
+::: callout-note
+Los resúmenes descriptivos acompañados de hipótesis 
+causales acerca del *proceso generador de datos*, nos guía hacia descripciones 
+interpretables de los datos. 
+:::
+
+Las explicaciones no son tan simples y, otra vez, interviene el comportamiento de doctores, tratamientos, y distintos tipos de padecimientos.
+
+Podemos codificar la información causal con un diagrama:
+
+```{r}
+#| code-fold: true
+grViz("
+digraph {
+  graph [ranksep = 0.2]
+  node [shape=plaintext]
+    T 
+    M 
+    C
+  edge [minlen = 3]
+    T -> M
+    C -> T
+    C -> M
+{ rank = same; M; T }
+}
+", width = 200, height = 50)
+```
+
+Es decir, el tamaño de los cálculos es una causa común de tratamiento (T)
+y resultado (M). Veremos más adelante que la decisión 
+de condicionar a el tipo de cálculos proviene
+de un análisis relativamente simple de este diagrama causal, independientemente
+de los métodos que usemos para estimar las proporciones de interés (en este
+ejemplo, examinar las tablas cruzadas es equivalente a hacer estimaciones
+de máxima verosimlitud).
+
+
+### Ejemplo (cálculos renales 2) {-}
+
+Contrastemos el ejemplo anterior usando exactamente la misma tabla de datos, pero
+con el supuesto de un proceso generador diferente. En este caso, 
+los tratamientos son para mejorar
+alguna enfermedad del corazón. Sabemos que parte del efecto de este tratamiento
+ocurre gracias a una baja en presión arterial de los pacientes, así que 
+después de administrar el tratamiento, se toma la presión arterial de los pacientes.
+Ahora tenemos la tabla agregada y desagregada como sigue:
+
+```{r}
+corazon <- calculos |> 
+  select(tratamiento, presión = tamaño, resultado) |> 
+  mutate(presión = ifelse(presión == "grandes", "alta", "baja"))
+corazon_agregada <- corazon |> 
+   group_by(tratamiento, presión, resultado) |> 
+   count()
+corazon_agregada |> pivot_wider(names_from = resultado, values_from = n) |> 
+   mutate(total = mejora + sin_mejora) |> 
+   mutate(prop_mejora = round(mejora / total, 2)) |> 
+   select(tratamiento, presión, total, prop_mejora) |> 
+   arrange(presión) |> 
+   kable() |> 
+   kable_paper(full_width = FALSE)
+```
+
+```{r}
+corazon |> group_by(tratamiento) |> 
+   summarise(prop_mejora = mean(resultado == "mejora") |> round(2)) |> 
+   kable() |> 
+   kable_paper(full_width = FALSE)
+```
+
+¿Cuál creemos que es el mejor tratamiento en este caso? ¿Deberíamos usar
+la tabla agregada o la desagregada por presión?
+
+- En este caso, la tabla agregada es más apropiada (B es mejor tratamiento).
+- La razón es que *presión* en este caso es una consecuencia de tomar el tratamiento,
+y como las tablas muestran, B es más exitoso en bajar la presión de los pacientes.
+- Si sólo comparamos dentro de los grupos de presión baja o de presión alta, 
+ignoramos lo más importante del tratamiento en la probabilidad de mejorar. 
+
+Nuestros supuestos causales podemos mostrarlos con el siguiente diagrama:
+
+```{r}
+#| out-width: 100%
+#| code-fold: true
+grViz("
+digraph {
+  graph [ranksep = 0.2]
+  node [shape=plaintext]
+    P
+    T 
+    M 
+  edge [minlen = 3]
+    T -> P
+    P -> M
+    T -> M
+{ rank = same; M; T}
+}
+", width = 200, height = 50)
+```
+
+### Ejemplo (admisiones de Berkeley) {-}
+
+Una ejemplo al que regresaremos más adelante es el siguiente: en 1973 se
+recolectaron datos agregados de solicitantes para estudiar en Berkeley para
+los 6 departamentos más grandes, clasificados por sexo del solicitante y
+si fue admitido o no. Los resultados se muestran a continuación:
+
+```{r}
+data("UCBAdmissions")
+adm_original <- UCBAdmissions |> as_tibble() |> 
+   pivot_wider(names_from = Admit, values_from = n) 
+adm_original |> knitr::kable() |> 
+   kable_paper(full_width = FALSE)
+```
+
+y las proporciones de admisión por sexo y departamente son las siguientes:
+
+```{r}
+adm_tbl <- adm_original |> 
+   mutate(prop_adm = round(Admitted / (Admitted + Rejected), 2), total = Admitted + Rejected) |> 
+   select(Gender, Dept, prop_adm, total) |> 
+   pivot_wider(names_from = Gender, values_from = prop_adm:total)
+adm_tbl |> knitr::kable() |> 
+   kable_paper(full_width = FALSE)
+```
+
+Complementamos con las tasas de aceptación a total por género, y tasas de aceptación por departamento:
+
+```{r}
+adm_original |> group_by(Gender) |> 
+   summarise(Admitted = sum(Admitted), Rejected = sum(Rejected)) |> 
+   mutate(prop_adm = round(Admitted / (Admitted + Rejected),2)) |> 
+   kable() |> 
+   kable_paper(full_width = FALSE)
+```
+
+La pregunta que queremos hacer es: ¿existe discriminación por sexo en 
+la selección de candidatos? Examinando las tablas no está clara cuál es la 
+respuesta.
+
+
+```{r}
+adm_original |> group_by(Dept) |> 
+   summarise(Admitted = sum(Admitted), Rejected = sum(Rejected)) |> 
+   mutate(prop_adm = round(Admitted / (Admitted + Rejected),2)) |> 
+   kable() |> 
+   kable_paper(full_width = FALSE)
+```
+
+Discutiremos este ejemplo con más detalle más adelante. La interpretación 
+debe ser hecha con cuidado, y debemos establecer claramente los supuestos
+que fundamentan nuestra decisión de mostrar cada tabla y de qué forma
+mostrarlas.
+
+
+## Resumen de ejemplos
+
+Nótese que en los dos casos anteriores, los datos son exactamente los mismos, 
+pero la respuesta correcta es diferente en cada caso. En la tabla de datos
+**no está la respuesta acerca de qué resumen es el correcto**. Solamente conocimiento
+externo de cómo se generan los datos sugieren cómo debemos tratar y explicar 
+lo que observamos en cada caso.
+
+A se conocimiento externo es una combinación de 
+
+ - *Conocimiento de dominio* o *teorías científicas*, y 
+ - Entendimiento de cómo fueron *recolectados* y procesados
+los datos, lo cual también es información causal.
+
+Estos ejemplos también muestran adicionalmente que:
+
+- Incluso desde un punto de vista puramente **descriptivo**, es
+necesario entender algo de la estructura causal del problema para poder
+dar descripciones interpretables
+- Si no tenemos la información correcta,
+es difíl producir **estimaciones causales**. 
+
+En el primer ejemplo de 
+cálculos renales fue importante saber saber el hecho de que los doctores
+seleccionaban el tratamiento según la severidad y que tuviéramos una medición
+de esa variable. En el segundo ejemplo de presión no era necesaria esa medición
+adicional.
+
+- Más adelante hablaremos de experimentación. Veremos que aquí
+también entender el proceso generador de datos es importante. Por
+ejemplo, ¿qué variables podemos usar cómo controles para mejorar
+la estimación y qué variables no?
+- Modelos causales nos ayudan a diseñar estudios (experimentales o no) y
+a decidir qué datos es necesario recolectar.
+
+## Más de asociación no causal
+
+Discutiremos otro ejemplo de los puntos mencionados arriba.
+
+Algunos estudios fueron publicados en la primera mitad de 2020
+que notaban que el porcentaje fumadores
+entre los casos positivos de COVID era menor que en la población general, y 
+se hicieron algunas interpretaciones acerca de este hecho. Estos estudios 
+se hicieron con personas que se hicieron una prueba.
+
+En este ejemplo replicaremos cómo es que podemos encontrar esta asociación
+en este tipo de estudios aún cuando no exista tal asociación en la población 
+general (ver [este artículo](https://www.nature.com/articles/s41467-020-19478-2)). 
+Usaremos datos sintéticos (simulados).
+
+Primero vamos a razonar acerca del proceso generador de datos y a hacer
+algunos supuestos:
+
+1. En primer lugar, ¿cuándo decide hacerse alguien una prueba? A principios de 2020, son principalmente personas que tienen síntomas considerables, y trabajadores de salud (tengan o no síntomas). 
+2. Ser trabajador de salud incrementa el riesgo de contagiarse.
+3. En algunos países, fumar está asociado con ser trabajador de salud (no tienen la misma tasa de tabaquismo que la población general).
+4. Sólo observamos a las personas que se hicieron una prueba.
+5. Fumar no tiene efectos causales en este modelo.
+5. Ingoramos por el momento que la relación entre covid y prueba positiva no es perfecta.
+
+Podemos resumir cualitativamente con el siguiente diagrama:
+
+
+
+```{r}
+#| out-width: 100%
+#| code-fold: true
+grViz("
+digraph {
+  graph [ranksep = 0.2, rankdir = LR]
+  node [shape=plaintext]
+    Prueba
+    TrabSalud
+    Síntomas
+    Fumar
+    Covid
+  edge [minlen = 3]
+    #TrabSalud -> Covid
+    TrabSalud -> Prueba
+    TrabSalud -> Fumar
+    TrabSalud -> Covid
+    U -> Síntomas
+    Covid -> Síntomas
+    Síntomas -> Prueba
+}
+")#, width = 200, height = 50)
+```
+
+
+El código para simular es el siguiente: todas las variables toman
+valores 0 o 1, pero con diferentes probabilidades y dependiendo de las
+variables que son padres en la gráfica de arriba. 
+
+1. Simulamos un millón de personas de las cuales aproximadamente el 1% son trabajadores de salud.
+2. Suponemos que la probabilidad es de 5% de que un trabajador de salud resulte positivo y de 1% para el del resto de las personas. 
+3. Suponemos que de las personas que tienen covid, el 50% tienen síntomas y de las personas que no tienen covid, el 1% tiene síntomas.
+4. Suponemos que de los trabadores de salud el 99% se hicieron prueba (sin importar si tenían o no síntomas) y el resto de las personas se divide en 2, de los no trabadores de salud con síntomas, el 85% se hicieron una prueba y de los no trabajdores de salud sin síntomas, el 1% se hizo una prueba
+5. De los trabajadores de salud, el 20% fuman, del resto de las personas el 7% fuman.
+
+
+```{r}
+#| code-fold: show
+set.seed(8221)
+#simular población
+n <- 1e6
+trab_salud <- rbinom(n, 1, 0.01)
+covid <- rbinom(n, 1, ifelse(trab_salud==1, 0.05, 0.01))
+datos <- tibble(trab_salud = trab_salud, covid) |> 
+  mutate(sintomas = rbernoulli(n, ifelse(covid == 1, 0.5, 0.01))) |> 
+  mutate(prueba = rbernoulli(n, ifelse(trab_salud ==1, 0.99, 0.84 * sintomas + 0.01))) |> 
+  mutate(fumar = rbernoulli(n, ifelse(trab_salud == 1, 0.20, 0.07))) |> 
+  mutate(covid = ifelse(covid ==1, "positivo", "negativo")) |> 
+  mutate(fumar = ifelse(fumar, "fuma", "no_fuma"))
+```
+
+Suponemos ahora que tomamos como muestra a *todas aquellas personas que se
+hicieron una prueba*.
+En primer lugar, la proporción de fumadores en la muestra es un poco más alta que la población, porque los trabajadores de salud están sobrerrepresentados:
+
+```{r}
+datos_pruebas <- filter(datos, prueba == 1)
+table(datos_pruebas$fumar) |> prop.table() |> round(2)
+```
+
+Y ahora vemos que bajo esta condición o filtro,
+están asociados fumar y tener covid:
+
+```{r}
+table(datos_pruebas$covid, datos_pruebas$fumar) |> prop.table(margin = 2) |> 
+  round(2) 
+```
+
+Sin embargo, en la población (sin filtrar por los que se hicieron prueba) 
+en general, esperaríamos una asociación positiva 
+pero relativamente chica de fumar con tener covid (veremos por qué
+sabemos esto al consultar el diagrama):
+
+```{r}
+table(datos$covid, datos$fumar) |> prop.table(margin = 2) |> 
+  round(4)
+```
+
+Esta tampoco es una relación causal. Discutiremos con detalle más
+adelante por qué condicionar a sólo los que hicieron una prueba produce
+una correlación fuerte entre estas dos variables que no están 
+causalmente relacionadas.
+
+
+
+
+
+
+
+
+
+
+

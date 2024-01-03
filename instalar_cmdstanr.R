@@ -1,0 +1,1 @@
+cmdstanr::install_cmdstan()
