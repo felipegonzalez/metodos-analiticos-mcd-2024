@@ -11,6 +11,7 @@ env:
 
 permissions:
   contents: write
+  pages: write
 
 name: Render and deploy Book
 
@@ -31,8 +32,8 @@ jobs:
           sudo apt-get update && sudo apt-get install tzdata locales -y && sudo locale-gen es_ES.UTF-8
           sudo update-locale
 
-      - name: Install Quarto
-        uses: quarto-dev/quarto-actions/install-quarto@v1
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
         # uncomment and fill to pin a version
         # with:
         #   version: 0.9.105
@@ -50,16 +51,10 @@ jobs:
         shell: Rscript {0}
 
 
-      - name: Render book to all format
-        # Add any command line argument needed
-        run: |
-          quarto render notas/ --to html
-      - name: Deploy 🚀
-        # only deploy when push to main
-        if: github.event_name != 'pull_request'
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Render and Publish
+        uses: quarto-dev/quarto-actions/publish@v2
         with:
-          # The branch the action should deploy to.
-          branch: gh-pages
-          # The folder the action should deploy. Adapt if you changed in Quarto config
-          folder: notas/_book
+          target: gh-pages
+          path: notas/
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
