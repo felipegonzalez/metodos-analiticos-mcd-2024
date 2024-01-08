@@ -311,6 +311,17 @@
       ],
       "Hash": "3243218410e169c5515ef8933cbba546"
     },
+    "coda": {
+      "Package": "coda",
+      "Version": "0.19-4",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "lattice"
+      ],
+      "Hash": "24b6d006b8b2343876cf230687546932"
+    },
     "colorspace": {
       "Package": "colorspace",
       "Version": "2.1-0",
@@ -971,6 +982,20 @@
       ],
       "Hash": "b8552d117e1b808b09a832f589b79035"
     },
+    "loo": {
+      "Package": "loo",
+      "Version": "2.6.0",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "checkmate",
+        "matrixStats",
+        "parallel",
+        "stats"
+      ],
+      "Hash": "e5c8f41731502a0e98f353da23f7ca30"
+    },
     "lubridate": {
       "Package": "lubridate",
       "Version": "1.9.3",
@@ -1070,6 +1095,17 @@
         "methods"
       ],
       "Hash": "6dfe8bf774944bd5595785e3229d8771"
+    },
+    "mvtnorm": {
+      "Package": "mvtnorm",
+      "Version": "1.2-4",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "stats"
+      ],
+      "Hash": "17e96668f44a28aef0981d9e17c49b59"
     },
     "nlme": {
       "Package": "nlme",
@@ -1325,6 +1361,32 @@
       ],
       "Hash": "d66fe009d4c20b7ab1927eb405db9ee2"
     },
+    "rethinking": {
+      "Package": "rethinking",
+      "Version": "2.40",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "rethinking",
+      "RemoteUsername": "rmcelreath",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "f3ac8de0b4bcfabccc67ed033fb81d1873ec755e",
+      "Requirements": [
+        "MASS",
+        "R",
+        "cmdstanr",
+        "coda",
+        "graphics",
+        "loo",
+        "methods",
+        "mvtnorm",
+        "parallel",
+        "posterior",
+        "shape",
+        "stats"
+      ],
+      "Hash": "9caed73679267a4b22d50a3dc49f219a"
+    },
     "rlang": {
       "Package": "rlang",
       "Version": "1.1.2",
@@ -1433,6 +1495,19 @@
         "stringr"
       ],
       "Hash": "3838071b66e0c566d55cc26bd6e27bf4"
+    },
+    "shape": {
+      "Package": "shape",
+      "Version": "1.4.6",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "grDevices",
+        "graphics",
+        "stats"
+      ],
+      "Hash": "9067f962730f58b14d8ae54ca885509f"
     },
     "stringi": {
       "Package": "stringi",

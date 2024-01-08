@@ -6,6 +6,7 @@ book:
   author: "Felipe González"
   chapters:
     - index.qmd
+    - 01-introduccion.qmd
 bibliography: referencias/book.bib
 
 format:
