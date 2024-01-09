@@ -160,10 +160,77 @@ de los métodos que usemos para estimar las proporciones de interés (en este
 ejemplo, examinar las tablas cruzadas es equivalente a hacer estimaciones
 de máxima verosimlitud).
 
+### Ejemplo (cálculos renales 2) {-}
+
+Contrastemos el ejemplo anterior usando exactamente la misma tabla de datos, pero
+con el supuesto de un proceso generador diferente. En este caso, 
+los tratamientos son para mejorar
+alguna enfermedad del corazón. Sabemos que parte del efecto de este tratamiento
+ocurre gracias a una baja en presión arterial de los pacientes, así que 
+después de administrar el tratamiento, se toma la presión arterial de los pacientes.
+Ahora tenemos la tabla agregada y desagregada como sigue:
+
+```{r}
+corazon <- calculos |> 
+  select(tratamiento, presión = tamaño, resultado) |> 
+  mutate(presión = ifelse(presión == "grandes", "alta", "baja"))
+corazon_agregada <- corazon |> 
+   group_by(tratamiento, presión, resultado) |> 
+   count()
+corazon_agregada |> pivot_wider(names_from = resultado, values_from = n) |> 
+   mutate(total = mejora + sin_mejora) |> 
+   mutate(prop_mejora = round(mejora / total, 2)) |> 
+   select(tratamiento, presión, total, prop_mejora) |> 
+   arrange(presión) |> 
+   kable() |> 
+   kable_paper(full_width = FALSE)
+```
+
+```{r}
+corazon |> group_by(tratamiento) |> 
+   summarise(prop_mejora = mean(resultado == "mejora") |> round(2)) |> 
+   kable() |> 
+   kable_paper(full_width = FALSE)
+```
+
+¿Cuál creemos que es el mejor tratamiento en este caso? ¿Deberíamos usar
+la tabla agregada o la desagregada por presión?
+
+- En este caso, la tabla agregada es más apropiada (B es mejor tratamiento).
+- La razón es que *presión* en este caso es una consecuencia de tomar el tratamiento,
+y como las tablas muestran, B es más exitoso en bajar la presión de los pacientes.
+- Si sólo comparamos dentro de los grupos de presión baja o de presión alta, 
+ignoramos lo más importante del tratamiento en la probabilidad de mejorar. 
+
+Nuestros supuestos causales podemos mostrarlos con el siguiente diagrama:
+
+```{r}
+#| out-width: 100%
+#| code-fold: true
+grViz("
+digraph {
+  graph [ranksep = 0.2]
+  node [shape=plaintext]
+    P
+    T 
+    M 
+  edge [minlen = 3]
+    T -> P
+    P -> M
+    T -> M
+{ rank = same; M; T}
+}
+", width = 200, height = 50)
+```
+
+Nótese que el análisis más apropiado no está en los datos: en ambos casos la
+tabla de datos es exactamente la misma. Los supuestos acerca del proceso que genera
+los datos sin embargo nos lleva a respuestas opuestas.
+
 ---
 
-El ejemplo de arriba es un DAG (Gráfica dirigida acíclica), y no son 
-generados por datos observados, sino que codifican conocimiento acerca
+Los diagramas de arriba se llaman DAGs (Gráficas dirigidas acíclicas), y no son 
+generadas por datos observados, sino que codifican conocimiento acerca
 del fenómenos y los datos observados. Nos ayudan a (@rethinking):
 
 - Pensar claramente en términos científicos/de negocio acerca de nuestro problema
