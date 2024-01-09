@@ -2,15 +2,15 @@
 
 **Todas las notas y material del curso estarán en este** [repositorio](https://github.com/felipegonzalez/metodos-analiticos-mcd-2024).
 
-- Parte 1: Principios de estadística bayesiana y Simulación
+- Principios de estadística bayesiana y Simulación
 
-  - Modelos estadísticos e inferencia
+  - Modelos estadísticos e inferencia causal
   - Modelación bayesiana
-  - Métodos de simulación para modelos bayesianos
   - Flujo de trabajo para inferencia bayesiana
+  - Métodos de simulación para modelos bayesianos
   - Stan
   
-- Parte 2: Inferencia causal
+- Inferencia causal
 
   - Introducción a inferencia causal
   - Modelos probabilísticos gráficos
@@ -29,7 +29,7 @@
 ### Material {-}
 
 Cada semestre las notas cambian, en algunas partes considerablemente. Las
-de este semestre están en [este repositorio](https://github.com/felipegonzalez/metodos-analiticos-mcd-2023),
+de este semestre están en [este repositorio](https://github.com/felipegonzalez/metodos-analiticos-mcd-2024),
 incluyendo ejemplos, ejercicios y tareas.
 
 ### Referencias principales {-}
