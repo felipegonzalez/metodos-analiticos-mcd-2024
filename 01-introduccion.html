@@ -185,6 +185,7 @@ div.csl-indent {
   <li><a href="#diagramas-causales" id="toc-diagramas-causales" class="nav-link active" data-scroll-target="#diagramas-causales"><span class="header-section-number">1.1</span> Diagramas causales</a>
   <ul class="collapse">
   <li><a href="#ejemplo-cálculos-renales" id="toc-ejemplo-cálculos-renales" class="nav-link" data-scroll-target="#ejemplo-cálculos-renales">Ejemplo (cálculos renales)</a></li>
+  <li><a href="#ejemplo-cálculos-renales-2" id="toc-ejemplo-cálculos-renales-2" class="nav-link" data-scroll-target="#ejemplo-cálculos-renales-2">Ejemplo (cálculos renales 2)</a></li>
   </ul></li>
   <li><a href="#modelos-y-procedimientos" id="toc-modelos-y-procedimientos" class="nav-link" data-scroll-target="#modelos-y-procedimientos"><span class="header-section-number">1.2</span> Modelos y procedimientos</a></li>
   <li><a href="#proceso-de-modelación" id="toc-proceso-de-modelación" class="nav-link" data-scroll-target="#proceso-de-modelación"><span class="header-section-number">1.3</span> Proceso de modelación</a></li>
@@ -281,13 +282,13 @@ Nota
 </tr>
 <tr class="odd">
 <td style="text-align: left;">B</td>
-<td style="text-align: left;">chicos</td>
+<td style="text-align: left;">grandes</td>
 <td style="text-align: left;">sin_mejora</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">B</td>
-<td style="text-align: left;">chicos</td>
-<td style="text-align: left;">mejora</td>
+<td style="text-align: left;">A</td>
+<td style="text-align: left;">grandes</td>
+<td style="text-align: left;">sin_mejora</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">B</td>
@@ -295,29 +296,29 @@ Nota
 <td style="text-align: left;">mejora</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">A</td>
-<td style="text-align: left;">grandes</td>
-<td style="text-align: left;">sin_mejora</td>
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">chicos</td>
+<td style="text-align: left;">mejora</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">A</td>
-<td style="text-align: left;">grandes</td>
-<td style="text-align: left;">sin_mejora</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">A</td>
 <td style="text-align: left;">grandes</td>
 <td style="text-align: left;">mejora</td>
 </tr>
+<tr class="even">
+<td style="text-align: left;">A</td>
+<td style="text-align: left;">chicos</td>
+<td style="text-align: left;">mejora</td>
+</tr>
 <tr class="odd">
+<td style="text-align: left;">A</td>
+<td style="text-align: left;">grandes</td>
+<td style="text-align: left;">mejora</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">B</td>
 <td style="text-align: left;">chicos</td>
 <td style="text-align: left;">sin_mejora</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">A</td>
-<td style="text-align: left;">chicos</td>
-<td style="text-align: left;">mejora</td>
 </tr>
 </tbody>
 </table>
@@ -561,13 +562,131 @@ Nota
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-fdbb436e85c7a7ddff17" style="width:100%;height:162px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-fdbb436e85c7a7ddff17">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    T \n    M \n    C\n  edge [minlen = 3]\n    T -> M\n    C -> T\n    C -> M\n{ rank = same; M; T }\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-5ab20890b6f279534ff6" style="width:100%;height:162px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-5ab20890b6f279534ff6">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    T \n    M \n    C\n  edge [minlen = 3]\n    T -> M\n    C -> T\n    C -> M\n{ rank = same; M; T }\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Es decir, el tamaño de los cálculos es una causa común de tratamiento (T) y resultado (M). Veremos más adelante que la decisión de condicionar a el tipo de cálculos proviene de un análisis relativamente simple de este diagrama causal, independientemente de los métodos que usemos para estimar las proporciones de interés (en este ejemplo, examinar las tablas cruzadas es equivalente a hacer estimaciones de máxima verosimlitud).</p>
+</section>
+<section id="ejemplo-cálculos-renales-2" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="ejemplo-cálculos-renales-2">Ejemplo (cálculos renales 2)</h3>
+<p>Contrastemos el ejemplo anterior usando exactamente la misma tabla de datos, pero con el supuesto de un proceso generador diferente. En este caso, los tratamientos son para mejorar alguna enfermedad del corazón. Sabemos que parte del efecto de este tratamiento ocurre gracias a una baja en presión arterial de los pacientes, así que después de administrar el tratamiento, se toma la presión arterial de los pacientes. Ahora tenemos la tabla agregada y desagregada como sigue:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>corazon <span class="ot">&lt;-</span> calculos <span class="sc">|&gt;</span> </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(tratamiento, presión <span class="ot">=</span> tamaño, resultado) <span class="sc">|&gt;</span> </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(presión <span class="ot">=</span> <span class="fu">ifelse</span>(presión <span class="sc">==</span> <span class="st">"grandes"</span>, <span class="st">"alta"</span>, <span class="st">"baja"</span>))</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>corazon_agregada <span class="ot">&lt;-</span> corazon <span class="sc">|&gt;</span> </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">group_by</span>(tratamiento, presión, resultado) <span class="sc">|&gt;</span> </span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">count</span>()</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>corazon_agregada <span class="sc">|&gt;</span> <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> resultado, <span class="at">values_from =</span> n) <span class="sc">|&gt;</span> </span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">total =</span> mejora <span class="sc">+</span> sin_mejora) <span class="sc">|&gt;</span> </span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">prop_mejora =</span> <span class="fu">round</span>(mejora <span class="sc">/</span> total, <span class="dv">2</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>   <span class="fu">select</span>(tratamiento, presión, total, prop_mejora) <span class="sc">|&gt;</span> </span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>   <span class="fu">arrange</span>(presión) <span class="sc">|&gt;</span> </span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable_paper</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">tratamiento</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">presión</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">total</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">prop_mejora</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A</td>
+<td style="text-align: left;">alta</td>
+<td style="text-align: right;">263</td>
+<td style="text-align: right;">0.73</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">alta</td>
+<td style="text-align: right;">80</td>
+<td style="text-align: right;">0.69</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">A</td>
+<td style="text-align: left;">baja</td>
+<td style="text-align: right;">87</td>
+<td style="text-align: right;">0.93</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">baja</td>
+<td style="text-align: right;">270</td>
+<td style="text-align: right;">0.87</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>corazon <span class="sc">|&gt;</span> <span class="fu">group_by</span>(tratamiento) <span class="sc">|&gt;</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">summarise</span>(<span class="at">prop_mejora =</span> <span class="fu">mean</span>(resultado <span class="sc">==</span> <span class="st">"mejora"</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable_paper</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">tratamiento</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">prop_mejora</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A</td>
+<td style="text-align: right;">0.78</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: right;">0.83</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>¿Cuál creemos que es el mejor tratamiento en este caso? ¿Deberíamos usar la tabla agregada o la desagregada por presión?</p>
+<ul>
+<li>En este caso, la tabla agregada es más apropiada (B es mejor tratamiento).</li>
+<li>La razón es que <em>presión</em> en este caso es una consecuencia de tomar el tratamiento, y como las tablas muestran, B es más exitoso en bajar la presión de los pacientes.</li>
+<li>Si sólo comparamos dentro de los grupos de presión baja o de presión alta, ignoramos lo más importante del tratamiento en la probabilidad de mejorar.</li>
+</ul>
+<p>Nuestros supuestos causales podemos mostrarlos con el siguiente diagrama:</p>
+<div class="cell">
+<details>
+<summary>Código</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grViz</span>(<span class="st">"</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="st">digraph {</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="st">  graph [ranksep = 0.2]</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="st">  node [shape=plaintext]</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="st">    P</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="st">    T </span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="st">    M </span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="st">  edge [minlen = 3]</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="st">    T -&gt; P</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="st">    P -&gt; M</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="st">    T -&gt; M</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="st">{ rank = same; M; T}</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="htmlwidget-18be3c00a587b70f2df4" style="width:100%;height:162px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-18be3c00a587b70f2df4">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    P\n    T \n    M \n  edge [minlen = 3]\n    T -> P\n    P -> M\n    T -> M\n{ rank = same; M; T}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>Nótese que el análisis más apropiado no está en los datos: en ambos casos la tabla de datos es exactamente la misma. Los supuestos acerca del proceso que genera los datos sin embargo nos lleva a respuestas opuestas.</p>
 <hr>
-<p>El ejemplo de arriba es un DAG (Gráfica dirigida acíclica), y no son generados por datos observados, sino que codifican conocimiento acerca del fenómenos y los datos observados. Nos ayudan a (<span class="citation" data-cites="rethinking">McElreath (<a href="#ref-rethinking" role="doc-biblioref">2020</a>)</span>):</p>
+<p>Los diagramas de arriba se llaman DAGs (Gráficas dirigidas acíclicas), y no son generadas por datos observados, sino que codifican conocimiento acerca del fenómenos y los datos observados. Nos ayudan a (<span class="citation" data-cites="rethinking">McElreath (<a href="#ref-rethinking" role="doc-biblioref">2020</a>)</span>):</p>
 <ul>
 <li>Pensar claramente en términos científicos/de negocio acerca de nuestro problema</li>
 <li>Expresar los supuestos que hacemos que soportan nuestro análisis</li>
