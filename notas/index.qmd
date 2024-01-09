@@ -42,7 +42,7 @@ Este curso sigue aproximadamente la primera referencia (Statistical Rethinking).
 
 ### Otras referencias {-}
 
-- [Pattern Recognition and Machine Learning](http://www.springer.com/us/book/9780387310732), @Bishop
+- [Pattern Recognition and Machine Learning](http://www.springer.com/us/book/9780387310732)
 - [The Book of Why](https://dl.acm.org/doi/10.5555/3238230)
 - [Data Analysis Using Regression and Multilevel/Hierarchical Models](https://www.cambridge.org/highereducation/books/data-analysis-using-regression-and-multilevel-hierarchical-models/32A29531C7FD730C3A68951A17C9D983#overview)
 
