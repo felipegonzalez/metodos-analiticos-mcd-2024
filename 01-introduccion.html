@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Métodos analíticos - 1&nbsp; Introducción (Parte 1)</title>
+<title>Métodos analíticos - 1&nbsp; Introducción</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -135,7 +135,7 @@ div.csl-indent {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-introduccion.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción (Parte 1)</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-introduccion.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -169,7 +169,7 @@ div.csl-indent {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./01-introduccion.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción (Parte 1)</span></span></a>
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
   </div>
 </li>
     </ul>
@@ -182,15 +182,14 @@ div.csl-indent {
     <h2 id="toc-title">Tabla de contenidos</h2>
    
   <ul>
-  <li><a href="#qué-es-inferencia-causal" id="toc-qué-es-inferencia-causal" class="nav-link active" data-scroll-target="#qué-es-inferencia-causal"><span class="header-section-number">1.1</span> ¿Qué es inferencia causal?</a></li>
-  <li><a href="#preguntas-y-datos" id="toc-preguntas-y-datos" class="nav-link" data-scroll-target="#preguntas-y-datos"><span class="header-section-number">1.2</span> Preguntas y datos</a>
+  <li><a href="#diagramas-causales" id="toc-diagramas-causales" class="nav-link active" data-scroll-target="#diagramas-causales"><span class="header-section-number">1.1</span> Diagramas causales</a>
   <ul class="collapse">
   <li><a href="#ejemplo-cálculos-renales" id="toc-ejemplo-cálculos-renales" class="nav-link" data-scroll-target="#ejemplo-cálculos-renales">Ejemplo (cálculos renales)</a></li>
-  <li><a href="#ejemplo-cálculos-renales-2" id="toc-ejemplo-cálculos-renales-2" class="nav-link" data-scroll-target="#ejemplo-cálculos-renales-2">Ejemplo (cálculos renales 2)</a></li>
-  <li><a href="#ejemplo-admisiones-de-berkeley" id="toc-ejemplo-admisiones-de-berkeley" class="nav-link" data-scroll-target="#ejemplo-admisiones-de-berkeley">Ejemplo (admisiones de Berkeley)</a></li>
   </ul></li>
-  <li><a href="#resumen-de-ejemplos" id="toc-resumen-de-ejemplos" class="nav-link" data-scroll-target="#resumen-de-ejemplos"><span class="header-section-number">1.3</span> Resumen de ejemplos</a></li>
-  <li><a href="#más-de-asociación-no-causal" id="toc-más-de-asociación-no-causal" class="nav-link" data-scroll-target="#más-de-asociación-no-causal"><span class="header-section-number">1.4</span> Más de asociación no causal</a></li>
+  <li><a href="#modelos-y-procedimientos" id="toc-modelos-y-procedimientos" class="nav-link" data-scroll-target="#modelos-y-procedimientos"><span class="header-section-number">1.2</span> Modelos y procedimientos</a></li>
+  <li><a href="#proceso-de-modelación" id="toc-proceso-de-modelación" class="nav-link" data-scroll-target="#proceso-de-modelación"><span class="header-section-number">1.3</span> Proceso de modelación</a></li>
+  <li><a href="#análisis-como-software" id="toc-análisis-como-software" class="nav-link" data-scroll-target="#análisis-como-software"><span class="header-section-number">1.4</span> Análisis como software</a></li>
+  <li><a href="#análisis-como-proceso" id="toc-análisis-como-proceso" class="nav-link" data-scroll-target="#análisis-como-proceso"><span class="header-section-number">1.5</span> Análisis como proceso</a></li>
   </ul>
 </nav>
     </div>
@@ -199,7 +198,7 @@ div.csl-indent {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="introduccion" class="quarto-section-identifier"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción (Parte 1)</span></span></h1>
+<h1 class="title"><span id="introduccion" class="quarto-section-identifier"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></h1>
 </div>
 
 
@@ -214,46 +213,31 @@ div.csl-indent {
 
 </header>
 
-<p>Muchas tareas usuales del análisis de datos requieren de entender y definir relaciones de causa-efecto. En esta primera parte del curso buscamos:</p>
-<ul>
-<li>Dar esquemas de análisis y especificación de <strong>supuestos causales</strong>, que nos permita también poder identificar estrategias para estimar efectos causales.</li>
-<li>Entender cómo se conectan los <strong>modelos estadísticos</strong> con supuestos causales para hacer inferencia causal.</li>
-<li>Estudiar cómo se conectan los supuestos causales con la experimentación y el <strong>diseño de experimentos</strong>.</li>
-</ul>
-<section id="qué-es-inferencia-causal" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="qué-es-inferencia-causal"><span class="header-section-number">1.1</span> ¿Qué es inferencia causal?</h2>
-<p>La inferencia causal consiste en predecir los posibles efectos de <strong>intervenciones</strong>, y entender qué pasaría si las condiciones que observamos fueran diferentes, es decir, condiciones <strong>contrafactuales</strong>. Tanto en ciencia como en industria, estos dos conceptos son muy importantes:</p>
-<p>Intervenciones (acciones):</p>
-<ul>
-<li>¿Qué efecto tiene sobre las ventas reducir el presupuesto de publicidad?</li>
-<li>¿Qué efecto tienen sobre la salud de una persona administrarle un medicamento?</li>
-<li>¿Cuáles son las expectativas de un hogar que ponemos en un programa gubernamental relacionado con la educación o la salud?</li>
-</ul>
-<p>Contrafactuales (no necesariamente intervenciones que podemos controlar o ejecutar, sino escenarios hipotéticos):</p>
-<ul>
-<li>¿Cuánto ha contribuido a las ventas de un producto el gasto en publicidad?</li>
-<li>¿Cuál sería el ingreso de una persona si tuviera un año más de estudios?</li>
-<li>¿Cómo sería la salud de una persona que ha fumado durante 10 años si no hubiera fumado?</li>
-</ul>
-<p>Este tipo de preguntas centrales en la industria y la ciencia generalmente no pueden contestarse únicamente usando términos estadísticos y datos disponibles. Las razones son:</p>
-<ul>
-<li>Asociaciones entre variables observadas no implican relaciones causales entre las variables.</li>
-<li>La ausencia de asociación entre variables observadas no implica que no hay relación causal entre ellas.</li>
-<li>Relaciones causales no están en los datos: están en el conocimiento experto o teoría científica.</li>
-</ul>
-<p>La evaluación de intervenciones y de contrafactuales tienen una lógica similar, pero su naturaleza conceptual es diferente: en un caso</p>
-</section>
-<section id="preguntas-y-datos" class="level2" data-number="1.2">
-<h2 data-number="1.2" class="anchored" data-anchor-id="preguntas-y-datos"><span class="header-section-number">1.2</span> Preguntas y datos</h2>
-<p>Para entender y poder usar datos para contestar preguntas de interés, el paso inicial más importante es entender bajo que proceso se generan los datos. Veremos cómo estos procesos generadores se expresan en términos causales.</p>
-<ul>
-<li>Cuanto más sepamos de este proceso, mejor podemos contestar preguntas de interés</li>
-<li>En muchos casos, tenemos qué hacer supuestos basados en conocimiento experto acerca de este proceso generador para poder producir (o no) respuestas.</li>
-</ul>
-<p>En particular, en inferencia causal:</p>
-<ul>
-<li>Si no tenemos los supuestos y hechos relevantes que definen el proceso generador de datos, no es posible dar respuestas a preguntas causales</li>
-</ul>
+<p>Este es un curso de modelación bayesiana aplicada, que se concentra en plantear y resolver problemas aplicados usando estadística. Para hacer esto necesitamos entender tres componentes:</p>
+<ol type="1">
+<li><p>El contexto del problema, o conocimiento del área: esto es conocimiento científico o de negocios y cómo es que observamos o medimos el fenómeno que nos interesa.</p></li>
+<li><p>Modelos estadísticos o algoritmos con el que procesamos datos para obtener resúmenes útiles o informativos acerca de ellos.</p></li>
+<li><p>En vista del contexto del problema (1), ¿cómo construir modelos estadísticos para responder preguntas de interés?</p></li>
+</ol>
+<p>Este proceso aplica tanto a estadística bayesiana como frecuentista.</p>
+<section id="diagramas-causales" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="diagramas-causales"><span class="header-section-number">1.1</span> Diagramas causales</h2>
+<p>En primer lugar, observamos (<span class="citation" data-cites="rethinking">McElreath (<a href="#ref-rethinking" role="doc-biblioref">2020</a>)</span>):</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Nota
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Las razones de cómo hacemos análisis estadístico (que procedimiento o algoritmo seleccionamos, por ejemplo) en un problema dado <strong>no están en los datos observados</strong>, las <strong>causas</strong> de los datos.</p>
+</div>
+</div>
+<p>Las <strong>causas</strong> de los datos no pueden extrarse de los datos solamente. Muchas veces nos referimos a las causas de los datos como el <em>proceso generador de los datos</em>: esto incluye aspectos del fenómeno que nos interesa (ciencia o proceso de negocios, etc.), así como el proceso de observación (muestras, valores no observados, etc.).</p>
+<p>Consideremos un ejemplo simple para ilustrar este primer principio:</p>
 <section id="ejemplo-cálculos-renales" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="ejemplo-cálculos-renales">Ejemplo (cálculos renales)</h3>
 <p>Este es un estudio real acerca de tratamientos para cálculos renales (<span class="citation" data-cites="kidney94">Julious y Mullee (<a href="#ref-kidney94" role="doc-biblioref">1994</a>)</span>). Pacientes se asignaron de una forma no controlada a dos tipos de tratamientos para reducir cálculos renales. Para cada paciente, conocemos el tipo de ćalculos que tenía (grandes o chicos) y si el tratamiento tuvo éxito o no.</p>
@@ -286,7 +270,37 @@ div.csl-indent {
 </thead>
 <tbody>
 <tr class="odd">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">chicos</td>
+<td style="text-align: left;">mejora</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">chicos</td>
+<td style="text-align: left;">mejora</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">chicos</td>
+<td style="text-align: left;">mejora</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">A</td>
+<td style="text-align: left;">chicos</td>
+<td style="text-align: left;">mejora</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">grandes</td>
+<td style="text-align: left;">mejora</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">grandes</td>
+<td style="text-align: left;">mejora</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B</td>
 <td style="text-align: left;">grandes</td>
 <td style="text-align: left;">mejora</td>
 </tr>
@@ -303,37 +317,7 @@ div.csl-indent {
 <tr class="even">
 <td style="text-align: left;">B</td>
 <td style="text-align: left;">chicos</td>
-<td style="text-align: left;">mejora</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">A</td>
-<td style="text-align: left;">chicos</td>
-<td style="text-align: left;">mejora</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">A</td>
-<td style="text-align: left;">grandes</td>
 <td style="text-align: left;">sin_mejora</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">A</td>
-<td style="text-align: left;">grandes</td>
-<td style="text-align: left;">sin_mejora</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">B</td>
-<td style="text-align: left;">chicos</td>
-<td style="text-align: left;">mejora</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">B</td>
-<td style="text-align: left;">chicos</td>
-<td style="text-align: left;">mejora</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">B</td>
-<td style="text-align: left;">chicos</td>
-<td style="text-align: left;">mejora</td>
 </tr>
 </tbody>
 </table>
@@ -540,7 +524,7 @@ div.csl-indent {
 </div>
 <p>Nuestra hipótesis aquí es que la decisión de qué tratamiento usar depende del tamaño de los cálculos. En este caso, hay una decisión pues A es una cirugía y B es un procedimiento menos invasivo, y se prefiere utilizar el tratamiento <span class="math inline">\(A\)</span> para cálculos grandes, y <span class="math inline">\(B\)</span> para cálculos chicos. Esto quiere decir que en la tabla total <em>el tratamiento</em> <span class="math inline">\(A\)</span> está en desventaja porque se usa en casos más difíciles, pero el tratamiento <span class="math inline">\(A\)</span> parece ser en general mejor. La razón es probablemente un proceso de optimización de recursos y riesgo que hacen los doctores.</p>
 <ul>
-<li>Una mejor respuesta a la pregunta de qué tratamiento es mejor es la que presenta los datos desagregados</li>
+<li>En este caso, una mejor respuesta a la pregunta de qué tratamiento es mejor es la que presenta los datos desagregados.</li>
 <li>La tabla desagregada de asignación del tratamiento nos informa acerca de cómo se está distribuyendo el tratamiento en los pacientes.</li>
 </ul>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -577,524 +561,76 @@ Nota
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-7ec85e353ff2c31cd1d5" style="width:100%;height:162px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-7ec85e353ff2c31cd1d5">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    T \n    M \n    C\n  edge [minlen = 3]\n    T -> M\n    C -> T\n    C -> M\n{ rank = same; M; T }\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-e3a2912afa60e4f573ab" style="width:100%;height:162px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-e3a2912afa60e4f573ab">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    T \n    M \n    C\n  edge [minlen = 3]\n    T -> M\n    C -> T\n    C -> M\n{ rank = same; M; T }\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Es decir, el tamaño de los cálculos es una causa común de tratamiento (T) y resultado (M). Veremos más adelante que la decisión de condicionar a el tipo de cálculos proviene de un análisis relativamente simple de este diagrama causal, independientemente de los métodos que usemos para estimar las proporciones de interés (en este ejemplo, examinar las tablas cruzadas es equivalente a hacer estimaciones de máxima verosimlitud).</p>
-</section>
-<section id="ejemplo-cálculos-renales-2" class="level3 unnumbered">
-<h3 class="unnumbered anchored" data-anchor-id="ejemplo-cálculos-renales-2">Ejemplo (cálculos renales 2)</h3>
-<p>Contrastemos el ejemplo anterior usando exactamente la misma tabla de datos, pero con el supuesto de un proceso generador diferente. En este caso, los tratamientos son para mejorar alguna enfermedad del corazón. Sabemos que parte del efecto de este tratamiento ocurre gracias a una baja en presión arterial de los pacientes, así que después de administrar el tratamiento, se toma la presión arterial de los pacientes. Ahora tenemos la tabla agregada y desagregada como sigue:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>corazon <span class="ot">&lt;-</span> calculos <span class="sc">|&gt;</span> </span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(tratamiento, presión <span class="ot">=</span> tamaño, resultado) <span class="sc">|&gt;</span> </span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(presión <span class="ot">=</span> <span class="fu">ifelse</span>(presión <span class="sc">==</span> <span class="st">"grandes"</span>, <span class="st">"alta"</span>, <span class="st">"baja"</span>))</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>corazon_agregada <span class="ot">&lt;-</span> corazon <span class="sc">|&gt;</span> </span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">group_by</span>(tratamiento, presión, resultado) <span class="sc">|&gt;</span> </span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">count</span>()</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>corazon_agregada <span class="sc">|&gt;</span> <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> resultado, <span class="at">values_from =</span> n) <span class="sc">|&gt;</span> </span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">total =</span> mejora <span class="sc">+</span> sin_mejora) <span class="sc">|&gt;</span> </span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">prop_mejora =</span> <span class="fu">round</span>(mejora <span class="sc">/</span> total, <span class="dv">2</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>   <span class="fu">select</span>(tratamiento, presión, total, prop_mejora) <span class="sc">|&gt;</span> </span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>   <span class="fu">arrange</span>(presión) <span class="sc">|&gt;</span> </span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable_paper</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">tratamiento</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">presión</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">total</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">prop_mejora</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">A</td>
-<td style="text-align: left;">alta</td>
-<td style="text-align: right;">263</td>
-<td style="text-align: right;">0.73</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">B</td>
-<td style="text-align: left;">alta</td>
-<td style="text-align: right;">80</td>
-<td style="text-align: right;">0.69</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">A</td>
-<td style="text-align: left;">baja</td>
-<td style="text-align: right;">87</td>
-<td style="text-align: right;">0.93</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">B</td>
-<td style="text-align: left;">baja</td>
-<td style="text-align: right;">270</td>
-<td style="text-align: right;">0.87</td>
-</tr>
-</tbody>
-</table>
-
-
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>corazon <span class="sc">|&gt;</span> <span class="fu">group_by</span>(tratamiento) <span class="sc">|&gt;</span> </span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">summarise</span>(<span class="at">prop_mejora =</span> <span class="fu">mean</span>(resultado <span class="sc">==</span> <span class="st">"mejora"</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable_paper</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">tratamiento</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">prop_mejora</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">0.78</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">0.83</td>
-</tr>
-</tbody>
-</table>
-
-
-</div>
-</div>
-<p>¿Cuál creemos que es el mejor tratamiento en este caso? ¿Deberíamos usar la tabla agregada o la desagregada por presión?</p>
+<hr>
+<p>El ejemplo de arriba es un DAG (Gráfica dirigida acíclica), y no son generados por datos observados, sino que codifican conocimiento acerca del fenómenos y los datos observados. Nos ayudan a (<span class="citation" data-cites="rethinking">McElreath (<a href="#ref-rethinking" role="doc-biblioref">2020</a>)</span>):</p>
 <ul>
-<li>En este caso, la tabla agregada es más apropiada (B es mejor tratamiento).</li>
-<li>La razón es que <em>presión</em> en este caso es una consecuencia de tomar el tratamiento, y como las tablas muestran, B es más exitoso en bajar la presión de los pacientes.</li>
-<li>Si sólo comparamos dentro de los grupos de presión baja o de presión alta, ignoramos lo más importante del tratamiento en la probabilidad de mejorar.</li>
+<li>Pensar claramente en términos científicos/de negocio acerca de nuestro problema</li>
+<li>Expresar los supuestos que hacemos que soportan nuestro análisis</li>
+<li>Entender qué podemos entender o explicar, sin hacer supuestos adicionales acerca de las relaciones particulares entre las variables.</li>
+<li>Guiar el análisis para decidir que modelos o procedimientos usar para contestar preguntas de interés.</li>
 </ul>
-<p>Nuestros supuestos causales podemos mostrarlos con el siguiente diagrama:</p>
-<div class="cell">
-<details>
-<summary>Código</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grViz</span>(<span class="st">"</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="st">digraph {</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="st">  graph [ranksep = 0.2]</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="st">  node [shape=plaintext]</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="st">    P</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="st">    T </span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="st">    M </span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="st">  edge [minlen = 3]</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="st">    T -&gt; P</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="st">    P -&gt; M</span></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="st">    T -&gt; M</span></span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="st">{ rank = same; M; T}</span></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div id="htmlwidget-e304877e04ac894ed39c" style="width:100%;height:162px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-e304877e04ac894ed39c">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    P\n    T \n    M \n  edge [minlen = 3]\n    T -> P\n    P -> M\n    T -> M\n{ rank = same; M; T}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
-</div>
-</div>
-</section>
-<section id="ejemplo-admisiones-de-berkeley" class="level3 unnumbered">
-<h3 class="unnumbered anchored" data-anchor-id="ejemplo-admisiones-de-berkeley">Ejemplo (admisiones de Berkeley)</h3>
-<p>Una ejemplo al que regresaremos más adelante es el siguiente: en 1973 se recolectaron datos agregados de solicitantes para estudiar en Berkeley para los 6 departamentos más grandes, clasificados por sexo del solicitante y si fue admitido o no. Los resultados se muestran a continuación:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"UCBAdmissions"</span>)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>adm_original <span class="ot">&lt;-</span> UCBAdmissions <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Admit, <span class="at">values_from =</span> n) </span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>adm_original <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable_paper</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Gender</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Dept</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Admitted</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Rejected</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Male</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">512</td>
-<td style="text-align: right;">313</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Female</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">89</td>
-<td style="text-align: right;">19</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Male</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">353</td>
-<td style="text-align: right;">207</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Female</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">17</td>
-<td style="text-align: right;">8</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Male</td>
-<td style="text-align: left;">C</td>
-<td style="text-align: right;">120</td>
-<td style="text-align: right;">205</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Female</td>
-<td style="text-align: left;">C</td>
-<td style="text-align: right;">202</td>
-<td style="text-align: right;">391</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Male</td>
-<td style="text-align: left;">D</td>
-<td style="text-align: right;">138</td>
-<td style="text-align: right;">279</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Female</td>
-<td style="text-align: left;">D</td>
-<td style="text-align: right;">131</td>
-<td style="text-align: right;">244</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Male</td>
-<td style="text-align: left;">E</td>
-<td style="text-align: right;">53</td>
-<td style="text-align: right;">138</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Female</td>
-<td style="text-align: left;">E</td>
-<td style="text-align: right;">94</td>
-<td style="text-align: right;">299</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Male</td>
-<td style="text-align: left;">F</td>
-<td style="text-align: right;">22</td>
-<td style="text-align: right;">351</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Female</td>
-<td style="text-align: left;">F</td>
-<td style="text-align: right;">24</td>
-<td style="text-align: right;">317</td>
-</tr>
-</tbody>
-</table>
-
-
-</div>
-</div>
-<p>y las proporciones de admisión por sexo y departamente son las siguientes:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>adm_tbl <span class="ot">&lt;-</span> adm_original <span class="sc">|&gt;</span> </span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">prop_adm =</span> <span class="fu">round</span>(Admitted <span class="sc">/</span> (Admitted <span class="sc">+</span> Rejected), <span class="dv">2</span>), <span class="at">total =</span> Admitted <span class="sc">+</span> Rejected) <span class="sc">|&gt;</span> </span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">select</span>(Gender, Dept, prop_adm, total) <span class="sc">|&gt;</span> </span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Gender, <span class="at">values_from =</span> prop_adm<span class="sc">:</span>total)</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>adm_tbl <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable_paper</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Dept</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">prop_adm_Male</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">prop_adm_Female</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">total_Male</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">total_Female</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">0.62</td>
-<td style="text-align: right;">0.82</td>
-<td style="text-align: right;">825</td>
-<td style="text-align: right;">108</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">0.63</td>
-<td style="text-align: right;">0.68</td>
-<td style="text-align: right;">560</td>
-<td style="text-align: right;">25</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">C</td>
-<td style="text-align: right;">0.37</td>
-<td style="text-align: right;">0.34</td>
-<td style="text-align: right;">325</td>
-<td style="text-align: right;">593</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">D</td>
-<td style="text-align: right;">0.33</td>
-<td style="text-align: right;">0.35</td>
-<td style="text-align: right;">417</td>
-<td style="text-align: right;">375</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">E</td>
-<td style="text-align: right;">0.28</td>
-<td style="text-align: right;">0.24</td>
-<td style="text-align: right;">191</td>
-<td style="text-align: right;">393</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">F</td>
-<td style="text-align: right;">0.06</td>
-<td style="text-align: right;">0.07</td>
-<td style="text-align: right;">373</td>
-<td style="text-align: right;">341</td>
-</tr>
-</tbody>
-</table>
-
-
-</div>
-</div>
-<p>Complementamos con las tasas de aceptación a total por género, y tasas de aceptación por departamento:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>adm_original <span class="sc">|&gt;</span> <span class="fu">group_by</span>(Gender) <span class="sc">|&gt;</span> </span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">summarise</span>(<span class="at">Admitted =</span> <span class="fu">sum</span>(Admitted), <span class="at">Rejected =</span> <span class="fu">sum</span>(Rejected)) <span class="sc">|&gt;</span> </span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">prop_adm =</span> <span class="fu">round</span>(Admitted <span class="sc">/</span> (Admitted <span class="sc">+</span> Rejected),<span class="dv">2</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable_paper</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Gender</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Admitted</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Rejected</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">prop_adm</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Female</td>
-<td style="text-align: right;">557</td>
-<td style="text-align: right;">1278</td>
-<td style="text-align: right;">0.30</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Male</td>
-<td style="text-align: right;">1198</td>
-<td style="text-align: right;">1493</td>
-<td style="text-align: right;">0.45</td>
-</tr>
-</tbody>
-</table>
-
-
-</div>
-</div>
-<p>La pregunta que queremos hacer es: ¿existe discriminación por sexo en la selección de candidatos? Examinando las tablas no está clara cuál es la respuesta.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>adm_original <span class="sc">|&gt;</span> <span class="fu">group_by</span>(Dept) <span class="sc">|&gt;</span> </span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">summarise</span>(<span class="at">Admitted =</span> <span class="fu">sum</span>(Admitted), <span class="at">Rejected =</span> <span class="fu">sum</span>(Rejected)) <span class="sc">|&gt;</span> </span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">prop_adm =</span> <span class="fu">round</span>(Admitted <span class="sc">/</span> (Admitted <span class="sc">+</span> Rejected),<span class="dv">2</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable_paper</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Dept</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Admitted</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Rejected</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">prop_adm</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">601</td>
-<td style="text-align: right;">332</td>
-<td style="text-align: right;">0.64</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">370</td>
-<td style="text-align: right;">215</td>
-<td style="text-align: right;">0.63</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">C</td>
-<td style="text-align: right;">322</td>
-<td style="text-align: right;">596</td>
-<td style="text-align: right;">0.35</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">D</td>
-<td style="text-align: right;">269</td>
-<td style="text-align: right;">523</td>
-<td style="text-align: right;">0.34</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">E</td>
-<td style="text-align: right;">147</td>
-<td style="text-align: right;">437</td>
-<td style="text-align: right;">0.25</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">F</td>
-<td style="text-align: right;">46</td>
-<td style="text-align: right;">668</td>
-<td style="text-align: right;">0.06</td>
-</tr>
-</tbody>
-</table>
-
-
-</div>
-</div>
-<p>Discutiremos este ejemplo con más detalle más adelante. La interpretación debe ser hecha con cuidado, y debemos establecer claramente los supuestos que fundamentan nuestra decisión de mostrar cada tabla y de qué forma mostrarlas.</p>
-</section>
-</section>
-<section id="resumen-de-ejemplos" class="level2" data-number="1.3">
-<h2 data-number="1.3" class="anchored" data-anchor-id="resumen-de-ejemplos"><span class="header-section-number">1.3</span> Resumen de ejemplos</h2>
-<p>Nótese que en los dos casos anteriores, los datos son exactamente los mismos, pero la respuesta correcta es diferente en cada caso. En la tabla de datos <strong>no está la respuesta acerca de qué resumen es el correcto</strong>. Solamente conocimiento externo de cómo se generan los datos sugieren cómo debemos tratar y explicar lo que observamos en cada caso.</p>
-<p>A se conocimiento externo es una combinación de</p>
-<ul>
-<li><em>Conocimiento de dominio</em> o <em>teorías científicas</em>, y</li>
-<li>Entendimiento de cómo fueron <em>recolectados</em> y procesados los datos, lo cual también es información causal.</li>
-</ul>
-<p>Estos ejemplos también muestran adicionalmente que:</p>
-<ul>
-<li>Incluso desde un punto de vista puramente <strong>descriptivo</strong>, es necesario entender algo de la estructura causal del problema para poder dar descripciones interpretables</li>
-<li>Si no tenemos la información correcta, es difíl producir <strong>estimaciones causales</strong>.</li>
-</ul>
-<p>En el primer ejemplo de cálculos renales fue importante saber saber el hecho de que los doctores seleccionaban el tratamiento según la severidad y que tuviéramos una medición de esa variable. En el segundo ejemplo de presión no era necesaria esa medición adicional.</p>
-<ul>
-<li>Más adelante hablaremos de experimentación. Veremos que aquí también entender el proceso generador de datos es importante. Por ejemplo, ¿qué variables podemos usar cómo controles para mejorar la estimación y qué variables no?</li>
-<li>Modelos causales nos ayudan a diseñar estudios (experimentales o no) y a decidir qué datos es necesario recolectar.</li>
-</ul>
-</section>
-<section id="más-de-asociación-no-causal" class="level2" data-number="1.4">
-<h2 data-number="1.4" class="anchored" data-anchor-id="más-de-asociación-no-causal"><span class="header-section-number">1.4</span> Más de asociación no causal</h2>
-<p>Discutiremos otro ejemplo de los puntos mencionados arriba.</p>
-<p>Algunos estudios fueron publicados en la primera mitad de 2020 que notaban que el porcentaje fumadores entre los casos positivos de COVID era menor que en la población general, y se hicieron algunas interpretaciones acerca de este hecho. Estos estudios se hicieron con personas que se hicieron una prueba.</p>
-<p>En este ejemplo replicaremos cómo es que podemos encontrar esta asociación en este tipo de estudios aún cuando no exista tal asociación en la población general (ver <a href="https://www.nature.com/articles/s41467-020-19478-2">este artículo</a>). Usaremos datos sintéticos (simulados).</p>
-<p>Primero vamos a razonar acerca del proceso generador de datos y a hacer algunos supuestos:</p>
+<p>Los DAGs se construyen con causas, no asociaciones. El pensamiento causal es útil siempre que queremos responder preguntas acerca de un fenómeno de interés:</p>
+<p>Análisis descriptivo</p>
 <ol type="1">
-<li>En primer lugar, ¿cuándo decide hacerse alguien una prueba? A principios de 2020, son principalmente personas que tienen síntomas considerables, y trabajadores de salud (tengan o no síntomas).</li>
-<li>Ser trabajador de salud incrementa el riesgo de contagiarse.</li>
-<li>En algunos países, fumar está asociado con ser trabajador de salud (no tienen la misma tasa de tabaquismo que la población general).</li>
-<li>Sólo observamos a las personas que se hicieron una prueba.</li>
-<li>Fumar no tiene efectos causales en este modelo.</li>
-<li>Ingoramos por el momento que la relación entre covid y prueba positiva no es perfecta.</li>
+<li>Como vimos en el ejemplo anterior, incluso el análisis descriptivo (qué tabla usar, qué gráfica usar) de datos requiere de un análisis causal.</li>
+<li>Muchas veces los datos que tenemos, por distintas razones, tienen características que requieren procesarlos (por ejemplo ponderarlos) para que nos den respuestas entendibles.</li>
 </ol>
-<p>Podemos resumir cualitativamente con el siguiente diagrama:</p>
-<div class="cell">
-<details>
-<summary>Código</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grViz</span>(<span class="st">"</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="st">digraph {</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="st">  graph [ranksep = 0.2, rankdir = LR]</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="st">  node [shape=plaintext]</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="st">    Prueba</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="st">    TrabSalud</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="st">    Síntomas</span></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="st">    Fumar</span></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="st">    Covid</span></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="st">  edge [minlen = 3]</span></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="st">    #TrabSalud -&gt; Covid</span></span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="st">    TrabSalud -&gt; Prueba</span></span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="st">    TrabSalud -&gt; Fumar</span></span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="st">    TrabSalud -&gt; Covid</span></span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="st">    U -&gt; Síntomas</span></span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="st">    Covid -&gt; Síntomas</span></span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="st">    Síntomas -&gt; Prueba</span></span>
-<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
-<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)<span class="co">#, width = 200, height = 50)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-45121d583322e6f1920f" style="width:100%;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-45121d583322e6f1920f">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir = LR]\n  node [shape=plaintext]\n    Prueba\n    TrabSalud\n    Síntomas\n    Fumar\n    Covid\n  edge [minlen = 3]\n    #TrabSalud -> Covid\n    TrabSalud -> Prueba\n    TrabSalud -> Fumar\n    TrabSalud -> Covid\n    U -> Síntomas\n    Covid -> Síntomas\n    Síntomas -> Prueba\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
-</div>
-</div>
-<p>El código para simular es el siguiente: todas las variables toman valores 0 o 1, pero con diferentes probabilidades y dependiendo de las variables que son padres en la gráfica de arriba.</p>
+<p>Inferencia causal:</p>
 <ol type="1">
-<li>Simulamos un millón de personas de las cuales aproximadamente el 1% son trabajadores de salud.</li>
-<li>Suponemos que la probabilidad es de 5% de que un trabajador de salud resulte positivo y de 1% para el del resto de las personas.</li>
-<li>Suponemos que de las personas que tienen covid, el 50% tienen síntomas y de las personas que no tienen covid, el 1% tiene síntomas.</li>
-<li>Suponemos que de los trabadores de salud el 99% se hicieron prueba (sin importar si tenían o no síntomas) y el resto de las personas se divide en 2, de los no trabadores de salud con síntomas, el 85% se hicieron una prueba y de los no trabajdores de salud sin síntomas, el 1% se hizo una prueba</li>
-<li>De los trabajadores de salud, el 20% fuman, del resto de las personas el 7% fuman.</li>
+<li>En algunos casos, queremos saber consecuencias de una intervención sobre un sistema o proceso dados (por ejemplo, ¿cuántos accidentes graves habría si pusiéramos una multa por no usar cinturón de seguridad?). Esto requiere utilizar pensamiento causal.</li>
+<li>También es usual necesitar pensar cómo serían las cosas si el pasado se hubiera desarrollado de manera distinta (por ejemplo, ¿cómo serían las ventas si no se hubiera gastado en publicidad?) en publicidad ?).</li>
 </ol>
-<div class="cell">
-<details open="">
-<summary>Código</summary>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">8221</span>)</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co">#simular población</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fl">1e6</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>trab_salud <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.01</span>)</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>covid <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fu">ifelse</span>(trab_salud<span class="sc">==</span><span class="dv">1</span>, <span class="fl">0.05</span>, <span class="fl">0.01</span>))</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">trab_salud =</span> trab_salud, covid) <span class="sc">|&gt;</span> </span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sintomas =</span> <span class="fu">rbernoulli</span>(n, <span class="fu">ifelse</span>(covid <span class="sc">==</span> <span class="dv">1</span>, <span class="fl">0.5</span>, <span class="fl">0.01</span>))) <span class="sc">|&gt;</span> </span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prueba =</span> <span class="fu">rbernoulli</span>(n, <span class="fu">ifelse</span>(trab_salud <span class="sc">==</span><span class="dv">1</span>, <span class="fl">0.99</span>, <span class="fl">0.84</span> <span class="sc">*</span> sintomas <span class="sc">+</span> <span class="fl">0.01</span>))) <span class="sc">|&gt;</span> </span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fumar =</span> <span class="fu">rbernoulli</span>(n, <span class="fu">ifelse</span>(trab_salud <span class="sc">==</span> <span class="dv">1</span>, <span class="fl">0.20</span>, <span class="fl">0.07</span>))) <span class="sc">|&gt;</span> </span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">covid =</span> <span class="fu">ifelse</span>(covid <span class="sc">==</span><span class="dv">1</span>, <span class="st">"positivo"</span>, <span class="st">"negativo"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fumar =</span> <span class="fu">ifelse</span>(fumar, <span class="st">"fuma"</span>, <span class="st">"no_fuma"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: There was 1 warning in `mutate()`.
-ℹ In argument: `sintomas = rbernoulli(n, ifelse(covid == 1, 0.5, 0.01))`.
-Caused by warning:
-! `rbernoulli()` was deprecated in purrr 1.0.0.</code></pre>
-</div>
-</div>
-<p>Suponemos ahora que tomamos como muestra a <em>todas aquellas personas que se hicieron una prueba</em>. En primer lugar, la proporción de fumadores en la muestra es un poco más alta que la población, porque los trabajadores de salud están sobrerrepresentados:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>datos_pruebas <span class="ot">&lt;-</span> <span class="fu">filter</span>(datos, prueba <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(datos_pruebas<span class="sc">$</span>fumar) <span class="sc">|&gt;</span> <span class="fu">prop.table</span>() <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-   fuma no_fuma 
-   0.11    0.89 </code></pre>
-</div>
-</div>
-<p>Y ahora vemos que bajo esta condición o filtro, están asociados fumar y tener covid:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(datos_pruebas<span class="sc">$</span>covid, datos_pruebas<span class="sc">$</span>fumar) <span class="sc">|&gt;</span> <span class="fu">prop.table</span>(<span class="at">margin =</span> <span class="dv">2</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">2</span>) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>          
-           fuma no_fuma
-  negativo 0.90    0.85
-  positivo 0.10    0.15</code></pre>
-</div>
-</div>
-<p>Sin embargo, en la población (sin filtrar por los que se hicieron prueba) en general, esperaríamos una asociación positiva pero relativamente chica de fumar con tener covid (veremos por qué sabemos esto al consultar el diagrama):</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(datos<span class="sc">$</span>covid, datos<span class="sc">$</span>fumar) <span class="sc">|&gt;</span> <span class="fu">prop.table</span>(<span class="at">margin =</span> <span class="dv">2</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">4</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>          
-             fuma no_fuma
-  negativo 0.9892  0.9896
-  positivo 0.0108  0.0104</code></pre>
-</div>
-</div>
-<p>Esta tampoco es una relación causal. Discutiremos con detalle más adelante por qué condicionar a sólo los que hicieron una prueba produce una correlación fuerte entre estas dos variables que no están causalmente relacionadas.</p>
+<p>Diseño de estudios o experimentos.</p>
+<p>Si queremos recolectar datos acerca de un fenómeno particular (por ejemplo, ¿cómo debo seleccionar una muestra para medir orientación política de una población?), diseños eficientes requieren tener conocimiento de dominio acerca de las causas de las variables que nos interesa medir. Por ejemplo, si queremos tomar una muestra de casillas para estimar el resultado de una votación, deberíamos considerar variables geográficas como distrito electoral, grado de urbanización, etc.</p>
+</section>
+</section>
+<section id="modelos-y-procedimientos" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="modelos-y-procedimientos"><span class="header-section-number">1.2</span> Modelos y procedimientos</h2>
+<p>En muchos cursos introductorios de estadística se muestran distintos tipos de procedimientos, que aplican según el tipo de datos (por ejemplo, categóricos o numéricos, pareados, no pareados, etc), generalmente con el propósito de evaluar evidencia en contra de una hipótesis nula.</p>
+<p>Este enfoque puede ser confuso en un principio (¿cómo se relacionan todos estos procedimientos?), y también restringir nuestra capacidad para analizar datos: ¿qué hacemos cuando no se cumplen los supuestos de un procedimiento? Adicionalmente, la manera en que fallan estas herramientas puede ser poco intuitiva y difícil de descubrir.</p>
+<p>Adiconalmente, aunque son herramientas poderosas, no sustituyen el pensamiento científico o de proceso de negocios. Estas herramientas no generan hallazgos si no están acompañados de pensamiento causal.</p>
+<p>Este curso tiene dos propósitos:</p>
+<ol type="1">
+<li>Dar herramientas (bayesianas) para analizar datos que son más flexibles, y se puedan adaptar a distintas situaciones.</li>
+<li>Proponer un proceso para analizar datos, que sea más sistemático, robusto, y maneras de checar que el proceso es correcto o hace lo que pensamos que tiene qué hacer.</li>
+<li>Entender cómo se conectan estos modelos o métodos de analizar de datos con preguntas reales acerca del fenómeno de interés.</li>
+</ol>
+</section>
+<section id="proceso-de-modelación" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="proceso-de-modelación"><span class="header-section-number">1.3</span> Proceso de modelación</h2>
+<p>El proceso de modelación que propondremos es bayesiano, y propondremos varios pasos para analizar datos:</p>
+<ul>
+<li><p>Análisis como <em>software</em>: Una parte de este proceso está relacionado con la reproducibilidad y documentación del trabajo, y su objetivo es evitar errores de programación y de organización (esta parte hablaremos menos: es necesario seguir los estándares de la industria para obtener resultados más confiables).</p></li>
+<li><p>Otra parte es el proceso con el cual construimos y contrastamos modelos para contestar preguntas, verificamos los modelos y sus respuestas y checamos resultados de cómputos.</p></li>
+</ul>
+</section>
+<section id="análisis-como-software" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="análisis-como-software"><span class="header-section-number">1.4</span> Análisis como software</h2>
+</section>
+<section id="análisis-como-proceso" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="análisis-como-proceso"><span class="header-section-number">1.5</span> Análisis como proceso</h2>
+<p>Iremos refinando nuestro poco a poco, conforme veamos distintas herramientas y problemas. El más básico es el siguiente (<span class="citation" data-cites="rethinking">McElreath (<a href="#ref-rethinking" role="doc-biblioref">2020</a>)</span>):</p>
+<ol type="1">
+<li>Definir un modelo generativo para la muestra de datos.</li>
+<li>Definir la cantidad que queremos estimar en relación al fenómeno de interés.</li>
+<li>Definir un proceso estadístico para hacer una estimación.</li>
+<li>Probar el proceso 3) usando 1).</li>
+<li>Analizar los datos, resumir resultados.</li>
+</ol>
+<p>Este proceso no es exclusivo de los modelos bayesianos, pero quizá es más natural, como veremos, cuando adoptamos el punto de vista bayesiano.</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">
 <div id="ref-kidney94" class="csl-entry" role="listitem">
 Julious, Steven A, y Mark A Mullee. 1994. <span>«Confounding and Simpson<span>’</span>s paradox»</span>. <em>BMJ</em> 309 (6967): 1480-81. <a href="https://doi.org/10.1136/bmj.309.6967.1480">https://doi.org/10.1136/bmj.309.6967.1480</a>.
+</div>
+<div id="ref-rethinking" class="csl-entry" role="listitem">
+McElreath, R. 2020. <em>Statistical Rethinking: A Bayesian Course with Examples in R and Stan</em>. A Chapman &amp; Hall libro. CRC Press. <a href="https://books.google.com.mx/books?id=Ie2vxQEACAAJ">https://books.google.com.mx/books?id=Ie2vxQEACAAJ</a>.
 </div>
 </div>
 </section>
