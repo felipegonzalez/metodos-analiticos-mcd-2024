@@ -21,4 +21,272 @@ redes neuronales típicamente caen en esta categoría de modelos genéricos
 Nota: sin embargo, en modelos de regresión, árboles, redes nueronales es posible
 que comprensión del fenómeno nos lleva a mejores modelos predictivos.
 
+## Golf
+
+Este caso está basado en Gelman and Nolan (2002) y Gelman (n.d.). Usamos el flujo de trabajo bayesiano tomado del documento de Michael Betancourt Betancourt (2020).
+
+Queremos entender modelar la probabilidad de éxito de putts de Golf (putts: tiros relativamente cerca del hoyo que buscan que la pelota ruede al hoyo o muy cerca de él), y cómo depende el éxito de la distancia del tiro. Quisiéramos inferir qué tan precisos son los profesionales en sus tiros.
+
+En este caso, el modelo conceptual es simple $D->Y$, donde $D$ es la distancia del tiro y $Y$ es el resultado del tiro (1 si es exitoso, 0 si no). Nótese que no escribiríamos
+$Y->D$, porque cambiar la distancia del tiro si cambia las probabilidades de éxito, pero
+no a la inversa.
+
+Nuestro interés principal es modelar cómo cambia la probabilidad de éxito de un
+tiro (para profesionales) con la distancia al hoyo. Si tomamos un punto de vista
+de modelos genéricos, podríamos proponer regresión logística:
+
+$p(Y = 1| D = d) = \frac{1}{1 + \exp(-\alpha - \beta d)}$
+
+Y nuestra cantidad a estimar es la curva $p(Y=1|D=d)$, que es una función de $d$.
+Esto lo haremos estimando los parámetros $\alpha$ y $beta$.
+
+Ahora construimos un modelo generativo, donde $D$ está dada en centímetros:
+
+```{r}
+simular_putts <- function(distancias, alpha, beta) {
+  p <- 1 / (1 + exp(-alpha - beta * distancias))
+  tibble(y = rbinom(length(distancias), 1, p), d = distancias) |> 
+    select(d, y)
+}
+```
+
+Fijamos parámetros y simulamos datos:
+
+
+```{r}
+set.seed(22)
+distancias <- seq(0, 1000, 5) |> rep(each = 5)
+simular_putts(distancias, 3, -0.005) |> 
+  ggplot(aes(x = d, y = y)) +
+  geom_jitter(height = 0.1) +
+  labs(x = "Distancia (cm)", y = "Éxito") +
+  geom_smooth(span = 0.5)
+```
+
+Nótese que para este ejemplo utilizamos valores de $\alpha$ y $\beta$ fijos.
+Podríamos poner valores imposibles para golfistas profesionales, por ejemplo:
+
+```{r}
+set.seed(22)
+distancias <- seq(0, 1000, 5) |> rep(each = 5)
+simular_putts(distancias, 10, -1) |> 
+  ggplot(aes(x = d, y = y)) +
+  geom_jitter(height = 0.1) +
+  labs(x = "Distancia (cm)", y = "Éxito") +
+  geom_smooth(span = 0.5)
+```
+
+Esta configuración de parámetros no es razonable, pues implicaría que
+sólo pueden completar los tiros a unos cuantos centímetros del hoyo. Sabemos
+que esto no es cierto.
+
+Para completar nuestro modelo generativo, es necesario especificar los
+valores que pueden tomar estas variables, y entonces podremos ver cómo se 
+comporta nuestra cantidad a estimar.
+
+Pondremos distribuciones **iniciales** o **a priori** para los parámetros. En
+este punto no hemos visto ningún dato, así que podemos experimentar para hacer
+una selección apropiada desde el punto de vista del conocimiento del área
+que tenemos actualmente.
+
+Podemos poner por ejemplo
+$$\alpha \sim \text{Normal}(5, 2),$$
+pues sabemos a que distancias de casi cero, es muy seguro lograr el tiro (no lejos de 100% de éxito). Para la $\beta$, consideramos que a unos 100 cm es muy probable hacer
+el tiro, pero a 1000 cm (10 m) la probabilidad baja considerablemente. Experimentaremos
+poniendo (debe ser negativa)
+
+$$\beta \sim \text{Normal}^-(0, 0.02).$$
+
+y ahora reescribimos nuestra función de simulación:
+
+```{r}
+simular_putts <- function(distancias) {
+  alpha <- rnorm(1, 5, 2)
+  beta <-  - abs(rnorm(1, 0, 0.015))
+  p <- 1 / (1 + exp(-alpha - beta * distancias))
+  tibble(y = rbinom(length(distancias), 1, p), p = p, d = distancias) |> 
+    select(d, p, y) |> 
+    mutate(alpha = alpha, beta = beta)
+}
+```
+
+Y podemos ver cómo se ven diversas curvas que incluye nuestro modelo:
+
+```{r}
+distancias <- seq(0, 3000, 1) 
+map_df(1:100,  \(x) simular_putts(distancias) |> mutate(id = x)) |> 
+  ggplot(aes(x = d, y = p, group = id)) +
+  geom_line(alpha = 0.2) +
+  labs(x = "Distancia (cm)", y = "Probabilidad de Éxito")
+```
+Los casos extremos son poco creíbles (0 probabilidad a 5 metros o 100% de probabilidad a 20 metros), pero el grueso de las curvas son razonables. Podemos ver la curva promedio:
+
+
+```{r}
+reps_sim <- map_df(1:1000,  \(x) simular_putts(distancias) |> mutate(id = x)) 
+resumen <- reps_sim |> group_by(d) |> summarise(p_5 = quantile(p, 0.10),
+                                                p95 = quantile(p, 0.90),
+                                                p = mean(p))
+reps_sim |> 
+  ggplot(aes(x = d, y = p)) +
+  #geom_line(aes(group = id), alpha = 0.2) +
+  labs(x = "Distancia (cm)", y = "Probabilidad de Éxito") +
+  geom_ribbon(data = resumen, aes(ymin = p_5, ymax = p95), alpha = 0.2) +
+  geom_line(data = resumen, color = "red", size = 2) 
+```
+
+Una vez que estamos satisfechos con nuestro modelo (nótese que hay lugar
+para varias críticas), podemo proceder a calcular la distribución posterior,
+primero con datos simulados.
+
+La posterior en este caso es más complicada y no tenemos una manera simple de
+simularla. Explicaremos más adelante cómo hacer esto (usando MCMC). Por ahora,
+escribiremos un programa de Stan que nos da simulaciones de la posterior. Tomaremos
+por el momento Stan como una *caja negra*, y después justificaremos este procedimiento.
+
+```{r}
+#! message: false
+library(cmdstanr)
+mod_logistica <- cmdstan_model("./src/golf-logistico.stan")
+print(mod_logistica)
+```
+```{r}
+set.seed(1225)
+distancias <- rnorm(100, 0, 2000) |> abs() 
+datos <- simular_putts(distancias)
+datos_mod <- datos |> group_by(d) |> 
+  summarise(n = n(), y = sum(y)) |> 
+  ungroup()
+ajuste <- mod_logistica$sample(
+  data = list(N = nrow(datos_mod), 
+              d = datos_mod$d, y = datos_mod$y, n = datos_mod$n), 
+                        refresh = 1000, init = 10, step_size = 0.01)
+sims <- ajuste$draws(c("alpha", "beta"), format = "df")
+resumen <- ajuste$summary()
+
+```
+
+```{r}
+resumen
+```
+
+
+```{r}
+datos$alpha[1]
+datos$beta[1]
+```
+```{r}
+ggplot(sims, aes(alpha, beta)) + geom_point() +
+  geom_point(data = datos |> first(), aes(alpha, beta), color = "red", size = 3)
+```
+Y podemos graficar la posterior de interés, que se construye con 
+todas las curvas simuladas:
+
+```{r}
+grafs_tbl <- sims |>
+  rowwise() |>
+  mutate(graf = list(tibble(d = seq(0, 3000, 10)) |> 
+           mutate(p = 1 / (1 + exp(-alpha - beta * d)))
+  )) |> 
+  ungroup() |> 
+  slice_sample(n = 100) |> 
+  select(.draw, graf) |> 
+  unnest(graf) 
+```
+
+Y graficamos:
+
+```{r}
+grafs_tbl |> 
+  ggplot(aes(x = d, y = p, group = .draw)) +
+  geom_line(alpha = 0.1) +
+  labs(x = "Distancia (cm)", y = "Probabilidad de Éxito")
+
+```
+
+Veremos cómo formalizar este proceso de chequeo a priori más adelante: por el momento,
+podríamos hacer unas cuantas simulaciones distintas, y ver que las curvas
+obtenidas son las que esperaríamos. También podríamos hacer simulaciones
+con distintos tamaños de muestra, y entender cuánta incertidumbre en la estimación
+de las curvas podríamos tener.
+
+Ahora llegamos al siguiente paso, que tomar los datos y estimar nuestra curva
+de desempeño según la distancia.
+
+```{r}
+datos_golf <- read_delim("../datos/golf.csv", delim = " ")
+head(datos_golf)
+```
+
+
+
+```{r}
+set.seed(1225)
+ajuste <- mod_logistica$sample(
+  data = list(N = nrow(datos_golf), 
+              d = 100 * datos_golf$x / 0.3048, y = datos_golf$y, n = datos_golf$n), 
+                        refresh = 1000, init = 10, step_size = 0.01)
+sims <- ajuste$draws(c("alpha", "beta"), format = "df")
+resumen <- ajuste$summary()
+
+```
+
+```{r}
+resumen
+```
+
+Ahora simulamos la posterior y la contrastamos con los datos:
+
+
+```{r}
+grafs_tbl <- sims |>
+  rowwise() |>
+  mutate(graf = list(tibble(d = 100 * datos_golf$x / 0.3048) |> 
+           mutate(p = 1 / (1 + exp(-alpha - beta * d)))
+  )) |> 
+  ungroup() |> 
+  slice_sample(n = 100) |> 
+  select(.draw, graf) |> 
+  unnest(graf) 
+```
+
+```{r}
+resumen_golf <- datos_golf |>
+  mutate(d = 100 * x / 0.3048, p = y / n)
+```
+
+```{r}
+grafs_tbl |> 
+  ggplot(aes(x = d, y = p)) +
+  geom_line(aes(group = .draw), alpha = 0.1) +
+  labs(x = "Distancia (cm)", y = "Probabilidad de Éxito") +
+  geom_point(data = resumen_golf, color = "red") +
+  geom_linerange(data = resumen_golf, aes(ymin = p - 2 * sqrt(p * (1 - p) / n), 
+                                     ymax = p + 2 * sqrt(p * (1 - p) / n)),
+            color = "red")
+
+```
+Vemos que la curva estimada desajusta. Este tipo de análisis se
+llama **chequeo a posteriori**, y mas frecuentemente se
+hace un **chequeo predictivo posterior**, que veremos más adelante. Por
+el momento, nos quedamos con la conclusión de que el modelo no es apropiado
+para estos datos.
+
+En este punto veremos dos caminos:
+
+1. El primero es continuar con modelos genéricos que no toman en cuenta
+mecanismos específicos de los datos. Por ejemplo, podríamos poner
+más terminos derivados de la distancia (polinomios o splines)
+2. El segundo camino, que exploramos primero, es **utilizar más información
+acerca del fenómeno de interés**. Sabemos como funciona básicamente el golf,
+y también sabemos geometría y física que determina el proceso generador de datos.
+Podemos utilizar esta información para construir un modelo más apropiado.
+
+## Usando teoría para construir modelos
+
+
+
+
+
+## Ampliación del modelo "geocéntrico"
 

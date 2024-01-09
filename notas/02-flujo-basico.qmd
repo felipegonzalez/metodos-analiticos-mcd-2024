@@ -107,7 +107,6 @@ p <- seq(0, 1, length.out = 100)
   tibble(p = p, prob = _) |> 
   ggplot(aes(x = p, y = prob)) +
   geom_line() +
-  geom_vline(xintercept = 0.5, linetype = 2) +
   labs(x = "p", y = "p(D|p)")
 
 ```
@@ -116,7 +115,27 @@ Esta función no es una densidad de probabilidad sobre $p$, pues no integra a un
 Sin embargo, podemos normalizarla para que integre a uno. Usando cálculo, podemos
 mostrar que la **probabilidad posterior** para $p$ está dada por la densidad
 
-$$ \frac{}{} p^$$
+$$ \frac{1}{B(E,F)} p^E(1-p)^F$$
+donde $B(E,F) = \frac{(E+F+1)!}{E!F!}$. Esta densidad se llama **beta** con 
+parámetros $E+1$ y $F+1$.
+
+```{r}
+simular_posterior <- function(muestra, n){
+  rbeta(n, sum(muestra$Pos) + 1, sum(muestra$Neg) + 1)
+}
+```
+
+```{r}
+una_muestra <- sim_pos_neg(p = 0.1, N = 100)
+simular_posterior(una_muestra, 1000) |> 
+  tibble(p = _) |> 
+  ggplot(aes(x = p)) +
+  geom_histogram()
+```
+
+
+
+
 
 ## Modelo generativo: errores de medición 1
 
@@ -125,18 +144,174 @@ una especificidad conocida.
 
 el diagrama es ahora:
 
+```{r}
+#| out-width: 100%
+#| code-fold: true
+grViz("
+digraph {
+  graph [ranksep = 0.3, rankdir = LR]
+  node [shape=circle]
+    p
+  node [shape=plaintext]
+    N
+    Npos [label = <N<SUB>+</SUB>>]
+    Nneg [label = <N<SUB>-</SUB>>]
+    #sens
+    #esp
+  edge [minlen = 3]
+    p -> Npos
+    p -> Nneg
+    N -> Npos
+    N -> Nneg
+    esp -> Npos
+    sens -> Npos
+    esp -> Nneg
+    sens -> Nneg
+{ rank = same; p; N }
+{ rank = same; Npos; Nneg}
+{ rank = max; sens; esp}
+}
+")#, width = 200, height = 50)
+```
 
+#Y para constuir el modelo generativo notamos que
+#la probabilidad de que un individuo sea positivo en la muestra sale
+#positivo es:
 
+#$$P(E) = P(E|Pos)P(Pos) + P(E|Neg)P(Neg) = sens*p + (1-esp)*(1-p)$$
 
+Y el modelo generativo es:
 
+```{r}
+sim_pos_neg <- function(p = 0.01, N = 20, sens = 1, esp = 1) {
+  # verdaderos positivos que capturamos en la muestra
+  Pos_verdadero <- rbinom(N, 1, p)
+  Neg_verdadero <- 1 - Pos_verdadero
+  # positivos observados en la muestra: si es positivo, calculamos
+  # la probabilidad de que realmente sea positivo
+  sim_tbl <- tibble(Pos_verdadero, Neg_verdadero) |> 
+    mutate(Pos = rbinom(N, 1, Pos_verdadero * sens + Neg_verdadero * (1-esp))) |> 
+    mutate(Neg = 1 - Pos)
+  # Observaciones
+  sim_tbl |> select(Pos, Neg)
+}
+```
+
+Hacemos unas pruebas:
+
+```{r}
+set.seed(8212)
+sim_pos_neg(p = 0.3, N = 1e7, sens = 0.9, esp = 0.99) |> pull(Pos) |> mean() |> 
+  round(4)
+sim_pos_neg(p = 0.3, N = 1e7, sens = 1, esp = 1) |> pull(Pos) |> mean() |> 
+  round(4)
+```
+
+```{r}
+simular_posterior <- function(muestra, n, sens = 1, esp = 1){
+  p_obs <- rbeta(n, sum(muestra$Pos) + 1, sum(muestra$Neg) + 1)
+  p <- (p_obs + esp -1 ) / (sens + esp - 1)
+  p
+}
+```
+
+```{r}
+set.seed(88)
+una_muestra <- sim_pos_neg(p = 0.3, N = 600, sens = 0.5, esp = 0.99)
+mean(una_muestra$Pos)
+simular_posterior(una_muestra, 1000, sens = 0.5, esp = 0.99) |> 
+  tibble(p = _) |> 
+  ggplot(aes(x = p)) +
+  geom_histogram()
+```
 
 ## Modelo generativo: errores de medición 2
 
-Mostrar la flexibilidad.
+Ahora haremos un paso adicional: los valores de sensibilidad y especificidad
+generalmente no son conocidos con certeza, sino que son estimados a partir de
+una muestra de "estándar de oro". En esta prueba particular,  el kit identificó correctamente como positivos a 103 de 122 personas infectadas,
+e identificó correctamente como negativos a 399 de 401 personas no infectadas. 
+Consideraremos 122 y 401 como tamaños de muestra fijos y conocidos (las personas
+fueron extraídas de otra población). 
+
+```{r}
+
+```{r}
+
+```{r}
+#| out-width: 100%
+#| code-fold: true
+grViz("
+digraph {
+  graph [ranksep = 0.3, rankdir = LR]
+  node [shape=circle]
+    p
+    esp
+    sens
+  node [shape=plaintext]
+    N
+    Npos [label = <N<SUB>+</SUB>>]
+    Nneg [label = <N<SUB>-</SUB>>]
+  edge [minlen = 3]
+    p -> Npos
+    p -> Nneg
+    N -> Npos
+    N -> Nneg
+    esp -> Npos
+    sens -> Npos
+    esp -> Nneg
+    sens -> Nneg
+{ rank = same; p; N }
+{ rank = same; Npos; Nneg}
+{ rank = max; sens; esp}
+}
+")#, width = 200, height = 50)
+```
+
+Por los argumentos de arriba, las distribuciones de esp y sens son beta,
+y podemos incorporarlas en la simulación de la posterior. Nuestra nueva
+función para simular de la posterior es:
+
+```{r}
+sim_pos_neg <- function(p = 0.01, N = 20, pos_gold = c(103,122), neg_gold = c(399,401)) {
+  sens <- rbeta(1, pos_gold[1] + 1, pos_gold[2] - pos_gold[1] + 1)
+  esp <- rbeta(1, neg_gold[1] + 1, neg_gold[2] - neg_gold[1] + 1)
+  # verdaderos positivos que capturamos en la muestra
+  Pos_verdadero <- rbinom(N, 1, p)
+  Neg_verdadero <- 1 - Pos_verdadero
+  # positivos observados en la muestra: si es positivo, calculamos
+  # la probabilidad de que realmente sea positivo
+  sim_tbl <- tibble(Pos_verdadero, Neg_verdadero) |> 
+    mutate(Pos = rbinom(N, 1, Pos_verdadero * sens + Neg_verdadero * (1-esp))) |> 
+    mutate(Neg = 1 - Pos)
+  # Observaciones
+  sim_tbl |> select(Pos, Neg)
+}
+```
+
+```{r}
+simular_posterior <- function(muestra, n, pos_gold = c(103,122), neg_gold = c(399,401)){
+  # simulamos sens y especificidad
+  sens <- rbeta(n, pos_gold[1] + 1, pos_gold[2] - pos_gold[1] + 1)
+  esp <- rbeta(n, neg_gold[1] + 1, neg_gold[2] - neg_gold[1] + 1)
+  # simulamos muestra
+  p_obs <- rbeta(n, sum(muestra$Pos) + 1, sum(muestra$Neg) + 1)
+  p <- (p_obs + esp -1 ) / (sens + esp - 1)
+  ifelse(p > 0, p, 0)
+}
+```
 
 
+```{r}
+set.seed(828)
+una_muestra <- sim_pos_neg(p = 0.01, N = 3300)
+mean(una_muestra$Pos)
+simular_posterior(una_muestra, 1000) |> 
+  tibble(p = _) |> 
+  ggplot(aes(x = p)) +
+  geom_histogram()
+```
 
-
-
-
-
+Y notamos que aún con una muestra relativamente grande, 
+el rango de $p$ es considerable: va desde valores cercanos a 0 hasta valores
+alrededor de 0.025-0.03.
