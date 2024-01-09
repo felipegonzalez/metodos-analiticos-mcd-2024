@@ -1,0 +1,142 @@
+# Flujo de trabajo básico 
+
+```{r}
+#| include: false
+library(tidyverse)
+library(kableExtra)
+library(DiagrammeR)
+library(rethinking)
+ggplot2::theme_set(ggplot2::theme_light())
+```
+
+En esta sección introductoria, veremos una aplicación básica del flujo de
+trabajo que seguiremos. El objetivo en este ejemplo es estimar la proporción
+de personas que es seropositiva de una enfermedad en una población dada, usando una 
+muestra de la población de interés a la que se le aplicó una prueba de seropositivdad.
+
+## Modelo generativo
+
+Consideremos primero qué variables de interés tenemos: $p$, la proporción de
+seropositivos en la población, $N$ que es el número de personas a las que les
+hicimos la prueba, y $N_{+}$ y $N_{-}$ que cuentan el número de positivos y seronegativos
+en la muestra. Supondremos que la prueba da resultados exactos.
+
+
+
+Comenzamos construyendo el diagrama que indica cómo influye cada variable en 
+otra (nota: no son asociaciones, sino que indican qué variables "escuchan" a otras
+para determinar su valor). En este caso, $N$ y $p$ son variable que no depende de ninguna
+otra, mientras que $N_{+}$ y $N_{-}$ dependen de $N$ y $p$. 
+
+```{r}
+#| out-width: 100%
+#| code-fold: true
+grViz("
+digraph {
+  graph [ranksep = 0.3, rankdir = LR]
+  node [shape=circle]
+    p
+  node [shape=plaintext]
+    N
+    Npos [label = <N<SUB>+</SUB>>]
+    Nneg [label = <N<SUB>-</SUB>>]
+    #sens
+    #esp
+  edge [minlen = 3]
+    p -> Npos
+    p -> Nneg
+    N -> Npos
+    N -> Nneg
+    #esp -> Pos
+    #sens -> Pos
+    #esp -> Neg
+    #sens -> Neg
+{ rank = same; p; N }
+{ rank = same; Npos; Nneg}
+#{ rank = max; sens; esp}
+
+  
+}
+")#, width = 200, height = 50)
+```
+
+Y ahora construimos el modelo generativo:
+
+```{r}
+sim_pos_neg <- function(p = 0.01, N = 20, sens = 1, esp = 1) {
+  # verdaderos positivos que capturamos en la muestra
+  Pos_verdadero <- rbinom(N, 1, p)
+  Neg_verdadero <- 1 - Pos_verdadero
+  # positivos observados en la muestra
+  Pos <- Pos_verdadero
+  #Pos <- map_int(Pos_verdadero, 
+  #  \(x) ifelse(x == 1, rbinom(1, 1, sens), rbinom(1, 1, (1 - esp))
+  #))
+  Neg <- 1 - Pos
+  # Observaciones
+  tibble(Pos = Pos, Neg = Neg)
+}
+```
+
+Podemos en primer lugar
+hacer algunas pruebas del modelo generativo en casos extremos:
+
+```{r}
+set.seed(8212)
+sim_pos_neg(p = 0.995, N = 10)
+sim_pos_neg(p = 0.005, N = 10)
+sim_pos_neg(p = 0.1, N = 1e7) |> pull(Pos) |> mean() |> 
+  round(4)
+```
+
+Análisis de datos bayesiano
+
+En estadística bayesiana podemos consideramos las posibles explicaciones
+(estados de $p$) de los datos, y consideramos como más creíbles aquellas explicaciones
+que pueden ocurrir de manera más probable. 
+
+Supongamos entonces una $p$ dada, y que observamos la muestra
+$1,0,0,1,0$. La probabilidad de observar esta muestra es entonces
+
+$$p(1-p)(1-p)p(1-p) = p^2(1-p)^3$$
+Podemos graficar esta función:
+
+```{r}
+p <- seq(0, 1, length.out = 100)
+(p^2 * (1 - p)^3) |> 
+  tibble(p = p, prob = _) |> 
+  ggplot(aes(x = p, y = prob)) +
+  geom_line() +
+  geom_vline(xintercept = 0.5, linetype = 2) +
+  labs(x = "p", y = "p(D|p)")
+
+```
+
+Esta función no es una densidad de probabilidad sobre $p$, pues no integra a uno.
+Sin embargo, podemos normalizarla para que integre a uno. Usando cálculo, podemos
+mostrar que la **probabilidad posterior** para $p$ está dada por la densidad
+
+$$ \frac{}{} p^$$
+
+## Modelo generativo: errores de medición 1
+
+Ahora supongamos que la prueba no es perfecta, y que tiene una sensibilidad y
+una especificidad conocida.
+
+el diagrama es ahora:
+
+
+
+
+
+
+## Modelo generativo: errores de medición 2
+
+Mostrar la flexibilidad.
+
+
+
+
+
+
+
