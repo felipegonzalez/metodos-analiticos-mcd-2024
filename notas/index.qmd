@@ -1,25 +1,25 @@
 # Temario y referencias {-}
 
+Este es un curso de estadística bayesiana con énfasis en inferencia causal y
+flujos de trabajo para análisis de datos. Está basado en el material
+de @rethinking.
+
 **Todas las notas y material del curso estarán en este** [repositorio](https://github.com/felipegonzalez/metodos-analiticos-mcd-2024).
 
-- Principios de estadística bayesiana y Simulación
 
   - Modelos estadísticos e inferencia causal
-  - Modelación bayesiana
-  - Flujo de trabajo para inferencia bayesiana
-  - Métodos de simulación para modelos bayesianos
-  - Stan
-  
-- Inferencia causal
+  - Básicos del flujo de trabajo para inferencia bayesiana
+  - Básicos de modelación
+  - Modelos gráficos (DAGS) y efectos causales
+  - Experimentos. Buenos y malos controles
+  - MCMC, Monte Carlo Hamiltoniano y Stan 
+  - Un flujo de trabajo bayesiano (avanzado)
+  - Modelos jerárquicos
+  - Error de medición y clasificación incorrecta
+  - Datos faltantes
+  - Otros métodos de inferencia causal
 
-  - Introducción a inferencia causal
-  - Modelos probabilísticos gráficos
-  - Estimación de efectos causales
-  - Experimentos y controles
-  - Contrafactuales de Rubin
-  - Otros métodos de inferencia causal 
 
-  
 ### Evaluación {-}
 
 - Tareas semanales (20%)

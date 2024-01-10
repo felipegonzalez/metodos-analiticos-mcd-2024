@@ -17,13 +17,21 @@ necesitamos entender tres componentes:
 conocimiento científico o de negocios y cómo es que observamos
 o medimos el fenómeno que nos interesa.
 
-2. Modelos estadísticos o algoritmos con el que procesamos datos
-para obtener resúmenes útiles o informativos acerca de ellos.
-
-3. En vista del contexto del problema (1), ¿cómo construir modelos
+2. En vista del contexto del problema (1), ¿cómo construir modelos
 estadísticos para responder preguntas de interés?
 
-Este proceso aplica tanto a estadística bayesiana como frecuentista. 
+3. Práctica de construcción y desarrollo de modelos, junto con procedimientos
+para criticarlos y probarlos.
+
+Este proceso aplica tanto a estadística bayesiana como frecuentista,
+aunque en este curso, por su flexibilidad y unidad, consideraremos el 
+enfoque bayesiano. Para la parte 1 y 2, consideraremos modelos gráficos causales, 
+que expresan nuestro conocimiento acerca del problema de interés. Para la parte 3
+propondremos un flujo de trabajo bayesiano que nos permita probar y entender el
+funcionamiento de nuestros modelos. Finalmente, para 2 y 3 propondremos distintas
+estrategias de modelación, como son modelos jerárquicos, regresión, como trabajar con 
+datos faltantes entre otros.
+
 
 
 ## Diagramas causales
@@ -242,18 +250,17 @@ de las relaciones particulares entre las variables.
 
 Los DAGs se construyen con causas, no asociaciones. 
 El pensamiento causal es útil siempre que queremos responder preguntas
-acerca de un fenómeno de interés:
+acerca de un fenómeno de interés. En particular nos asisten en :
 
-Análisis descriptivo
+#### Análisis descriptivo {-}
 
 1. Como vimos en el ejemplo anterior, incluso el análisis descriptivo (qué tabla
-usar, qué gráfica usar)
-   de datos requiere de un análisis causal.
+usar, qué gráfica usar) de datos requiere de un análisis causal.
 2. Muchas veces los datos que tenemos, por distintas razones, tienen características
 que requieren procesarlos (por ejemplo ponderarlos) para que nos den respuestas
 entendibles.
 
-Inferencia causal:
+####  Inferencia causal {-}
 
 1. En algunos casos, queremos saber consecuencias de una intervención sobre
 un sistema o proceso dados (por ejemplo, ¿cuántos accidentes graves habría
@@ -262,7 +269,7 @@ si pusiéramos una multa por no usar cinturón de seguridad?). Esto requiere uti
 desarrollado de manera distinta (por ejemplo, ¿cómo serían las ventas si no se hubiera gastado en publicidad?)
 en publicidad ?).
 
-Diseño de estudios o experimentos. 
+#### Diseño de estudios o experimentos {-} 
 
 Si queremos recolectar datos acerca
 de un fenómeno particular (por ejemplo, ¿cómo debo seleccionar una muestra para
@@ -283,23 +290,23 @@ propósito de evaluar evidencia en contra de una hipótesis nula.
 Este enfoque puede ser confuso en un principio (¿cómo se relacionan todos
 estos procedimientos?), y también restringir nuestra capacidad para analizar
 datos: ¿qué hacemos cuando no se cumplen los supuestos de un procedimiento?
-Adicionalmente, la manera en que fallan estas herramientas puede ser poco intuitiva
-y difícil de descubrir.
+Adicionalmente si no tenemos mucha experiencia, 
+la manera en que fallan estas herramientas puede ser poco intuitiva y difícil de descubrir.
 
-Adiconalmente, aunque son herramientas poderosas, no sustituyen el pensamiento científico
+Adicionalmente, aunque son herramientas poderosas, no sustituyen el pensamiento científico
 o de proceso de negocios. Estas herramientas no generan hallazgos si no 
 están acompañados de pensamiento causal.
 
-
-Este curso tiene dos propósitos: 
+Buscamos entonces:
 
 1. Dar herramientas (bayesianas) para analizar datos que son más flexibles, y 
 se puedan adaptar a distintas situaciones.
 2. Proponer un proceso para analizar datos, que sea más sistemático, robusto,
 y maneras de checar que el proceso es correcto o hace lo que pensamos que tiene
 qué hacer.
-3. Entender cómo se conectan estos modelos o métodos de analizar de datos
-con preguntas reales acerca del fenómeno de interés.
+3. Ligar 1 y 2 con supuestos causales claros para proponer una interpretación
+sólida de nuestros resultados.
+
 
 ## Proceso de modelación
 
@@ -316,9 +323,6 @@ modelos para contestar preguntas, verificamos los modelos y sus respuestas y
 checamos resultados de cómputos.
 
 
-## Análisis como software
-
-
 ## Análisis como proceso
 
 Iremos refinando nuestro poco a poco, conforme veamos distintas herramientas y problemas.
@@ -327,11 +331,25 @@ El más básico es el siguiente (@rethinking):
 1. Definir un modelo generativo para la muestra de datos.
 2. Definir la cantidad que queremos estimar en relación al fenómeno de interés.
 3. Definir un proceso estadístico para hacer una estimación.
-4. Probar el proceso 3) usando 1).
-5. Analizar los datos, resumir resultados.
+4. Probar el proceso 3 usando 1 y 2.
+5. (Usar datos) Analizar los datos, resumir resultados.
+6. Checar cómputos y desempeño del modelo.
 
 Este proceso no es exclusivo de los modelos bayesianos, pero quizá es más natural,
-como veremos, cuando adoptamos el punto de vista bayesiano.
+como veremos, cuando adoptamos el punto de vista bayesiano. Su propósito es
+múltiple: verificar que nuestros modelos están estimando las cantidades que realmente
+nos interesan, según nuestros supuestos, verificar los programas y cómputos
+con los que se obtienen resultados, y checar la adecuación del modelo a datos
+reales, cuestionando supuestos teóricos y supuestos de modelación.
+
+
+Finalmente, quisiéramos
+llegar a un proceso como el que se describe en [Towards a Principled Bayesian Workflow](https://betanalpha.github.io/assets/case_studies/principled_bayesian_workflow.html), e incorporar el que se detalla en @gelman2020bayesian:
+
+
+![Gelman et al, Bayesian Workflow](./figuras/gelman-wflow.png)
+
+
 
 
 
