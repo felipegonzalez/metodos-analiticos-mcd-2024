@@ -21,7 +21,26 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -160,25 +179,20 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="temario-y-referencias" class="level1 unnumbered">
 <h1 class="unnumbered">Temario y referencias</h1>
+<p>Este es un curso de estadística bayesiana con énfasis en inferencia causal y flujos de trabajo para análisis de datos. Está basado en el material de <span class="citation" data-cites="rethinking">McElreath (<a href="#ref-rethinking" role="doc-biblioref">2020</a>)</span>.</p>
 <p><strong>Todas las notas y material del curso estarán en este</strong> <a href="https://github.com/felipegonzalez/metodos-analiticos-mcd-2024">repositorio</a>.</p>
 <ul>
-<li><p>Principios de estadística bayesiana y Simulación</p>
-<ul>
 <li>Modelos estadísticos e inferencia causal</li>
-<li>Modelación bayesiana</li>
-<li>Flujo de trabajo para inferencia bayesiana</li>
-<li>Métodos de simulación para modelos bayesianos</li>
-<li>Stan</li>
-</ul></li>
-<li><p>Inferencia causal</p>
-<ul>
-<li>Introducción a inferencia causal</li>
-<li>Modelos probabilísticos gráficos</li>
-<li>Estimación de efectos causales</li>
-<li>Experimentos y controles</li>
-<li>Contrafactuales de Rubin</li>
+<li>Básicos del flujo de trabajo para inferencia bayesiana</li>
+<li>Básicos de modelación</li>
+<li>Modelos gráficos (DAGS) y efectos causales</li>
+<li>Experimentos. Buenos y malos controles</li>
+<li>MCMC, Monte Carlo Hamiltoniano y Stan</li>
+<li>Un flujo de trabajo bayesiano (avanzado)</li>
+<li>Modelos jerárquicos</li>
+<li>Error de medición y clasificación incorrecta</li>
+<li>Datos faltantes</li>
 <li>Otros métodos de inferencia causal</li>
-</ul></li>
 </ul>
 <section id="evaluación" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="evaluación">Evaluación</h3>
@@ -214,6 +228,11 @@ ul.task-list li input[type="checkbox"] {
 <p>Para hacer las tareas y exámenes pueden usar cualquier lenguaje o flujo de trabajo que les convenga (R o Python, por ejemplo) - el único requisito esté basado en código y no point-and-click.</p>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-rethinking" class="csl-entry" role="listitem">
+McElreath, R. 2020. <em>Statistical Rethinking: A Bayesian Course with Examples in R and Stan</em>. A Chapman &amp; Hall libro. CRC Press. <a href="https://books.google.com.mx/books?id=Ie2vxQEACAAJ">https://books.google.com.mx/books?id=Ie2vxQEACAAJ</a>.
+</div>
+</div>
 </section>
 </section>
 

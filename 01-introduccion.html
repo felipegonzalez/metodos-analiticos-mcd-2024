@@ -189,8 +189,7 @@ div.csl-indent {
   </ul></li>
   <li><a href="#modelos-y-procedimientos" id="toc-modelos-y-procedimientos" class="nav-link" data-scroll-target="#modelos-y-procedimientos"><span class="header-section-number">1.2</span> Modelos y procedimientos</a></li>
   <li><a href="#proceso-de-modelación" id="toc-proceso-de-modelación" class="nav-link" data-scroll-target="#proceso-de-modelación"><span class="header-section-number">1.3</span> Proceso de modelación</a></li>
-  <li><a href="#análisis-como-software" id="toc-análisis-como-software" class="nav-link" data-scroll-target="#análisis-como-software"><span class="header-section-number">1.4</span> Análisis como software</a></li>
-  <li><a href="#análisis-como-proceso" id="toc-análisis-como-proceso" class="nav-link" data-scroll-target="#análisis-como-proceso"><span class="header-section-number">1.5</span> Análisis como proceso</a></li>
+  <li><a href="#análisis-como-proceso" id="toc-análisis-como-proceso" class="nav-link" data-scroll-target="#análisis-como-proceso"><span class="header-section-number">1.4</span> Análisis como proceso</a></li>
   </ul>
 </nav>
     </div>
@@ -217,10 +216,10 @@ div.csl-indent {
 <p>Este es un curso de modelación bayesiana aplicada, que se concentra en plantear y resolver problemas aplicados usando estadística. Para hacer esto necesitamos entender tres componentes:</p>
 <ol type="1">
 <li><p>El contexto del problema, o conocimiento del área: esto es conocimiento científico o de negocios y cómo es que observamos o medimos el fenómeno que nos interesa.</p></li>
-<li><p>Modelos estadísticos o algoritmos con el que procesamos datos para obtener resúmenes útiles o informativos acerca de ellos.</p></li>
 <li><p>En vista del contexto del problema (1), ¿cómo construir modelos estadísticos para responder preguntas de interés?</p></li>
+<li><p>Práctica de construcción y desarrollo de modelos, junto con procedimientos para criticarlos y probarlos.</p></li>
 </ol>
-<p>Este proceso aplica tanto a estadística bayesiana como frecuentista.</p>
+<p>Este proceso aplica tanto a estadística bayesiana como frecuentista, aunque en este curso, por su flexibilidad y unidad, consideraremos el enfoque bayesiano. Para la parte 1 y 2, consideraremos modelos gráficos causales, que expresan nuestro conocimiento acerca del problema de interés. Para la parte 3 propondremos un flujo de trabajo bayesiano que nos permita probar y entender el funcionamiento de nuestros modelos. Finalmente, para 2 y 3 propondremos distintas estrategias de modelación, como son modelos jerárquicos, regresión, como trabajar con datos faltantes entre otros.</p>
 <section id="diagramas-causales" class="level2" data-number="1.1">
 <h2 data-number="1.1" class="anchored" data-anchor-id="diagramas-causales"><span class="header-section-number">1.1</span> Diagramas causales</h2>
 <p>En primer lugar, observamos (<span class="citation" data-cites="rethinking">McElreath (<a href="#ref-rethinking" role="doc-biblioref">2020</a>)</span>):</p>
@@ -271,8 +270,28 @@ Nota
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">B</td>
+<td style="text-align: left;">A</td>
+<td style="text-align: left;">grandes</td>
+<td style="text-align: left;">mejora</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">A</td>
 <td style="text-align: left;">chicos</td>
+<td style="text-align: left;">mejora</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">A</td>
+<td style="text-align: left;">grandes</td>
+<td style="text-align: left;">sin_mejora</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">A</td>
+<td style="text-align: left;">grandes</td>
+<td style="text-align: left;">sin_mejora</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">A</td>
+<td style="text-align: left;">grandes</td>
 <td style="text-align: left;">mejora</td>
 </tr>
 <tr class="even">
@@ -282,7 +301,7 @@ Nota
 </tr>
 <tr class="odd">
 <td style="text-align: left;">A</td>
-<td style="text-align: left;">chicos</td>
+<td style="text-align: left;">grandes</td>
 <td style="text-align: left;">mejora</td>
 </tr>
 <tr class="even">
@@ -291,33 +310,13 @@ Nota
 <td style="text-align: left;">mejora</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">B</td>
+<td style="text-align: left;">A</td>
 <td style="text-align: left;">grandes</td>
 <td style="text-align: left;">sin_mejora</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">B</td>
 <td style="text-align: left;">grandes</td>
-<td style="text-align: left;">sin_mejora</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">B</td>
-<td style="text-align: left;">grandes</td>
-<td style="text-align: left;">mejora</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">B</td>
-<td style="text-align: left;">chicos</td>
-<td style="text-align: left;">mejora</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">A</td>
-<td style="text-align: left;">chicos</td>
-<td style="text-align: left;">mejora</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">B</td>
-<td style="text-align: left;">chicos</td>
 <td style="text-align: left;">mejora</td>
 </tr>
 </tbody>
@@ -562,8 +561,8 @@ Nota
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-60ed842b38d9b0e6fd6d" style="width:100%;height:162px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-60ed842b38d9b0e6fd6d">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    T \n    M \n    C\n  edge [minlen = 3]\n    T -> M\n    C -> T\n    C -> M\n{ rank = same; M; T }\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-9de5cb27b348068c6b79" style="width:100%;height:162px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-9de5cb27b348068c6b79">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    T \n    M \n    C\n  edge [minlen = 3]\n    T -> M\n    C -> T\n    C -> M\n{ rank = same; M; T }\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Es decir, el tamaño de los cálculos es una causa común de tratamiento (T) y resultado (M). Veremos más adelante que la decisión de condicionar a el tipo de cálculos proviene de un análisis relativamente simple de este diagrama causal, independientemente de los métodos que usemos para estimar las proporciones de interés (en este ejemplo, examinar las tablas cruzadas es equivalente a hacer estimaciones de máxima verosimlitud).</p>
@@ -680,8 +679,8 @@ Nota
 <span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-cbfb2cd2eeaa273e8c6c" style="width:100%;height:162px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-cbfb2cd2eeaa273e8c6c">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    P\n    T \n    M \n  edge [minlen = 3]\n    T -> P\n    P -> M\n    T -> M\n{ rank = same; M; T}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-d145c812283d9ed75c0c" style="width:100%;height:162px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-d145c812283d9ed75c0c">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    P\n    T \n    M \n  edge [minlen = 3]\n    T -> P\n    P -> M\n    T -> M\n{ rank = same; M; T}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Nótese que el análisis más apropiado no está en los datos: en ambos casos la tabla de datos es exactamente la misma. Los supuestos acerca del proceso que genera los datos sin embargo nos lleva a respuestas opuestas.</p>
@@ -693,31 +692,37 @@ Nota
 <li>Entender qué podemos entender o explicar, sin hacer supuestos adicionales acerca de las relaciones particulares entre las variables.</li>
 <li>Guiar el análisis para decidir que modelos o procedimientos usar para contestar preguntas de interés.</li>
 </ul>
-<p>Los DAGs se construyen con causas, no asociaciones. El pensamiento causal es útil siempre que queremos responder preguntas acerca de un fenómeno de interés:</p>
-<p>Análisis descriptivo</p>
+<p>Los DAGs se construyen con causas, no asociaciones. El pensamiento causal es útil siempre que queremos responder preguntas acerca de un fenómeno de interés. En particular nos asisten en :</p>
+<section id="análisis-descriptivo" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="análisis-descriptivo">Análisis descriptivo</h4>
 <ol type="1">
 <li>Como vimos en el ejemplo anterior, incluso el análisis descriptivo (qué tabla usar, qué gráfica usar) de datos requiere de un análisis causal.</li>
 <li>Muchas veces los datos que tenemos, por distintas razones, tienen características que requieren procesarlos (por ejemplo ponderarlos) para que nos den respuestas entendibles.</li>
 </ol>
-<p>Inferencia causal:</p>
+</section>
+<section id="inferencia-causal" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="inferencia-causal">Inferencia causal</h4>
 <ol type="1">
 <li>En algunos casos, queremos saber consecuencias de una intervención sobre un sistema o proceso dados (por ejemplo, ¿cuántos accidentes graves habría si pusiéramos una multa por no usar cinturón de seguridad?). Esto requiere utilizar pensamiento causal.</li>
 <li>También es usual necesitar pensar cómo serían las cosas si el pasado se hubiera desarrollado de manera distinta (por ejemplo, ¿cómo serían las ventas si no se hubiera gastado en publicidad?) en publicidad ?).</li>
 </ol>
-<p>Diseño de estudios o experimentos.</p>
+</section>
+<section id="diseño-de-estudios-o-experimentos" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="diseño-de-estudios-o-experimentos">Diseño de estudios o experimentos</h4>
 <p>Si queremos recolectar datos acerca de un fenómeno particular (por ejemplo, ¿cómo debo seleccionar una muestra para medir orientación política de una población?), diseños eficientes requieren tener conocimiento de dominio acerca de las causas de las variables que nos interesa medir. Por ejemplo, si queremos tomar una muestra de casillas para estimar el resultado de una votación, deberíamos considerar variables geográficas como distrito electoral, grado de urbanización, etc.</p>
+</section>
 </section>
 </section>
 <section id="modelos-y-procedimientos" class="level2" data-number="1.2">
 <h2 data-number="1.2" class="anchored" data-anchor-id="modelos-y-procedimientos"><span class="header-section-number">1.2</span> Modelos y procedimientos</h2>
 <p>En muchos cursos introductorios de estadística se muestran distintos tipos de procedimientos, que aplican según el tipo de datos (por ejemplo, categóricos o numéricos, pareados, no pareados, etc), generalmente con el propósito de evaluar evidencia en contra de una hipótesis nula.</p>
-<p>Este enfoque puede ser confuso en un principio (¿cómo se relacionan todos estos procedimientos?), y también restringir nuestra capacidad para analizar datos: ¿qué hacemos cuando no se cumplen los supuestos de un procedimiento? Adicionalmente, la manera en que fallan estas herramientas puede ser poco intuitiva y difícil de descubrir.</p>
-<p>Adiconalmente, aunque son herramientas poderosas, no sustituyen el pensamiento científico o de proceso de negocios. Estas herramientas no generan hallazgos si no están acompañados de pensamiento causal.</p>
-<p>Este curso tiene dos propósitos:</p>
+<p>Este enfoque puede ser confuso en un principio (¿cómo se relacionan todos estos procedimientos?), y también restringir nuestra capacidad para analizar datos: ¿qué hacemos cuando no se cumplen los supuestos de un procedimiento? Adicionalmente si no tenemos mucha experiencia, la manera en que fallan estas herramientas puede ser poco intuitiva y difícil de descubrir.</p>
+<p>Adicionalmente, aunque son herramientas poderosas, no sustituyen el pensamiento científico o de proceso de negocios. Estas herramientas no generan hallazgos si no están acompañados de pensamiento causal.</p>
+<p>Buscamos entonces:</p>
 <ol type="1">
 <li>Dar herramientas (bayesianas) para analizar datos que son más flexibles, y se puedan adaptar a distintas situaciones.</li>
 <li>Proponer un proceso para analizar datos, que sea más sistemático, robusto, y maneras de checar que el proceso es correcto o hace lo que pensamos que tiene qué hacer.</li>
-<li>Entender cómo se conectan estos modelos o métodos de analizar de datos con preguntas reales acerca del fenómeno de interés.</li>
+<li>Ligar 1 y 2 con supuestos causales claros para proponer una interpretación sólida de nuestros resultados.</li>
 </ol>
 </section>
 <section id="proceso-de-modelación" class="level2" data-number="1.3">
@@ -728,23 +733,31 @@ Nota
 <li><p>Otra parte es el proceso con el cual construimos y contrastamos modelos para contestar preguntas, verificamos los modelos y sus respuestas y checamos resultados de cómputos.</p></li>
 </ul>
 </section>
-<section id="análisis-como-software" class="level2" data-number="1.4">
-<h2 data-number="1.4" class="anchored" data-anchor-id="análisis-como-software"><span class="header-section-number">1.4</span> Análisis como software</h2>
-</section>
-<section id="análisis-como-proceso" class="level2" data-number="1.5">
-<h2 data-number="1.5" class="anchored" data-anchor-id="análisis-como-proceso"><span class="header-section-number">1.5</span> Análisis como proceso</h2>
+<section id="análisis-como-proceso" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="análisis-como-proceso"><span class="header-section-number">1.4</span> Análisis como proceso</h2>
 <p>Iremos refinando nuestro poco a poco, conforme veamos distintas herramientas y problemas. El más básico es el siguiente (<span class="citation" data-cites="rethinking">McElreath (<a href="#ref-rethinking" role="doc-biblioref">2020</a>)</span>):</p>
 <ol type="1">
 <li>Definir un modelo generativo para la muestra de datos.</li>
 <li>Definir la cantidad que queremos estimar en relación al fenómeno de interés.</li>
 <li>Definir un proceso estadístico para hacer una estimación.</li>
-<li>Probar el proceso 3) usando 1).</li>
-<li>Analizar los datos, resumir resultados.</li>
+<li>Probar el proceso 3 usando 1 y 2.</li>
+<li>(Usar datos) Analizar los datos, resumir resultados.</li>
+<li>Checar cómputos y desempeño del modelo.</li>
 </ol>
-<p>Este proceso no es exclusivo de los modelos bayesianos, pero quizá es más natural, como veremos, cuando adoptamos el punto de vista bayesiano.</p>
+<p>Este proceso no es exclusivo de los modelos bayesianos, pero quizá es más natural, como veremos, cuando adoptamos el punto de vista bayesiano. Su propósito es múltiple: verificar que nuestros modelos están estimando las cantidades que realmente nos interesan, según nuestros supuestos, verificar los programas y cómputos con los que se obtienen resultados, y checar la adecuación del modelo a datos reales, cuestionando supuestos teóricos y supuestos de modelación.</p>
+<p>Finalmente, quisiéramos llegar a un proceso como el que se describe en <a href="https://betanalpha.github.io/assets/case_studies/principled_bayesian_workflow.html">Towards a Principled Bayesian Workflow</a>, e incorporar el que se detalla en <span class="citation" data-cites="gelman2020bayesian">Gelman et&nbsp;al. (<a href="#ref-gelman2020bayesian" role="doc-biblioref">2020</a>)</span>:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./figuras/gelman-wflow.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Gelman et al, Bayesian Workflow</figcaption>
+</figure>
+</div>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-gelman2020bayesian" class="csl-entry" role="listitem">
+Gelman, Andrew, Aki Vehtari, Daniel Simpson, Charles C. Margossian, Bob Carpenter, Yuling Yao, Lauren Kennedy, Jonah Gabry, Paul-Christian Bürkner, y Martin Modrák. 2020. <span>«Bayesian Workflow»</span>. <a href="https://arxiv.org/abs/2011.01808">https://arxiv.org/abs/2011.01808</a>.
+</div>
 <div id="ref-kidney94" class="csl-entry" role="listitem">
 Julious, Steven A, y Mark A Mullee. 1994. <span>«Confounding and Simpson<span>’</span>s paradox»</span>. <em>BMJ</em> 309 (6967): 1480-81. <a href="https://doi.org/10.1136/bmj.309.6967.1480">https://doi.org/10.1136/bmj.309.6967.1480</a>.
 </div>
