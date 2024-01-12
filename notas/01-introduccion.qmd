@@ -289,6 +289,62 @@ la estructura causal del problema. Ignorar estos aspectos puede llevar fácilmen
 a evaluación incorrecta del desempeño, filtración de datos, o modelos que no
 pueden implementarse en la práctica.
 
+### Otro ejemplo (admisiones de Berkeley) {-}
+
+Una ejemplo al que regresaremos más adelante es el siguiente: en 1973 se
+recolectaron datos agregados de solicitantes para estudiar en Berkeley para
+los 6 departamentos más grandes, clasificados por sexo del solicitante y
+si fue admitido o no. Los resultados se muestran a continuación:
+
+```{r}
+data("UCBAdmissions")
+adm_original <- UCBAdmissions |> as_tibble() |> 
+   pivot_wider(names_from = Admit, values_from = n) 
+adm_original |> knitr::kable() |> 
+   kable_paper(full_width = FALSE)
+```
+
+y las proporciones de admisión por sexo y departamente son las siguientes:
+
+```{r}
+adm_tbl <- adm_original |> 
+   mutate(prop_adm = round(Admitted / (Admitted + Rejected), 2), total = Admitted + Rejected) |> 
+   select(Gender, Dept, prop_adm, total) |> 
+   pivot_wider(names_from = Gender, values_from = prop_adm:total)
+adm_tbl |> knitr::kable() |> 
+   kable_paper(full_width = FALSE)
+```
+
+Complementamos con las tasas de aceptación a total por género, y tasas de aceptación por departamento:
+
+```{r}
+adm_original |> group_by(Gender) |> 
+   summarise(Admitted = sum(Admitted), Rejected = sum(Rejected)) |> 
+   mutate(prop_adm = round(Admitted / (Admitted + Rejected),2)) |> 
+   kable() |> 
+   kable_paper(full_width = FALSE)
+```
+
+La pregunta que queremos hacer es: ¿existe discriminación por sexo en 
+la selección de candidatos? Examinando las tablas no está clara cuál es la 
+respuesta.
+
+
+```{r}
+adm_original |> group_by(Dept) |> 
+   summarise(Admitted = sum(Admitted), Rejected = sum(Rejected)) |> 
+   mutate(prop_adm = round(Admitted / (Admitted + Rejected),2)) |> 
+   kable() |> 
+   kable_paper(full_width = FALSE)
+```
+
+Discutiremos este ejemplo con más detalle más adelante. La interpretación 
+debe ser hecha con cuidado, y debemos establecer claramente los supuestos
+que fundamentan nuestra decisión de mostrar cada tabla y de qué forma
+mostrarlas.
+
+
+
 ## Modelos y algoritmos
 
 En muchos cursos introductorios de estadística se muestran distintos
