@@ -22,11 +22,10 @@ hicimos la prueba, y $N_{+}$ y $N_{-}$ que cuentan el número de positivos y ser
 en la muestra. Supondremos que la prueba da resultados exactos.
 
 
-
 Comenzamos construyendo el diagrama que indica cómo influye cada variable en 
 otra (nota: no son asociaciones, sino que indican qué variables "escuchan" a otras
-para determinar su valor). En este caso, $N$ y $p$ son variable que no depende de ninguna
-otra, mientras que $N_{+}$ y $N_{-}$ dependen de $N$ y $p$. 
+para determinar su valor). En este caso, $N$ y $\theta$ son variable que no depende de ninguna
+otra, mientras que $N_{+}$ y $N_{-}$ dependen de $N$ y $\theta$. 
 
 ```{r}
 #| out-width: 100%
@@ -35,7 +34,7 @@ grViz("
 digraph {
   graph [ranksep = 0.3, rankdir = LR]
   node [shape=circle]
-    p
+    theta [label = <&theta;>]
   node [shape=plaintext]
     N
     Npos [label = <N<SUB>+</SUB>>]
@@ -43,15 +42,15 @@ digraph {
     #sens
     #esp
   edge [minlen = 3]
-    p -> Npos
-    p -> Nneg
+    theta -> Npos
+    theta -> Nneg
     N -> Npos
     N -> Nneg
     #esp -> Pos
     #sens -> Pos
     #esp -> Neg
     #sens -> Neg
-{ rank = same; p; N }
+{ rank = same; theta; N }
 { rank = same; Npos; Nneg}
 #{ rank = max; sens; esp}
 
@@ -63,15 +62,12 @@ digraph {
 Y ahora construimos el modelo generativo:
 
 ```{r}
-sim_pos_neg <- function(p = 0.01, N = 20, sens = 1, esp = 1) {
+sim_pos_neg <- function(theta = 0.01, N = 20, sens = 1, esp = 1) {
   # verdaderos positivos que capturamos en la muestra
-  Pos_verdadero <- rbinom(N, 1, p)
+  Pos_verdadero <- rbinom(N, 1, theta)
   Neg_verdadero <- 1 - Pos_verdadero
   # positivos observados en la muestra
   Pos <- Pos_verdadero
-  #Pos <- map_int(Pos_verdadero, 
-  #  \(x) ifelse(x == 1, rbinom(1, 1, sens), rbinom(1, 1, (1 - esp))
-  #))
   Neg <- 1 - Pos
   # Observaciones
   tibble(Pos = Pos, Neg = Neg)
@@ -83,33 +79,232 @@ hacer algunas pruebas del modelo generativo en casos extremos:
 
 ```{r}
 set.seed(8212)
-sim_pos_neg(p = 0.995, N = 10)
-sim_pos_neg(p = 0.005, N = 10)
-sim_pos_neg(p = 0.1, N = 1e7) |> pull(Pos) |> mean() |> 
+sim_pos_neg(theta = 0.995, N = 10)
+sim_pos_neg(theta = 0.005, N = 10)
+sim_pos_neg(theta = 0.1, N = 1e7) |> pull(Pos) |> mean() |> 
   round(4)
 ```
 
-Análisis de datos bayesiano
+## Análisis de datos bayesiano: motivación
 
 En estadística bayesiana podemos consideramos las posibles explicaciones
-(estados de $p$) de los datos, y consideramos como más creíbles aquellas explicaciones
+(estados de $\theta$) de los datos, y consideramos como más creíbles aquellas explicaciones
 que pueden ocurrir de manera más probable. 
 
-Supongamos entonces una $p$ dada, y que observamos la muestra
+Supongamos entonces una $\theta$ dada, y que observamos la muestra
 $1,0,0,1,0$. La probabilidad de observar esta muestra es entonces
 
-$$p(1-p)(1-p)p(1-p) = p^2(1-p)^3$$
-Podemos graficar esta función:
+$$\theta(1-\theta)(1-\theta)\theta(1-\theta) = \theta^2(1-\theta)^3$$
+Para algunos valores de $\theta$ (posibles conjeturas acerca del valor de $\theta$) podemos
+escribir una tabla como sigue (Nota: discretizamos por el momento a un número finito de valores de $p$
+para hacer el argumento más simple):
 
 ```{r}
-p <- seq(0, 1, length.out = 100)
-(p^2 * (1 - p)^3) |> 
-  tibble(p = p, prob = _) |> 
-  ggplot(aes(x = p, y = prob)) +
-  geom_line() +
-  labs(x = "p", y = "p(D|p)")
+theta <- seq(0, 1, length.out = 11)
+tibble(conjetura_theta = theta, verosimiltud = theta^2 * (1 - theta)^3) |> 
+  kable(col.names = c("Conjetura $\\theta$", "$p(D|\\theta)$"), escape = FALSE) |> kable_paper()
+```
+
+En la tabla vemos que hay algunas conjeturas, o posibles valores de $\theta$, que tienen
+probabilidad considerablemente más alta que otra. La notación 
+
+$$p(D|\theta)$$
+significa: la probabilidad de los datos $D$ dado el valor de $\theta$. 
+
+Ahora observemos que si queremos hacer **afirmaciones probabilísticas** acerca de $\theta$,
+esta cantidad no es la que debemos considerar, pues no es una distribución de probabilidad.
+Afirmaciones probabilísticas son afirmaciones de la forma:
+
+- ¿Cuál es la probabilidad de que $\theta$ sea menor a 1%? (Muy pocos seropositivos)
+- ¿Cuál es la probabildad de que $\theta$ sea mayor a 80%? (Población cerca de saturación)
+
+Para afirmaciones probabilísticas, realmente quisiéramos tener una distrubución de $\theta$ dado que observamos los datos $D$:
+$$p(\theta|D)$$
+Usando reglas de probabilidad (en particular la regla de Bayes), observamos que
+
+$$p(\theta | D) = \frac{p(D|\theta)p(\theta)} { p(D)}$$
+Como $p(\theta|D)$ debe dar una distribución de probabilidad (suma o integra a 1),
+entonces $p(D)$ debe ser una constante de normalización para el numerador de la derecha,
+es decir, basta escribir
+
+$$p(\theta | D) \propto p(D|\theta)p(\theta) $$
+Ahora es donde encontramos que tenemos que tener $p(\theta)$ para poder calcular
+la cantidad que nos interesa. $p(\theta)$ es simplemente una afirmación de dónde
+puede estar $\theta$, antes de observar ningún dato. 
+
+Podríamos quizá evitar este problema poniendo $p(\theta)$ constante, de manera
+que sólo tendríamos que normalizar como sigue:
+
+```{r}
+p <- seq(0, 1, length.out = 11)
+prob_post <- tibble(conjetura = p, probablidad = p^2 * (1 - p)^3) |> 
+  mutate(prob_posterior = probablidad / sum(probablidad)) 
+prob_post |> 
+  kable(col.names = c("Conjetura $\\theta$", "$p(D|\\theta)$",
+                      "$p(\\theta|D)$"), escape = FALSE) |> kable_paper()
+```
+
+
+
+Con esto, expresamos nuestro conocimiento acerca de $\theta$, después de observar los
+datos, con una *distribución de probabilidad sobre las posibles conjecturas*. A esta
+distribución de probabilidad le llamamos **probabilidad posterior**. Este es el 
+resultado principal de inferencia bayesiana, y es la base para tomar decisiones
+relativas a $p$.
+
+### Usando información adicional
+
+Supongamos que tenemos información adicional acerca de $\theta$, por ejemplo, que
+en un experimento similar anterior alguien tomó una muestra de dos personas,
+y encontró dos negativos. Tenemos entonces como creencias inciales:
+
+```{r}
+p <- seq(0, 1, length.out = 11)
+prob_priori <- tibble(conjetura = p, prob_priori = (1-p) * (1 -p)) |> 
+  mutate(prob_priori = prob_priori / sum(prob_priori)) 
+prob_priori |>
+  kable(col.names = c("Conjetura $\\theta$", "$p(\\theta)$"), escape = FALSE) |> kable_paper()
+```
+
+
+Ahora reconsideramos la posterior de nuestra muestra de 5 personas, y calculamos
+el producto de $P(D|\theta)$ por $p(\theta)$:
+
+```{r}
+prob_post <- prob_priori |> 
+  mutate(prob_post_ant = p^2 * (1-p)^3) |> 
+  mutate(prob_post_ant = prob_post_ant / sum(prob_post_ant)) |> 
+  mutate(prod = prob_priori * prob_post_ant)
+
+prob_post|> 
+  kable(col.names = c("Conjetura $\\theta$", "$p(\\theta)$", "$p(D|\\theta)$",
+                      "$p(D|\\theta)p(\\theta)$"), escape = FALSE) |> kable_paper()
 
 ```
+
+Y finalmente, normalizamos para encontrar la probabilidad posterior:
+
+
+```{r}
+prob_post <- prob_post |> 
+  mutate(prob_posterior = prod / sum(prod))
+
+prob_post|> 
+  kable(col.names = c("Conjetura $\\theta$", "$p(\\theta)$", "$p(D|\\theta)$",
+                      "$p(D|\\theta)p(\\theta)$", "$p(\\theta|D)$"), escape = FALSE) |> kable_paper()
+
+```
+
+La última columna nos da el resultado final de la inferencia bayesiana. Podemos
+resumir algunas de sus características, por ejemplo:
+
+- Es muy poco probable que la seropositividad sea mayor o igual a 0.7
+- Un intervalo de 98% de probabilidad para la seropositividad es $[0.1, 0.5]$
+
+La gráfica de la posterior es:
+
+```{r}
+prob_post |>
+  ggplot(aes(x = conjetura, y = prob_posterior)) +
+  geom_col() +
+  labs(x = "theta", y = "Prob posterior") 
+
+```
+
+Podemos hacer esto también de manera continua. Para los datos que obtuvimos,
+tenemos igualmente
+
+$$p(\theta | D) \propto p(D|\theta)p(\theta) $$
+por el momento pondremos $p(\theta) = 1$ para $\theta\in [0,1]$ (densidad uniforme), entonces
+
+$p(\theta|D) \propto \theta^2(1-\theta^2)$
+
+En este caso, para normalizar tenemos que hacer la integral de la expresión de la
+derecha, y dividir por el resultado. En general, escribiremos
+
+$$B(a,b) = \int_{0}^1 \theta^{a-1}(1-\theta)^{b-1} d\theta$$
+de modo que en nuestro caso
+
+$$p(\theta|D) = \frac{1}{B(3,4)} \theta^2(1-\theta)^3$$
+Es posible demostrar con cálculo que $B(a,b) = \frac{(a-1)!(b-1)!}{(a+b-1)!}$,
+pero eso no es importante. Este tipo de densidades pertenecen a la familia
+beta con parámetros $(a,b)$, donde $a>0, b>0$.
+
+De modo que nuestra posterior es una beta con parámetros $(3,4)$, y se ve así:
+
+```{r}
+library(tidyverse)
+theta <- seq(0,1, 0.01)
+tibble(theta = theta, densidad = dbeta(theta, 3, 4)) |> 
+  ggplot(aes(x = theta, y = densidad)) +
+  geom_line() +
+  labs(x = "theta", y = "Densidad posterior") 
+```
+### Ejercicio
+
+Podemos examinar la posterior para dados distintos datos. Supondremos que 
+la a priori es uniforme.
+
+```{r}
+set.seed(92192)
+theta_seq <- seq(0,1, 0.001)
+datos_sim <- sim_pos_neg(theta = 0.25, N = 12) |> 
+  mutate(obs = ifelse(Pos==1, "P", "N")) |> 
+  mutate(n = 1:12)
+# graficar posteriores para cada n
+datos_graf <- datos_sim |> 
+  mutate(n_pos = cumsum(Pos), n_neg = cumsum(Neg)) |> 
+  mutate(muestra = accumulate(obs, ~ paste0(.x, .y))) |> 
+  group_by(n) |>
+  mutate(dens_graf = 
+    list(tibble(theta = theta_seq, densidad = dbeta(theta_seq, 1 + n_pos, 1 + n_neg)))) |> 
+  unnest(dens_graf)
+ggplot(datos_graf, aes(x=theta, y = densidad, group = n)) +
+  geom_line() + 
+  facet_wrap(~ muestra) +
+  geom_abline(slope = 0, intercept = 1, color = "gray") 
+```
+- En esta gráfica vemos que 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Simulación de la posterior
+
+Una vez que tenemos la densidad posterior podemos mostrarla o resumirla de 
+varias maneras. Si tenemos una expresión analítica, esos resúmen típicamente
+*consisten de integrales*, por ejemplo:
+
+- La media o mediana posterior
+- Deciles o u otro tipo de percentiles de la posterior
+- Intervalos de probabilidad posterior
+
+Este proceso puede ser no trivial incluso para densidades posteriores conocidas.
+La alternativa a integrar es **simular** de la posterior y calcular las cantidades
+de interés a partir de las simulaciones. En general, esto es más fácil que integrar.
+En nuestro ejemplo:
+
+
+
+
+
+
+
+
+
+
+
 
 Esta función no es una densidad de probabilidad sobre $p$, pues no integra a uno.
 Sin embargo, podemos normalizarla para que integre a uno. Usando cálculo, podemos
@@ -126,10 +321,10 @@ simular_posterior <- function(muestra, n){
 ```
 
 ```{r}
-una_muestra <- sim_pos_neg(p = 0.1, N = 100)
+una_muestra <- sim_pos_neg(theta = 0.1, N = 100)
 simular_posterior(una_muestra, 1000) |> 
-  tibble(p = _) |> 
-  ggplot(aes(x = p)) +
+  tibble(theta = _) |> 
+  ggplot(aes(x = theta)) +
   geom_histogram()
 ```
 

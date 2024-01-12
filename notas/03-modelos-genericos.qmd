@@ -285,8 +285,3 @@ Podemos utilizar esta información para construir un modelo más apropiado.
 ## Usando teoría para construir modelos
 
 
-
-
-
-## Ampliación del modelo "geocéntrico"
-

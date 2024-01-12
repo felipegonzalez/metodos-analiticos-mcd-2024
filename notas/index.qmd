@@ -1,7 +1,7 @@
 # Temario y referencias {-}
 
 Este es un curso de estadística bayesiana con énfasis en inferencia causal y
-flujos de trabajo para análisis de datos. Está basado en el material
+flujos de trabajo robustos para análisis de datos. Está basado en el material
 de @rethinking.
 
 **Todas las notas y material del curso estarán en este** [repositorio](https://github.com/felipegonzalez/metodos-analiticos-mcd-2024).
@@ -13,7 +13,7 @@ de @rethinking.
   - Modelos gráficos (DAGS) y efectos causales
   - Experimentos. Buenos y malos controles
   - MCMC, Monte Carlo Hamiltoniano y Stan 
-  - Un flujo de trabajo bayesiano (avanzado)
+  - Flujo de trabajo bayesiano avanzado
   - Modelos jerárquicos
   - Error de medición y clasificación incorrecta
   - Datos faltantes
@@ -39,17 +39,19 @@ Este curso sigue aproximadamente la primera referencia (Statistical Rethinking).
   - [Statistical Rethinking](https://xcelab.net/rm/statistical-rethinking/)
   - [Causal Inference in Statistics: a primer](https://www.wiley.com/en-us/Causal+Inference+in+Statistics:+A+Primer-p-9781119186847)
   - [Counterfactuals and Causal Inference: Methods and Principles for Social Research](https://www.cambridge.org/core/books/counterfactuals-and-causal-inference/5CC81E6DF63C5E5A8B88F79D45E1D1B7)
+  - [Bayesian workflow](https://arxiv.org/abs/2011.01808)] 
+  - [Towards a principled Bayesian workflow](https://betanalpha.github.io/assets/case_studies/principled_bayesian_workflow.html)
 
 ### Otras referencias {-}
 
-- [Pattern Recognition and Machine Learning](http://www.springer.com/us/book/9780387310732)
-- [The Book of Why](https://dl.acm.org/doi/10.5555/3238230)
-- [Data Analysis Using Regression and Multilevel/Hierarchical Models](https://www.cambridge.org/highereducation/books/data-analysis-using-regression-and-multilevel-hierarchical-models/32A29531C7FD730C3A68951A17C9D983#overview)
-
+  - [The Book of Why](https://dl.acm.org/doi/10.5555/3238230)
+  - [Causal Inference: The Mixtape](https://mixtape.scunning.com/)
+  - [Data Analysis Using Regression and Multilevel/Hierarchical Models](https://www.cambridge.org/highereducation/books/data-analysis-using-regression-and-multilevel-hierarchical-models/32A29531C7FD730C3A68951A17C9D983#overview)
+  - [Pattern Recognition and Machine Learning](http://www.springer.com/us/book/9780387310732)
 
 ### Software: R y Rstudio {-}
 
-Para hacer las tareas y exámenes pueden usar cualquier lenguaje o flujo de trabajo
+Para hacer las tareas y exámenes pueden usar cualquier lenguaje de programación
 que les convenga (R o Python, por ejemplo) - el único requisito esté basado en código y no
 point-and-click.
 
