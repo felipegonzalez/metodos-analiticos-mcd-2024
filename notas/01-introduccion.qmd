@@ -298,7 +298,7 @@ propósito de evaluar evidencia en contra de una hipótesis nula. Por ejemplo,
 de @rethinking:
 
 
-![Ejemplo de proceso de decisión para procedimientos estadísticos](./figuras/rethinking-flujo-golems.jpg)
+![Ejemplo de proceso de decisión para procedimientos estadísticos](./figuras/rethinking-flujo-golems.png)
 
 
 
