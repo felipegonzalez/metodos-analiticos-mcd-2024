@@ -7,7 +7,8 @@ book:
   chapters:
     - index.qmd
     - 01-introduccion.qmd
-
+    - 02-flujo-basico.qmd
+    - 02-flujo-basico-2.qmd
 bibliography: referencias/book.bib
 
 format:
