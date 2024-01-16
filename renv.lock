@@ -3,8 +3,12 @@
     "Version": "4.3.2",
     "Repositories": [
       {
+        "Name": "Stan",
+        "URL": "https://mc-stan.org/r-packages"
+      },
+      {
         "Name": "CRAN",
-        "URL": "https://packagemanager.posit.co/cran/latest"
+        "URL": "https://cloud.r-project.org"
       }
     ]
   },
@@ -291,7 +295,8 @@
     "cmdstanr": {
       "Package": "cmdstanr",
       "Version": "0.7.1",
-      "Source": "unknown",
+      "Source": "Repository",
+      "Repository": "Stan",
       "Requirements": [
         "R",
         "R6",
