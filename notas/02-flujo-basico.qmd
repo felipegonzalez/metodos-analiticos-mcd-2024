@@ -424,11 +424,9 @@ prueba es en general más apropiada, pues no nos interesan configuración de par
 con probabilidad inicial extremadamente baja (imposibles según nuestros supuestos), pero
 también es posible tomar algunos valores fijos de interés.
 
-- Veremos más adelante también *pruebas predictivas a priori*, que son una
-manera de checar supuestos, y también 
-nos sirven para evaluar si nuestras distribuciones apriori son consistentes
-con conocimiento previo o teoría.
-
+- Veremos más de *chequeos o pruebas predictivas a priori*, que en general también
+sirven para entender la adecuación del modelo y supuestos en términos
+de teoría y 
 :::
 
 Este paso también es importante para entender si, bajo nuestros propios supuestos,
@@ -456,6 +454,7 @@ ggplot(simulacion_rep, aes(x = theta, y = prob_posterior)) +
 Nuestra respuesta en este caso es que quizá con 3 personas la información obtenida
 no será suficiente para tomar decisiones útiles:  nótese que la posterior
 está muy poco concentrada alrededor del verdadero valor de $\theta$. 
+
 
 ### Introduciendo un bug
 
