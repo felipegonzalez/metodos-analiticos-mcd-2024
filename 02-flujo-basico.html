@@ -263,8 +263,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">300</span>, <span class="at">height =</span> <span class="dv">100</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-197fe7ca462d81545507" style="width:100%;height:216px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-197fe7ca462d81545507">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    theta [label = <&theta;>]\n  node [shape=plaintext]\n    N\n    Npos [label = <N<SUB>+<\/SUB>>]\n    Nneg [label = <N<SUB>-<\/SUB>>]\n    #sens\n    #esp\n  edge [minlen = 3]\n    theta -> Npos\n    theta -> Nneg\n    N -> Npos\n    N -> Nneg\n    #esp -> Pos\n    #sens -> Pos\n    #esp -> Neg\n    #sens -> Neg\n{ rank = same; theta; N }\n{ rank = same; Npos; Nneg}\n#{ rank = max; sens; esp}\n\n  \n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-671dbe7575e411e8e639" style="width:100%;height:216px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-671dbe7575e411e8e639">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    theta [label = <&theta;>]\n  node [shape=plaintext]\n    N\n    Npos [label = <N<SUB>+<\/SUB>>]\n    Nneg [label = <N<SUB>-<\/SUB>>]\n    #sens\n    #esp\n  edge [minlen = 3]\n    theta -> Npos\n    theta -> Nneg\n    N -> Npos\n    N -> Nneg\n    #esp -> Pos\n    #sens -> Pos\n    #esp -> Neg\n    #sens -> Neg\n{ rank = same; theta; N }\n{ rank = same; Npos; Nneg}\n#{ rank = max; sens; esp}\n\n  \n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Que también podríamos simplificar (suponiendo la <span class="math inline">\(N\)</span> fija y conocida, pues <span class="math inline">\(N_+\)</span> y <span class="math inline">\(M\)</span> dan <span class="math inline">\(N_{-}\)</span>) como:</p>
@@ -297,8 +297,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">300</span>, <span class="at">height =</span> <span class="dv">100</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-1db838567139f2dc7584" style="width:100%;height:216px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-1db838567139f2dc7584">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    theta [label = <&theta;>]\n  node [shape=plaintext]\n    N\n    Npos [label = <N<SUB>+<\/SUB>>]\n    #sens\n    #esp\n  edge [minlen = 3]\n    theta -> Npos\n    N -> Npos\n    #esp -> Pos\n    #sens -> Pos\n    #esp -> Neg\n    #sens -> Neg\n{ rank = same; theta; N }\n{ rank = same; Npos}\n#{ rank = max; sens; esp}\n\n  \n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-5f3cb079f61899d6e419" style="width:100%;height:216px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-5f3cb079f61899d6e419">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    theta [label = <&theta;>]\n  node [shape=plaintext]\n    N\n    Npos [label = <N<SUB>+<\/SUB>>]\n    #sens\n    #esp\n  edge [minlen = 3]\n    theta -> Npos\n    N -> Npos\n    #esp -> Pos\n    #sens -> Pos\n    #esp -> Neg\n    #sens -> Neg\n{ rank = same; theta; N }\n{ rank = same; Npos}\n#{ rank = max; sens; esp}\n\n  \n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Y ahora construimos el modelo generativo. Supondremos que la muestra de <span class="math inline">\(N\)</span> personas se toma de manera aleatoria de la población (una población grande, así que podemos ignorar el efecto de muestreo). Supondremos provisionalmente, además, que la prueba es perfecta, es decir, no hay falsos positivos o negativos.</p>
@@ -989,7 +989,7 @@ Observaciones
 <ul>
 <li><p>Más adelante veremos cómo comparar valores a estimar con la posterior a través de varias simulaciones de manera más rigurosa. Por el momento, recuerda que <strong>incluso pruebas simples o limitadas son mejores que ninguna prueba</strong>.</p></li>
 <li><p>Típicamente los valores iniciales se toman de la distribución a priori, como hicimos arriba. Esta prueba es en general más apropiada, pues no nos interesan configuración de parámetros con probabilidad inicial extremadamente baja (imposibles según nuestros supuestos), pero también es posible tomar algunos valores fijos de interés.</p></li>
-<li><p>Veremos más adelante también <em>pruebas predictivas a priori</em>, que son una manera de checar supuestos, y también nos sirven para evaluar si nuestras distribuciones apriori son consistentes con conocimiento previo o teoría.</p></li>
+<li><p>Veremos más de <em>chequeos o pruebas predictivas a priori</em>, que en general también sirven para entender la adecuación del modelo y supuestos en términos de teoría y</p></li>
 </ul>
 </div>
 </div>
@@ -1222,7 +1222,7 @@ Aspectos numéricos
 </div>
 </div>
 <hr>
-<p>En este punto, podríamos pasar al siguiente paso, que es escribir una función para calcular la posterior. En realidad ya sabemos su función de densidad, pero cualquier resumen que hagamos de esta distribución requerirá de integrales (¿por qué? piensa en cómo calcular la probabilidad de ser menor que un valor, o cómo se calcula la media).</p>
+<p>En este punto, podríamos ir al siguiente paso, que es escribir una función para calcular la posterior. En realidad ya sabemos su función de densidad, pero cualquier resumen que hagamos de esta distribución requerirá de integrales (¿por qué? piensa en cómo calcular la probabilidad de ser menor que un valor, o cómo se calcula la media).</p>
 <p>Aunque en este ejemplo simple la posterior tiene una forma conocida y hay manera de calcular (analíticamente o con rutinas numéricas ya implementadas) esos resúmenes de interés (media, cuantiles, etc.), en general calcular integrales no es una estrategia que podamos llevar muy lejos.</p>
 </section>
 <section id="métodos-monte-carlo" class="level3" data-number="2.7.2">
@@ -1288,7 +1288,10 @@ Métodos Monte Carlo
 <p><span class="math display">\[\frac{1}{M} \sum_{i=1}^{M} x_i \to I\]</span> cuando <span class="math inline">\(M\to \infty\)</span>. De este modo, podemos aproximar con la precisión que requiramos la integral <span class="math inline">\(I\)</span>.</p>
 </div>
 </div>
-<p><strong>Nota importante</strong>: Notamos, sin embargo, que sin más información del proceso de simulación, no es posible <em>demostrar</em> que una aproximación es “suficientemente” buena, no importa que tan grande sea <span class="math inline">\(M\)</span>. Más adelante veremos una batería de diagnósticos para al menos excluir los casos comunes en los que la aproximación es mala.</p>
+<p><strong>Nota 1</strong>: Sin más información del proceso de simulación, no es posible <em>demostrar</em> que una aproximación es “suficientemente” buena, no importa que tan grande sea <span class="math inline">\(M\)</span>. Más adelante veremos una batería de diagnósticos para al menos excluir los casos comunes en los que la aproximación es mala.</p>
+<p><strong>Nota 2</strong>: En nuestro caso, las integrales de interés usualmente son de la forma <span class="math display">\[I = \int f(\theta)p(\theta|D) d\theta,\]</span> donde <span class="math inline">\(D\)</span> es la información de la muestra, <span class="math inline">\(\theta\)</span> es un vector de parámetros del modelo, y <span class="math inline">\(f(\theta)\)</span> es una función de <span class="math inline">\(\theta\)</span> que nos interesa. Por ejemplo, para la media posterior de <span class="math inline">\(\theta_i\)</span>, usaríamos <span class="math inline">\(f(\theta) = \theta_i\)</span>. Podemos aproximar cualquier integral si tenemos simulaciones de la posterior:</p>
+<p><span class="math display">\[\theta_i \sim p(\theta|D) \implies \frac{1}{M} \sum_{i=1}^{M} f(\theta_i) \to I.\]</span></p>
+<hr>
 <p>Finalmente, checamos todo nuestra construcción de estimación como hicimos arriba, la diferencia es que ahora usamos simulaciones para entender el comportamiento de la posterior. En este caso, el proceso es como sigue:</p>
 <ol type="1">
 <li>Generamos un valor de la apriori <span class="math inline">\(\theta_{sim} \sim \text{Beta}(1,3)\)</span></li>

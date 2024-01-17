@@ -203,7 +203,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 <p>En esta parte veremos cómo continuaríamos refinando el modelo tomando en cuenta otros aspectos importantes del problema de estimar la seropositividad de una población.</p>
-<p>El primer aspecto importante es persistir <strong>seguiendo el flujo de trabajo</strong>. En segundo lugar, este ejemplo ilustra que la construcción de modelos preferiblemente se hace de manera iterativa: una vez que probamos nuestro código, entendemos cómo funciona nuesto modelo, podemos continuar agregando componentes para hacerlo más útil.</p>
+<p>El primer aspecto importante es persistir <strong>siguiendo el flujo de trabajo</strong>. En segundo lugar, este ejemplo ilustra que la construcción de modelos preferiblemente se hace de manera iterativa: una vez que probamos nuestro código, entendemos cómo funciona nuesto modelo, podemos continuar agregando componentes para hacerlo más útil.</p>
 <section id="prevalencia-con-error-conocido" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="prevalencia-con-error-conocido"><span class="header-section-number">3.1</span> Prevalencia con error conocido</h2>
 <p>Nuestro ejemplo de la sección es poco realista. Usualmente, las pruebas que son utilizadas para medir la prevalencia no son perfectas. Bajo condiciones muy controladas, el perfil de desempeño de las pruebas se miden, y los resultados son del siguiente tipo:</p>
@@ -226,7 +226,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="st">  node [shape=plaintext]</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="st">    N</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="st">    Npos [label = &lt;N&lt;SUB&gt;+&lt;/SUB&gt;&gt;]</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="st">    Nobs</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="st">    Nobs [label = &lt;N&lt;SUB&gt;obs&lt;/SUB&gt;&gt;]</span></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="st">    #Nneg [label = &lt;N&lt;SUB&gt;-&lt;/SUB&gt;&gt;]</span></span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="st">    #sens</span></span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="st">    #esp</span></span>
@@ -247,8 +247,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)<span class="co">#, width = 200, height = 50)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-11fa9e1ed40f05edb647" style="width:100%;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-11fa9e1ed40f05edb647">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    p\n    Npos\n  node [shape=plaintext]\n    N\n    Npos [label = <N<SUB>+<\/SUB>>]\n    Nobs\n    #Nneg [label = <N<SUB>-<\/SUB>>]\n    #sens\n    #esp\n  edge [minlen = 3]\n    p -> Npos\n    #p -> Nneg\n    N -> Npos\n    Npos -> Nobs\n    #N -> Nneg\n    esp -> Nobs\n    sens -> Nobs\n    #esp -> Nneg\n    #sens -> Nneg\n{ rank = same; p; N }\n{ rank = same; Npos}\n{ rank = max; sens; esp}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-f857745ee896ff57baac" style="width:100%;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-f857745ee896ff57baac">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    p\n    Npos\n  node [shape=plaintext]\n    N\n    Npos [label = <N<SUB>+<\/SUB>>]\n    Nobs [label = <N<SUB>obs<\/SUB>>]\n    #Nneg [label = <N<SUB>-<\/SUB>>]\n    #sens\n    #esp\n  edge [minlen = 3]\n    p -> Npos\n    #p -> Nneg\n    N -> Npos\n    Npos -> Nobs\n    #N -> Nneg\n    esp -> Nobs\n    sens -> Nobs\n    #esp -> Nneg\n    #sens -> Nneg\n{ rank = same; p; N }\n{ rank = same; Npos}\n{ rank = max; sens; esp}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Donde vemos ahora que el estado real de cada persona de la prueba es desconocido, aunque el resultado de la prueba depende de ese estado, y la cantidad de positivos que observamos es ahora <span class="math inline">\(N_{obs}\)</span>, que depende también de la sensibilidad y especificidad de la prueba.</p>
@@ -290,7 +290,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 data-number="3.1.3" class="anchored" data-anchor-id="paso-3-modelo-estadístico"><span class="header-section-number">3.1.3</span> Paso 3: modelo estadístico</h3>
 <p>El modelo estadístico es ahora diferente. Vamos a plantear primero <span class="math inline">\(p(D|\theta, sens, esp)\)</span>, que es la probabilidad de observar los datos <span class="math inline">\(D\)</span> dado que <span class="math inline">\(\theta\)</span> es el parámetro de interés, y <span class="math inline">\(sens\)</span> y <span class="math inline">\(esp\)</span> (que en este caso suponemos conocidos). Es fácil ver que la probabilidad de obtener un positivo ahora es:</p>
 <p><span class="math inline">\(\theta_{obs} = P(Positivo | \theta, sens, esp) = \theta \cdot sens + (1-\theta) \cdot (1-esp)\)</span></p>
-<p>Si llamamos a esta cantidad <span class="math inline">\(\theta_{obs}\)</span>, de forma que dada una muestra de 0’s y 1’s, tenemos</p>
+<p>Si llamamos a esta cantidad <span class="math inline">\(\theta_{obs}\)</span>, de forma que dada una muestra de 0’s y 1’s, tenemos que la verosimilitud de la muestra dada cada conjetura <span class="math inline">\(\theta\)</span>, y con <span class="math inline">\(sens\)</span> y <span class="math inline">\(esp\)</span> fijas, es:</p>
 <p><span class="math display">\[p(D|\theta, sens, esp) = \theta_{obs}^{N_{+}}(1-\theta_{obs})^{N_{-}}\]</span> Suponiendo que la distribución apriori de <span class="math inline">\(\theta\)</span> es uniforme, tenemos entonces que la distribución posterior cumple:</p>
 <p><span class="math display">\[p(\theta|D, sens, esp) \propto \theta_{obs}^{N_{+}}(1-\theta_{obs})^{N_{-}}\]</span> donde <span class="math inline">\(\theta_obs\)</span> está dada por la fórmula de arriba. Sustituyendo:</p>
 <p><span class="math display">\[p(\theta|D, sens, esp) \propto (\theta \cdot sens + (1-\theta) \cdot (1-esp))^{N_{+}}(\theta(1-sens) + (1-\theta)esp)^{N_{-}}\]</span></p>
@@ -374,7 +374,12 @@ Método de aproximación de rejilla
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> theta_sim), <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>rep)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02-flujo-basico-2_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+<div id="fig-apriori-check" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="02-flujo-basico-2_files/figure-html/fig-apriori-check-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figura&nbsp;3.1: Verificación a priori</figcaption>
+</figure>
+</div>
 </div>
 </div>
 <p>Contrasta con lo que pasaría si usaramos el modelo sin considerar fuentes de error:</p>
@@ -402,7 +407,12 @@ Método de aproximación de rejilla
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> theta_sim), <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>rep)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02-flujo-basico-2_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+<div id="fig-apriori-falla" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="02-flujo-basico-2_files/figure-html/fig-apriori-falla-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figura&nbsp;3.2: Verificación a priori fallida (modelo incorrecto)</figcaption>
+</figure>
+</div>
 </div>
 </div>
 <p>Este resultado está lejos de ser aceptable.</p>
@@ -465,8 +475,8 @@ Método de aproximación de rejilla
 <span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)<span class="co">#, width = 200, height = 50)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-a7d4cbf65811d7cf7313" style="width:100%;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-a7d4cbf65811d7cf7313">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    theta\n    esp\n    sens\n    Npos [label = <N<SUB>+<\/SUB>>]\n  node [shape=plaintext]\n    Nobs [label = <N<SUB>obs<\/SUB>>]\n   # Nneg [label = <N<SUB>-<\/SUB>>]\n  edge [minlen = 3]\n    theta -> Npos\n    #p -> Nneg\n    N -> Npos\n    Npos -> Nobs\n    #N -> Nneg\n    esp -> Nobs\n    sens -> Nobs\n    #esp -> Nneg\n    #sens -> Nneg\n    esp -> Ref\n    sens -> Ref\n{ rank = same; theta; N }\n#{ rank = same; Npos; Nneg}\n{ rank = max; sens; esp}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-6ddea1ed0530caa3333b" style="width:100%;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-6ddea1ed0530caa3333b">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    theta\n    esp\n    sens\n    Npos [label = <N<SUB>+<\/SUB>>]\n  node [shape=plaintext]\n    Nobs [label = <N<SUB>obs<\/SUB>>]\n   # Nneg [label = <N<SUB>-<\/SUB>>]\n  edge [minlen = 3]\n    theta -> Npos\n    #p -> Nneg\n    N -> Npos\n    Npos -> Nobs\n    #N -> Nneg\n    esp -> Nobs\n    sens -> Nobs\n    #esp -> Nneg\n    #sens -> Nneg\n    esp -> Ref\n    sens -> Ref\n{ rank = same; theta; N }\n#{ rank = same; Npos; Nneg}\n{ rank = max; sens; esp}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Por los argumentos de arriba, las distribuciones de esp y sens son beta y podemos incorporarlas en la simulación de la posterior. Nuestra nueva función para simular el proceso generativo es:</p>
@@ -503,7 +513,7 @@ Método de aproximación de rejilla
 }
 
 parameters {
-  real&lt;lower=0, upper=1&gt; p; //seroprevalencia
+  real&lt;lower=0, upper=1&gt; theta; //seroprevalencia
   real&lt;lower=0, upper=1&gt; sens; //sensibilidad
   real&lt;lower=0, upper=1&gt; esp; //especificidad
 }
@@ -511,7 +521,7 @@ parameters {
 transformed parameters {
   real&lt;lower=0, upper=1&gt; prob_pos;
 
-  prob_pos = p * sens + (1 - p) * (1 - esp);
+  prob_pos = theta * sens + (1 - theta) * (1 - esp);
 
 }
 model {
@@ -521,7 +531,7 @@ model {
   kit_pos ~ binomial(n_kit_pos, sens);
   kit_neg ~ binomial(n_kit_neg, esp);
   // iniciales para cantidades no medidas
-  p ~ beta(1.0, 10.0);
+  theta ~ beta(1.0, 10.0);
   sens ~ beta(2.0, 1.0);
   esp ~ beta(2.0, 1.0);
 }</code></pre>
@@ -562,8 +572,8 @@ All 4 chains finished successfully.
 Mean chain execution time: 0.0 seconds.
 Total execution time: 0.6 seconds.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> ajuste<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"p"</span>, <span class="st">"sens"</span>, <span class="st">"esp"</span>), <span class="at">format =</span> <span class="st">"df"</span>)</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>resumen <span class="ot">&lt;-</span> ajuste<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"p"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> ajuste<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"theta"</span>, <span class="st">"sens"</span>, <span class="st">"esp"</span>), <span class="at">format =</span> <span class="st">"df"</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>resumen <span class="ot">&lt;-</span> ajuste<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"theta"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>resumen <span class="sc">|&gt;</span> <span class="fu">select</span>(variable, mean, q5, q95)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -571,12 +581,12 @@ Total execution time: 0.6 seconds.</code></pre>
 <pre><code># A tibble: 1 × 4
   variable   mean      q5    q95
   &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;
-1 p        0.0104 0.00243 0.0174</code></pre>
+1 theta    0.0104 0.00243 0.0174</code></pre>
 </div>
 </div>
 <p>Y podemos graficar la posterior de la seroprevalencia:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sims, <span class="fu">aes</span>(<span class="at">x =</span> p)) <span class="sc">+</span> </span>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sims, <span class="fu">aes</span>(<span class="at">x =</span> theta)) <span class="sc">+</span> </span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
@@ -588,7 +598,7 @@ Total execution time: 0.6 seconds.</code></pre>
 <p>Y vemos que los datos son consistentes con el dato reportado por los autores (alrededor de 1.2%), pero que no podemos excluir valores de prevalencia muy bajos (por abajo de 0.3% por ejemplo). Por otro lado, también son consistentes valores muy altos de seroprevalencia, de manera que este estudio resultó ser poco informativo de la IFR del COVID.</p>
 <p>Podemos hacer diagnósticos adicionales acerca de la razón de esta variabilidad alta, si graficamos la relación entre especificidad de la prueba y estimación de prevalencia:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sims, <span class="fu">aes</span>(<span class="at">x =</span> esp, <span class="at">y =</span> p)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sims, <span class="fu">aes</span>(<span class="at">x =</span> esp, <span class="at">y =</span> theta)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Especificidad del kit"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Prevalencia"</span>) <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'</code></pre>
@@ -599,7 +609,7 @@ Total execution time: 0.6 seconds.</code></pre>
 </div>
 <p>La asociación entre estas dos cantidades es interesante porque conceptualmente (y desde punto de vista del modelo), no hay relación entre estas dos variables: su asociación aparece porque son causas que compiten para explicar una observación.</p>
 <p>Nótese que dada la prevalencia baja, la especificidad del kit es un factor importante para explicar la prevalencia observada, pero si no pensamos con cuidado podríamos concluir que los falsos positivos no deberían ser problema por que la especificidad para ser muy buena.</p>
-<p>Y notamos que aún con una muestra relativamente grande, el rango de <span class="math inline">\(p\)</span> es considerable: va desde valores cercanos a 0 hasta valores alrededor de 0.025-0.03.</p>
+<p>Y notamos que aún con una muestra relativamente grande, el rango de <span class="math inline">\(\theta\)</span> es considerable: va desde valores cercanos a 0 hasta valores alrededor de 0.025-0.03.</p>
 
 
 </section>
