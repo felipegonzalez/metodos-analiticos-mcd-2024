@@ -701,7 +701,7 @@ ggplot(datos_graf, aes(x=theta, y = densidad, group = n)) +
 
 ---
 
-En este punto, podríamos pasar al siguiente paso, que es 
+En este punto, podríamos ir al siguiente paso, que es 
 escribir una función para calcular la posterior. En realidad ya
 sabemos su función de densidad, pero cualquier resumen que hagamos de esta
 distribución requerirá de integrales (¿por qué? piensa en cómo calcular la probabilidad
@@ -784,13 +784,23 @@ cuando $M\to \infty$. De este modo, podemos aproximar con la precisión que
 requiramos la integral $I$.
 :::
 
-**Nota importante**: 
-Notamos, sin embargo, que sin más información del proceso de simulación,
+**Nota 1**: Sin más información del proceso de simulación,
 no es posible *demostrar* que una aproximación es "suficientemente" buena, no
 importa que tan grande sea $M$. Más
 adelante veremos una batería de diagnósticos para al menos excluir los casos comunes
 en los que la aproximación es mala.
 
+**Nota 2**: En nuestro caso, las integrales de interés usualmente son de
+la forma
+$$I = \int f(\theta)p(\theta|D) d\theta,$$
+donde $D$ es la información de la muestra, $\theta$ es un vector de parámetros
+del modelo, y $f(\theta)$ es una función de $\theta$ que nos interesa. Por ejemplo,
+para la media posterior de $\theta_i$, usaríamos $f(\theta) = \theta_i$. Podemos
+aproximar cualquier integral si tenemos simulaciones de la posterior:
+
+$$\theta_i \sim p(\theta|D) \implies \frac{1}{M} \sum_{i=1}^{M} f(\theta_i) \to I.$$
+
+---
 
 Finalmente, checamos todo nuestra construcción de estimación como hicimos
 arriba, la diferencia es que ahora usamos simulaciones para entender el comportamiento

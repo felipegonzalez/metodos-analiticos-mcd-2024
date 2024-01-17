@@ -8,7 +8,7 @@ data {
 }
 
 parameters {
-  real<lower=0, upper=1> p; //seroprevalencia
+  real<lower=0, upper=1> theta; //seroprevalencia
   real<lower=0, upper=1> sens; //sensibilidad
   real<lower=0, upper=1> esp; //especificidad
 }
@@ -16,7 +16,7 @@ parameters {
 transformed parameters {
   real<lower=0, upper=1> prob_pos;
 
-  prob_pos = p * sens + (1 - p) * (1 - esp);
+  prob_pos = theta * sens + (1 - theta) * (1 - esp);
 
 }
 model {
@@ -26,7 +26,7 @@ model {
   kit_pos ~ binomial(n_kit_pos, sens);
   kit_neg ~ binomial(n_kit_neg, esp);
   // iniciales para cantidades no medidas
-  p ~ beta(1.0, 10.0);
+  theta ~ beta(1.0, 10.0);
   sens ~ beta(2.0, 1.0);
   esp ~ beta(2.0, 1.0);
 }
