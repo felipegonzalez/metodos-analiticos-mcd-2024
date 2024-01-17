@@ -216,7 +216,7 @@ Ahora usamos histogramas por ejemplo para mostrar cómo luce la posterior,
 y comparamos con los valores de la simulación:
 
 ```{r}
-#| label: fig-apriori-falla
+#| label: fig-apriori-check
 #| fig-cap: "Verificación a priori"
 ggplot(simulacion_rep_error, aes(x = theta)) +
   geom_histogram(bins = 50) +
