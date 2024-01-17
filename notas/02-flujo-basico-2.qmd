@@ -405,7 +405,7 @@ Podemos hacer diagnósticos adicionales acerca de la razón de esta variabilidad
 si graficamos la relación entre especificidad de la prueba y estimación de prevalencia:
 
 ```{r, fig.width = 5, fig.height=4}
-ggplot(sims, aes(x = esp, y = p)) + geom_point() +
+ggplot(sims, aes(x = esp, y = theta)) + geom_point() +
   xlab("Especificidad del kit") + ylab("Prevalencia") + geom_smooth()
 ```
 
