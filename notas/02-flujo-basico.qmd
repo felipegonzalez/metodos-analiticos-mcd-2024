@@ -896,7 +896,20 @@ sims_post |>
   summarise(prob = mean(theta < 0.2))
 ```
 
+Muchas veces se presentan **intervalos de probabilidad posterior**, por ejemplo, 
+podríamos reportar que con 90% de probabilidad la prevalencia está en el siguiente
+intervalo:
 
+```{r}
+sims_post |> 
+  summarise(inf = quantile(theta, 0.05),
+            sup = quantile(theta, 0.95)) |> 
+  mutate(inf = round(inf, 2),
+         sup = round(sup, 2))
+```
+**Observación**: No hay un intervalo mágico que debe reportarse 
+(por ejemplo 95% de probabilida es una costumbre o superstición). Hay varias maneras 
+de construir intervalos de probabilidad. Dejaremos esta discusión para más adelante.
 
 
 
