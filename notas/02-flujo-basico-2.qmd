@@ -13,7 +13,7 @@ En esta parte veremos cómo continuaríamos refinando el modelo tomando
 en cuenta otros aspectos importantes del problema de estimar la seropositividad
 de una población.
 
-El primer aspecto importante es persistir **seguiendo el flujo de trabajo**. En
+El primer aspecto importante es persistir **siguiendo el flujo de trabajo**. En
 segundo lugar, este ejemplo ilustra que la construcción de modelos preferiblemente
 se hace de manera iterativa: una vez que probamos nuestro código, entendemos cómo
 funciona nuesto modelo, podemos continuar agregando componentes para hacerlo
@@ -48,7 +48,7 @@ digraph {
   node [shape=plaintext]
     N
     Npos [label = <N<SUB>+</SUB>>]
-    Nobs
+    Nobs [label = <N<SUB>obs</SUB>>]
     #Nneg [label = <N<SUB>-</SUB>>]
     #sens
     #esp
@@ -126,7 +126,8 @@ un positivo ahora es:
 $\theta_{obs} = P(Positivo | \theta, sens, esp) = \theta \cdot sens + (1-\theta) \cdot (1-esp)$
 
 Si llamamos a esta cantidad $\theta_{obs}$, de forma que dada una muestra
-de 0's y 1's, tenemos
+de 0's y 1's, tenemos que la verosimilitud de la muestra dada cada
+conjetura $\theta$, y con $sens$ y $esp$ fijas, es:
 
 $$p(D|\theta, sens, esp) = \theta_{obs}^{N_{+}}(1-\theta_{obs})^{N_{-}}$$
 Suponiendo que la distribución apriori de $\theta$ es uniforme, tenemos entonces
@@ -215,6 +216,8 @@ Ahora usamos histogramas por ejemplo para mostrar cómo luce la posterior,
 y comparamos con los valores de la simulación:
 
 ```{r}
+#| label: fig-apriori-falla
+#| fig-cap: "Verificación a priori"
 ggplot(simulacion_rep_error, aes(x = theta)) +
   geom_histogram(bins = 50) +
   labs(x = "theta", y = "Prob posterior") +
@@ -245,6 +248,8 @@ Ahora usamos histogramas por ejemplo para mostrar cómo luce la posterior,
 y comparamos con los valores de la simulación:
 
 ```{r}
+#| label: fig-apriori-falla
+#| fig-cap: "Verificación a priori fallida (modelo incorrecto)"
 ggplot(simulacion_rep, aes(x = theta)) +
   geom_histogram(bins = 50) +
   labs(x = "theta", y = "Prob posterior") +
@@ -378,8 +383,8 @@ datos_lista <- list(N = 3300, n = 50,
  kit_pos = 103, n_kit_pos = 122,
  kit_neg = 399, n_kit_neg = 401)
 ajuste <- mod_sc$sample(data = datos_lista, refresh = 1000)
-sims <- ajuste$draws(c("p", "sens", "esp"), format = "df")
-resumen <- ajuste$summary(c("p"))
+sims <- ajuste$draws(c("theta", "sens", "esp"), format = "df")
+resumen <- ajuste$summary(c("theta"))
 ```
 
 ```{r}
@@ -389,7 +394,7 @@ resumen |> select(variable, mean, q5, q95)
 Y podemos graficar la posterior de la seroprevalencia:
 
 ```{r, fig.width = 5, fig.height=3.5}
-ggplot(sims, aes(x = p)) + 
+ggplot(sims, aes(x = theta)) + 
   geom_histogram()
 ```
 
@@ -413,18 +418,6 @@ para explicar la prevalencia observada, pero si no pensamos con cuidado podríam
 concluir que los falsos positivos no deberían ser problema por que la especificidad
 para ser muy buena.
 
-
-
-
-
-
-
-
-
-
-
-
-
 Y notamos que aún con una muestra relativamente grande, 
-el rango de $p$ es considerable: va desde valores cercanos a 0 hasta valores
+el rango de $\theta$ es considerable: va desde valores cercanos a 0 hasta valores
 alrededor de 0.025-0.03.
