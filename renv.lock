@@ -1843,14 +1843,19 @@
     "withr": {
       "Package": "withr",
       "Version": "3.0.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "withr",
+      "RemoteUsername": "r-lib",
+      "RemoteRef": "v3.0.0",
+      "RemoteSha": "f40ad8fd4ac9123ab247276ec68f804436069455",
       "Requirements": [
         "R",
         "grDevices",
         "graphics"
       ],
-      "Hash": "d31b6c62c10dcf11ec530ca6b0dd5d35"
+      "Hash": "08651a71591521f00913c91f03ae062f"
     },
     "xfun": {
       "Package": "xfun",
