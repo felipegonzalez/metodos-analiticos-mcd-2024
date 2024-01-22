@@ -203,10 +203,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 <p>En esta parte veremos cómo continuaríamos refinando el modelo tomando en cuenta otros aspectos importantes del problema de estimar la seropositividad de una población.</p>
-<p>El primer aspecto importante es persistir <strong>siguiendo el flujo de trabajo</strong>. En segundo lugar, este ejemplo ilustra que la construcción de modelos preferiblemente se hace de manera iterativa: una vez que probamos nuestro código, entendemos cómo funciona nuesto modelo, podemos continuar agregando componentes para hacerlo más útil.</p>
+<p>El primer aspecto importante es persistir el <strong>seguir el flujo de trabajo</strong>. En segundo lugar, este ejemplo ilustra que la construcción de modelos preferiblemente se hace de manera iterativa: una vez que probamos nuestro código, entendemos cómo funciona nuesto modelo, podemos continuar agregando componentes para hacerlo más útil.</p>
 <section id="prevalencia-con-error-conocido" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="prevalencia-con-error-conocido"><span class="header-section-number">3.1</span> Prevalencia con error conocido</h2>
-<p>Nuestro ejemplo de la sección es poco realista. Usualmente, las pruebas que son utilizadas para medir la prevalencia no son perfectas. Bajo condiciones muy controladas, el perfil de desempeño de las pruebas se miden, y los resultados son del siguiente tipo:</p>
+<p>Nuestro ejemplo de la sección anterior es poco realista pues usualmente las pruebas que son utilizadas para medir la prevalencia no son perfectas. Bajo condiciones muy controladas, el perfil de desempeño de las pruebas se mide, obteniendo resultados son del siguiente tipo:</p>
 <ul>
 <li>En pruebas de <em>gold standard</em>, el kit identificó correctamente como positivos a 103 de 122 personas infectadas, e identificó correctamente como negativos a 399 de 401 personas no infectadas.</li>
 <li>Sin considerar la incertidumbre, esto implica que la prueba tiene una sensibilidad de 84% y una especificidad de 99.5%.</li>
@@ -247,8 +247,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)<span class="co">#, width = 200, height = 50)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-5ec405e328fa6dc0fffb" style="width:100%;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-5ec405e328fa6dc0fffb">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    p\n    Npos\n  node [shape=plaintext]\n    N\n    Npos [label = <N<SUB>+<\/SUB>>]\n    Nobs [label = <N<SUB>obs<\/SUB>>]\n    #Nneg [label = <N<SUB>-<\/SUB>>]\n    #sens\n    #esp\n  edge [minlen = 3]\n    p -> Npos\n    #p -> Nneg\n    N -> Npos\n    Npos -> Nobs\n    #N -> Nneg\n    esp -> Nobs\n    sens -> Nobs\n    #esp -> Nneg\n    #sens -> Nneg\n{ rank = same; p; N }\n{ rank = same; Npos}\n{ rank = max; sens; esp}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-8bbd58c73831d5c2fbd7" style="width:100%;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-8bbd58c73831d5c2fbd7">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    p\n    Npos\n  node [shape=plaintext]\n    N\n    Npos [label = <N<SUB>+<\/SUB>>]\n    Nobs [label = <N<SUB>obs<\/SUB>>]\n    #Nneg [label = <N<SUB>-<\/SUB>>]\n    #sens\n    #esp\n  edge [minlen = 3]\n    p -> Npos\n    #p -> Nneg\n    N -> Npos\n    Npos -> Nobs\n    #N -> Nneg\n    esp -> Nobs\n    sens -> Nobs\n    #esp -> Nneg\n    #sens -> Nneg\n{ rank = same; p; N }\n{ rank = same; Npos}\n{ rank = max; sens; esp}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Donde vemos ahora que el estado real de cada persona de la prueba es desconocido, aunque el resultado de la prueba depende de ese estado, y la cantidad de positivos que observamos es ahora <span class="math inline">\(N_{obs}\)</span>, que depende también de la sensibilidad y especificidad de la prueba.</p>
@@ -284,7 +284,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="paso-2-cantidad-a-estimar" class="level3" data-number="3.1.2">
 <h3 data-number="3.1.2" class="anchored" data-anchor-id="paso-2-cantidad-a-estimar"><span class="header-section-number">3.1.2</span> Paso 2: cantidad a estimar</h3>
-<p>En este punto hay que tener cuidado, porque <em>no</em> queremos estimar la proporción de positivos potenciales en la población (pues la prueba es imperfedta), sino la proporción de verdaderos positivos en la población. Esta cantidad sigue siendo representada por <span class="math inline">\(\theta\)</span> en nuestro modelo generativo.</p>
+<p>En este punto hay que tener cuidado, porque <em>no</em> queremos estimar la proporción de positivos potenciales en la población (pues la prueba es imperfecta), sino la proporción de verdaderos positivos en la población. Esta cantidad sigue siendo representada por <span class="math inline">\(\theta\)</span> en nuestro modelo generativo.</p>
 </section>
 <section id="paso-3-modelo-estadístico" class="level3" data-number="3.1.3">
 <h3 data-number="3.1.3" class="anchored" data-anchor-id="paso-3-modelo-estadístico"><span class="header-section-number">3.1.3</span> Paso 3: modelo estadístico</h3>
@@ -292,7 +292,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><span class="math inline">\(\theta_{obs} = P(Positivo | \theta, sens, esp) = \theta \cdot sens + (1-\theta) \cdot (1-esp)\)</span></p>
 <p>Si llamamos a esta cantidad <span class="math inline">\(\theta_{obs}\)</span>, de forma que dada una muestra de 0’s y 1’s, tenemos que la verosimilitud de la muestra dada cada conjetura <span class="math inline">\(\theta\)</span>, y con <span class="math inline">\(sens\)</span> y <span class="math inline">\(esp\)</span> fijas, es:</p>
 <p><span class="math display">\[p(D|\theta, sens, esp) = \theta_{obs}^{N_{+}}(1-\theta_{obs})^{N_{-}}\]</span> Suponiendo que la distribución apriori de <span class="math inline">\(\theta\)</span> es uniforme, tenemos entonces que la distribución posterior cumple:</p>
-<p><span class="math display">\[p(\theta|D, sens, esp) \propto \theta_{obs}^{N_{+}}(1-\theta_{obs})^{N_{-}}\]</span> donde <span class="math inline">\(\theta_obs\)</span> está dada por la fórmula de arriba. Sustituyendo:</p>
+<p><span class="math display">\[p(\theta|D, sens, esp) \propto \theta_{obs}^{N_{+}}(1-\theta_{obs})^{N_{-}}\]</span> donde <span class="math inline">\(\theta_{obs}\)</span> está dada por la fórmula de arriba. Sustituyendo:</p>
 <p><span class="math display">\[p(\theta|D, sens, esp) \propto (\theta \cdot sens + (1-\theta) \cdot (1-esp))^{N_{+}}(\theta(1-sens) + (1-\theta)esp)^{N_{-}}\]</span></p>
 <p>Esta posterior tiene la estructura de una distribución beta, pero es un poco más complicada. En este punto, utilizaremos una técnica que funciona para problemas chicos (de unos cuantos parámetros), y que consiste en hacer una aproximación discreta de la distribución posterior:</p>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -306,9 +306,9 @@ Método de aproximación de rejilla
 </div>
 <div class="callout-body-container callout-body">
 <ol type="1">
-<li>Dividimos el intervalo <span class="math inline">\([0,1]\)</span> en <span class="math inline">\(m\)</span> partes iguales, y calculamos el valor de la expresión proporcional a la posterior en cada uno de estos</li>
-<li>Normalizamos estos valores para que sumen 1, y obtenemos una distribución discreta que aproxima la posterior</li>
-<li>Muestreamos de esta distribución discreta para obtener una muestra de la posterior</li>
+<li>Dividimos el intervalo <span class="math inline">\([0,1]\)</span> en <span class="math inline">\(m\)</span> partes iguales, y calculamos el valor de la expresión proporcional a la posterior en cada uno de estos intervalos (por ejemplo en los puntos medios).</li>
+<li>Normalizamos estos valores para que sumen 1, y obtenemos una distribución discreta que aproxima la posterior.</li>
+<li>Muestreamos de esta distribución discreta para obtener una muestra de la posterior.</li>
 </ol>
 <p>Este método sólo es factible en modelos simples cuando hay solamente unos cuantos parámetros por estimar, pues su complejidad crece exponencialmente con el número de parámetros. Rara vez se usa en la práctica por esta razón.</p>
 </div>
@@ -399,7 +399,6 @@ Método de aproximación de rejilla
 <span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">theta_sim =</span> theta_sim)</span>
 <span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    })</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Ahora usamos histogramas por ejemplo para mostrar cómo luce la posterior, y comparamos con los valores de la simulación:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(simulacion_rep, <span class="fu">aes</span>(<span class="at">x =</span> theta)) <span class="sc">+</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">50</span>) <span class="sc">+</span></span>
@@ -475,11 +474,11 @@ Método de aproximación de rejilla
 <span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)<span class="co">#, width = 200, height = 50)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-479ad99666a35699e604" style="width:100%;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-479ad99666a35699e604">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    theta\n    esp\n    sens\n    Npos [label = <N<SUB>+<\/SUB>>]\n  node [shape=plaintext]\n    Nobs [label = <N<SUB>obs<\/SUB>>]\n   # Nneg [label = <N<SUB>-<\/SUB>>]\n  edge [minlen = 3]\n    theta -> Npos\n    #p -> Nneg\n    N -> Npos\n    Npos -> Nobs\n    #N -> Nneg\n    esp -> Nobs\n    sens -> Nobs\n    #esp -> Nneg\n    #sens -> Nneg\n    esp -> Ref\n    sens -> Ref\n{ rank = same; theta; N }\n#{ rank = same; Npos; Nneg}\n{ rank = max; sens; esp}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-b13fe98cf516efea2124" style="width:100%;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-b13fe98cf516efea2124">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    theta\n    esp\n    sens\n    Npos [label = <N<SUB>+<\/SUB>>]\n  node [shape=plaintext]\n    Nobs [label = <N<SUB>obs<\/SUB>>]\n   # Nneg [label = <N<SUB>-<\/SUB>>]\n  edge [minlen = 3]\n    theta -> Npos\n    #p -> Nneg\n    N -> Npos\n    Npos -> Nobs\n    #N -> Nneg\n    esp -> Nobs\n    sens -> Nobs\n    #esp -> Nneg\n    #sens -> Nneg\n    esp -> Ref\n    sens -> Ref\n{ rank = same; theta; N }\n#{ rank = same; Npos; Nneg}\n{ rank = max; sens; esp}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
-<p>Por los argumentos de arriba, las distribuciones de esp y sens son beta y podemos incorporarlas en la simulación de la posterior. Nuestra nueva función para simular el proceso generativo es:</p>
+<p>Usando argumentos como los del modelo original, las distribuciones de esp y sens son beta y podemos incorporarlas en la simulación de la posterior. Nuestra nueva función para simular el proceso generativo es:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>sim_pos_neg <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">p =</span> <span class="fl">0.01</span>, <span class="at">N =</span> <span class="dv">20</span>, <span class="at">pos_gold =</span> <span class="fu">c</span>(<span class="dv">103</span>,<span class="dv">122</span>), <span class="at">neg_gold =</span> <span class="fu">c</span>(<span class="dv">399</span>,<span class="dv">401</span>)) {</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Simular especificidad y sensibilidad</span></span>
