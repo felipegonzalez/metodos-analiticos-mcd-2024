@@ -13,7 +13,7 @@ En esta parte veremos cómo continuaríamos refinando el modelo tomando
 en cuenta otros aspectos importantes del problema de estimar la seropositividad
 de una población.
 
-El primer aspecto importante es persistir **siguiendo el flujo de trabajo**. En
+El primer aspecto importante es persistir el **seguir el flujo de trabajo**. En
 segundo lugar, este ejemplo ilustra que la construcción de modelos preferiblemente
 se hace de manera iterativa: una vez que probamos nuestro código, entendemos cómo
 funciona nuesto modelo, podemos continuar agregando componentes para hacerlo
@@ -22,9 +22,11 @@ más útil.
 ## Prevalencia con error conocido
 
 
-Nuestro ejemplo de la sección es poco realista. Usualmente, las pruebas que
+Nuestro ejemplo de la sección anterior es poco realista
+pues usualmente las pruebas que
 son utilizadas para medir la prevalencia no son perfectas. Bajo condiciones
-muy controladas, el perfil de desempeño de las pruebas se miden, y los resultados
+muy controladas, el perfil de desempeño de las pruebas se mide, 
+obteniendo resultados
 son del siguiente tipo:
 
 - En pruebas de *gold standard*, el kit identificó correctamente como positivos a 103 de 122 personas infectadas, e identificó correctamente como negativos a 399 de 401 personas no infectadas. 
@@ -109,7 +111,7 @@ sim_pos_neg(theta = 0.3, N = 1e7, sens = 1, esp = 1) |> pull(Pos) |> mean() |>
 ### Paso 2: cantidad a estimar
 
 En este punto hay que tener cuidado, porque *no* queremos estimar la proporción
-de positivos potenciales en la población (pues la prueba es imperfedta), sino
+de positivos potenciales en la población (pues la prueba es imperfecta), sino
 la proporción de verdaderos 
 positivos en la población. Esta cantidad sigue siendo representada
 por $\theta$ en nuestro modelo generativo.
@@ -134,7 +136,7 @@ Suponiendo que la distribución apriori de $\theta$ es uniforme, tenemos entonce
 que la distribución posterior cumple:
 
 $$p(\theta|D, sens, esp) \propto \theta_{obs}^{N_{+}}(1-\theta_{obs})^{N_{-}}$$
-donde $\theta_obs$ está dada por la fórmula de arriba. Sustituyendo:
+donde $\theta_{obs}$ está dada por la fórmula de arriba. Sustituyendo:
 
 $$p(\theta|D, sens, esp) \propto (\theta \cdot sens + (1-\theta) \cdot (1-esp))^{N_{+}}(\theta(1-sens) + (1-\theta)esp)^{N_{-}}$$
 
@@ -149,9 +151,10 @@ hacer una aproximación discreta de la distribución posterior:
 
 1. Dividimos el intervalo $[0,1]$ en $m$ partes iguales, y calculamos
 el valor de la expresión proporcional a la posterior en cada uno de estos
+intervalos (por ejemplo en los puntos medios).
 2. Normalizamos estos valores para que sumen 1, y obtenemos una distribución discreta
-que aproxima la posterior
-3. Muestreamos de esta distribución discreta para obtener una muestra de la posterior
+que aproxima la posterior.
+3. Muestreamos de esta distribución discreta para obtener una muestra de la posterior.
 
 Este método sólo es factible en modelos simples 
 cuando hay solamente unos cuantos parámetros por estimar,
@@ -244,8 +247,6 @@ simulacion_rep <- map_df(1:20,
     })
 ```
 
-Ahora usamos histogramas por ejemplo para mostrar cómo luce la posterior,
-y comparamos con los valores de la simulación:
 
 ```{r}
 #| label: fig-apriori-falla
@@ -335,7 +336,8 @@ digraph {
 ")#, width = 200, height = 50)
 ```
 
-Por los argumentos de arriba, las distribuciones de esp y sens son beta
+Usando argumentos como los del modelo original, 
+las distribuciones de esp y sens son beta
 y podemos incorporarlas en la simulación de la posterior. Nuestra nueva
 función para simular el proceso generativo es:
 
