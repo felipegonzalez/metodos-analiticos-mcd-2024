@@ -9,17 +9,536 @@ library(rethinking)
 ggplot2::theme_set(ggplot2::theme_light())
 ```
 
+En esta sección veremos las primeras componentes que podemos
+utilizar para hacer modelación, en particular regresión lineal
+y logística. Lo haremos en el contexto de nuestro flujo de trabajo
+que incluye establecer claramente un modelo causal.
+
 ## Predicciones sin explicación
 
-Buenas predicciones, pero no sabemos por qué ni tenemos explicaciones
-de cómo funciona el proceso que genera los datos. 
+Es posible obtener buenas predicciones con modelos estadísticos
+genéricos sin tener una explicación de cómo funciona el fenómeno que estamos modelando. Estos modelos, aunque pueden resultar en
+predicciones muy buenas y ser útiles, pueden ser riesgosos si se
+interpretan fuera de un contexto teórico con supuestos claros.
 
-El ejemplo de @rethinking: epicilos planetarios (el modelo geocéntrico).
-Modelos como regresión lineal, regresión logística, métodos basados en árboles,
-redes neuronales típicamente caen en esta categoría de modelos genéricos
+El primer ejemplo es de nuestra referencia de @rethinking: los [epicilos planetarios del modelo geocéntrico](https://es.wikipedia.org/wiki/Epiciclo) para explicar el 
+[movimiento retrógrado](https://es.wikipedia.org/wiki/Retrogradaci%C3%B3n_de_los_planetas#:~:text=La%20retrogradaci%C3%B3n%20de%20los%20planetas,un%20punto%20de%20vista%20particular) de planetas en el cielo. Este 
+modelo fue exitoso y muy preciso para calcular las posiciones futuras de los planetas en el cielo, pero sus fundamentos eran incorrectos: 
+no es posible interpretar este modelo por sí solo para entender cómo
+funciona el sistema solar. 
 
-Nota: sin embargo, en modelos de regresión, árboles, redes nueronales es posible
-que comprensión del fenómeno nos lleva a mejores modelos predictivos.
+Modelos genéricos como regresión lineal o logística, métodos basados en árboles, redes neuronales típicamente caen en esta categoría de modelos de tipo "geocéntrico": aunque pueden ser efectivos para predecir, debemos
+ser cuidadosos en su interpretación en términos de causas, efectos,
+y mecanismos del fenómeno que nos interesa.
+
+Podemos aplicar con éxito estas componentes de modelación si entendemos
+su papel: como hemos explicado, estos modelos genéricos no contienen
+o nos dan causas o mecanismos por sí solos.
+
+## Ejemplo: regresión lineal
+
+En este ejemplo, introducimos notación para representar modelos,
+usaremos posteriores con varios parámetros, y veremos cómo construir}
+y aplicar modelos lineales, todo desde el punto de vista de
+nuestro flujo de trabajo.
+
+En este ejemplo de @rethinking 
+queremos describir la relación entre peso y estatura
+de adultos de una población relativamente homogénea. 
+Nuestro modelo causal es como sigue: 
+
+- En primer lugar, la estatura influye causalmente en 
+el peso de las personas: la estatura ($H$) de las personas influye en
+su distribución de peso ($W$). El peso, sin embargo, está influenciado también
+por otras variables no observadas:
+
+```{r}
+#| out-width: 100%
+#| code-fold: true
+grViz("
+digraph {
+  graph [ranksep = 0.3, rankdir = LR]
+  node [shape=circle]
+    U
+  node [shape=plaintext]
+    H
+    W
+  edge [minlen = 3]
+    H -> W
+    U -> W
+}
+")#, width = 200, height = 50)
+```
+Nótese que no consideramos $W->H$, porque podemos pensar en varias
+intervenciones que podrían cambiar el peso por no cambian la estatura.
+Por otro lado, es difícil pensar en alguna intervención que cambie la estatura pero no cambie el peso de una persona. Adicionalmente,
+hay otros factores desconocidos no observados $U$ que afectan
+el peso de cada persona adicionalmente a su estatura.
+
+Ahora pasamos la modelo generativo. 
+Supondremos que el peso de una persona adulta depende de su estatura
+de manera lineal, de forma que podemos escribir:
+
+$$W = \alpha + \beta H + U$$
+Como $U$ no es observada, tenemos que definir cómo generar esta variable. Una distribución natural para esta variable es una distribución normal con media 0 y desviación estándar $\sigma$ no conocida. Esto es porque
+en regresión lineal, tenemos que:
+
+$$E[W|H] = \alpha + \beta H$$
+de modo que el valor esperado del peso de una persona, dada su estatura,
+es una función lineal de la estatura. De esta forma, $U$ representa la
+variabilidad en peso alrededor de este valor esperado. Usamos
+la distribución normal considerando que es una agregación de varias
+perturbaciones pequeñas, no relacionadas con estatura, que afectan el peso de una persona (aunque este supuesto también tiene que validarse). 
+
+Adicionalmente, tenemos que hacer supuestos acerca del proceso
+generador para la estatura $H$. Por el momento, y para ejemplificar, supondremos que
+la estatura es una variable normal con media en 160 cm y desviación estándar de 10cm.
+
+Empezamos a escribir nuestro modelo generativo:
+
+```{r}
+sim_peso <- function(n= 10, alpha, beta, sigma){
+  # simular estatura
+  H <- rnorm(n, 160, 10)
+  # simular perturbación de peso
+  U <- rnorm(n, 0, sigma)
+  # regresión lineal de peso dado estatura
+  W <- alpha + beta * H + U
+  tibble(H, W)
+}
+```
+
+Podemos checar nuestro modelo generativo con simulaciones
+predictivas a priori: generamos una muestra y checamos con el
+conocimiento del área:
+
+```{r}
+set.seed(9)
+sim_peso(100, alpha = 0, beta = 0.5, sigma = 5) |> 
+  ggplot(aes(x = H, y = W)) +
+  geom_point() +
+  labs(x = "Estatura (cm)", y = "Peso (kg)")
+```
+
+Podemos escribir este generativo
+siguiendo el código de la función de arriba. Si cada
+persona la denotamos por un índice $i$ entonces:
+
+$$
+\begin{align}
+W_i &= \alpha + \beta H_i + U_i \\
+U_i &\sim Normal(0,\sigma) \\
+H_i &\sim Normal(160, 10)
+\end{align}
+$$
+De lado izquierdo están las variables, del lado derecho las definiciones,
+igualdad significa una relación determinística y $\sim$ significa
+"se distribuye como".
+
+Ahora podemos plantear nuestra pregunta inicial en términos
+de este modelo: nos interesa describir cómo cambia el peso esperado
+de una persona dependiendo de su estatura, es decir, describir la
+recta
+
+$$E(W|H) = \alpha + \beta H$$
+Con esto hemos terminado los primeros paso de nuestro flujo
+(modelo causal, modelo generativo,  cantidad a estimar). 
+Nuestro método de estimación es bayesiano, así que podemos
+ser más específicos y decir que nos interesa la distribución
+posterior de $\alpha,\beta$ dado datos observados. Otra manera
+de decir esto es que nos interesa describir la posterior de la
+recta $\alpha + \beta H$. En este caso, tenemos tres parámetros
+desconocidos $\alpha,\beta,\sigma$, y tenemos por la regla de bayes
+que la posterior está dada por:
+
+$$p(\alpha,\beta,\sigma|W_i,H_i)\propto p(W_i|H_i, \alpha,\beta,\sigma)p(\alpha,\beta,\sigma)$$
+
+Ahora tenemos que poner distribuciones a priori para
+los parámetros desconocidos, y tenemos que hacer chequeos a
+priori.
+
+En primer lugar, haremos este trabajo más fácil si 
+parametrizamos la recta de regresión de la siguiente manera, donde
+restamos a la estatura un valor típico de la distribución de estaturas
+(también puede usarse la media los datos, por ejemplo):
+
+$E[W|H] =  \alpha + \beta (H - 160) $
+
+
+Las apriori o iniciales expresaan conocimiento del área (incluyendo
+las unidades que se están utilizando),
+y actúan como restricciones suaves. Recuérdese que tenemos
+ Supondremos que
+peso está en kilogramos y estatura en centímetros.
+
+- Cuando $H=160$ esperamos que $W$ esté alrededor de 50-70 kg, así que podemos centrar $\alpha$ en 60 Las unidades de $\alpha$ son kg. Una inicial
+(verificaremos dentro de un momento esa decisión) puede ser
+$\alpha\sim N(60, 10)$. Recordemos que esto implica que $\alpha$ están
+dentre 60 - 2(10) = 40 y 60 + 10(2) = 80 con probabilidad 0.95, lo cual es 
+considerablemente amplio para una persona de estatura 160cm.
+
+- Si $\alpha$ es está alrededor de 60, 
+la constante de proporcionalidad $\beta$ debe ser positiva, y no muy
+lejana de un valor entre 0 y 2. La razón es que no tiene sentido 
+esperar que un aumento de 10 kilos tenga un aumento esperado de peso
+de 20 kilos, por ejemplo. Podríamos poner una inicial como 
+$\beta\sim N^+(0, 1)$ (normal truncada en 0) por ejemplo.
+
+Finalmente, tenemos que poner una inicial para $\sigma$. Debe ser positiva,
+y representa la variabilidad que hay en el peso que no se debe a la estatura.
+Una inicial razonable es $\sigma\sim N^+(0, 20)$, por ejemplo. 
+
+
+### Chequeo predictivo a priori {-}
+
+Ahora podemos simular de la a priori cuáles son las posibilidades que
+estamos considerando:
+
+```{r}
+sim_peso_mod <- function(n= 10){
+  alpha <- rnorm(1, 60, 10)
+  beta <- rnorm(1, 0, 1) |> abs()
+  sigma <- rnorm(1, 0, 20) |> abs()
+  
+  # simular estaturas y pesos
+  H <- rnorm(n, 160, 10)
+  mu_W = alpha + beta * (H - 160)
+  # simular perturbación de peso
+  U <- rnorm(n, 0, sigma)
+  # regresión lineal de peso dado estatura
+  W <- mu_W + U
+  tibble(alpha, beta, sigma, H, W)
+}
+```
+
+Y hacemos varias replicaciones:
+
+```{r}
+sims_tbl <- map_df(1:20, function(rep) {
+  sim_peso_mod(100) |> mutate(rep = rep)
+})
+```
+
+Nuestros supuestos actuales se ven como sigue:
+
+```{r}
+#| fig-cap="Simulaciones predictivas a priori"
+sims_tbl |> 
+  ggplot(aes(x = H, y = W)) +
+  geom_point() +
+  geom_abline(aes(intercept = alpha - 160 * beta, slope = beta), data = sims_tbl, color = "red") +
+  labs(x = "Estatura (cm)", y = "Peso (kg)") +
+  facet_wrap(~rep)
+```
+- Esto parece ser razonable, aunque algunas replicaciones son algo extremas
+(muy poca variabilidad de peso, una relación muy débil o. muy fuerte entre estatura y peso). Comenzaremos con este modelo y seguiremos explorando
+sus consecuencias.
+
+Nótese que en esta situación, un punto de vista que aparentemente
+es "conservador" en efecto pone peso en resultados que son infactibles
+del todo. Por ejemplo, si pusiéramos $\beta\sim N^+(0,100)$ y
+$\sigma\sim N^+(0, 1000)$, bajo el argumento
+de que no tenemos información acerca de $\beta$ o $\sigma$, obtendríamos:
+
+```{r}
+#| code-fold: true
+#| fig-cap: "Modelo no realista"
+sim_peso_mod_mal <- function(n= 10){
+  alpha <- rnorm(1, 60, 10)
+  beta <- rnorm(1, 0, 100) |> abs()
+  sigma <- rnorm(1, 0, 1000) |> abs()
+  
+  # simular estaturas y pesos
+  H <- rnorm(n, 160, 10)
+  mu_W = alpha + beta * (H - 160)
+  # simular perturbación de peso
+  U <- rnorm(n, 0, sigma)
+  # regresión lineal de peso dado estatura
+  W <- mu_W + U
+  tibble(alpha, beta, sigma, H, W)
+}
+sims_tbl <- map_df(1:20, function(rep) {
+  sim_peso_mod_mal(100) |> mutate(rep = rep)
+})
+sims_tbl |> 
+  ggplot(aes(x = H, y = W)) +
+  geom_point() +
+  geom_abline(aes(intercept = alpha - 160 * beta, slope = beta), data = sims_tbl, color = "red") +
+  labs(x = "Estatura (cm)", y = "Peso (kg)") +
+  facet_wrap(~rep)
+```
+Esta es una prueba inicial fallida. Regresaremos a este ejemplo más adelante. En este ejemplo particular que es muy simple y como veremos no es grave permitir algunos resultados algo extremos. 
+
+## Discusión de iniciales
+
+
+
+### Modelo en Stan {-}
+
+Aunque en este punto es posible todavía hacer una aproximación
+por rejilla (sólo tenemos tres parámetros), escribiremos
+el modelo en Stan y simularemos de la posterior con MCMC (recuerda
+que más tarde explicaremos este proceso).
+
+El modelo en Stan es como sigue:
+
+```{r}
+library(cmdstanr)
+mod_peso <- cmdstan_model("./src/peso-estatura-1.stan")
+print(mod_peso)
+```
+
+Una vez que escribimos nuestro modelo, hacemos nuestra siguiente
+verificación a priori: dados los supuestos del modelo generativo,
+¿nuestro estimador funciona apropiadamente para responder la pregunta
+de interés?
+
+Utilizaremos una muestra de 350 personas simulada de nuestro proceso
+generador de datos. En cada caso, buscamos correr nuestro modelo y checar
+que nuestra estimación de la recta de regresión es consistente con
+los valores que utilizamos para generar los datos. 
+
+```{r}
+set.seed(881)
+sims_tbl <- map_df(1:10, function(rep) {
+  sim_peso_mod(350) |> mutate(rep = rep)
+}) |> nest(datos_sim = c(H, W))
+sims_tbl
+```
+
+```{r}
+#| include: false
+# Ajustar modelos
+sims_post_tbl <- sims_tbl |> 
+  mutate(
+    mod_fit = purrr::map(datos_sim, function(datos_tbl) {
+      mod_peso$sample(
+        data = list(N = nrow(datos_tbl),
+                    h = datos_tbl$H,
+                    w = datos_tbl$W),
+        parallel_chains = 4,
+        init = 0,
+        step_size = 0.1,
+        iter_sampling = 2000,
+        refresh = 0)
+    })) 
+# Extraer simulaciones de posterior
+sims_post_tbl <- sims_post_tbl |>
+  mutate(
+    post_tbl = purrr::map(mod_fit, function(mod_fit) {
+      mod_fit |> 
+        as_draws_df() |> 
+        select(.draw, alpha, beta, sigma) 
+    })
+  ) 
+```
+
+En la siguiente gráfica vemos un comportamiento razonable de nuestro
+proceso de estimación. 
+
+```{r}
+post_tbl <- sims_post_tbl |> 
+  select(rep, post_tbl) |> 
+  unnest(post_tbl)
+ggplot(post_tbl, aes(x = alpha, y = beta)) +
+  geom_point(alpha = 0.2) +
+  labs(x = "alpha", y = "beta") +
+  geom_point(data = sims_post_tbl, color = "red", size = 3) +
+  facet_wrap(~ rep, scales = "free") 
+```
+Esta gráfica también podemos hacerla como sigue, usando rectas:
+
+```{r}
+post_tbl |> 
+  ggplot() +
+  geom_abline(aes(intercept = alpha - beta * 160, slope = beta), alpha = 0.5, colour = "gray") +
+  facet_wrap(~ rep, scales = "free") +
+  scale_x_continuous(limits = c(40, 180)) + 
+  scale_y_continuous(limits = c(0, 200)) +
+  geom_abline(data = sims_post_tbl, aes(intercept = alpha - beta * 160, 
+      slope = beta), color = "red", size = 1.1)
+
+```
+Esta prueba computacional tiene buenos resultados: en general, la posterior
+se concentra alrededor del valor verdadero de cada simulación. Ahora podemos
+proceder a cargar los datos reales y hacer una simulación de la posterior.
+
+### Ajustando el modelo a los datos reales
+
+
+
+
+
+
+
+Cargamos los datos y producimos simulaciones de la posterior. Primero usaremos
+una muestra chica:
+
+```{r}
+set.seed(81)
+datos_tbl <- read_delim("../datos/Howell1.csv", delim = ";") |> 
+  filter(age >= 18) |> slice_sample(n = 20)
+```
+```{r}
+data_list <- list(
+  N = nrow(datos_tbl),
+  h = datos_tbl$height,
+  w = datos_tbl$weight
+)
+# correr modelo en Stan
+mod_peso_fit <- mod_peso$sample(
+  data = data_list,
+  refresh = 0)
+```
+
+La posterior de los parámetros de la recta se ve como siguen:
+
+```{r}
+sims_peso_post_tbl <- mod_peso_fit |> 
+  as_draws_df() |> 
+  select(.draw, alpha, beta, sigma) 
+```
+```{r}
+ggplot(sims_peso_post_tbl)+
+  geom_point(aes(x = alpha, y = beta)) 
+```
+Y un resumen simple está dado por:
+
+```{r}
+mod_peso_fit$summary(c("alpha", "beta", "sigma")) |> 
+  mutate(across(where(is.numeric),  ~ round(.x, 2)))
+```
+
+::: callout-tip
+# Cálculos y resúmenes con simulaciones
+
+Nótese que si queremos hacer resúmenes que involucren simulaciones, el
+orden es: primero calcular y luego resumir, y no a la inversa. La razón
+es que tenemos que tener en cuenta la forma completa de la posterior.
+:::
+
+En nuestro ejemplo, $\alpha$ y $\beta$ están correlacionadas en la posterior.
+
+## Distribución predictiva posterior
+
+Dado nuestro modelo, ahora podemos generar cómo se verían observaciones
+nuevas: en este caso, si tuviéramos una estatura, cómo sería el peso
+de esa persona. Para esto tenemos que tener en cuenta tanto la posterior
+de los parámetros como el modelo de los datos.
+
+En primer lugar, la posterior de la relación lineal es:
+
+```{r}
+ggplot(sims_peso_post_tbl) +
+  geom_abline(aes(intercept = alpha - beta * 160, slope = beta),
+              colour = "gray") +
+  scale_x_continuous(limits = c(130, 180)) +
+  scale_y_continuous(limits = c(20, 80)) 
+```
+Esto nos indican los valores esperados para estatura. 
+Para la predictiva posterior, también tenemos que considerar dónde
+pueden aparecer individuos. Para simular a una estatura fija,
+por ejemplo, hacemos lo sugiente:
+
+```{r}
+sim_pred_post <- function(n, sims_peso_post_tbl, h) {
+  # extraer parámetros de la posterior
+  pars <- slice_sample(sims_peso_post_tbl, n = n, replace = TRUE) 
+  # simular pesos
+  sims_tbl <- map_df(h, function(h){
+    w_media <- pars$alpha + pars$beta * (h - 160)
+    w <- rnorm(n, w_media, pars$sigma)
+    tibble(rep = 1:n, h = h, w_media = w_media, w = w)
+  })
+  sims_tbl
+}
+```
+
+Las predictivas posteriores para las estaturas $h = 160$ y $h=150$ son: 
+
+```{r}
+comp_ppost_tbl <- sim_pred_post(5000, sims_peso_post_tbl, c(150, 160))
+ggplot(comp_ppost_tbl, aes(x =  w, fill = factor(h))) +
+  geom_histogram(alpha = 0.5, position = "identity") 
+```
+
+que como vemos presentan variabilidad considerable más allá de
+la diferencia de valores esperados. Podemos calcular por ejemplo
+cuál es la probabilidad de que una persona de 150 cm sea más alta
+que una de 170 cm:
+
+```{r}
+comp_ppost_tbl |> 
+  select(-w_media) |> 
+  pivot_wider(names_from = h, values_from = w) |> 
+  summarise(prop = mean(`150` > `160`))
+```
+Y podemos entonces por ejemplor resumir la distribución predictiva
+para distintas estaturas:
+
+```{r}
+resumen_ppost_tbl <- sim_pred_post(20000, sims_peso_post_tbl, 
+                                   h = seq(130, 180, 2.5)) |> 
+  group_by(h) |> 
+  summarise(q5 = quantile(w, 0.05), 
+            q95 = quantile(w, 0.95),
+            q_media_5 = quantile(w_media, 0.05),
+            q_media_95 = quantile(w_media, 0.95)) 
+
+```
+
+
+
+En nuestra gráfica anterior tendríamos entonces nuestra recta junto
+con rangos de 90% para la estatura de los individuos:
+
+```{r}
+ggplot(sims_peso_post_tbl) +
+  geom_abline(aes(intercept = alpha - beta * 160, slope = beta),
+              colour = "gray", alpha = 0.01) +
+  scale_x_continuous(limits = c(130, 180)) +
+  scale_y_continuous(limits = c(10, 80)) + 
+  geom_ribbon(data = resumen_ppost_tbl,
+    aes(x = h, ymin = q_media_5, ymax = q_media_95),
+      fill = NA, colour = "gray") + 
+  geom_ribbon(data = resumen_ppost_tbl,
+    aes(x = h, ymin = q5, ymax = q95), fill = NA, colour = "red")
+```
+
+
+
+
+
+
+
+
+Entre los adultos humanos, hombres y mujeres tienen distintas
+distribuciones de peso y estatura. La variable $S$ (sexo) influye
+tanto en estatura como en peso. La relación la consideramos causalmente
+partiendo en $S$:
+
+```{r}
+#| out-width: 100%
+#| code-fold: true
+grViz("
+digraph {
+  graph [ranksep = 0.3, rankdir = LR]
+  node [shape=circle]
+    U
+  node [shape=plaintext]
+    H
+    W
+    S
+  edge [minlen = 3]
+    H -> W
+    U -> W
+    S -> H
+    S -> W
+}
+")#, width = 200, height = 50)
+```
+
+
 
 ## Golf
 
