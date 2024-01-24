@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Métodos analíticos - 4&nbsp; Componentes básicas de modelación 1</title>
+<title>Métodos analíticos - 4&nbsp; Componentes de modelación 1</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -132,7 +132,7 @@ div.csl-indent {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03-modelos-genericos.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Componentes básicas de modelación 1</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03-modelos-genericos.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Componentes de modelación 1</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -184,7 +184,7 @@ div.csl-indent {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./03-modelos-genericos.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Componentes básicas de modelación 1</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Componentes de modelación 1</span></span></a>
   </div>
 </li>
     </ul>
@@ -228,7 +228,7 @@ div.csl-indent {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Componentes básicas de modelación 1</span></h1>
+<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Componentes de modelación 1</span></h1>
 </div>
 
 
@@ -276,8 +276,8 @@ div.csl-indent {
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)<span class="co">#, width = 200, height = 50)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-6fc5f9bf1230c0ab5b44" style="width:100%;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-6fc5f9bf1230c0ab5b44">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    U\n  node [shape=plaintext]\n    H\n    W\n  edge [minlen = 3]\n    H -> W\n    U -> W\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-0e313fd4e66194f2a4ee" style="width:100%;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-0e313fd4e66194f2a4ee">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    U\n  node [shape=plaintext]\n    H\n    W\n  edge [minlen = 3]\n    H -> W\n    U -> W\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Nótese que no consideramos <span class="math inline">\(W\to H\)</span>, porque podemos pensar en varias intervenciones que podrían cambiar el peso por no cambian la estatura. Por otro lado, es difícil pensar en alguna intervención que cambie la estatura pero no cambie el peso de una persona. Adicionalmente, hay otros factores desconocidos no observados <span class="math inline">\(U\)</span> que afectan el peso de cada persona adicionalmente a su estatura.</p>
@@ -831,8 +831,8 @@ Verificaciones de predictiva posterior
 <span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-f25b125fe9524aad44a0" style="width:100%;height:162px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-f25b125fe9524aad44a0">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    U\n    V\n    Z\n  node [shape=plaintext]\n    H\n    W\n    S\n  edge [minlen = 3]\n    H -> W\n    U -> W\n    S -> H\n    S -> W\n    V -> H\n    Z -> S\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-477bdde70041f5b261c7" style="width:100%;height:162px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-477bdde70041f5b261c7">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    U\n    V\n    Z\n  node [shape=plaintext]\n    H\n    W\n    S\n  edge [minlen = 3]\n    H -> W\n    U -> W\n    S -> H\n    S -> W\n    V -> H\n    Z -> S\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Omitiendo del diagrama las variables no observadas que también son causas únicamente de <span class="math inline">\(S\)</span> y <span class="math inline">\(W, H\)</span>:</p>
@@ -857,8 +857,8 @@ Verificaciones de predictiva posterior
 <span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-e1fb30200f5eed9b171f" style="width:100%;height:162px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-e1fb30200f5eed9b171f">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n  \n  node [shape=plaintext]\n    H\n    W\n    S\n  edge [minlen = 3]\n    H -> W\n    S -> H\n    S -> W\n\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-9b6653e6d02846c01fe3" style="width:100%;height:162px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-9b6653e6d02846c01fe3">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n  \n  node [shape=plaintext]\n    H\n    W\n    S\n  edge [minlen = 3]\n    H -> W\n    S -> H\n    S -> W\n\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Si queremos saber cómo influye el sexo en el peso, este diagrama indica que hay dos tipos de preguntas que podemos hacer:</p>
@@ -1031,7 +1031,7 @@ Total execution time: 0.7 seconds.</code></pre>
 <pre><code>Running MCMC with 4 sequential chains...
 
 Chain 1 finished in 0.1 seconds.
-Chain 2 finished in 0.1 seconds.
+Chain 2 finished in 0.0 seconds.
 Chain 3 finished in 0.1 seconds.
 Chain 4 finished in 0.1 seconds.
 
