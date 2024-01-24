@@ -917,7 +917,7 @@ hacer condicionando o estratificando por  los valores de $H$. Es decir, para
 cada valor de $H$, queremos calcular cuál es la diferencia entre una población
 de hombres y de mujeres (con la misma estatura $H$). Las diferencias que
 encontremos no puede deberse a estatura, pues esta valor es fijo.
-Al estratificar por $H$, decimos que el camino $S\toH\toW$ está bloqueado,
+Al estratificar por $H$, decimos que el camino $S\to H\to W$ está bloqueado,
 y refinaremos esta idea más adelante.
 
 En términos de cantidad a estimar, quisiéramos, para cada estatura $H$,
