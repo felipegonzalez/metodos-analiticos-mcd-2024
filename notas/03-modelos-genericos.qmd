@@ -163,7 +163,8 @@ desconocidos $\alpha,\beta,\sigma$, y tenemos por la regla de bayes
 $$p(\alpha,\beta,\sigma|W_i,H_i)\propto p(W_i|H_i, \alpha,\beta,\sigma)p(\alpha,\beta,\sigma)$$
 De modo que sólo nos interesa entender como es el peso condicional
 a la estatura, y por eso nuestra verosimilitud sólo considera 
-$W_i$ condicional a $H_i$. En otros casos, quizá buscaríamos
+$W_i$ condicional a $H_i$ (desde el punto de vista del diagrama,
+nos interesa modelar el nodo $W$. En otros casos, quizá buscaríamos
 modelar la distribución conjunta de $W_i,H_i$.
 
 Ahora tenemos que poner distribuciones a priori $p(\alpha, \beta,\sigma)$ para
@@ -279,7 +280,7 @@ sims_tbl |>
   labs(x = "Estatura (cm)", y = "Peso (kg)") +
   facet_wrap(~rep)
 ```
-- Esto parece ser razonable, aunque algunas replicaciones son algo extremas
+**Observación*: Esto parece ser razonable, aunque algunas replicaciones son algo extremas
 (muy poca variabilidad de peso, una relación muy débil o. muy fuerte entre estatura y peso). Comenzaremos con este modelo y seguiremos explorando
 sus consecuencias.
 
@@ -359,8 +360,8 @@ los valores que utilizamos para generar los datos.
 
 ```{r}
 set.seed(881)
-sims_tbl <- map_df(1:10, function(rep) {
-  sim_peso_mod(350) |> mutate(rep = rep)
+sims_inicial_check_tbl <- map_df(1:10, function(rep) {
+  sim_peso_mod(352) |> mutate(rep = rep)
 }) |> nest(datos_sim = c(H, W))
 sims_tbl
 ```
@@ -368,7 +369,7 @@ sims_tbl
 ```{r}
 #| include: false
 # Ajustar modelos
-sims_post_tbl <- sims_tbl |> 
+sims_inicial_check_tbl <- sims_inicial_check_tbl |> 
   mutate(
     mod_fit = purrr::map(datos_sim, function(datos_tbl) {
       mod_peso$sample(
@@ -380,7 +381,7 @@ sims_post_tbl <- sims_tbl |>
         refresh = 0)
     })) 
 # Extraer simulaciones de posterior
-sims_post_tbl <- sims_post_tbl |>
+sims_inicial_check_tbl <- sims_inicial_check_tbl |>
   mutate(
     post_tbl = purrr::map(mod_fit, function(mod_fit) {
       mod_fit |> 
@@ -399,13 +400,13 @@ para hacer la simulación de cada recuadro:
 
 ```{r}
 # fig-cap: Posterior para datos simulados
-post_tbl <- sims_post_tbl |> 
+datos_check_tbl <- sims_inicial_check_tbl |> 
   select(rep, post_tbl) |> 
   unnest(post_tbl)
-ggplot(post_tbl, aes(x = alpha, y = beta)) +
+ggplot(datos_check_tbl, aes(x = alpha, y = beta)) +
   geom_point(alpha = 0.2) +
   labs(x = "alpha", y = "beta") +
-  geom_point(data = sims_post_tbl, color = "red", size = 3) +
+  geom_point(data = sims_inicial_check_tbl, color = "red", size = 3) +
   facet_wrap(~ rep, scales = "free") 
 ```
 Esta gráfica también podemos hacerla como sigue, usando rectas:
@@ -413,16 +414,16 @@ Esta gráfica también podemos hacerla como sigue, usando rectas:
 ```{r}
 # nota: el intercept en geom_abline es la ordenada al origen
 # mientras que la alpha es valor de la recta para h = 160
-post_tbl |> 
+datos_check_tbl |> 
   ggplot() +
   geom_abline(aes(intercept = alpha - beta * 160, slope = beta),
               alpha = 0.5, colour = "gray") +
   facet_wrap(~ rep, scales = "free") +
   scale_x_continuous(limits = c(130, 200)) + 
   scale_y_continuous(limits = c(0, 200)) +
-  geom_abline(data = sims_post_tbl, 
+  geom_abline(data = sims_inicial_check_tbl, 
     aes(intercept = alpha - beta * 160, 
-      slope = beta), color = "red", size = 1.1)
+      slope = beta), color = "red", linewidth = 1.05)
 
 ```
 Esta prueba computacional tiene buenos resultados: en general, la posterior
@@ -445,7 +446,7 @@ data_list <- list(
   w = datos_tbl$weight
 )
 # correr modelo en Stan
-mod_peso_fit <- mod_peso$sample(
+mod_peso_ajuste <- mod_peso$sample(
   data = data_list,
   iter_sampling = 2000,
   refresh = 0)
@@ -454,7 +455,7 @@ mod_peso_fit <- mod_peso$sample(
 La posterior de los parámetros de la recta se ve como siguen:
 
 ```{r}
-sims_peso_post_tbl <- mod_peso_fit |> 
+sims_peso_post_tbl <- mod_peso_ajuste |> 
   as_draws_df() |> 
   select(.draw, alpha, beta, sigma) 
 ```
@@ -465,18 +466,29 @@ ggplot(sims_peso_post_tbl)+
 Y un resumen simple está dado por:
 
 ```{r}
-mod_peso_fit$summary(c("alpha", "beta", "sigma")) |> 
+mod_peso_ajuste$summary(c("alpha", "beta", "sigma")) |> 
   mutate(across(where(is.numeric),  ~ round(.x, 2)))
 ```
 
-En nuestro ejemplo, $\alpha$ y $\beta$ están correlacionadas en la posterior.
+::: callout-tip
+# Simulaciones conjuntas
+
+Observa que los resúmenes marginales (variable por variable) no cuentan la historia completa de la posterior. En nuestro ejemplo, $\alpha$ y $\beta$ están correlacionadas en la posterior como muestra la gráfica anterior. Por
+eso cuando queremos calcular resúmenes de cantidades en las que influyen 
+varios parámetros, es importante trabajar con las simulaciones conjuntas de los parámetros.
+:::
+
+Puedes ver que en realidad no es posible calcular la
+distribución de cantidades como $\alpha + 10\beta$, por ejemplo, a partir de la información de la tabla de arriba: por ejemplo, la varianza de esta suma no es simplemente la suma de las varianzas
 
 ## Distribución predictiva posterior
 
 Dado nuestro modelo, ahora podemos generar cómo se verían observaciones
-nuevas: en este caso, si tuviéramos una estatura, cómo sería el peso
-de esa persona. Para esto tenemos que tener en cuenta tanto la posterior
+nuevas: en este caso, si tuviéramos una estatura, ¿cómo sería el peso
+de esa persona? Para esto tenemos que tener en cuenta tanto la posterior
 de los parámetros como el modelo de los datos.
+
+
 
 En primer lugar, la posterior de la relación lineal es (cada línea
 de esta gráfica es una simulación de la posterior):
@@ -485,8 +497,6 @@ de esta gráfica es una simulación de la posterior):
 ggplot(sims_peso_post_tbl) +
   geom_abline(aes(intercept = alpha - beta * 160, slope = beta),
               colour = "gray", alpha = 0.1) +
-  geom_point(data = datos_tbl, aes(x = height, y = weight),
-    colour = "red") +
   scale_x_continuous(limits = c(130, 180)) +
   scale_y_continuous(limits = c(20, 70)) 
 ```
@@ -494,6 +504,7 @@ Esto nos indican los valores esperados para estatura.
 Para la predictiva posterior, también tenemos que considerar dónde
 pueden aparecer individuos. Para simular a una estatura fija,
 por ejemplo, hacemos lo sugiente:
+
 
 ```{r}
 sim_pred_post <- function(n, sims_peso_post_tbl, h) {
@@ -514,7 +525,7 @@ Las predictivas posteriores para las estaturas $h = 160$ y $h=150$ son:
 ```{r}
 comp_ppost_tbl <- sim_pred_post(5000, sims_peso_post_tbl, c(150, 160))
 ggplot(comp_ppost_tbl, aes(x =  w, fill = factor(h))) +
-  geom_histogram(alpha = 0.5, position = "identity") 
+  geom_histogram(bins = 50, alpha = 0.5, position = "identity") 
 ```
 
 que como vemos presentan variabilidad considerable más allá de
@@ -528,19 +539,43 @@ comp_ppost_tbl |>
   pivot_wider(names_from = h, values_from = w) |> 
   summarise(prop = mean(`150` > `160`))
 ```
+Y también es más útil calcular la distribución de la diferencia
+de pesos entre personas de 150 y 160 cm:
+
+```{r}
+comp_ppost_tbl |> 
+  select(-w_media) |> 
+  pivot_wider(names_from = h, values_from = w) |> 
+  mutate(diferencia = `160` - `150`) |> 
+ggplot(aes(x = diferencia)) +
+  geom_histogram(bins = 50, alpha = 0.5, position = "identity") +
+  labs(x = "Diferencia de pesos 160 - 150cm")
+```
+
+
+
 En contraste,  si comparamos las estaturas medias
-de cada grupo:
+de cada grupo, que no incluyen variabilidad individual más allá
+de la producida por la estatura:
 
 ```{r}
 ggplot(comp_ppost_tbl, aes(x =  w_media, fill = factor(h))) +
-  geom_histogram(alpha = 0.5, position = "identity") 
+  geom_histogram(bins = 100, alpha = 0.5, position = "identity") +
+  labs(x = "Media de pesos")
 ```
 
 Prácticamente tenemos seguridad que la *media* de pesos de
-los individuos de 150 cm es menor que la de los de 160 cm. Es importante
-no confundir el contrastre a nivel individuo que hicimos arriba,
-y el que hicimos a nivel agregado. 
+los individuos de 150 cm es menor que la de los de 160 cm. 
 
+
+
+::: callout-tip
+Es importante
+no confundir el contraste a nivel individuo que hicimos arriba,
+y el que hicimos a nivel de medias de grupos. 
+Los grupos tienen claramente medias
+diferentes, pero las distribuciones de individuos tienen traslape considerable.
+:::
 
 Podemos también resumir la distribución predictiva
 para distintas estaturas:
@@ -573,6 +608,60 @@ ggplot(sims_peso_post_tbl) +
   geom_ribbon(data = resumen_ppost_tbl,
     aes(x = h, ymin = q5, ymax = q95), fill = NA, colour = "red")
 ```
+
+### Verificaciones de predictiva posterior
+
+Además de ser útil para calcular cantidades de interés de manera
+natural, la predictiva posterior también está sujeta a crítica y 
+validación. Veremos más de este punto, pero la idea básica es la siguiente:
+
+::: callout-note
+# Verificaciones de predictiva posterior
+
+Una vez que tenemos la posterior dados los datos:
+
+1. Tomamos una simulación de todos los parámetros del modelo.
+2. Simulamos nuevas observaciones (una muestra del mismo tamaño) 
+   a partir de los parámetros simulados.
+3. Comparamos los datos simulados con los datos observados (gráficas
+u otros resúmenes apropiados).
+4. Repetimos para varias simulaciones.
+
+Diferencias sistemáticas entre datos observados y datos simulados
+de la predictiva posterior indican fallas del modelo o áreas donde
+puede mejorar. 
+
+:::
+
+Hay muchas variaciones de este tipo de verificaciones. 
+En nuestro caso podemos hacer manualmente este proceso una
+vez que tenemos simulaciones de la posterior, tomando las mismas
+estaturas de los datos y simulando datos del modelo para el peso.
+
+```{r}
+sims_check_post <- sim_pred_post(10, sims_peso_post_tbl, 
+                                 h = datos_tbl$height) |> 
+  select(-w_media)
+sims_check_post <- bind_rows(sims_check_post, 
+   datos_tbl |> mutate(rep = 11) |> select(rep, h = height, w = weight)) |> 
+  mutate(rep = digest::digest2int(as.character(rep), seed = 992)) 
+ggplot(sims_check_post) +
+  geom_point(aes(x = h, y = w), alpha = 0.2) + facet_wrap(~ rep)
+```
+¿Puedes reconocer dónde están los datos? Si hay desajustes graves
+y sistemáticas, deberías poder detectarlos en una gráfica de este tipo.
+Veremos más de este tipo de verificaciones en el curso.
+
+```{r}
+#| eval: false
+# Respuesta
+digest::digest2int("11", seed = 992)
+```
+
+
+
+
+
 
 
 
@@ -607,7 +696,7 @@ digraph {
     V -> H
     Z -> S
 }
-")#, width = 200, height = 50)
+", width = 200, height = 50)
 ```
 
 Omitiendo del diagrama las variables no observadas que también
@@ -631,7 +720,7 @@ digraph {
     S -> W
 
 }
-")#, width = 200, height = 50)
+", width = 200, height = 50)
 ```
 
 Si queremos saber cómo influye el sexo en el peso, este diagrama
@@ -644,7 +733,8 @@ no actúa a través de $H$.
 Aunque tenemos un solo modelo causal, *pueden construirse distintos
 modelos estadísticos para contestar cada pregunta*. El modelo causal
 nos dice que si no tenemos causas comunes de $S$ y $H$ y $W$, entonces
-podemos estimar el efecto total de $S$ sobre $W$.
+podemos estimar el efecto total de $S$ sobre $W$ (esto lo formalizaremos
+más adelante).
 
 Empezamos con el efecto total. Para esto, podemos usar el modelo lineal e
 ignorar la estatura, donde $S_i=2$ si el individuo $i$ es hombre y $S_i=1$
@@ -684,14 +774,18 @@ Dado este modelo generador, ¿cuál es el efecto causal de sexo? Tenemos
 que definir esta cantidad en términos del modelo. En nuestro caso,
 definiremos el efecto causal promedio sobre la población, que
 definimos como la diferencia promedio de estaturas de dos poblaciones:
-una compuesta enteramente por hombres y otra por mujeres.
+una compuesta enteramente por hombres y otra por mujeres. 
 
 ```{r}
 set.seed(2021)
+# Fjamos mismos valores de los parámetros para simular dos
+# poblaciones
 sim_hombres <-  sim_peso_mod_s(rep(2, 1000), c(55, 70), 10)
 sim_mujeres <-  sim_peso_mod_s(rep(1, 1000), c(55, 70), 10)
 mean(sim_hombres$W - sim_mujeres$W)
 ```
+
+### Verificación a priori {-}
 
 Ahora generamos una población con estos parámetros y vemos
 si podemos recuperar el efecto causal promedio sobre la población. Nuestro
@@ -704,10 +798,10 @@ print(mod_peso)
 ```
 
 
-Simulamos datos y ajustamos el modelo:
+Simulamos datos y ajustamos el modelo, usando los mismos parámetros fijos:
 
 ```{r}
-S_sim <- sample(c(1,2), 100, replace = TRUE)
+S_sim <- sample(c(1,2), 1000, replace = TRUE)
 datos_sim_tbl <- sim_peso_mod_s(S_sim, c(55, 70), 10)
 ```
 
@@ -716,7 +810,7 @@ mod_2_fit <- mod_peso$sample(
   data = list(N = nrow(datos_sim_tbl), 
               s = datos_sim_tbl$S, 
               w = datos_sim_tbl$W),
-  refresh = 0
+  refresh = 0, seed = 221
 )
 ```
 
@@ -725,75 +819,234 @@ mod_2_fit$summary(c("alpha", "sigma"))
 ```
 
 Nótese que la diferencia de medias poblacionales es de alrededor
-de 15 cm, que es lo que esperábamos según el cálculo de arriba. Podemos replicar
+de 15 cm, que es lo que esperábamos según el cálculo de arriba. Podemos replicar el cálculo que hicimos arriba directamente usando simulación:
 
+1. Para cada simulación de la posterior calculamos una población
+hipotética de hombres y otras de mujeres (mismos parámetros) 
+2. Calculamos la diferencia de medias poblacionales
+3. Resumimos con la posterior.
 
-
-
-
-
-
-
-- Contrafactual: Si tomáramos un individuo particular *con las mismas
-perturbaciones $U$* y lo consideráramos del sexo opuesto, ¿cuánto
-cambiaría su peso? Quisiéramos ver esta cantidad promediada sobre la población.
-- Efecto causal poblacional: Si consideramos a una persona y la sustituimos
-por otra del sexo opuesto, ¿cuánto cambiaría su peso?
-
-Para la primera pregunta, obsérvese que si se trata de la persona $i$,
-queremos mostrar el contraste
-
-$$(\alpha_1 + U_i) - (\alpha_2 + U_i) = \alpha_1 - \alpha_2$$
-de modo que en este caso queremos encontrar la posterior de medias
-poblacionales.
-
-Para la segunda pregunta, queremos entender la posterior de
-
-$$W_i - W_j|S_i=1,S_j=2$$.
-
-es decir la diferencia de peso entre un hombre y una mujer tomados
-al azar de la población. 
-
-
-
-
-
-
-siempre y cuando
-sexo y estatura o peso no tengan causas comunes podemos hacerlo. Nótese
-que en cuanto a cómo influye la estatura en el peso, podríamos criticar
-que hay varias causas comunes entre las dos (por ejemplo nutrición), y podemos
-discutir esto más adelante.
-
-Por el momento incluimos la variable sexo en el modelo generativo
-que ya teníamos. Seguiremos usando regresión lineal, cambiando ahora
-a:
-
-
-
+Esto es fácil hacerlo directamente en Stan, pero en este ejemplo
+lo calcularemos manualmente:
 
 ```{r}
-sim_peso_mod_2 <- function(n= 10){
-  
-  alpha <- rnorm(1, 60, 10)
-  beta <- rnorm(1, 0, 1) |> abs()
-  sigma <- rnorm(1, 0, 20) |> abs()
-  
-  # simular estaturas y pesos
-  H <- rnorm(n, 160, 10)
-  mu_W = alpha + beta * (H - 160)
-  # simular perturbación de peso
-  U <- rnorm(n, 0, sigma)
-  # regresión lineal de peso dado estatura
-  W <- mu_W + U
-  tibble(alpha, beta, sigma, H, W)
+sims_post_tbl <- mod_2_fit$draws() |> as_draws_df() |> 
+  as_tibble()
+simular_diferencia_post <- function(sims_post_tbl){
+  pars <- sample_n(sims_post_tbl, 1) |> 
+    select(starts_with("alpha"), sigma)
+  # Simulamos datos
+  sims_hombres <- sim_peso_mod_s(rep(2, 1000), 
+      alpha = c(pars$`alpha[1]`, pars$`alpha[2]`), pars$sigma)
+  sims_mujeres <- sim_peso_mod_s(rep(1, 1000), 
+      c(pars$`alpha[1]`, pars$`alpha[2]`), pars$sigma)
+  diferencia <- mean(sims_hombres$W - sims_mujeres$W)
+  # Calculamos la diferencia de medias
+  tibble(diferencia = diferencia) |> bind_cols(pars)
 }
+
 ```
 
 
+```{r}
+simular_diferencia_post(sims_post_tbl)
+```
+
+Y ahora calculamos el resumen de interés, que es la posterior
+del contraste o diferencia entre las dos poblaciones simuladas.
+Comparamos con la línea en rojo que es la cantidad que establecimos
+a estimar:
+
+```{r}
+map_df(1:4000, ~ simular_diferencia_post(sims_post_tbl) |> 
+         mutate(rep = .x)) |>  
+ggplot(aes(x = diferencia)) +
+  geom_histogram(bins = 50) +
+  labs(x = "Efecto de sexo en estatura hombres vs mujeres (cm)") +
+  geom_vline(xintercept = mean(sim_hombres$W - sim_mujeres$W), 
+             color = "red", linewidth = 1.5)
+
+```
+Puedes repetir este ejercicio para distintos valores de los parámetros,
+como hicimos en los ejemplos de arriba.
+
+## Ajustar a los datos observados y resumir
+
+Ahora usamos los datos reales y calculamos el estimador que
+probamos arriba.
+
+```{r}
+mod_2_fit <- mod_peso$sample(
+  data = list(N = nrow(datos_tbl), 
+              s = datos_tbl$male + 1, 
+              w = datos_tbl$weight),
+  refresh = 0, seed = 221
+)
+```
+Y repetimos exactamente el proceso que probamos arriba:
+
+```{r}
+sims_post_tbl <- mod_2_fit$draws() |> as_draws_df() |> 
+  as_tibble()
+dif_tbl <- map_df(1:4000, ~ simular_diferencia_post(sims_post_tbl) |> 
+         mutate(rep = .x)) 
+dif_tbl |> 
+ggplot(aes(x = diferencia)) +
+  geom_histogram(bins = 50) +
+  labs(x = "Efecto de sexo en peso hombres vs mujeres (kg)") 
+
+```
+
+Concluimos que el efecto total de sexo sobre peso está
+entre unos 5.5 y 8 kg de diferencia de hombres vs mujeres.
+
+**Ejercicio**: explica porqué mostrar por separado las distribuciones
+de poblaciones de hombres vs la de poblaciones de mujeres no da
+la respuesta que buscamos.
+
+## Efecto directo de sexo
+
+Ahora pensemos cómo podemos calcular el efecto directo de sexo sobre
+peso, sin tomar en cuente su influencia en la estatura. En nuestro
+diagrama, nos interesa sólo considerar la influencia que va directamente
+de sexo a peso, y no la que pasa por el camino que va a través de la estatura.
+Este tipo de análisis se llama a veces *análisis de mediación*. 
+
+La idea es *bloquear* el camino que va de sexo a estatura, y esto podemos
+hacer condicionando o estratificando por  los valores de $H$. Es decir, para
+cada valor de $H$, queremos calcular cuál es la diferencia entre una población
+de hombres y de mujeres (con la misma estatura $H$). Las diferencias que
+encontremos no puede deberse a estatura, pues esta valor es fijo.
+Al estratificar por $H$, decimos que el camino $S\toH\toW$ está bloqueado,
+y refinaremos esta idea más adelante.
+
+En términos de cantidad a estimar, quisiéramos, para cada estatura $H$,
+calcular la diferencia de una población de hombres vs una de mujeres. La 
+diferencia es el efecto directo a la estatura $H$.
+
+El modelo estadístico que proponemos para estimar el efecto directo es entonces:
+
+$$
+\begin{align}
+W_i &\sim N(\mu_i, \sigma)\\
+\mu_i &= \alpha_{S_i} + \beta_{S_i} (H_i - \bar{H})\\
+\alpha_1,\alpha_2 &\sim N(60, 10) \\
+\beta_1,\beta_2 &\sim N^+(0, 1) \\
+\sigma &\sim N^+(0, 20) \\
+\end{align}
+$$
+
+El contraste que queremos calcular lo podemos identificar con parámetros en
+el modelo. Por ejemplo, si $\beta_1 = \beta_2$, el efecto directo, para cualquier
+estatura, debería ser $\alpha_2 - \alpha_1$. Sin embargo, seguimos con nuestro
+camino de hacer simulación para mantener más flexibilidad y simplicidad.
+
+**Ejercicio**: Haz verificaciones a priori: genera datos sintéticos,
+examínalos, y verifica que el modelo es capaz de recuperar el contraste de
+interés.
+
+### Ajuste a datos reales y resumen
+
+```{r}
+mod_peso_2 <- cmdstan_model("./src/peso-estatura-3.stan")
+print(mod_peso_2)
+```
 
 
-## Golf
+```{r}
+mod_3_fit <- mod_peso_2$sample(
+  data = list(N = nrow(datos_tbl), 
+              s = datos_tbl$male + 1, 
+              h = datos_tbl$height,
+              w = datos_tbl$weight),
+  init = 0.01, step_size = 0.01, refresh = 0, seed = 221
+)
+```
+```{r}
+mod_3_fit$summary(c("alpha", "beta", "sigma")) |> 
+  knitr::kable(digits = 2)
+```
+
+
+La diferencia entre las dos rectas parece ser chica. Eso implicaría
+que el efecto directo de sexo en peso es débil. Sin embargo,
+es mejor calcular y resumir el contraste como hemos hecho en otros 
+ejemplos.
+
+
+Repetimos exactamente el proceso que probamos arriba. Haremos
+los cálculos manualmente otra vez (aunque conviene más hacerlos
+dentro de stan):
+
+
+```{r}
+sims_post_tbl <- mod_3_fit$draws() |> as_draws_df() |> 
+  as_tibble()
+h_media <- mean(datos_tbl$height)
+# función para simular pesos
+sim_peso_mod_sh <- function(S, H, alpha, beta, sigma, h_media){
+  n <- length(S)
+  W <- rnorm(n, alpha[S] + beta[S] * (H - h_media), sigma)
+  tibble(W = W)
+}
+simular_diferencia_post_2 <- function(sims_post_tbl, h){
+  pars <- sample_n(sims_post_tbl, 1) |> 
+    select(starts_with(c("alpha", "beta")), sigma)
+  alpha <- c(pars$`alpha[1]`, pars$`alpha[2]`)
+  beta <- c(pars$`beta[1]`, pars$`beta[2]`)
+  diferencia <- numeric(length(h))
+  # para cada nivel de estatura especificado
+  for(i in seq_along(h)){
+    # Simulamos poblaciones
+    sims_hombres <- sim_peso_mod_sh(rep(2, 1000), h[i],
+      alpha = alpha, beta = beta, pars$sigma, h_media = h_media)
+    sims_mujeres <- sim_peso_mod_sh(rep(1, 1000), h[i],
+      alpha = alpha, beta = beta, pars$sigma, h_media = h_media)
+    diferencia[i] <- mean(sims_hombres$W - sims_mujeres$W)
+  }
+  tibble(diferencia = diferencia, h = h) |> bind_cols(pars)
+}
+```
+
+Por ejemplo:
+
+```{r}
+simular_diferencia_post_2(sims_post_tbl, h = c(150, 170))
+
+```
+
+
+```{r}
+h <- seq(130, 190, by = 5)
+dif_tbl <- map_df(1:1000, 
+    ~ simular_diferencia_post_2(sims_post_tbl, h) |> 
+         mutate(rep = .x))
+```
+
+
+```{r}
+dif_tbl |> 
+ggplot(aes(x = h, y = diferencia, group = rep)) +
+  geom_line(alpha = 0.1) +
+  labs(x = "Contraste de peso hombres vs mujeres (kg)") +
+  geom_hline(yintercept = 0, colour = "red") 
+
+```
+
+Esto muestra que el efecto directo de sexo en peso es relativamente
+chico: la mayor parte del efecto es a través de la estatura. 
+Existe una ligera tendencia a que los hombre de menos estatura
+sean más pesados, y las mujeres de más estatura sean relativamente
+menos pesadas, pero realmente no podemos afirmar con confianza
+ningún efecto claro.
+
+
+
+
+
+
+
+## Regresión logística: tiros de golf
 
 Este caso está basado en Gelman and Nolan (2002) y Gelman (n.d.). Usamos el flujo de trabajo bayesiano tomado del documento de Michael Betancourt Betancourt (2020).
 
@@ -1033,10 +1286,10 @@ grafs_tbl |>
   geom_line(aes(group = .draw), alpha = 0.1) +
   labs(x = "Distancia (cm)", y = "Probabilidad de Éxito") +
   geom_point(data = resumen_golf, color = "red") +
-  geom_linerange(data = resumen_golf, aes(ymin = p - 2 * sqrt(p * (1 - p) / n), 
-                                     ymax = p + 2 * sqrt(p * (1 - p) / n)),
-            color = "red")
-
+  geom_linerange(data = resumen_golf, 
+    aes(ymin = p - 2 * sqrt(p * (1 - p) / n),  
+        ymax = p + 2 * sqrt(p * (1 - p) / n)),
+    color = "red")
 ```
 Vemos que la curva estimada desajusta. Este tipo de análisis se
 llama **chequeo a posteriori**, y mas frecuentemente se

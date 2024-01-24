@@ -9,6 +9,7 @@ book:
     - 01-introduccion.qmd
     - 02-flujo-basico.qmd
     - 02-flujo-basico-2.qmd
+    - 03-modelos-genericos.qmd
 bibliography: referencias/book.bib
 
 format:
