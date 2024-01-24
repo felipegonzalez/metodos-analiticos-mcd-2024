@@ -1,4 +1,4 @@
-# Componentes básicas de modelación 1
+# Componentes de modelación 1
 
 ```{r}
 #| include: false
