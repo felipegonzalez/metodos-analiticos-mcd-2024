@@ -268,9 +268,9 @@ sims_post <-
   simular_posterior_error(una_muestra$Pos, 5000, 1, 1)
 ambas_sims_tbl <- 
   sims_post_error |>
-  mutate(tipo = "Con error") |>
+  mutate(tipo = "Con error de medición") |>
   bind_rows(sims_post |>
-              mutate(tipo = "Sin error"))
+              mutate(tipo = "Sin error de medición"))
 ambas_sims_tbl |> ggplot(aes(x = theta, fill = tipo)) +
   geom_histogram(position = "identity", alpha = 0.5, bins = 50) +
   scale_fill_manual(values = c("red", "blue")) +
