@@ -926,7 +926,7 @@ $$I = \int f(x)p(x)dx,$$
 simulamos una gran cantidad de observaciones $x_1,\ldots, x_M$ bajo $p(x)$,
 y entonces (Ley de los grandes números):
 
-$$\frac{1}{M} \sum_{i=1}^{M} x_i \to I$$
+$$\frac{1}{M} \sum_{i=1}^{M} f(x_i) \to I$$
 cuando $M\to \infty$. De este modo, podemos aproximar con la precisión que
 requiramos la integral $I$.
 :::
