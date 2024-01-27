@@ -1,0 +1,119 @@
+---
+title: "Tarea 2"
+format: html
+---
+
+En este ejemplo repasamos el ejemplo de detección con 
+error de mediciión (pruebas imperfectas) y la aproximación de rejilla que
+utilizamos.
+
+```{r}
+library(tidyverse)
+library(DiagrammeR)
+```
+
+Discutimos en clase cómo simular datos de nuestro
+modelo generativo:
+
+```{r}
+sim_pos_neg <- function(theta = 0.01, N = 20, sens = 0.84, esp = 0.995) {
+  # verdaderos positivos que capturamos en la muestra
+  Pos_verdadero <- rbinom(N, 1, theta)
+  Neg_verdadero <- 1 - Pos_verdadero
+  # positivos observados en la muestra: si es positivo, calculamos
+  # la probabilidad de que realmente sea positivo
+  sim_tbl <- tibble(Pos_verdadero, Neg_verdadero) |> 
+    mutate(Pos = rbinom(N, 1, Pos_verdadero * sens + Neg_verdadero * (1-esp))) |> 
+    mutate(Neg = 1 - Pos)
+  # Observaciones
+  sim_tbl |> select(Pos, Neg)
+}
+```
+
+**Pregunta 1**: Explica por qué simulamos los positivos observados utilizando la expresión Pos_verdadero * sens + Neg_verdadero * (1-esp). ¿Qué valores toma la cantidad Pos_verdadero y Neg_verdadero?
+
+
+**Pregunta 2**: una vez que tomamos una muestra, discute por qué simular de la posterior para este modelo no es directo (o calcular integrales).  
+
+### Aproximación por rejilla
+
+Supongamos que tenemos una distribución triangular en [0, 1]: esto quiere decir
+que la densidad toma los valores $p(x) = x$ para 
+$x \in [0,1/2]$ y $p(x) = 1-x$ para  $x \in [0,1/2]$. En este ejemplo simularemos
+de esta distribución usando el método de rejilla (o *grid approximation*):
+
+```{r}
+dtriangular <- function(x, log = FALSE){
+  dens <- ifelse(x < 0.5, x, 1 - x)
+  if(log){
+    dens <- log(dens)
+  }
+  dens
+}
+
+simular_triangular <- function(N, delta =0.0001){
+  # Calcular grid o rejilla
+  p_grid <- seq(1e-12, 1 - 1e-12, by = delta)
+  # calcular la densidad
+  valores_densidad <- dtriangular(p_grid)
+  # muestrear de la rejilla proporcional a la densidad
+  muestra <- sample(p_grid, N, replace = T,
+                    prob = valores_densidad)
+  muestra
+}
+```
+
+Prueba:
+
+```{r}
+qplot(simular_triangular(10000), bins = 100)
+```
+
+**Pregunta 3**: explica por qué el muestreo se hacer sobre un 
+conjunto discreto de valores. ¿Qué valores se muestrean con qué peso? Si es
+necesario, revisa qué hace el argumento *replace = TRUE* en la función *sample*
+que se utliza, y que significa el argumento *prob*.
+
+
+### Ejemplo de seropositividad
+
+Ahora regresamos al ejemplo de seropositividad con errores de tamaño
+conocido. La función que vimos en clase es:
+
+
+```{r}
+log_sum_exp <- function(x){
+  max_x <- max(x)
+  log(sum(exp(x - max_x))) + max_x
+}
+simular_posterior_error <- function(muestra, n, sens = 1, esp = 1, delta = 0.0001){
+    # utiliza aproximación de rejilla,
+    theta <- seq(1e-12, 1-1e-12, by = delta)
+    p_obs <- theta * sens + (1 - theta) * (1 - esp)
+    # verosimilitud (en logaritmo)
+    log_dens_sin_norm <- log(p_obs) * sum(muestra) +  
+      log(1-p_obs) * (length(muestra) - sum(muestra))
+    # a priori
+    log_dens_sin_norm <- log_dens_sin_norm + dbeta(theta, 1, 3, log = TRUE)
+    # normalizar
+    log_dens_norm <- log_dens_sin_norm - log_sum_exp(log_dens_sin_norm)
+    densidad_post <- exp(log_dens_norm)
+    # muestrear
+    tibble(theta = sample(theta, size = n, replace = TRUE, prob = densidad_post))
+}
+```
+
+**Pregunta 4**: Explica por qué esta función utiliza el método de rejilla para
+simular de la posterior. ¿Qué probabilidad a priori para la seropositividad se
+usa en el modelo que corresponde a esta función *simular_posterior_error*?
+Explica por qué hacemos los cálculos en la escala logarítimica.
+
+
+**Pregunta 5**: Supón que para cada parámetro usas una rejilla de 100 puntos.
+Si una posterior tiene 20 parámetros, en cuántos puntos tienes que calcular la
+densidad para usar el método de rejilla? Si cada evaluación de la posterior
+tarda 1 milisegundo, ¿cuánto tardarías en simular todos los valores de la rejilla?
+(que coresponde a las líneas 3 y 4 de la función de arriba)
+¿Crees que el método de rejilla es típicamente factible en la práctica?
+
+
