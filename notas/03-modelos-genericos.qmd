@@ -49,7 +49,7 @@ de **adultos** de una población relativamente homogénea.
 Nuestro modelo causal es como sigue: 
 
 - En primer lugar, la estatura ($H$) de las personas adultas influye en
- su peso ($W$). El peso, sin embargo, está influenciado también
+ su peso ($W$). El peso, está influenciado también
 por otras variables no observadas:
 
 ```{r}
@@ -182,7 +182,7 @@ desde el punto de vista del conocimiento del área.
 Los chequeos a priori nos permite entender las consecuencias de
 nuestras decisiones acerca de las iniciales. **Nótese que todo este
 trabajo se hace antes de ver los datos**, lo que implica que no estamos
-buscando "sacar el resultado que queremos" de los datos. S
+buscando "sacar el resultado que queremos" de los datos. 
 
 :::
 
@@ -211,7 +211,7 @@ considerable pero no excesivamente amplio para una persona de estatura 160cm.
 - Si $\alpha$ es está alrededor de 60, 
 la constante de proporcionalidad $\beta$ debe ser positiva, y no muy
 lejana de un valor entre 0 y 2. La razón es que no tiene sentido 
-esperar que un aumento de 10 kilos tenga un aumento esperado de peso
+esperar que un aumento de 10 cm tenga un aumento esperado de peso
 de 20 kilos, por ejemplo. Podríamos poner una inicial como 
 $\beta\sim N^+(0, 1)$ (normal truncada en 0) por ejemplo. Esta distribución
 tiene los siguientes percentiles:
@@ -307,13 +307,13 @@ sim_peso_mod_mal <- function(n= 10){
   W <- mu_W + U
   tibble(alpha, beta, sigma, H, W)
 }
-sims_tbl <- map_df(1:20, function(rep) {
+sims_mal_tbl <- map_df(1:20, function(rep) {
   sim_peso_mod_mal(100) |> mutate(rep = rep)
 })
-sims_tbl |> 
+sims_mal_tbl |> 
   ggplot(aes(x = H, y = W)) +
   geom_point() +
-  geom_abline(aes(intercept = alpha - 160 * beta, slope = beta), data = sims_tbl, color = "red") +
+  geom_abline(aes(intercept = alpha - 160 * beta, slope = beta), data = sims_mal_tbl, color = "red") +
   labs(x = "Estatura (cm)", y = "Peso (kg)") +
   facet_wrap(~rep)
 ```
@@ -1040,30 +1040,78 @@ sean más pesados, y las mujeres de más estatura sean relativamente
 menos pesadas, pero realmente no podemos afirmar con confianza
 ningún efecto claro.
 
-
-
-
-
+::: callout-tip
+Cuando agregamos una variable como estatura en el modelo de regresión,
+decimos que estamos *estratificando* por estatura. En este caso, bloqueamos
+el efecto causal que tiene sexo en peso a través de la estatura. El efecto
+causal entre los la variable sexo, que se hace dentro de cada estrato,
+y se expresa en los coeficientes de sexo, tiene una interpretación totalmente
+diferente en comparación al modelo que no incluye estatura.
+:::
 
 
 ## Regresión logística: tiros de golf
 
-Este caso está basado en Gelman and Nolan (2002) y Gelman (n.d.). Usamos el flujo de trabajo bayesiano tomado del documento de Michael Betancourt Betancourt (2020).
+Este caso está basado en el paper @GelmanGolf y [el caso de estudio de Gelman]  (https://mc-stan.org/users/documentation/case-studies/golf.html).
 
-Queremos entender modelar la probabilidad de éxito de putts de Golf (putts: tiros relativamente cerca del hoyo que buscan que la pelota ruede al hoyo o muy cerca de él), y cómo depende el éxito de la distancia del tiro. Quisiéramos inferir qué tan precisos son los profesionales en sus tiros.
+Queremos entender la probabilidad de éxito de putts de Golf (putts: tiros relativamente cerca del hoyo que buscan que la pelota ruede al hoyo o muy cerca de él), y *cómo depende el éxito de la distancia del tiro*. ¿Qué tan precisos son los profesionales a diferentes
+distancias? Los datos que tenemos son varios putts de Golf de profesionales a varias
+distancias, y para cada distancia el porcentaje de éxitos de esos putts.
 
-En este caso, el modelo conceptual es simple $D->Y$, donde $D$ es la distancia del tiro y $Y$ es el resultado del tiro (1 si es exitoso, 0 si no). Nótese que no escribiríamos
-$Y->D$, porque cambiar la distancia del tiro si cambia las probabilidades de éxito, pero
-no a la inversa.
+Comenzaremos con el siguiente diagrama causal:
 
-Nuestro interés principal es modelar cómo cambia la probabilidad de éxito de un
-tiro (para profesionales) con la distancia al hoyo. Si tomamos un punto de vista
-de modelos genéricos, podríamos proponer regresión logística:
+```{r}
+#| out-width: 100%
+#| code-fold: true
+grViz("
+digraph {
+  graph [ranksep = 0.3, rankdir = LR]
+  node [shape=circle]
+    V
+    Ang
+    U
+  node [shape=plaintext]
+    D
+    Y
+  edge [minlen = 3]
+    D -> V
+    D -> Y
+    V -> Y
+    Ang -> Y
+    U -> Y
+{rank = same; D; V}
+{rank = same; Ang; Y}
+{rank = max; U}
+}
+")#, width = 200, height = 50)
+```
 
-$p(Y = 1| D = d) = \frac{1}{1 + \exp(-\alpha - \beta d)}$
+En este caso, el modelo causal es como sigue: conocemos la distancia $D$
+al hoyo en cada tiro. El éxito ($Y=1$) o fracaso ($Y=0$) depende de la distancia,
+junto con la velocidad a la que sale la pelota (muy alto o muy bajo puede dar
+un tiro fallido), y el ángulo de salida. Adicionalmente, hay otros factors
+$U$ que pueden afectar la probabilidad de éxito. Nótese que no 
+escribiríamos, por ejemplo $Y \leftarrow D$, porque la distancia no cambia 
+causalmente con el resultado del tiro, aunque es cierto que si intervenimos
+en la distancia, esperaríamos obtener tasas de éxito diferentes. Igualmente, es necesario poner una flecha de $V$ a $D$ y $V$ a $Y$.
 
-Y nuestra cantidad a estimar es la curva $p(Y=1|D=d)$, que es una función de $d$.
-Esto lo haremos estimando los parámetros $\alpha$ y $beta$.
+Todas estas variables antecedentes de $Y$ interactúan para determinar
+el éxito de un tiro.
+
+**Cantidad a estimar**: queremos conocer el efecto total de $D$ sobre $Y$.
+Esto es, queremos conocer la curva $p(Y=1|D=d)$, que es una función de $d$, y también
+hacer contrastes del tipo $p(Y=1|D=d + 10) - p(Y = 1|D=d),$ por ejemplo.
+
+**Modelo estadístico**: Nuestro diagrama causal justifica, aún cuando no tengamos la variable de ángulo, el uso de un modelo genérico como regresión logística (por ejemplo,
+no es necesario controlar por velocidad del tiro, y tampoco no nos interesa saber la distribución
+de distancias a la que intentan un putt), donde
+usamos $Y$ como respuesta y $D$ como variable independiente. Planteamos entonces un 
+modelo logístico:
+
+$p(Y = 1| D = d) = \frac{1}{1 + \exp(-\alpha - \beta d)} = h(\alpha +\beta d)$
+
+En términos de este modelo, queremos estimar la curva $h(\alpha +\beta d)$, o
+los parámetros $\alpha$ y $\beta$.
 
 Ahora construimos un modelo generativo, donde $D$ está dada en centímetros:
 
@@ -1089,7 +1137,7 @@ simular_putts(distancias, 3, -0.005) |>
 ```
 
 Nótese que para este ejemplo utilizamos valores de $\alpha$ y $\beta$ fijos.
-Podríamos poner valores imposibles para golfistas profesionales, por ejemplo:
+Valores imposibles para golfistas profesionales, por ejemplo:
 
 ```{r}
 set.seed(22)
