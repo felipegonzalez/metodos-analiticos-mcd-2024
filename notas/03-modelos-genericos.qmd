@@ -1508,7 +1508,7 @@ con el ajuste a los datos para checar el ajuste de este modelo:
 #! message: false
 library(cmdstanr)
 mod_golf <- cmdstan_model("./src/golf-principios-1.stan")
-print(mod_logistica_2)
+print(mod_golf)
 ```
 
 ```{r}
