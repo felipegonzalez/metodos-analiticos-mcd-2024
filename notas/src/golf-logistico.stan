@@ -10,6 +10,6 @@ parameters {
 }
 model {
   y ~ binomial_logit(n, alpha + beta * d);
-  alpha ~ normal(5, 2);
-  beta ~ normal(0, 0.02);
+  alpha ~ normal(6, 2);
+  beta ~ normal(0, 0.025);
 }
