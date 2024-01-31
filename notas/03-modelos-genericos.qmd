@@ -1068,7 +1068,7 @@ digraph {
   graph [ranksep = 0.3, rankdir = LR]
   node [shape=circle]
     V
-    Ang
+    Ang [label = <&theta;>]
     U
   node [shape=plaintext]
     D
@@ -1089,7 +1089,7 @@ digraph {
 En este caso, el modelo causal es como sigue: conocemos la distancia $D$
 al hoyo en cada tiro. El éxito ($Y=1$) o fracaso ($Y=0$) depende de la distancia,
 junto con la velocidad a la que sale la pelota (muy alto o muy bajo puede dar
-un tiro fallido), y el ángulo de salida. Adicionalmente, hay otros factors
+un tiro fallido), y el ángulo $\theta$ de salida. Adicionalmente, hay otros factors
 $U$ que pueden afectar la probabilidad de éxito. Nótese que no 
 escribiríamos, por ejemplo $Y \leftarrow D$, porque la distancia no cambia 
 causalmente con el resultado del tiro, aunque es cierto que si intervenimos
@@ -1109,6 +1109,16 @@ usamos $Y$ como respuesta y $D$ como variable independiente. Planteamos entonces
 modelo logístico:
 
 $p(Y = 1| D = d) = \frac{1}{1 + \exp(-\alpha - \beta d)} = h(\alpha +\beta d)$
+
+Y nuestro modelo es:
+
+$$
+\begin{align}
+Y_i &\sim Bern(p_i(D_i)) \\
+p_i &= \frac{1}{1+exp(-\alpha - \beta D_i)} \\
+\end{align}
+$$
+
 
 En términos de este modelo, queremos estimar la curva $h(\alpha +\beta d)$, o
 los parámetros $\alpha$ y $\beta$.
@@ -1154,28 +1164,26 @@ sólo pueden completar los tiros a unos cuantos centímetros del hoyo. Sabemos
 que esto no es cierto.
 
 Para completar nuestro modelo generativo, es necesario especificar los
-valores que pueden tomar estas variables, y entonces podremos ver cómo se 
-comporta nuestra cantidad a estimar.
-
-Pondremos distribuciones **iniciales** o **a priori** para los parámetros. En
+valores que pueden tomar estas variables.
+Pondremos distribuciones **iniciales** o **a priori** apropiadas para los parámetros. En
 este punto no hemos visto ningún dato, así que podemos experimentar para hacer
 una selección apropiada desde el punto de vista del conocimiento del área
 que tenemos actualmente.
 
 Podemos poner por ejemplo
-$$\alpha \sim \text{Normal}(5, 2),$$
+$$\alpha \sim \text{Normal}(6, 2),$$
 pues sabemos a que distancias de casi cero, es muy seguro lograr el tiro (no lejos de 100% de éxito). Para la $\beta$, consideramos que a unos 100 cm es muy probable hacer
 el tiro, pero a 1000 cm (10 m) la probabilidad baja considerablemente. Experimentaremos
 poniendo (debe ser negativa)
 
-$$\beta \sim \text{Normal}^-(0, 0.02).$$
+$$\beta \sim \text{Normal}^-(0, 0.025).$$
 
 y ahora reescribimos nuestra función de simulación:
 
 ```{r}
 simular_putts <- function(distancias) {
-  alpha <- rnorm(1, 5, 2)
-  beta <-  - abs(rnorm(1, 0, 0.015))
+  alpha <- rnorm(1, 6, 2)
+  beta <-  - abs(rnorm(1, 0, 0.025))
   p <- 1 / (1 + exp(-alpha - beta * distancias))
   tibble(y = rbinom(length(distancias), 1, p), p = p, d = distancias) |> 
     select(d, p, y) |> 
@@ -1186,13 +1194,13 @@ simular_putts <- function(distancias) {
 Y podemos ver cómo se ven diversas curvas que incluye nuestro modelo:
 
 ```{r}
-distancias <- seq(0, 3000, 1) 
+distancias <- seq(0, 1000, 1) 
 map_df(1:100,  \(x) simular_putts(distancias) |> mutate(id = x)) |> 
   ggplot(aes(x = d, y = p, group = id)) +
   geom_line(alpha = 0.2) +
   labs(x = "Distancia (cm)", y = "Probabilidad de Éxito")
 ```
-Los casos extremos son poco creíbles (0 probabilidad a 5 metros o 100% de probabilidad a 20 metros), pero el grueso de las curvas son razonables. Podemos ver la curva promedio:
+Los casos extremos son poco creíbles (0 probabilidad a 2 metros o 100% de probabilidad a 6 metros), pero tenemos un rango razonable para las curvas. Podemos ver la curva promedio:
 
 
 ```{r}
@@ -1209,7 +1217,7 @@ reps_sim |>
 ```
 
 Una vez que estamos satisfechos con nuestro modelo (nótese que hay lugar
-para varias críticas), podemo proceder a calcular la distribución posterior,
+para varias críticas), podemos proceder a calcular la distribución posterior,
 primero con datos simulados.
 
 La posterior en este caso es más complicada y no tenemos una manera simple de
@@ -1224,7 +1232,7 @@ mod_logistica <- cmdstan_model("./src/golf-logistico.stan")
 print(mod_logistica)
 ```
 ```{r}
-set.seed(1225)
+set.seed(425)
 distancias <- rnorm(100, 0, 2000) |> abs() 
 datos <- simular_putts(distancias)
 datos_mod <- datos |> group_by(d) |> 
@@ -1258,11 +1266,11 @@ todas las curvas simuladas:
 ```{r}
 grafs_tbl <- sims |>
   rowwise() |>
-  mutate(graf = list(tibble(d = seq(0, 3000, 10)) |> 
+  mutate(graf = list(tibble(d = seq(0, 600, 10)) |> 
            mutate(p = 1 / (1 + exp(-alpha - beta * d)))
   )) |> 
   ungroup() |> 
-  slice_sample(n = 100) |> 
+  slice_sample(n = 1000) |> 
   select(.draw, graf) |> 
   unnest(graf) 
 ```
@@ -1277,16 +1285,19 @@ grafs_tbl |>
 
 ```
 
-Veremos cómo formalizar este proceso de chequeo a priori más adelante: por el momento,
+Por el momento,
 podríamos hacer unas cuantas simulaciones distintas, y ver que las curvas
-obtenidas son las que esperaríamos. También podríamos hacer simulaciones
+obtenidas son las que esperaríamos (más tarde formalizaremos este proceso). 
+También podríamos hacer simulaciones
 con distintos tamaños de muestra, y entender cuánta incertidumbre en la estimación
 de las curvas podríamos tener.
 
 Ahora llegamos al siguiente paso, que tomar los datos y estimar nuestra curva
-de desempeño según la distancia.
+de desempeño según la distancia. Será necesario convertir de pies a centímetros
+en la variable de distancia:
 
 ```{r}
+# nota: x está en pies (ft)
 datos_golf <- read_delim("../datos/golf.csv", delim = " ")
 head(datos_golf)
 ```
@@ -1297,7 +1308,7 @@ head(datos_golf)
 set.seed(1225)
 ajuste <- mod_logistica$sample(
   data = list(N = nrow(datos_golf), 
-              d = 100 * datos_golf$x / 0.3048, y = datos_golf$y, n = datos_golf$n), 
+              d = 30.48 * datos_golf$x, y = datos_golf$y, n = datos_golf$n), 
                         refresh = 1000, init = 10, step_size = 0.01)
 sims <- ajuste$draws(c("alpha", "beta"), format = "df")
 resumen <- ajuste$summary()
@@ -1314,7 +1325,7 @@ Ahora simulamos la posterior y la contrastamos con los datos:
 ```{r}
 grafs_tbl <- sims |>
   rowwise() |>
-  mutate(graf = list(tibble(d = 100 * datos_golf$x / 0.3048) |> 
+  mutate(graf = list(tibble(d = 30.48 * datos_golf$x) |> 
            mutate(p = 1 / (1 + exp(-alpha - beta * d)))
   )) |> 
   ungroup() |> 
@@ -1325,10 +1336,11 @@ grafs_tbl <- sims |>
 
 ```{r}
 resumen_golf <- datos_golf |>
-  mutate(d = 100 * x / 0.3048, p = y / n)
+  mutate(d = 30.48 * x, p = y / n)
 ```
 
 ```{r}
+#| fig-cap: Chequeo predictivo posterior (deficiente)
 grafs_tbl |> 
   ggplot(aes(x = d, y = p)) +
   geom_line(aes(group = .draw), alpha = 0.1) +
@@ -1343,18 +1355,213 @@ Vemos que la curva estimada desajusta. Este tipo de análisis se
 llama **chequeo a posteriori**, y mas frecuentemente se
 hace un **chequeo predictivo posterior**, que veremos más adelante. Por
 el momento, nos quedamos con la conclusión de que el modelo no es apropiado
-para estos datos.
+para estos datos: no hemos capturado apropiadamente la relación que
+hay entre éxito y distancia.
 
 En este punto veremos dos caminos:
 
 1. El primero es continuar con modelos genéricos que no toman en cuenta
 mecanismos específicos de los datos. Por ejemplo, podríamos poner
-más terminos derivados de la distancia (polinomios o splines)
-2. El segundo camino, que exploramos primero, es **utilizar más información
+más terminos derivados de la distancia (polinomios o splines).
+
+2. El segundo camino,  es **utilizar más información
 acerca del fenómeno de interés**. Sabemos como funciona básicamente el golf,
 y también sabemos geometría y física que determina el proceso generador de datos.
 Podemos utilizar esta información para construir un modelo más apropiado.
 
+
 ## Usando teoría para construir modelos
+
+En la gráfica causal que vimos arriba, hay mucha información adicional
+que no hemos utilizado acerca de la naturaleza de la dependencia de las
+variables involucradas. En esta parte, **en lugar de usar un modelo genérico**,
+utilizaremos geometría y algo de física para construir un modelo más apropiado.
+
+El problema es considerablemente complicado conceptualmente (@HolmesGolf, @PennerPutting)
+si consideramos todas las fuentes de variación: ángulo de tiro, potencia de tiro,
+declive en greens y así sucesivamente. 
+
+Seguiremos haciendo la simplificación de superficie plana, pero consideramos
+dos parámetros para el tiro con distintas condiciones de éxito:
+
+1. El ángulo del tiro
+2. La velocidad con la que la pelota llega (o no llega) al hoyo
+
+
+El diámetro de una pelota de golf y el hoyo (en centrímetros) es de
+
+```{r}
+diam_pelota <- (1.68 * 2.54) |>  round(1)
+diam_hoyo <- (4.25 * 2.54) |>  round(1)
+c(diam_pelota, diam_hoyo)
+```
+
+Supondremos por el momento que los greens de golf (áreas cerca del hoyo) 
+son perfectamente planos,
+de modo que el éxito depende de 
+
+1. Tirar la pelota con un ángulo suficientemente cercano
+a cero con
+respecto a la línea que va del centro de la pelota al centro del hoyo.
+2. Tirar la pelota con una velocidad suficiente para llegue al hoyo pero
+no tan alta que vuele por encima del hoyo.
+
+Mejores datos de los tipos de fallo sería útil, pero por el momento no 
+consideramos que estén disponibles.
+
+Empezamos construyendo nuestro modelo considerando sólamente el ángulo de tiro.
+
+#### Ángulo de tiro
+
+Supongamos que la distancia del centro de la pelota al centro del hoyo es $d$, y que 
+$\theta$ es el ángulo del tiro con respecto a la recta que va del centro de la pelota
+al centro del hoyo. El tiro es exitoso cuando (si $\theta$ está en radianes):
+
+$$\tan(\theta) < \frac{R - r}{2d}$$
+
+![Tiro de golf](figuras/golf-put.png)
+Tenemos que
+
+```{r}
+(diam_hoyo - diam_pelota)/2
+```
+
+Así que para nuestro problema simplificado, la condición de éxito es
+
+$$\tan(\theta) < \frac{3.25}{d}$$
+
+Mejores golfistas tendrán mejor control sobre $\theta$, y conforme
+$d$ es más grande, la probabilidad de tener éxito baja:
+
+```{r}
+tibble(d = seq(10, 600, 1)) |>  
+  mutate(theta_grados = (180 / pi) * atan(3.25 / d)) |>  
+ggplot(aes(d, theta_grados)) + geom_point() +
+  xlab("Distancia (cm)") +
+  ylab(expression(paste("Desviación máxima en grados"))) +
+  labs(subtitle = "Desviación máxima permitida para tener éxito a distintas distancias") +
+  scale_y_log10()
+```
+Por el momento, sólo consideraremos el ángulo y la distancia. Supongamos
+que un tirador profesional tira con un ángula $\theta$ que se distribuye
+como
+
+$$\theta\sim N(0,\sigma),$$
+donde $\theta=0$ indica que el tiro es directo al hoyo. La probabilidad de tener
+éxito es entonces
+
+$$P(Y=1|\theta) = P(|\theta| < \arctan(3.25/d)) = 2\Phi \left (\frac{\arctan(3.25/d)}{\sigma}  \right )-1$$
+Así que nuestro modelo completo es
+
+$$
+\begin{align}
+Y_i &\sim Bern(p_i(D_i)) \\
+p_i &= 2\Phi(\arctan(3.25/D_i)/\sigma)-1 \\
+\end{align}
+$$
+Nótese que sólo tenemos un parámetro $\sigma$ en este modelo en lugar de dos como en la
+regresión logística. La diferencia grande también es la forma funcional de
+la probabilidad de éxito.
+
+
+Antes de escribir nuestra función, necesitamos poner una inicial sobre $\sigma$.
+Probaremos considerando que un jugador profesional puede tener una desviación
+de 0 a 10 grados, por ejemplo. Convirtiendo a radianes podríamos poner:
+
+$$
+\begin{align}
+Y_i &\sim Bern(p_i(D_i)) \\
+p_i &= 2\Phi(\arctan(3.25/D_i)/\sigma)-1 \\
+\sigma &\sim N^+(0, 5\pi/180))
+\end{align}
+$$
+
+
+```{r}
+simular_putts_angulo <- function(distancias) {
+  sigma <- rnorm(1, 0, 5 * pi / 180) |> abs()
+  p <- 2 * pnorm(atan(3.25 / distancias)/sigma) - 1
+  tibble(y = rbinom(length(distancias), 1, p), p = p, d = distancias) |> 
+    select(d, p, y) |> 
+    mutate(sigma = sigma)
+}
+```
+
+Y podemos ver cómo se ven diversas curvas que incluye nuestro modelo:
+
+```{r}
+distancias <- seq(0, 600, 1) 
+map_df(1:100,  \(x) simular_putts_angulo(distancias) |> mutate(id = x)) |> 
+  ggplot(aes(x = d, y = p, group = id)) +
+  geom_line(alpha = 0.2) +
+  labs(x = "Distancia (cm)", y = "Probabilidad de Éxito")
+```
+Podemos comenzar con esta inicial, que espera que en general
+los tiros a menos de menos de 50cm se consigan con mucha frecuencia o casi seguro,
+2 metros se consigan con cierta frecuencia, y 6 metros se consigan con relativamente
+menos frecuencia.
+
+Dejaremos como ejercicio hacer las pruebas predictivas a priori, y continuaremos
+con el ajuste a los datos para checar el ajuste de este modelo:
+
+```{r}
+#! message: false
+library(cmdstanr)
+mod_golf <- cmdstan_model("./src/golf-principios-1.stan")
+print(mod_logistica_2)
+```
+
+```{r}
+set.seed(225)
+ajuste_2 <- mod_golf$sample(
+  data = list(N = nrow(datos_golf),
+              d =  30.48 * datos_golf$x, y = datos_golf$y, n = datos_golf$n),
+  refresh = 1000, init = 0, step_size = 0.01)
+sims_2 <- ajuste_2$draws(c("sigma"), format = "df")
+resumen_2 <- ajuste_2$summary("sigma")
+
+```
+
+```{r}
+resumen_2
+```
+
+Ahora simulamos la posterior y la contrastamos con los datos:
+
+
+```{r}
+grafs_2_tbl <- sims_2 |>
+  rowwise() |>
+  mutate(graf = list(tibble(d = 30.48 * datos_golf$x) |>
+                       mutate(p = 2 * pnorm(atan(3.25 / d)/sigma) - 1))) |>
+  ungroup() |>
+  slice_sample(n = 100) |>
+  select(.draw, graf) |>
+  unnest(graf)
+```
+
+
+El resultado es considerablemente mejor que el de la regresión logística, aunque
+tiene algunos fallos en rangos medios:
+
+```{r}
+#| fig-cap: Chequeo predictivo posterior
+grafs_2_tbl |>
+  ggplot(aes(x = d, y = p)) +
+  geom_line(aes(group = .draw), alpha = 0.1) +
+  labs(x = "Distancia (cm)", y = "Probabilidad de Éxito") +
+  geom_point(data = resumen_golf, color = "red") +
+  geom_linerange(data = resumen_golf,
+                 aes(ymin = p - 2 * sqrt(p * (1 - p) / n),
+                     ymax = p + 2 * sqrt(p * (1 - p) / n)),
+                 color = "red")
+```
+
+
+
+
+
+
+
 
 
