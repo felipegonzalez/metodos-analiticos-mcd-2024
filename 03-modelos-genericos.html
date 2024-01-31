@@ -293,7 +293,7 @@ window.Quarto = {
 <p>En este ejemplo, introducimos notación para representar modelos, usaremos posteriores con varios parámetros, y veremos cómo construir y aplicar modelos lineales, todo desde el punto de vista de nuestro flujo de trabajo.</p>
 <p>En este ejemplo de <span class="citation" data-cites="rethinking">McElreath (<a href="#ref-rethinking" role="doc-biblioref">2020</a>)</span> queremos describir la relación entre peso y estatura de <strong>adultos</strong> de una población relativamente homogénea. Nuestro modelo causal es como sigue:</p>
 <ul>
-<li>En primer lugar, la estatura (<span class="math inline">\(H\)</span>) de las personas adultas influye en su peso (<span class="math inline">\(W\)</span>). El peso, sin embargo, está influenciado también por otras variables no observadas:</li>
+<li>En primer lugar, la estatura (<span class="math inline">\(H\)</span>) de las personas adultas influye en su peso (<span class="math inline">\(W\)</span>). El peso, está influenciado también por otras variables no observadas:</li>
 </ul>
 <div class="cell">
 <details class="code-fold">
@@ -313,8 +313,8 @@ window.Quarto = {
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)<span class="co">#, width = 200, height = 50)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-d914fa640e64fe910d6a" style="width:100%;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-d914fa640e64fe910d6a">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    U\n  node [shape=plaintext]\n    H\n    W\n  edge [minlen = 3]\n    H -> W\n    U -> W\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-76268e7501f31f526f75" style="width:100%;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-76268e7501f31f526f75">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    U\n  node [shape=plaintext]\n    H\n    W\n  edge [minlen = 3]\n    H -> W\n    U -> W\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Nótese que no consideramos <span class="math inline">\(W\to H\)</span>, porque podemos pensar en varias intervenciones que podrían cambiar el peso por no cambian la estatura. Por otro lado, es difícil pensar en alguna intervención que cambie la estatura pero no cambie el peso de una persona. Adicionalmente, hay otros factores desconocidos no observados <span class="math inline">\(U\)</span> que afectan el peso de cada persona adicionalmente a su estatura.</p>
@@ -375,7 +375,7 @@ Distribuciones a priori
 </div>
 <div class="callout-body-container callout-body">
 <p>La propuesta de distribuciones a priori depende de manera cercana de nuestras verificaciones a prior, como veremos más adelante. En general <strong>no</strong> existen distribuciones a priori “correctas”, sino justificables desde el punto de vista del conocimiento del área.</p>
-<p>Los chequeos a priori nos permite entender las consecuencias de nuestras decisiones acerca de las iniciales. <strong>Nótese que todo este trabajo se hace antes de ver los datos</strong>, lo que implica que no estamos buscando “sacar el resultado que queremos” de los datos. S</p>
+<p>Los chequeos a priori nos permite entender las consecuencias de nuestras decisiones acerca de las iniciales. <strong>Nótese que todo este trabajo se hace antes de ver los datos</strong>, lo que implica que no estamos buscando “sacar el resultado que queremos” de los datos.</p>
 </div>
 </div>
 <section id="distribuciones-a-priori-1" class="level3" data-number="4.2.1">
@@ -385,7 +385,7 @@ Distribuciones a priori
 <p>Las apriori o iniciales expresan conocimiento del área (incluyendo las unidades que se están utilizando), y actúan como restricciones suaves. Supondremos que peso está en kilogramos y estatura en centímetros.</p>
 <ul>
 <li><p>Cuando <span class="math inline">\(H=160\)</span> esperamos que <span class="math inline">\(W\)</span> esté alrededor de 50-70 kg, así que podemos centrar <span class="math inline">\(\alpha\)</span> en 60. Las unidades de <span class="math inline">\(\alpha\)</span> son kg. Una inicial (verificaremos dentro de un momento esa decisión) puede ser <span class="math inline">\(\alpha\sim N(60, 10)\)</span>. Recordemos que esto implica que <span class="math inline">\(\alpha\)</span> están dentre 60 - 2(10) = 40 y 60 + 10(2) = 80 con probabilidad 0.95, lo cual es considerable pero no excesivamente amplio para una persona de estatura 160cm.</p></li>
-<li><p>Si <span class="math inline">\(\alpha\)</span> es está alrededor de 60, la constante de proporcionalidad <span class="math inline">\(\beta\)</span> debe ser positiva, y no muy lejana de un valor entre 0 y 2. La razón es que no tiene sentido esperar que un aumento de 10 kilos tenga un aumento esperado de peso de 20 kilos, por ejemplo. Podríamos poner una inicial como <span class="math inline">\(\beta\sim N^+(0, 1)\)</span> (normal truncada en 0) por ejemplo. Esta distribución tiene los siguientes percentiles:</p></li>
+<li><p>Si <span class="math inline">\(\alpha\)</span> es está alrededor de 60, la constante de proporcionalidad <span class="math inline">\(\beta\)</span> debe ser positiva, y no muy lejana de un valor entre 0 y 2. La razón es que no tiene sentido esperar que un aumento de 10 cm tenga un aumento esperado de peso de 20 kilos, por ejemplo. Podríamos poner una inicial como <span class="math inline">\(\beta\sim N^+(0, 1)\)</span> (normal truncada en 0) por ejemplo. Esta distribución tiene los siguientes percentiles:</p></li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(<span class="fu">rnorm</span>(<span class="dv">10000</span>, <span class="dv">0</span>, <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">abs</span>(), <span class="at">probs =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.1</span>)) <span class="sc">|&gt;</span> </span>
@@ -468,13 +468,13 @@ U_i &amp;\sim N(0,\sigma) \\
 <span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  W <span class="ot">&lt;-</span> mu_W <span class="sc">+</span> U</span>
 <span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(alpha, beta, sigma, H, W)</span>
 <span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>sims_tbl <span class="ot">&lt;-</span> <span class="fu">map_df</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>, <span class="cf">function</span>(rep) {</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>sims_mal_tbl <span class="ot">&lt;-</span> <span class="fu">map_df</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>, <span class="cf">function</span>(rep) {</span>
 <span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sim_peso_mod_mal</span>(<span class="dv">100</span>) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">rep =</span> rep)</span>
 <span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>sims_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>sims_mal_tbl <span class="sc">|&gt;</span> </span>
 <span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> H, <span class="at">y =</span> W)) <span class="sc">+</span></span>
 <span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="fu">aes</span>(<span class="at">intercept =</span> alpha <span class="sc">-</span> <span class="dv">160</span> <span class="sc">*</span> beta, <span class="at">slope =</span> beta), <span class="at">data =</span> sims_tbl, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="fu">aes</span>(<span class="at">intercept =</span> alpha <span class="sc">-</span> <span class="dv">160</span> <span class="sc">*</span> beta, <span class="at">slope =</span> beta), <span class="at">data =</span> sims_mal_tbl, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
 <span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Estatura (cm)"</span>, <span class="at">y =</span> <span class="st">"Peso (kg)"</span>) <span class="sc">+</span></span>
 <span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>rep)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
@@ -551,18 +551,18 @@ model {
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>sims_tbl</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2,000 × 6
-   alpha  beta sigma     H      W   rep
-   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;int&gt;
- 1  65.4  129. 2466.  149. -3240.     1
- 2  65.4  129. 2466.  168.  1084.     1
- 3  65.4  129. 2466.  178.  -624.     1
- 4  65.4  129. 2466.  155. -2217.     1
- 5  65.4  129. 2466.  167. -1553.     1
- 6  65.4  129. 2466.  160.  -959.     1
- 7  65.4  129. 2466.  162. -6882.     1
- 8  65.4  129. 2466.  156.  2700.     1
- 9  65.4  129. 2466.  145.  2422.     1
-10  65.4  129. 2466.  161. -1013.     1
+   alpha  beta sigma     H     W   rep
+   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;
+ 1  61.0 0.203  22.9  165.  37.1     1
+ 2  61.0 0.203  22.9  176.  52.4     1
+ 3  61.0 0.203  22.9  154.  37.2     1
+ 4  61.0 0.203  22.9  162.  70.2     1
+ 5  61.0 0.203  22.9  156.  22.5     1
+ 6  61.0 0.203  22.9  158.  54.8     1
+ 7  61.0 0.203  22.9  173.  77.1     1
+ 8  61.0 0.203  22.9  174.  56.9     1
+ 9  61.0 0.203  22.9  150.  41.4     1
+10  61.0 0.203  22.9  150.  41.6     1
 # ℹ 1,990 more rows</code></pre>
 </div>
 </div>
@@ -908,8 +908,8 @@ Verificaciones de predictiva posterior
 <span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-4afa0a2f677d4d5271f7" style="width:100%;height:162px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-4afa0a2f677d4d5271f7">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    U\n    V\n    Z\n  node [shape=plaintext]\n    H\n    W\n    S\n  edge [minlen = 3]\n    H -> W\n    U -> W\n    S -> H\n    S -> W\n    V -> H\n    Z -> S\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-e3055f0b05c153a4b214" style="width:100%;height:162px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-e3055f0b05c153a4b214">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    U\n    V\n    Z\n  node [shape=plaintext]\n    H\n    W\n    S\n  edge [minlen = 3]\n    H -> W\n    U -> W\n    S -> H\n    S -> W\n    V -> H\n    Z -> S\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Omitiendo del diagrama las variables no observadas que también son causas únicamente de <span class="math inline">\(S\)</span> y <span class="math inline">\(W, H\)</span>:</p>
@@ -934,8 +934,8 @@ Verificaciones de predictiva posterior
 <span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-e3c448e089e9d1f529fd" style="width:100%;height:162px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-e3c448e089e9d1f529fd">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n  \n  node [shape=plaintext]\n    H\n    W\n    S\n  edge [minlen = 3]\n    H -> W\n    S -> H\n    S -> W\n\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-342f20711a918facbe65" style="width:100%;height:162px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-342f20711a918facbe65">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n  \n  node [shape=plaintext]\n    H\n    W\n    S\n  edge [minlen = 3]\n    H -> W\n    S -> H\n    S -> W\n\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Si queremos saber cómo influye el sexo en el peso, este diagrama indica que hay dos tipos de preguntas que podemos hacer:</p>
@@ -1376,53 +1376,86 @@ Total execution time: 1.3 seconds.</code></pre>
 </div>
 </div>
 <p>Esto muestra que el efecto directo de sexo en peso es relativamente chico: la mayor parte del efecto es a través de la estatura. Existe una ligera tendencia a que los hombre de menos estatura sean más pesados, y las mujeres de más estatura sean relativamente menos pesadas, pero realmente no podemos afirmar con confianza ningún efecto claro.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Cuando agregamos una variable como estatura en el modelo de regresión, decimos que estamos <em>estratificando</em> por estatura. En este caso, bloqueamos el efecto causal que tiene sexo en peso a través de la estatura. El efecto causal entre los la variable sexo, que se hace dentro de cada estrato, y se expresa en los coeficientes de sexo, tiene una interpretación totalmente diferente en comparación al modelo que no incluye estatura.</p>
+</div>
+</div>
 </section>
 </section>
 <section id="regresión-logística-tiros-de-golf" class="level2" data-number="4.7">
 <h2 data-number="4.7" class="anchored" data-anchor-id="regresión-logística-tiros-de-golf"><span class="header-section-number">4.7</span> Regresión logística: tiros de golf</h2>
-<p>Este caso está basado en Gelman and Nolan (2002) y Gelman (n.d.). Usamos el flujo de trabajo bayesiano tomado del documento de Michael Betancourt Betancourt (2020).</p>
-<p>Queremos entender modelar la probabilidad de éxito de putts de Golf (putts: tiros relativamente cerca del hoyo que buscan que la pelota ruede al hoyo o muy cerca de él), y cómo depende el éxito de la distancia del tiro. Quisiéramos inferir qué tan precisos son los profesionales en sus tiros.</p>
-<p>En este caso, el modelo conceptual es simple <span class="math inline">\(D-&gt;Y\)</span>, donde <span class="math inline">\(D\)</span> es la distancia del tiro y <span class="math inline">\(Y\)</span> es el resultado del tiro (1 si es exitoso, 0 si no). Nótese que no escribiríamos <span class="math inline">\(Y-&gt;D\)</span>, porque cambiar la distancia del tiro si cambia las probabilidades de éxito, pero no a la inversa.</p>
-<p>Nuestro interés principal es modelar cómo cambia la probabilidad de éxito de un tiro (para profesionales) con la distancia al hoyo. Si tomamos un punto de vista de modelos genéricos, podríamos proponer regresión logística:</p>
-<p><span class="math inline">\(p(Y = 1| D = d) = \frac{1}{1 + \exp(-\alpha - \beta d)}\)</span></p>
-<p>Y nuestra cantidad a estimar es la curva <span class="math inline">\(p(Y=1|D=d)\)</span>, que es una función de <span class="math inline">\(d\)</span>. Esto lo haremos estimando los parámetros <span class="math inline">\(\alpha\)</span> y <span class="math inline">\(beta\)</span>.</p>
+<p>Este caso está basado en el paper <span class="citation" data-cites="GelmanGolf">Gelman y Nolan (<a href="#ref-GelmanGolf" role="doc-biblioref">2002</a>)</span> y [el caso de estudio de Gelman] (https://mc-stan.org/users/documentation/case-studies/golf.html).</p>
+<p>Queremos entender la probabilidad de éxito de putts de Golf (putts: tiros relativamente cerca del hoyo que buscan que la pelota ruede al hoyo o muy cerca de él), y <em>cómo depende el éxito de la distancia del tiro</em>. ¿Qué tan precisos son los profesionales a diferentes distancias? Los datos que tenemos son varios putts de Golf de profesionales a varias distancias, y para cada distancia el porcentaje de éxitos de esos putts.</p>
+<p>Comenzaremos con el siguiente diagrama causal:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Código</summary>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grViz</span>(<span class="st">"</span></span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a><span class="st">digraph {</span></span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a><span class="st">  graph [ranksep = 0.3, rankdir = LR]</span></span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a><span class="st">  node [shape=circle]</span></span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a><span class="st">    V</span></span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a><span class="st">    Ang [label = &lt;&amp;theta;&gt;]</span></span>
+<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a><span class="st">    U</span></span>
+<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a><span class="st">  node [shape=plaintext]</span></span>
+<span id="cb65-9"><a href="#cb65-9" aria-hidden="true" tabindex="-1"></a><span class="st">    D</span></span>
+<span id="cb65-10"><a href="#cb65-10" aria-hidden="true" tabindex="-1"></a><span class="st">    Y</span></span>
+<span id="cb65-11"><a href="#cb65-11" aria-hidden="true" tabindex="-1"></a><span class="st">  edge [minlen = 3]</span></span>
+<span id="cb65-12"><a href="#cb65-12" aria-hidden="true" tabindex="-1"></a><span class="st">    D -&gt; V</span></span>
+<span id="cb65-13"><a href="#cb65-13" aria-hidden="true" tabindex="-1"></a><span class="st">    D -&gt; Y</span></span>
+<span id="cb65-14"><a href="#cb65-14" aria-hidden="true" tabindex="-1"></a><span class="st">    V -&gt; Y</span></span>
+<span id="cb65-15"><a href="#cb65-15" aria-hidden="true" tabindex="-1"></a><span class="st">    Ang -&gt; Y</span></span>
+<span id="cb65-16"><a href="#cb65-16" aria-hidden="true" tabindex="-1"></a><span class="st">    U -&gt; Y</span></span>
+<span id="cb65-17"><a href="#cb65-17" aria-hidden="true" tabindex="-1"></a><span class="st">{rank = same; D; V}</span></span>
+<span id="cb65-18"><a href="#cb65-18" aria-hidden="true" tabindex="-1"></a><span class="st">{rank = same; Ang; Y}</span></span>
+<span id="cb65-19"><a href="#cb65-19" aria-hidden="true" tabindex="-1"></a><span class="st">{rank = max; U}</span></span>
+<span id="cb65-20"><a href="#cb65-20" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb65-21"><a href="#cb65-21" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)<span class="co">#, width = 200, height = 50)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="grViz html-widget html-fill-item" id="htmlwidget-9146b602251bbfff4601" style="width:100%;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-9146b602251bbfff4601">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    V\n    Ang [label = <&theta;>]\n    U\n  node [shape=plaintext]\n    D\n    Y\n  edge [minlen = 3]\n    D -> V\n    D -> Y\n    V -> Y\n    Ang -> Y\n    U -> Y\n{rank = same; D; V}\n{rank = same; Ang; Y}\n{rank = max; U}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>En este caso, el modelo causal es como sigue: conocemos la distancia <span class="math inline">\(D\)</span> al hoyo en cada tiro. El éxito (<span class="math inline">\(Y=1\)</span>) o fracaso (<span class="math inline">\(Y=0\)</span>) depende de la distancia, junto con la velocidad a la que sale la pelota (muy alto o muy bajo puede dar un tiro fallido), y el ángulo <span class="math inline">\(\theta\)</span> de salida. Adicionalmente, hay otros factors <span class="math inline">\(U\)</span> que pueden afectar la probabilidad de éxito. Nótese que no escribiríamos, por ejemplo <span class="math inline">\(Y \leftarrow D\)</span>, porque la distancia no cambia causalmente con el resultado del tiro, aunque es cierto que si intervenimos en la distancia, esperaríamos obtener tasas de éxito diferentes. Igualmente, es necesario poner una flecha de <span class="math inline">\(V\)</span> a <span class="math inline">\(D\)</span> y <span class="math inline">\(V\)</span> a <span class="math inline">\(Y\)</span>.</p>
+<p>Todas estas variables antecedentes de <span class="math inline">\(Y\)</span> interactúan para determinar el éxito de un tiro.</p>
+<p><strong>Cantidad a estimar</strong>: queremos conocer el efecto total de <span class="math inline">\(D\)</span> sobre <span class="math inline">\(Y\)</span>. Esto es, queremos conocer la curva <span class="math inline">\(p(Y=1|D=d)\)</span>, que es una función de <span class="math inline">\(d\)</span>, y también hacer contrastes del tipo <span class="math inline">\(p(Y=1|D=d + 10) - p(Y = 1|D=d),\)</span> por ejemplo.</p>
+<p><strong>Modelo estadístico</strong>: Nuestro diagrama causal justifica, aún cuando no tengamos la variable de ángulo, el uso de un modelo genérico como regresión logística (por ejemplo, no es necesario controlar por velocidad del tiro, y tampoco no nos interesa saber la distribución de distancias a la que intentan un putt), donde usamos <span class="math inline">\(Y\)</span> como respuesta y <span class="math inline">\(D\)</span> como variable independiente. Planteamos entonces un modelo logístico:</p>
+<p><span class="math inline">\(p(Y = 1| D = d) = \frac{1}{1 + \exp(-\alpha - \beta d)} = h(\alpha +\beta d)\)</span></p>
+<p>Y nuestro modelo es:</p>
+<p><span class="math display">\[
+\begin{align}
+Y_i &amp;\sim Bern(p_i(D_i)) \\
+p_i &amp;= \frac{1}{1+exp(-\alpha - \beta D_i)} \\
+\end{align}
+\]</span></p>
+<p>En términos de este modelo, queremos estimar la curva <span class="math inline">\(h(\alpha +\beta d)\)</span>, o los parámetros <span class="math inline">\(\alpha\)</span> y <span class="math inline">\(\beta\)</span>.</p>
 <p>Ahora construimos un modelo generativo, donde <span class="math inline">\(D\)</span> está dada en centímetros:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>simular_putts <span class="ot">&lt;-</span> <span class="cf">function</span>(distancias, alpha, beta) {</span>
-<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>alpha <span class="sc">-</span> beta <span class="sc">*</span> distancias))</span>
-<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">y =</span> <span class="fu">rbinom</span>(<span class="fu">length</span>(distancias), <span class="dv">1</span>, p), <span class="at">d =</span> distancias) <span class="sc">|&gt;</span> </span>
-<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(d, y)</span>
-<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>simular_putts <span class="ot">&lt;-</span> <span class="cf">function</span>(distancias, alpha, beta) {</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>alpha <span class="sc">-</span> beta <span class="sc">*</span> distancias))</span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">y =</span> <span class="fu">rbinom</span>(<span class="fu">length</span>(distancias), <span class="dv">1</span>, p), <span class="at">d =</span> distancias) <span class="sc">|&gt;</span> </span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(d, y)</span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Fijamos parámetros y simulamos datos:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">22</span>)</span>
-<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>distancias <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1000</span>, <span class="dv">5</span>) <span class="sc">|&gt;</span> <span class="fu">rep</span>(<span class="at">each =</span> <span class="dv">5</span>)</span>
-<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a><span class="fu">simular_putts</span>(distancias, <span class="dv">3</span>, <span class="sc">-</span><span class="fl">0.005</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> d, <span class="at">y =</span> y)) <span class="sc">+</span></span>
-<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">height =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Distancia (cm)"</span>, <span class="at">y =</span> <span class="st">"Éxito"</span>) <span class="sc">+</span></span>
-<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">span =</span> <span class="fl">0.5</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>`geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'</code></pre>
-</div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="03-modelos-genericos_files/figure-html/unnamed-chunk-51-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>Nótese que para este ejemplo utilizamos valores de <span class="math inline">\(\alpha\)</span> y <span class="math inline">\(\beta\)</span> fijos. Podríamos poner valores imposibles para golfistas profesionales, por ejemplo:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">22</span>)</span>
-<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>distancias <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1000</span>, <span class="dv">5</span>) <span class="sc">|&gt;</span> <span class="fu">rep</span>(<span class="at">each =</span> <span class="dv">5</span>)</span>
-<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a><span class="fu">simular_putts</span>(distancias, <span class="dv">10</span>, <span class="sc">-</span><span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> d, <span class="at">y =</span> y)) <span class="sc">+</span></span>
-<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">height =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Distancia (cm)"</span>, <span class="at">y =</span> <span class="st">"Éxito"</span>) <span class="sc">+</span></span>
-<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">span =</span> <span class="fl">0.5</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">22</span>)</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>distancias <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1000</span>, <span class="dv">5</span>) <span class="sc">|&gt;</span> <span class="fu">rep</span>(<span class="at">each =</span> <span class="dv">5</span>)</span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a><span class="fu">simular_putts</span>(distancias, <span class="dv">3</span>, <span class="sc">-</span><span class="fl">0.005</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> d, <span class="at">y =</span> y)) <span class="sc">+</span></span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">height =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Distancia (cm)"</span>, <span class="at">y =</span> <span class="st">"Éxito"</span>) <span class="sc">+</span></span>
+<span id="cb67-7"><a href="#cb67-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">span =</span> <span class="fl">0.5</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'</code></pre>
 </div>
@@ -1434,53 +1467,48 @@ Total execution time: 1.3 seconds.</code></pre>
 </div>
 </div>
 </div>
-<p>Esta configuración de parámetros no es razonable, pues implicaría que sólo pueden completar los tiros a unos cuantos centímetros del hoyo. Sabemos que esto no es cierto.</p>
-<p>Para completar nuestro modelo generativo, es necesario especificar los valores que pueden tomar estas variables, y entonces podremos ver cómo se comporta nuestra cantidad a estimar.</p>
-<p>Pondremos distribuciones <strong>iniciales</strong> o <strong>a priori</strong> para los parámetros. En este punto no hemos visto ningún dato, así que podemos experimentar para hacer una selección apropiada desde el punto de vista del conocimiento del área que tenemos actualmente.</p>
-<p>Podemos poner por ejemplo <span class="math display">\[\alpha \sim \text{Normal}(5, 2),\]</span> pues sabemos a que distancias de casi cero, es muy seguro lograr el tiro (no lejos de 100% de éxito). Para la <span class="math inline">\(\beta\)</span>, consideramos que a unos 100 cm es muy probable hacer el tiro, pero a 1000 cm (10 m) la probabilidad baja considerablemente. Experimentaremos poniendo (debe ser negativa)</p>
-<p><span class="math display">\[\beta \sim \text{Normal}^-(0, 0.02).\]</span></p>
-<p>y ahora reescribimos nuestra función de simulación:</p>
+<p>Nótese que para este ejemplo utilizamos valores de <span class="math inline">\(\alpha\)</span> y <span class="math inline">\(\beta\)</span> fijos. Valores imposibles para golfistas profesionales, por ejemplo:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>simular_putts <span class="ot">&lt;-</span> <span class="cf">function</span>(distancias) {</span>
-<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">2</span>)</span>
-<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>  beta <span class="ot">&lt;-</span>  <span class="sc">-</span> <span class="fu">abs</span>(<span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="fl">0.015</span>))</span>
-<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>alpha <span class="sc">-</span> beta <span class="sc">*</span> distancias))</span>
-<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">y =</span> <span class="fu">rbinom</span>(<span class="fu">length</span>(distancias), <span class="dv">1</span>, p), <span class="at">p =</span> p, <span class="at">d =</span> distancias) <span class="sc">|&gt;</span> </span>
-<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(d, p, y) <span class="sc">|&gt;</span> </span>
-<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">alpha =</span> alpha, <span class="at">beta =</span> beta)</span>
-<span id="cb70-8"><a href="#cb70-8" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">22</span>)</span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>distancias <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1000</span>, <span class="dv">5</span>) <span class="sc">|&gt;</span> <span class="fu">rep</span>(<span class="at">each =</span> <span class="dv">5</span>)</span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a><span class="fu">simular_putts</span>(distancias, <span class="dv">10</span>, <span class="sc">-</span><span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> d, <span class="at">y =</span> y)) <span class="sc">+</span></span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">height =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Distancia (cm)"</span>, <span class="at">y =</span> <span class="st">"Éxito"</span>) <span class="sc">+</span></span>
+<span id="cb69-7"><a href="#cb69-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">span =</span> <span class="fl">0.5</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'</code></pre>
 </div>
-<p>Y podemos ver cómo se ven diversas curvas que incluye nuestro modelo:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>distancias <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">3000</span>, <span class="dv">1</span>) </span>
-<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a><span class="fu">map_df</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>,  \(x) <span class="fu">simular_putts</span>(distancias) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">id =</span> x)) <span class="sc">|&gt;</span> </span>
-<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> d, <span class="at">y =</span> p, <span class="at">group =</span> id)) <span class="sc">+</span></span>
-<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Distancia (cm)"</span>, <span class="at">y =</span> <span class="st">"Probabilidad de Éxito"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="03-modelos-genericos_files/figure-html/unnamed-chunk-54-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="03-modelos-genericos_files/figure-html/unnamed-chunk-53-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>Los casos extremos son poco creíbles (0 probabilidad a 5 metros o 100% de probabilidad a 20 metros), pero el grueso de las curvas son razonables. Podemos ver la curva promedio:</p>
+<p>Esta configuración de parámetros no es razonable, pues implicaría que sólo pueden completar los tiros a unos cuantos centímetros del hoyo. Sabemos que esto no es cierto.</p>
+<p>Para completar nuestro modelo generativo, es necesario especificar los valores que pueden tomar estas variables. Pondremos distribuciones <strong>iniciales</strong> o <strong>a priori</strong> apropiadas para los parámetros. En este punto no hemos visto ningún dato, así que podemos experimentar para hacer una selección apropiada desde el punto de vista del conocimiento del área que tenemos actualmente.</p>
+<p>Podemos poner por ejemplo <span class="math display">\[\alpha \sim \text{Normal}(6, 2),\]</span> pues sabemos a que distancias de casi cero, es muy seguro lograr el tiro (no lejos de 100% de éxito). Para la <span class="math inline">\(\beta\)</span>, consideramos que a unos 100 cm es muy probable hacer el tiro, pero a 1000 cm (10 m) la probabilidad baja considerablemente. Experimentaremos poniendo (debe ser negativa)</p>
+<p><span class="math display">\[\beta \sim \text{Normal}^-(0, 0.025).\]</span></p>
+<p>y ahora reescribimos nuestra función de simulación:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>reps_sim <span class="ot">&lt;-</span> <span class="fu">map_df</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>,  \(x) <span class="fu">simular_putts</span>(distancias) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">id =</span> x)) </span>
-<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>resumen <span class="ot">&lt;-</span> reps_sim <span class="sc">|&gt;</span> <span class="fu">group_by</span>(d) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">p_5 =</span> <span class="fu">quantile</span>(p, <span class="fl">0.10</span>),</span>
-<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>                                                <span class="at">p95 =</span> <span class="fu">quantile</span>(p, <span class="fl">0.90</span>),</span>
-<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>                                                <span class="at">p =</span> <span class="fu">mean</span>(p))</span>
-<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>reps_sim <span class="sc">|&gt;</span> </span>
-<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> d, <span class="at">y =</span> p)) <span class="sc">+</span></span>
-<span id="cb72-7"><a href="#cb72-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">#geom_line(aes(group = id), alpha = 0.2) +</span></span>
-<span id="cb72-8"><a href="#cb72-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Distancia (cm)"</span>, <span class="at">y =</span> <span class="st">"Probabilidad de Éxito"</span>) <span class="sc">+</span></span>
-<span id="cb72-9"><a href="#cb72-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="at">data =</span> resumen, <span class="fu">aes</span>(<span class="at">ymin =</span> p_5, <span class="at">ymax =</span> p95), <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb72-10"><a href="#cb72-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> resumen, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">2</span>) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-ℹ Please use `linewidth` instead.</code></pre>
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>simular_putts <span class="ot">&lt;-</span> <span class="cf">function</span>(distancias) {</span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">6</span>, <span class="dv">2</span>)</span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>  beta <span class="ot">&lt;-</span>  <span class="sc">-</span> <span class="fu">abs</span>(<span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="fl">0.025</span>))</span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>alpha <span class="sc">-</span> beta <span class="sc">*</span> distancias))</span>
+<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">y =</span> <span class="fu">rbinom</span>(<span class="fu">length</span>(distancias), <span class="dv">1</span>, p), <span class="at">p =</span> p, <span class="at">d =</span> distancias) <span class="sc">|&gt;</span> </span>
+<span id="cb71-6"><a href="#cb71-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(d, p, y) <span class="sc">|&gt;</span> </span>
+<span id="cb71-7"><a href="#cb71-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">alpha =</span> alpha, <span class="at">beta =</span> beta)</span>
+<span id="cb71-8"><a href="#cb71-8" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Y podemos ver cómo se ven diversas curvas que incluye nuestro modelo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>distancias <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1000</span>, <span class="dv">1</span>) </span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a><span class="fu">map_df</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>,  \(x) <span class="fu">simular_putts</span>(distancias) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">id =</span> x)) <span class="sc">|&gt;</span> </span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> d, <span class="at">y =</span> p, <span class="at">group =</span> id)) <span class="sc">+</span></span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Distancia (cm)"</span>, <span class="at">y =</span> <span class="st">"Probabilidad de Éxito"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1489,13 +1517,37 @@ Total execution time: 1.3 seconds.</code></pre>
 </div>
 </div>
 </div>
-<p>Una vez que estamos satisfechos con nuestro modelo (nótese que hay lugar para varias críticas), podemo proceder a calcular la distribución posterior, primero con datos simulados.</p>
+<p>Los casos extremos son poco creíbles (0 probabilidad a 2 metros o 100% de probabilidad a 6 metros), pero tenemos un rango razonable para las curvas. Podemos ver la curva promedio:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>reps_sim <span class="ot">&lt;-</span> <span class="fu">map_df</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>,  \(x) <span class="fu">simular_putts</span>(distancias) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">id =</span> x)) </span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>resumen <span class="ot">&lt;-</span> reps_sim <span class="sc">|&gt;</span> <span class="fu">group_by</span>(d) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">p_5 =</span> <span class="fu">quantile</span>(p, <span class="fl">0.10</span>),</span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>                                                <span class="at">p95 =</span> <span class="fu">quantile</span>(p, <span class="fl">0.90</span>),</span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>                                                <span class="at">p =</span> <span class="fu">mean</span>(p))</span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a>reps_sim <span class="sc">|&gt;</span> </span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> d, <span class="at">y =</span> p)) <span class="sc">+</span></span>
+<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">#geom_line(aes(group = id), alpha = 0.2) +</span></span>
+<span id="cb73-8"><a href="#cb73-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Distancia (cm)"</span>, <span class="at">y =</span> <span class="st">"Probabilidad de Éxito"</span>) <span class="sc">+</span></span>
+<span id="cb73-9"><a href="#cb73-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="at">data =</span> resumen, <span class="fu">aes</span>(<span class="at">ymin =</span> p_5, <span class="at">ymax =</span> p95), <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb73-10"><a href="#cb73-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> resumen, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">2</span>) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="03-modelos-genericos_files/figure-html/unnamed-chunk-56-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Una vez que estamos satisfechos con nuestro modelo (nótese que hay lugar para varias críticas), podemos proceder a calcular la distribución posterior, primero con datos simulados.</p>
 <p>La posterior en este caso es más complicada y no tenemos una manera simple de simularla. Explicaremos más adelante cómo hacer esto (usando MCMC). Por ahora, escribiremos un programa de Stan que nos da simulaciones de la posterior. Tomaremos por el momento Stan como una <em>caja negra</em>, y después justificaremos este procedimiento.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="co">#! message: false</span></span>
-<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cmdstanr)</span>
-<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>mod_logistica <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"./src/golf-logistico.stan"</span>)</span>
-<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mod_logistica)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="co">#! message: false</span></span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cmdstanr)</span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>mod_logistica <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"./src/golf-logistico.stan"</span>)</span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mod_logistica)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>data {
   int&lt;lower=0&gt; N;
@@ -1509,22 +1561,22 @@ parameters {
 }
 model {
   y ~ binomial_logit(n, alpha + beta * d);
-  alpha ~ normal(5, 2);
-  beta ~ normal(0, 0.02);
+  alpha ~ normal(6, 2);
+  beta ~ normal(0, 0.025);
 }</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1225</span>)</span>
-<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>distancias <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">100</span>, <span class="dv">0</span>, <span class="dv">2000</span>) <span class="sc">|&gt;</span> <span class="fu">abs</span>() </span>
-<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> <span class="fu">simular_putts</span>(distancias)</span>
-<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>datos_mod <span class="ot">&lt;-</span> datos <span class="sc">|&gt;</span> <span class="fu">group_by</span>(d) <span class="sc">|&gt;</span> </span>
-<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">y =</span> <span class="fu">sum</span>(y)) <span class="sc">|&gt;</span> </span>
-<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
-<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>ajuste <span class="ot">&lt;-</span> mod_logistica<span class="sc">$</span><span class="fu">sample</span>(</span>
-<span id="cb76-8"><a href="#cb76-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">list</span>(<span class="at">N =</span> <span class="fu">nrow</span>(datos_mod), </span>
-<span id="cb76-9"><a href="#cb76-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">d =</span> datos_mod<span class="sc">$</span>d, <span class="at">y =</span> datos_mod<span class="sc">$</span>y, <span class="at">n =</span> datos_mod<span class="sc">$</span>n), </span>
-<span id="cb76-10"><a href="#cb76-10" aria-hidden="true" tabindex="-1"></a>                        <span class="at">refresh =</span> <span class="dv">1000</span>, <span class="at">init =</span> <span class="dv">10</span>, <span class="at">step_size =</span> <span class="fl">0.01</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">425</span>)</span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>distancias <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">100</span>, <span class="dv">0</span>, <span class="dv">2000</span>) <span class="sc">|&gt;</span> <span class="fu">abs</span>() </span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> <span class="fu">simular_putts</span>(distancias)</span>
+<span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a>datos_mod <span class="ot">&lt;-</span> datos <span class="sc">|&gt;</span> <span class="fu">group_by</span>(d) <span class="sc">|&gt;</span> </span>
+<span id="cb77-5"><a href="#cb77-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">y =</span> <span class="fu">sum</span>(y)) <span class="sc">|&gt;</span> </span>
+<span id="cb77-6"><a href="#cb77-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb77-7"><a href="#cb77-7" aria-hidden="true" tabindex="-1"></a>ajuste <span class="ot">&lt;-</span> mod_logistica<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb77-8"><a href="#cb77-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">list</span>(<span class="at">N =</span> <span class="fu">nrow</span>(datos_mod), </span>
+<span id="cb77-9"><a href="#cb77-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">d =</span> datos_mod<span class="sc">$</span>d, <span class="at">y =</span> datos_mod<span class="sc">$</span>y, <span class="at">n =</span> datos_mod<span class="sc">$</span>n), </span>
+<span id="cb77-10"><a href="#cb77-10" aria-hidden="true" tabindex="-1"></a>                        <span class="at">refresh =</span> <span class="dv">1000</span>, <span class="at">init =</span> <span class="dv">10</span>, <span class="at">step_size =</span> <span class="fl">0.01</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Running MCMC with 4 sequential chains...
 
@@ -1551,74 +1603,75 @@ Chain 4 finished in 0.1 seconds.
 
 All 4 chains finished successfully.
 Mean chain execution time: 0.1 seconds.
-Total execution time: 0.9 seconds.</code></pre>
+Total execution time: 0.5 seconds.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> ajuste<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"alpha"</span>, <span class="st">"beta"</span>), <span class="at">format =</span> <span class="st">"df"</span>)</span>
-<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>resumen <span class="ot">&lt;-</span> ajuste<span class="sc">$</span><span class="fu">summary</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> ajuste<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"alpha"</span>, <span class="st">"beta"</span>), <span class="at">format =</span> <span class="st">"df"</span>)</span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>resumen <span class="ot">&lt;-</span> ajuste<span class="sc">$</span><span class="fu">summary</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>resumen</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>resumen</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 10
-  variable      mean    median      sd     mad        q5      q95  rhat ess_bulk
-  &lt;chr&gt;        &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
-1 lp__     -29.7     -29.4     0.996   0.723   -31.8     -2.88e+1  1.00    1148.
-2 alpha      5.51      5.46    1.05    1.04      3.89     7.28e+0  1.00     696.
-3 beta      -0.00634  -0.00628 0.00120 0.00118  -0.00838 -4.46e-3  1.01     666.
+  variable     mean   median     sd    mad       q5      q95  rhat ess_bulk
+  &lt;chr&gt;       &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
+1 lp__     -11.3    -11.0    1.01   0.772  -13.3    -10.3     1.00    1197.
+2 alpha      3.85     3.77   1.29   1.33     1.86     6.08    1.00    1051.
+3 beta      -0.0364  -0.0356 0.0114 0.0116  -0.0560  -0.0191  1.00    1072.
 # ℹ 1 more variable: ess_tail &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>alpha[<span class="dv">1</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>alpha[<span class="dv">1</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 5.766646</code></pre>
+<pre><code>[1] 2.691742</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>beta[<span class="dv">1</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>beta[<span class="dv">1</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] -0.006834248</code></pre>
+<pre><code>[1] -0.02548956</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sims, <span class="fu">aes</span>(alpha, beta)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> datos <span class="sc">|&gt;</span> <span class="fu">first</span>(), <span class="fu">aes</span>(alpha, beta), <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sims, <span class="fu">aes</span>(alpha, beta)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> datos <span class="sc">|&gt;</span> <span class="fu">first</span>(), <span class="fu">aes</span>(alpha, beta), <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="03-modelos-genericos_files/figure-html/unnamed-chunk-60-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="03-modelos-genericos_files/figure-html/unnamed-chunk-61-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Y podemos graficar la posterior de interés, que se construye con todas las curvas simuladas:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a>grafs_tbl <span class="ot">&lt;-</span> sims <span class="sc">|&gt;</span></span>
-<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">|&gt;</span></span>
-<span id="cb86-3"><a href="#cb86-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">graf =</span> <span class="fu">list</span>(<span class="fu">tibble</span>(<span class="at">d =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">3000</span>, <span class="dv">10</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb86-4"><a href="#cb86-4" aria-hidden="true" tabindex="-1"></a>           <span class="fu">mutate</span>(<span class="at">p =</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>alpha <span class="sc">-</span> beta <span class="sc">*</span> d)))</span>
-<span id="cb86-5"><a href="#cb86-5" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">|&gt;</span> </span>
-<span id="cb86-6"><a href="#cb86-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb86-7"><a href="#cb86-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_sample</span>(<span class="at">n =</span> <span class="dv">100</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb86-8"><a href="#cb86-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.draw, graf) <span class="sc">|&gt;</span> </span>
-<span id="cb86-9"><a href="#cb86-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(graf) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a>grafs_tbl <span class="ot">&lt;-</span> sims <span class="sc">|&gt;</span></span>
+<span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">|&gt;</span></span>
+<span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">graf =</span> <span class="fu">list</span>(<span class="fu">tibble</span>(<span class="at">d =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">600</span>, <span class="dv">10</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb87-4"><a href="#cb87-4" aria-hidden="true" tabindex="-1"></a>           <span class="fu">mutate</span>(<span class="at">p =</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>alpha <span class="sc">-</span> beta <span class="sc">*</span> d)))</span>
+<span id="cb87-5"><a href="#cb87-5" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">|&gt;</span> </span>
+<span id="cb87-6"><a href="#cb87-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb87-7"><a href="#cb87-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_sample</span>(<span class="at">n =</span> <span class="dv">1000</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb87-8"><a href="#cb87-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.draw, graf) <span class="sc">|&gt;</span> </span>
+<span id="cb87-9"><a href="#cb87-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(graf) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Y graficamos:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a>grafs_tbl <span class="sc">|&gt;</span> </span>
-<span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> d, <span class="at">y =</span> p, <span class="at">group =</span> .draw)) <span class="sc">+</span></span>
-<span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb87-4"><a href="#cb87-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Distancia (cm)"</span>, <span class="at">y =</span> <span class="st">"Probabilidad de Éxito"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a>grafs_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> d, <span class="at">y =</span> p, <span class="at">group =</span> .draw)) <span class="sc">+</span></span>
+<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb88-4"><a href="#cb88-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Distancia (cm)"</span>, <span class="at">y =</span> <span class="st">"Probabilidad de Éxito"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="03-modelos-genericos_files/figure-html/unnamed-chunk-62-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="03-modelos-genericos_files/figure-html/unnamed-chunk-63-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>Veremos cómo formalizar este proceso de chequeo a priori más adelante: por el momento, podríamos hacer unas cuantas simulaciones distintas, y ver que las curvas obtenidas son las que esperaríamos. También podríamos hacer simulaciones con distintos tamaños de muestra, y entender cuánta incertidumbre en la estimación de las curvas podríamos tener.</p>
-<p>Ahora llegamos al siguiente paso, que tomar los datos y estimar nuestra curva de desempeño según la distancia.</p>
+<p>Por el momento, podríamos hacer unas cuantas simulaciones distintas, y ver que las curvas obtenidas son las que esperaríamos (más tarde formalizaremos este proceso). También podríamos hacer simulaciones con distintos tamaños de muestra, y entender cuánta incertidumbre en la estimación de las curvas podríamos tener.</p>
+<p>Ahora llegamos al siguiente paso, que tomar los datos y estimar nuestra curva de desempeño según la distancia. Será necesario convertir de pies a centímetros en la variable de distancia:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a>datos_golf <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"../datos/golf.csv"</span>, <span class="at">delim =</span> <span class="st">" "</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="co"># nota: x está en pies (ft)</span></span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a>datos_golf <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"../datos/golf.csv"</span>, <span class="at">delim =</span> <span class="st">" "</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 19 Columns: 3
 ── Column specification ────────────────────────────────────────────────────────
@@ -1628,7 +1681,7 @@ dbl (3): x, n, y
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(datos_golf)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(datos_golf)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 3
       x     n     y
@@ -1642,11 +1695,11 @@ dbl (3): x, n, y
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1225</span>)</span>
-<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a>ajuste <span class="ot">&lt;-</span> mod_logistica<span class="sc">$</span><span class="fu">sample</span>(</span>
-<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">list</span>(<span class="at">N =</span> <span class="fu">nrow</span>(datos_golf), </span>
-<span id="cb92-4"><a href="#cb92-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">d =</span> <span class="dv">100</span> <span class="sc">*</span> datos_golf<span class="sc">$</span>x <span class="sc">/</span> <span class="fl">0.3048</span>, <span class="at">y =</span> datos_golf<span class="sc">$</span>y, <span class="at">n =</span> datos_golf<span class="sc">$</span>n), </span>
-<span id="cb92-5"><a href="#cb92-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">refresh =</span> <span class="dv">1000</span>, <span class="at">init =</span> <span class="dv">10</span>, <span class="at">step_size =</span> <span class="fl">0.01</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1225</span>)</span>
+<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a>ajuste <span class="ot">&lt;-</span> mod_logistica<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">list</span>(<span class="at">N =</span> <span class="fu">nrow</span>(datos_golf), </span>
+<span id="cb93-4"><a href="#cb93-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">d =</span> <span class="fl">30.48</span> <span class="sc">*</span> datos_golf<span class="sc">$</span>x, <span class="at">y =</span> datos_golf<span class="sc">$</span>y, <span class="at">n =</span> datos_golf<span class="sc">$</span>n), </span>
+<span id="cb93-5"><a href="#cb93-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">refresh =</span> <span class="dv">1000</span>, <span class="at">init =</span> <span class="dv">10</span>, <span class="at">step_size =</span> <span class="fl">0.01</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Running MCMC with 4 sequential chains...
 
@@ -1675,71 +1728,282 @@ All 4 chains finished successfully.
 Mean chain execution time: 0.0 seconds.
 Total execution time: 0.5 seconds.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> ajuste<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"alpha"</span>, <span class="st">"beta"</span>), <span class="at">format =</span> <span class="st">"df"</span>)</span>
-<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a>resumen <span class="ot">&lt;-</span> ajuste<span class="sc">$</span><span class="fu">summary</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> ajuste<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"alpha"</span>, <span class="st">"beta"</span>), <span class="at">format =</span> <span class="st">"df"</span>)</span>
+<span id="cb95-2"><a href="#cb95-2" aria-hidden="true" tabindex="-1"></a>resumen <span class="ot">&lt;-</span> ajuste<span class="sc">$</span><span class="fu">summary</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a>resumen</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a>resumen</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 10
   variable        mean   median      sd     mad       q5      q95  rhat ess_bulk
   &lt;chr&gt;          &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
-1 lp__        -3.03e+3 -3.03e+3 1.01e+0 7.12e-1 -3.03e+3 -3.03e+3  1.00    1300.
-2 alpha        2.23e+0  2.23e+0 5.75e-2 5.73e-2  2.14e+0  2.33e+0  1.00    1146.
-3 beta        -7.80e-4 -7.79e-4 2.03e-5 2.05e-5 -8.13e-4 -7.48e-4  1.00    1152.
+1 lp__     -3028.      -3.03e+3 9.67e-1 6.82e-1 -3.03e+3 -3.03e+3  1.00    1487.
+2 alpha        2.23     2.23e+0 5.77e-2 5.73e-2  2.14e+0  2.32e+0  1.01    1128.
+3 beta        -0.00839 -8.39e-3 2.18e-4 2.21e-4 -8.75e-3 -8.04e-3  1.01    1148.
 # ℹ 1 more variable: ess_tail &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <p>Ahora simulamos la posterior y la contrastamos con los datos:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a>grafs_tbl <span class="ot">&lt;-</span> sims <span class="sc">|&gt;</span></span>
-<span id="cb97-2"><a href="#cb97-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">|&gt;</span></span>
-<span id="cb97-3"><a href="#cb97-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">graf =</span> <span class="fu">list</span>(<span class="fu">tibble</span>(<span class="at">d =</span> <span class="dv">100</span> <span class="sc">*</span> datos_golf<span class="sc">$</span>x <span class="sc">/</span> <span class="fl">0.3048</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb97-4"><a href="#cb97-4" aria-hidden="true" tabindex="-1"></a>           <span class="fu">mutate</span>(<span class="at">p =</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>alpha <span class="sc">-</span> beta <span class="sc">*</span> d)))</span>
-<span id="cb97-5"><a href="#cb97-5" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">|&gt;</span> </span>
-<span id="cb97-6"><a href="#cb97-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb97-7"><a href="#cb97-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_sample</span>(<span class="at">n =</span> <span class="dv">100</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb97-8"><a href="#cb97-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.draw, graf) <span class="sc">|&gt;</span> </span>
-<span id="cb97-9"><a href="#cb97-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(graf) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a>grafs_tbl <span class="ot">&lt;-</span> sims <span class="sc">|&gt;</span></span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">|&gt;</span></span>
+<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">graf =</span> <span class="fu">list</span>(<span class="fu">tibble</span>(<span class="at">d =</span> <span class="fl">30.48</span> <span class="sc">*</span> datos_golf<span class="sc">$</span>x) <span class="sc">|&gt;</span> </span>
+<span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a>           <span class="fu">mutate</span>(<span class="at">p =</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>alpha <span class="sc">-</span> beta <span class="sc">*</span> d)))</span>
+<span id="cb98-5"><a href="#cb98-5" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">|&gt;</span> </span>
+<span id="cb98-6"><a href="#cb98-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb98-7"><a href="#cb98-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_sample</span>(<span class="at">n =</span> <span class="dv">100</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb98-8"><a href="#cb98-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.draw, graf) <span class="sc">|&gt;</span> </span>
+<span id="cb98-9"><a href="#cb98-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(graf) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a>resumen_golf <span class="ot">&lt;-</span> datos_golf <span class="sc">|&gt;</span></span>
-<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">d =</span> <span class="dv">100</span> <span class="sc">*</span> x <span class="sc">/</span> <span class="fl">0.3048</span>, <span class="at">p =</span> y <span class="sc">/</span> n)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>resumen_golf <span class="ot">&lt;-</span> datos_golf <span class="sc">|&gt;</span></span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">d =</span> <span class="fl">30.48</span> <span class="sc">*</span> x, <span class="at">p =</span> y <span class="sc">/</span> n)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>grafs_tbl <span class="sc">|&gt;</span> </span>
-<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> d, <span class="at">y =</span> p)) <span class="sc">+</span></span>
-<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> .draw), <span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb99-4"><a href="#cb99-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Distancia (cm)"</span>, <span class="at">y =</span> <span class="st">"Probabilidad de Éxito"</span>) <span class="sc">+</span></span>
-<span id="cb99-5"><a href="#cb99-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> resumen_golf, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb99-6"><a href="#cb99-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_linerange</span>(<span class="at">data =</span> resumen_golf, </span>
-<span id="cb99-7"><a href="#cb99-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">ymin =</span> p <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">sqrt</span>(p <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p) <span class="sc">/</span> n),  </span>
-<span id="cb99-8"><a href="#cb99-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">ymax =</span> p <span class="sc">+</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">sqrt</span>(p <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p) <span class="sc">/</span> n)),</span>
-<span id="cb99-9"><a href="#cb99-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"red"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a>grafs_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> d, <span class="at">y =</span> p)) <span class="sc">+</span></span>
+<span id="cb100-3"><a href="#cb100-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> .draw), <span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb100-4"><a href="#cb100-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Distancia (cm)"</span>, <span class="at">y =</span> <span class="st">"Probabilidad de Éxito"</span>) <span class="sc">+</span></span>
+<span id="cb100-5"><a href="#cb100-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> resumen_golf, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb100-6"><a href="#cb100-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_linerange</span>(<span class="at">data =</span> resumen_golf, </span>
+<span id="cb100-7"><a href="#cb100-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">ymin =</span> p <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">sqrt</span>(p <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p) <span class="sc">/</span> n),  </span>
+<span id="cb100-8"><a href="#cb100-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">ymax =</span> p <span class="sc">+</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">sqrt</span>(p <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p) <span class="sc">/</span> n)),</span>
+<span id="cb100-9"><a href="#cb100-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"red"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="03-modelos-genericos_files/figure-html/unnamed-chunk-68-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="03-modelos-genericos_files/figure-html/unnamed-chunk-69-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Chequeo predictivo posterior (deficiente)</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>Vemos que la curva estimada desajusta. Este tipo de análisis se llama <strong>chequeo a posteriori</strong>, y mas frecuentemente se hace un <strong>chequeo predictivo posterior</strong>, que veremos más adelante. Por el momento, nos quedamos con la conclusión de que el modelo no es apropiado para estos datos.</p>
+<p>Vemos que la curva estimada desajusta. Este tipo de análisis se llama <strong>chequeo a posteriori</strong>, y mas frecuentemente se hace un <strong>chequeo predictivo posterior</strong>, que veremos más adelante. Por el momento, nos quedamos con la conclusión de que el modelo no es apropiado para estos datos: no hemos capturado apropiadamente la relación que hay entre éxito y distancia.</p>
 <p>En este punto veremos dos caminos:</p>
 <ol type="1">
-<li>El primero es continuar con modelos genéricos que no toman en cuenta mecanismos específicos de los datos. Por ejemplo, podríamos poner más terminos derivados de la distancia (polinomios o splines)</li>
-<li>El segundo camino, que exploramos primero, es <strong>utilizar más información acerca del fenómeno de interés</strong>. Sabemos como funciona básicamente el golf, y también sabemos geometría y física que determina el proceso generador de datos. Podemos utilizar esta información para construir un modelo más apropiado.</li>
+<li><p>El primero es continuar con modelos genéricos que no toman en cuenta mecanismos específicos de los datos. Por ejemplo, podríamos poner más terminos derivados de la distancia (polinomios o splines).</p></li>
+<li><p>El segundo camino, es <strong>utilizar más información acerca del fenómeno de interés</strong>. Sabemos como funciona básicamente el golf, y también sabemos geometría y física que determina el proceso generador de datos. Podemos utilizar esta información para construir un modelo más apropiado.</p></li>
 </ol>
 </section>
 <section id="usando-teoría-para-construir-modelos" class="level2" data-number="4.8">
 <h2 data-number="4.8" class="anchored" data-anchor-id="usando-teoría-para-construir-modelos"><span class="header-section-number">4.8</span> Usando teoría para construir modelos</h2>
+<p>En la gráfica causal que vimos arriba, hay mucha información adicional que no hemos utilizado acerca de la naturaleza de la dependencia de las variables involucradas. En esta parte, <strong>en lugar de usar un modelo genérico</strong>, utilizaremos geometría y algo de física para construir un modelo más apropiado.</p>
+<p>El problema es considerablemente complicado conceptualmente (<span class="citation" data-cites="HolmesGolf">Holmes (<a href="#ref-HolmesGolf" role="doc-biblioref">1991</a>)</span>, <span class="citation" data-cites="PennerPutting">Penner (<a href="#ref-PennerPutting" role="doc-biblioref">2002</a>)</span>) si consideramos todas las fuentes de variación: ángulo de tiro, potencia de tiro, declive en greens y así sucesivamente.</p>
+<p>Seguiremos haciendo la simplificación de superficie plana, pero consideramos dos parámetros para el tiro con distintas condiciones de éxito:</p>
+<ol type="1">
+<li>El ángulo del tiro</li>
+<li>La velocidad con la que la pelota llega (o no llega) al hoyo</li>
+</ol>
+<p>El diámetro de una pelota de golf y el hoyo (en centrímetros) es de</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb101"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a>diam_pelota <span class="ot">&lt;-</span> (<span class="fl">1.68</span> <span class="sc">*</span> <span class="fl">2.54</span>) <span class="sc">|&gt;</span>  <span class="fu">round</span>(<span class="dv">1</span>)</span>
+<span id="cb101-2"><a href="#cb101-2" aria-hidden="true" tabindex="-1"></a>diam_hoyo <span class="ot">&lt;-</span> (<span class="fl">4.25</span> <span class="sc">*</span> <span class="fl">2.54</span>) <span class="sc">|&gt;</span>  <span class="fu">round</span>(<span class="dv">1</span>)</span>
+<span id="cb101-3"><a href="#cb101-3" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(diam_pelota, diam_hoyo)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  4.3 10.8</code></pre>
+</div>
+</div>
+<p>Supondremos por el momento que los greens de golf (áreas cerca del hoyo) son perfectamente planos, de modo que el éxito depende de</p>
+<ol type="1">
+<li>Tirar la pelota con un ángulo suficientemente cercano a cero con respecto a la línea que va del centro de la pelota al centro del hoyo.</li>
+<li>Tirar la pelota con una velocidad suficiente para llegue al hoyo pero no tan alta que vuele por encima del hoyo.</li>
+</ol>
+<p>Mejores datos de los tipos de fallo sería útil, pero por el momento no consideramos que estén disponibles.</p>
+<p>Empezamos construyendo nuestro modelo considerando sólamente el ángulo de tiro.</p>
+<section id="ángulo-de-tiro" class="level4" data-number="4.8.0.1">
+<h4 data-number="4.8.0.1" class="anchored" data-anchor-id="ángulo-de-tiro"><span class="header-section-number">4.8.0.1</span> Ángulo de tiro</h4>
+<p>Supongamos que la distancia del centro de la pelota al centro del hoyo es <span class="math inline">\(d\)</span>, y que <span class="math inline">\(\theta\)</span> es el ángulo del tiro con respecto a la recta que va del centro de la pelota al centro del hoyo. El tiro es exitoso cuando (si <span class="math inline">\(\theta\)</span> está en radianes):</p>
+<p><span class="math display">\[\tan(\theta) &lt; \frac{R - r}{2d}\]</span></p>
+<p><img src="figuras/golf-put.png" class="img-fluid" alt="Tiro de golf"> Tenemos que</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb103"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a>(diam_hoyo <span class="sc">-</span> diam_pelota)<span class="sc">/</span><span class="dv">2</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.25</code></pre>
+</div>
+</div>
+<p>Así que para nuestro problema simplificado, la condición de éxito es</p>
+<p><span class="math display">\[\tan(\theta) &lt; \frac{3.25}{d}\]</span></p>
+<p>Mejores golfistas tendrán mejor control sobre <span class="math inline">\(\theta\)</span>, y conforme <span class="math inline">\(d\)</span> es más grande, la probabilidad de tener éxito baja:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb105"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">d =</span> <span class="fu">seq</span>(<span class="dv">10</span>, <span class="dv">600</span>, <span class="dv">1</span>)) <span class="sc">|&gt;</span>  </span>
+<span id="cb105-2"><a href="#cb105-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">theta_grados =</span> (<span class="dv">180</span> <span class="sc">/</span> pi) <span class="sc">*</span> <span class="fu">atan</span>(<span class="fl">3.25</span> <span class="sc">/</span> d)) <span class="sc">|&gt;</span>  </span>
+<span id="cb105-3"><a href="#cb105-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(d, theta_grados)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb105-4"><a href="#cb105-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Distancia (cm)"</span>) <span class="sc">+</span></span>
+<span id="cb105-5"><a href="#cb105-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">"Desviación máxima en grados"</span>))) <span class="sc">+</span></span>
+<span id="cb105-6"><a href="#cb105-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">"Desviación máxima permitida para tener éxito a distintas distancias"</span>) <span class="sc">+</span></span>
+<span id="cb105-7"><a href="#cb105-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_log10</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="03-modelos-genericos_files/figure-html/unnamed-chunk-72-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Por el momento, sólo consideraremos el ángulo y la distancia. Supongamos que un tirador profesional tira con un ángula <span class="math inline">\(\theta\)</span> que se distribuye como</p>
+<p><span class="math display">\[\theta\sim N(0,\sigma),\]</span> donde <span class="math inline">\(\theta=0\)</span> indica que el tiro es directo al hoyo. La probabilidad de tener éxito es entonces</p>
+<p><span class="math display">\[P(Y=1|\theta) = P(|\theta| &lt; \arctan(3.25/d)) = 2\Phi \left (\frac{\arctan(3.25/d)}{\sigma}  \right )-1\]</span> Así que nuestro modelo completo es</p>
+<p><span class="math display">\[
+\begin{align}
+Y_i &amp;\sim Bern(p_i(D_i)) \\
+p_i &amp;= 2\Phi(\arctan(3.25/D_i)/\sigma)-1 \\
+\end{align}
+\]</span> Nótese que sólo tenemos un parámetro <span class="math inline">\(\sigma\)</span> en este modelo en lugar de dos como en la regresión logística. La diferencia grande también es la forma funcional de la probabilidad de éxito.</p>
+<p>Antes de escribir nuestra función, necesitamos poner una inicial sobre <span class="math inline">\(\sigma\)</span>. Probaremos considerando que un jugador profesional puede tener una desviación de 0 a 10 grados, por ejemplo. Convirtiendo a radianes podríamos poner:</p>
+<p><span class="math display">\[
+\begin{align}
+Y_i &amp;\sim Bern(p_i(D_i)) \\
+p_i &amp;= 2\Phi(\arctan(3.25/D_i)/\sigma)-1 \\
+\sigma &amp;\sim N^+(0, 5\pi/180))
+\end{align}
+\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb106"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a>simular_putts_angulo <span class="ot">&lt;-</span> <span class="cf">function</span>(distancias) {</span>
+<span id="cb106-2"><a href="#cb106-2" aria-hidden="true" tabindex="-1"></a>  sigma <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">5</span> <span class="sc">*</span> pi <span class="sc">/</span> <span class="dv">180</span>) <span class="sc">|&gt;</span> <span class="fu">abs</span>()</span>
+<span id="cb106-3"><a href="#cb106-3" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">pnorm</span>(<span class="fu">atan</span>(<span class="fl">3.25</span> <span class="sc">/</span> distancias)<span class="sc">/</span>sigma) <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb106-4"><a href="#cb106-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">y =</span> <span class="fu">rbinom</span>(<span class="fu">length</span>(distancias), <span class="dv">1</span>, p), <span class="at">p =</span> p, <span class="at">d =</span> distancias) <span class="sc">|&gt;</span> </span>
+<span id="cb106-5"><a href="#cb106-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(d, p, y) <span class="sc">|&gt;</span> </span>
+<span id="cb106-6"><a href="#cb106-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">sigma =</span> sigma)</span>
+<span id="cb106-7"><a href="#cb106-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Y podemos ver cómo se ven diversas curvas que incluye nuestro modelo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb107"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a>distancias <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">600</span>, <span class="dv">1</span>) </span>
+<span id="cb107-2"><a href="#cb107-2" aria-hidden="true" tabindex="-1"></a><span class="fu">map_df</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>,  \(x) <span class="fu">simular_putts_angulo</span>(distancias) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">id =</span> x)) <span class="sc">|&gt;</span> </span>
+<span id="cb107-3"><a href="#cb107-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> d, <span class="at">y =</span> p, <span class="at">group =</span> id)) <span class="sc">+</span></span>
+<span id="cb107-4"><a href="#cb107-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb107-5"><a href="#cb107-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Distancia (cm)"</span>, <span class="at">y =</span> <span class="st">"Probabilidad de Éxito"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="03-modelos-genericos_files/figure-html/unnamed-chunk-74-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Podemos comenzar con esta inicial, que espera que en general los tiros a menos de menos de 50cm se consigan con mucha frecuencia o casi seguro, 2 metros se consigan con cierta frecuencia, y 6 metros se consigan con relativamente menos frecuencia.</p>
+<p>Dejaremos como ejercicio hacer las pruebas predictivas a priori, y continuaremos con el ajuste a los datos para checar el ajuste de este modelo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb108"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a><span class="co">#! message: false</span></span>
+<span id="cb108-2"><a href="#cb108-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cmdstanr)</span>
+<span id="cb108-3"><a href="#cb108-3" aria-hidden="true" tabindex="-1"></a>mod_golf <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"./src/golf-principios-1.stan"</span>)</span>
+<span id="cb108-4"><a href="#cb108-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mod_golf)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>data {
+  int&lt;lower=0&gt; N;
+  array[N] int n;
+  vector[N] d;
+  array[N] int y;
+}
+transformed data {
+  vector[N] angulo_maximo = atan(3.25 ./ d);
+}
+parameters {
+  real&lt;lower=0&gt; sigma;
+  }
+transformed parameters {
+  vector[N] p = 2 * Phi(angulo_maximo / sigma) - 1;
+}
+model {
+  y ~ binomial_logit(n, p);
+  sigma ~ normal(0, 5 * pi() / 180);
+}</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb110"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">225</span>)</span>
+<span id="cb110-2"><a href="#cb110-2" aria-hidden="true" tabindex="-1"></a>ajuste_2 <span class="ot">&lt;-</span> mod_golf<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb110-3"><a href="#cb110-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">list</span>(<span class="at">N =</span> <span class="fu">nrow</span>(datos_golf),</span>
+<span id="cb110-4"><a href="#cb110-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">d =</span>  <span class="fl">30.48</span> <span class="sc">*</span> datos_golf<span class="sc">$</span>x, <span class="at">y =</span> datos_golf<span class="sc">$</span>y, <span class="at">n =</span> datos_golf<span class="sc">$</span>n),</span>
+<span id="cb110-5"><a href="#cb110-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">refresh =</span> <span class="dv">1000</span>, <span class="at">init =</span> <span class="dv">0</span>, <span class="at">step_size =</span> <span class="fl">0.01</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 sequential chains...
+
+Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 1 finished in 0.0 seconds.
+Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 2 finished in 0.0 seconds.
+Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 3 finished in 0.0 seconds.
+Chain 4 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 4 finished in 0.0 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 0.0 seconds.
+Total execution time: 0.5 seconds.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb112"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a>sims_2 <span class="ot">&lt;-</span> ajuste_2<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"sigma"</span>), <span class="at">format =</span> <span class="st">"df"</span>)</span>
+<span id="cb112-2"><a href="#cb112-2" aria-hidden="true" tabindex="-1"></a>resumen_2 <span class="ot">&lt;-</span> ajuste_2<span class="sc">$</span><span class="fu">summary</span>(<span class="st">"sigma"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb113"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a>resumen_2</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 10
+  variable   mean median      sd     mad     q5    q95  rhat ess_bulk ess_tail
+  &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+1 sigma    0.0308 0.0308 0.00141 0.00141 0.0285 0.0332  1.00    1289.    2238.</code></pre>
+</div>
+</div>
+<p>Ahora simulamos la posterior y la contrastamos con los datos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb115"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a>grafs_2_tbl <span class="ot">&lt;-</span> sims_2 <span class="sc">|&gt;</span></span>
+<span id="cb115-2"><a href="#cb115-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">|&gt;</span></span>
+<span id="cb115-3"><a href="#cb115-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">graf =</span> <span class="fu">list</span>(<span class="fu">tibble</span>(<span class="at">d =</span> <span class="fl">30.48</span> <span class="sc">*</span> datos_golf<span class="sc">$</span>x) <span class="sc">|&gt;</span></span>
+<span id="cb115-4"><a href="#cb115-4" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">mutate</span>(<span class="at">p =</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">pnorm</span>(<span class="fu">atan</span>(<span class="fl">3.25</span> <span class="sc">/</span> d)<span class="sc">/</span>sigma) <span class="sc">-</span> <span class="dv">1</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb115-5"><a href="#cb115-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb115-6"><a href="#cb115-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_sample</span>(<span class="at">n =</span> <span class="dv">100</span>) <span class="sc">|&gt;</span></span>
+<span id="cb115-7"><a href="#cb115-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.draw, graf) <span class="sc">|&gt;</span></span>
+<span id="cb115-8"><a href="#cb115-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(graf)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>El resultado es considerablemente mejor que el de la regresión logística, aunque tiene algunos fallos en rangos medios:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb116"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb116-1"><a href="#cb116-1" aria-hidden="true" tabindex="-1"></a>grafs_2_tbl <span class="sc">|&gt;</span></span>
+<span id="cb116-2"><a href="#cb116-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> d, <span class="at">y =</span> p)) <span class="sc">+</span></span>
+<span id="cb116-3"><a href="#cb116-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> .draw), <span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb116-4"><a href="#cb116-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Distancia (cm)"</span>, <span class="at">y =</span> <span class="st">"Probabilidad de Éxito"</span>) <span class="sc">+</span></span>
+<span id="cb116-5"><a href="#cb116-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> resumen_golf, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb116-6"><a href="#cb116-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_linerange</span>(<span class="at">data =</span> resumen_golf,</span>
+<span id="cb116-7"><a href="#cb116-7" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">aes</span>(<span class="at">ymin =</span> p <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">sqrt</span>(p <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p) <span class="sc">/</span> n),</span>
+<span id="cb116-8"><a href="#cb116-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">ymax =</span> p <span class="sc">+</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">sqrt</span>(p <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p) <span class="sc">/</span> n)),</span>
+<span id="cb116-9"><a href="#cb116-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color =</span> <span class="st">"red"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="03-modelos-genericos_files/figure-html/unnamed-chunk-79-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Chequeo predictivo posterior</figcaption>
+</figure>
+</div>
+</div>
+</div>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-GelmanGolf" class="csl-entry" role="listitem">
+Gelman, Andrew, y Deborah Nolan. 2002. <span>«A Probability Model for Golf Putting»</span>. <em>Teaching Statistics</em> 24 (septiembre): 93-95. <a href="https://doi.org/10.1111/1467-9639.00097">https://doi.org/10.1111/1467-9639.00097</a>.
+</div>
+<div id="ref-HolmesGolf" class="csl-entry" role="listitem">
+Holmes, Brian W. 1991. <span>«Putting: How a golf ball and hole interact»</span>. <em>American Journal of Physics</em> 59 (2): 129-36. <a href="https://doi.org/10.1119/1.16592">https://doi.org/10.1119/1.16592</a>.
+</div>
 <div id="ref-rethinking" class="csl-entry" role="listitem">
 McElreath, R. 2020. <em>Statistical Rethinking: A Bayesian Course with Examples in R and Stan</em>. A Chapman &amp; Hall libro. CRC Press. <a href="https://books.google.com.mx/books?id=Ie2vxQEACAAJ">https://books.google.com.mx/books?id=Ie2vxQEACAAJ</a>.
 </div>
+<div id="ref-PennerPutting" class="csl-entry" role="listitem">
+Penner, Albert. 2002. <span>«The physics of putting»</span>. <em>Canadian Journal of Physics</em> 80 (febrero): 83-96. <a href="https://doi.org/10.1139/p01-137">https://doi.org/10.1139/p01-137</a>.
 </div>
+</div>
+</section>
 </section>
 
 </main> <!-- /main -->
