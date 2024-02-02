@@ -1,0 +1,231 @@
+---
+title: "Tarea 3"
+format: html
+---
+
+```{r}
+#| warning: false
+#| message: false
+library(tidyverse)
+library(DiagrammeR)
+library(cmdstanr)
+set_cmdstan_path("./.cmdstan/cmdstan-2.34.1/")
+```
+
+En esta tarea: 1) Examinaremos la salida de simulaciones de la posterior
+de un modelo simple de Stan, 2) Veremos cómo hacer resumenes de manera 
+apropiada, y 3) Por qué la correlación entre parámetros es importante cuando
+buscamos calcular cantidades derivadas.
+
+**Nota**: un objetivo es entender más del lenguaje de Stan,
+por el momento no te preocupes acerca de su funcionamiento interno. Concéntrate
+en que produce simulaciones de una posterior.
+
+## Un programa simple de Stan
+
+Considerando el desarrollo que vimos en clase, vamos a usar 
+el siguiente modelo (un poco distinto) 
+de Stan para entender el efecto de estatura sobre peso.
+Utilizamos una forma de escribir el programa no vectorizada y más explícita
+para facilitar su comprensión:
+
+```{r}
+mod_peso <- cmdstan_model("peso-estatura-tarea.stan")
+print(mod_peso)
+```
+
+**Pregunta 1**: Identifica en el programa de arriba: 1) Qué datos deben
+proporcionarse al modelo y de qué tipo son (enteros, reales, vectores, matrices,
+etc) 2) ¿Cuáles son los parámetros a estimar? 3) ¿Cuál es el modelo que
+estamos proponiendo para peso dada la estatura? 4) ¿Dónde está la información
+a priori para los parámetros? Compara esta información con la descripción
+del modelo con ecuaciones y distribuciones:
+
+$$
+\begin{align}
+W_i &= \alpha + \beta H_i + U_i \\
+U_i &\sim N(0,\sigma) \\
+\alpha &\sim N(20, 20) \\
+\beta &\sim N^+(0, 1) \\
+\sigma &\sim N^+(0, 20) \\
+\end{align}
+$$
+
+**Pregunta 2**: ¿Por qué en este ejemplo es más difícil proponer una
+inicial razonable para el parámetro $\alpha$, en contraste con el
+modelo que vimos en clase (nota que no centramos $H_i$)? **Nota**: la
+dependencia de peso y estatura de este modelo es equivalente a la del modelo
+de la clase, pero la *parametrización es diferente*: en particular la
+interpetación del parámetro $\alpha$ es diferente.
+
+
+**Pregunta 3**: Describe
+algunas ventajas y desventajas en términos de lectura de código entre las versiones
+vectorizada (vista en clase) y no vectorizada (el código de arriba).
+
+
+## Simulando de la posterior
+
+Con Stan podemos producir simulaciones de la posterior de todos los
+parámetros. Vamos a hacerlo aquí con una muestra de los datos que vimos en
+clase. Normalmente corremos varias cadenas o simulaciones independientes
+que nos ayudan a paralelizar y también hacer diagnósticos.
+
+```{r}
+#| message: false
+# Leemos datos y tomamos una muestra
+set.seed(81)
+datos_tbl <- read_delim("./datos/Howell1.csv", delim = ";") |> 
+  filter(age >= 18) |> 
+  slice_sample(n = 200)
+```
+
+
+```{r}
+# Pasamos los datos en una lista
+datos_lista <- list(
+  N = nrow(datos_tbl),
+  h = datos_tbl$height,
+  w = datos_tbl$weight
+)
+
+# Muestreamos de la posterior 
+mod_peso_ajuste <- mod_peso$sample(
+  data = datos_lista,
+  chains = 4,
+  iter_sampling = 2000,
+  init = 0.1, 
+  seed = 83922,
+  refresh = 1000)
+```
+
+Usualmente, si tenemos problemas numéricos en la
+simulación cmdstanr nos dará algunas indicaciones (en rojo). En
+este caso los diagnósticos básicos no tienen problema.
+
+Ahora podemos obtener las simulaciones conjuntas de todos los parámetros:
+
+```{r}
+sims_tbl <- mod_peso_ajuste$draws(format = "df")  |> 
+  as_tibble()
+head(sims_tbl)
+```
+
+En total tenemos 8000 simulaciones (verificalo) *.draw* es un número secuencial que enumera todas las simulaciones,
+(debe ser de 1 a  2000 * 4), *.chain* indica cada cadena o corrida con valores iniciales
+diferentes (va de 1 a 4), y *.iter* enumera las simulaciones en cada cadena (va de 1 a 2000). Finalmente *lp__** nos da la log probabilidad del modelo en cada simulación
+(una cantidad de diagnóstico).
+
+
+## Calculando resúmenes
+
+La salida principal son las simulaciones de la posterior
+para $\alpha, \beta$ y $\sigma$. Podemos examinar 
+un resumen de la posterior de cada parámetro
+(es decir las *marginales* de la posterior) haciendo por ejemplo:
+
+
+```{r}
+mod_peso_ajuste$summary(c("alpha", "beta", "sigma"))
+```
+
+**Pregunta 4**: Con la tabla de arriba muestra intervalos de 90% de probabilidad
+posterior para cada uno de los parámetros.
+
+
+Ahora consideramos un resumen que puede ser de interés: por ejemplo,
+**¿cuál es el valor esperado de peso para una persona de 150 kilos?**
+
+Lo haríamos como sigue (revisa cómo se calcula peso_medio_150 en este código):
+
+```{r}
+sims_tbl |> 
+  mutate(peso_medio_150 = alpha + beta * 150) |> 
+ggplot(aes(x = peso_medio_150)) + geom_histogram()
+```
+
+Ahora imagina que quisieras calcular este resumen de la siguiente
+forma: tomamos una simulación de alpha al azar, luego una de beta al
+azar, y calculamos el resumen:
+
+```{r}
+tibble(alpha = sample(sims_tbl$alpha), beta = sample(sims_tbl$beta)) |> 
+  mutate(peso_medio_150 = alpha + beta * 150) |> 
+ggplot(aes(x = peso_medio_150)) + geom_histogram()
+```
+
+**Pregunta 5**: ¿Por qué los dos resultados son tan diferentes? 
+¿Cuál es el correcto? Tip: en *sims_tbl*, grafica alpha contra beta.
+
+
+**Pregunta 6**: Justifica la siguiente afirmación: en general, 
+cuando calculamos cantidades o hacemos preguntas 
+que involucran más de un parámetro, **es necesario usar la conjunta de la posterior**, y no se puede saber de la cantidad de interés a partir de resúmenes separados
+de cada parámetro.
+
+
+Finalmente, estas cantidades resumen pueden calcularse directamente
+en Stan, asegurando que seguimos las reglas de las dos preguntas anteriores
+(nota la parte extra de *generated quantities* al final del código):
+
+```{r}
+mod_peso_sim <- cmdstan_model("peso-estatura-tarea-sim.stan")
+print(mod_peso_sim)
+```
+
+
+```{r}
+mod_peso_ajuste_sim <- mod_peso_sim$sample(
+  data = datos_lista,
+  chains = 4,
+  iter_sampling = 2000,
+  init = 0.1, 
+  seed = 83922,
+  refresh = 1000)
+sims_2_tbl <- mod_peso_ajuste_sim$draws(format = "df")  |> 
+  as_tibble()
+```
+
+Y ahora podemos tomar:
+
+```{r}
+sims_2_tbl |> 
+  ggplot(aes(x = peso_medio_150)) +
+  geom_histogram()
+```
+
+**Pregunta 7**: Verifica que este resultado es
+lo mismo que obtuviste manualmente en la Pregunta 5.
+¿Por qué crees que en el programa de Stan definimos peso_medio_150 como un valor
+real? ¿Por qué entonces obtenemos un vector de simulaciones?
+
+
+
+## Discusión opcional: cantidades marginales y diferencias
+
+Este es otro ejemplo de por qué, cuando lo que nos interesa es
+hacer un contraste entre dos cantidades, es necesario construir un
+estimador apropiado para ese contraste.
+
+En muchas encuestas o estudios por muestreo, se reportan intervalos para estimar
+cantidades individuales: por ejemplo, un intervalo de preferencia para
+el candidato A y un intervalo de preferencia para el candidato B. 
+
+1. Explica por qué puede ser problemático fijarse en la intersección o no
+de los intervalos de $A$ y $B$ para decidir si $A$ y $B$ son 
+"significativamente diferentes".
+
+2. Discute cómo esto puede solucionarse mostrando la distribución posterior (o en su defecto algún intervalo) para el *margen o diferencia* entre los candidatos A y B (es decir pref A - pref B). 
+
+3. Finalmente, ¿crees que si el error reportado de una encuesta es de digamos
+3 puntos porcentuales, entonces el margen entre A y B también tiene un error de 3 puntos
+porcentuales?
+
+
+
+
+
+
+
+
+
