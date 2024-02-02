@@ -229,7 +229,7 @@ Quedamos entonces con:
 
 $$
 \begin{align}
-W_i &= \alpha + \beta H_i + U_i \\
+W_i &= \alpha + \beta (H_i - 160) + U_i \\
 U_i &\sim N(0,\sigma) \\
 \alpha &\sim N(60, 10) \\
 \beta &\sim N^+(0, 1) \\
