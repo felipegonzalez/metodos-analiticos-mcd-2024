@@ -1,0 +1,244 @@
+# Modelos gráficos y causalidad
+
+```{r}
+#| include: false
+library(tidyverse)
+library(kableExtra)
+library(DiagrammeR)
+library(rethinking)
+ggplot2::theme_set(ggplot2::theme_light())
+```
+
+En esta sección formalizaremos el concepto de modelos gráficos, en particular
+gráficas dirigidas acícilcas (DAGs), y veremos cómo sirven para representar
+supuestos causales acerca de lso procesos que nos interesa modelar para contestar
+preguntas, o dicho de otra manera, cómo expresamos más formalmente supuesto
+acerca de la historia de los datos que nos interesa examinar.
+
+
+## Modelos gráficos
+
+En primer lugar, podemos pensar cómo se asignan los valores de las variables
+en nuestro proceso generador de datos. Pensamos entonces de qué depende directamente
+cada variable para determinar su valor, de manera que cada nodo $X$ de la variable
+se puede escribir por ejemplo como $Y = f(X, W)$ y $Z = g(X)$. Esto es desde
+el punto de vista téorico y de conocimiento de área que tenemos, y respresenta
+supuestos causales. 
+
+En este caso, tenemos un *modelo gráfico* asociado, que en este ejemplo escribimos
+como:
+
+```{r}
+#| code-fold: true
+grViz("
+digraph {
+  graph [ranksep = 0.2, rankdir=LR]
+  node [shape=plaintext]
+    X
+    Y
+    Z
+    W
+  edge [minlen = 3]
+   X -> Y
+   Z -> X
+   W -> Y
+}
+", width = 150, height = 40)
+```
+En este caso, no describimos exactamente cómo son las funciones que relacionan
+las variables, sino más bien qué variables son causas directas de qué otras.
+Por ejemplo, aunque en nuestro ejemplo de arriba $Y$ depende de $Z$, no hay una
+causa *directa* a $Y$, porque cambios en $Z$ afectan a $X$, y es el cambio en $X$
+que es causa directa de $Y$.
+
+
+::: callout-note
+# Modelos gráficos Y DAGs
+
+En un modelo gráfico, dibujamos una arista de un nodo $X$ a un nodo $Y$ si
+el valor de la variable $Y$ depende directamente del valor de la variable $X$,
+es decir si $X$ es una causa directa de $Y$. En estos modelos *no* especificamos
+la fórmula o naturaleza de cada relación directa, sino simplemente que ésta existe.
+
+Trabajamos principalmente con modelos causales que pueden representarse
+como DAGs (gráficas dirigidas acícilcas), donde no existen ciclos de causas entre las variables.
+
+Existen dos tipos de nodos en estas gráficas: variables *exógenas* que no dependen
+de otros nodos para tomar su valor, y variables *endógenas* que son descendientes
+de al menos otro nodo. Cuando conocemos las variables exógenas, en teoría podemos
+simular todo el sistema si especificamos el modelo de cada nodo endógeno.
+:::
+
+**Nota**: hay varias maneras de construir modelos causales además de 
+DAGs. Una de ellas es
+sistemas de ecuaciones diferenciales (en el tiempo), que a veces son necesarias
+para modelos de biología, clima o epidemiología por ejemplo. También pueden utilizarse modelos
+de agentes (modelamos partes más pequeñas o simples del sistemas y sus interacciones). Quizá
+los DAGs son los modelos con más populares y tienen amplia aplicabilidad.
+
+### Ejemplo simple
+
+Para entender los conceptos empezamos con una historia de datos sencilla.
+En un juego de azar,
+supongamos que escogemos al azar un número $X$ entre 0 y 1, y luego tiramos dos veces 
+cinco volados con probabilidad de sol $X$. Medimos el número de soles en cada prueba como $S_1$ y $S_2$. Finalmente, la ganancia $G$ obtenida es la suma de $S_1+S_2$ 
+si el día es lluvioso o solamente $S_1$ si el día es soleado.
+
+Nótese que tanto como $S_1$ y $S_2$ dependen de su valor de $X$, además de que
+dependen de otras variables $U_1$ y $U_2$, muy complicadas, que determinan cómo
+caen los volados. $G$ depende de su valor de $S_1$ y $S_2$, además de depender de
+una variable $D$ que describe si el día actual es lluvioso o soleado. El diagrama
+causal resultante es el que sigue, donde consideramos que observaremos $U1$, $U2$ y $U3$.
+
+```{r}
+#| code-fold: true
+grViz("
+digraph {
+  graph [ranksep = 0.2, rankdir=LR]
+  node [shape=circle]
+    U1
+    U2
+    U3
+  node [shape=plaintext]
+    S1
+    S2
+    X
+  edge [minlen = 3]
+   X -> S1
+   X -> S2
+   U1 -> S1
+   U2 -> S2
+   S1 -> G
+   S2 -> G
+   D -> G
+   U3 -> D
+{
+  rank = same; S1; S2;U1;U2
+}
+
+}
+")
+```
+
+Sabemos que no podemos saber $U1$ y $U2$, y no nos interesa modelar la física de
+monedas, manera de lanzarlas, etc. En este ejemplo también no consideraremos
+qué hace un día soleado o lluvioso (no nos interesa modelar el clima). En este
+momento, en teoría tenemos **ecuaciones determinísticas** para todas las variables,
+y si conocemos todas las variables exógenas $X,U1,U2,U3$ podríamos determinar
+exactamente lo que va a suceder con la ganancia, por ejemplo, o cualquier otra
+variable del sistema.
+
+Sin embargo, muchas veces excluímos variables exógenas que sólo afectan a una
+variable endógena, y consideramos que las relaciones de dependiencia de la
+gráfica son probabilísticas:
+
+```{r}
+#| code-fold: true
+grViz("
+digraph {
+  graph [ranksep = 0.2, rankdir=LR]
+  node [shape=circle]
+   
+  node [shape=plaintext]
+    S1
+    S2
+    X
+  edge [minlen = 3]
+   X -> S1
+   X -> S2
+   S1 -> G
+   S2 -> G
+   D -> G
+{
+  rank = same; S1; S2
+}
+
+}
+")
+```
+
+## Modelos gráficos y regla del producto
+
+Los modelos gráficos también nos muestran cómo hacer factorizaciones
+útiles de los datos. Recordamos la regla del producto, para cualquier conjunto
+de variables aleatorias $X_1,\ldots,X_p$, la conjunta se puede
+
+$$p(x_1,x_2,\ldots, x_n) = p(x_1)p(x_2|x_1)p(x_3|x_1,x_2)\ldots p(x_p|x_1,x_2,\ldots,x_{p-1})$$
+
+El modelo gráfico nos da un ordenamiento natural de las variables que nos permite
+aplicar la regla del producto, según la dirección de las flechas del diagrama:
+
+### Ejemplo {-}
+
+En el ejemplo de arriba, un ordenamiento es $X,S1,S2,D,G$. Entonces, podemos
+escribir la regla del producto:
+
+$$p(x,s_1,s_2,d,g) = p(x)p(s_1|x)p(s_2|x,s_1)p(d|x,s_1,s_2,d)p(g|x,s1,s2,d)$$
+Que podemos simplificar porque por ejeemplo, $p(s_2|x, s_1) = p(s_2|x)$, ya
+que  $s_1$ no influye directamente en $s_2$. Por la misma lógica,
+$p(d|x,s_1,s_2) = p(d|x)$ y $p(g|x,s_1,s_2,d) = p(g|s_1,s_2,d)$. Entonces:
+
+$$p(x,s_1,s_2,d,g) = p(x)p(d)p(s_1|x)p(s_2|x)p(g|s_1,s_2,d)$$
+Que nos da una manera mucho más parsimoniosa de modelar las relaciones entre estas
+variables. 
+
+En nuestro caso, $p(x)$ es uniforme en $[0,1]$, supondremos
+por ejemplos que $p(d=lluvioso) =0.3$ (tomando un día del año al azar),
+$S_1|X$ y $S_2|X$ son binomiales con probabilidad $X$, y $G|S_1,S_2,D$ es 
+determinística: $G$ toma el valor $S_1+ S_2$ si $D$ es lluvioso, y $S_1$ en
+otro caso. Con esto, tenemos un modelo conjunto completo del sistema de interés.
+
+
+
+
+### Ejemplo {-}
+
+Para entender mejor la parsimonia que podemos alcanzar usando supuestos
+causales, considera la cadena $X\to Y\to Z\to W\to A$. Imagina que cada una de estas
+variables puede tomar 2 valores. La conjunta de cuatro variables $(X,Y,Z,W)$, en general,
+requiere $2^5-1=31$ parámetros. Sin embargo, si se satisface
+$X\to Y\to Z\to W\to A$ sólo requirimos 1 parámetro para $p(x)$, 2 para $p(y|x)$, 2
+para $p(z|y)$, etc. En total, sólo necesitamos 9 parámetros.
+
+::: callout-note
+### Regla del producto para DAGs
+
+Supongamos que tenemos un DAG con variables
+$X_i$. Si denotamos por $pa_i$ a los padres de $X_i$, entonces siempre
+podemos factorizar:
+
+$$p(x_1,\ldots, x_p) = \prod_{i=1}^p p(x_i|pa_i)$$
+:::
+
+## Regla del producto y simulación
+
+El orden del modelo gráfico también nos indica cómo simular las variables
+de la gráfica.
+Como cada modelo gráfico nos da una factorización de la conjunta, podemos
+utlizar esta para simular datos una vez que conocemos o estimamos las
+relaciones de dependencia directa. Empezamos con las variables exógenas (que no tienen
+padres) y vamos simulando hacia adelante.
+
+
+### Ejemplo {-}
+
+En nuestro ejemplo simulamos primero $X$ y $D$. A partir de $X$ podemos simular
+$X_1$ y $S_2$, y a partir de $D$, junto con $S_1$ y $S_2$, podemos simular $G$. 
+En nuestro ejemplo tendríamos
+
+```{r}
+simular_juego <- function(N){
+  x <- runif(N)
+  d <- sample(c("lluvioso","soleado"), N, replace = TRUE, prob = c(0.3,0.7))
+  s1 <- rbinom(N, 5, x)
+  s2 <- rbinom(N, 5, x)
+  g <- ifelse(d=="lluvioso", s1+s2, s1)
+  tibble(x, d, s1, s2, g)
+}
+simular_juego(5)
+```
+
+
+
+
+
