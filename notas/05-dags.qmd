@@ -238,6 +238,843 @@ simular_juego <- function(N){
 simular_juego(5)
 ```
 
+## Estructuras básicas de DAGs
+
+Veremos que para razonar acerca de las asociaciones e independencias
+que pueden aparecer en una conjunta, podemos examinar la gráfica que la represente, o dicho de otra manera, entender bajo qué condiciones
+puede propagarse información de un nodo a otro.
+
+Consideremos entonces tres variables $X$, $Y$ y $Z$. Las tres estructuras
+que tenemos que entender en primer lugar pueden verse también como métodos de
+razonamiento lógico derivados de las leyes de probabilidad:
+
+## Cadenas o mediación
+
+En este caso tenemos:
+
+```{r}
+#| code-fold: true
+
+grViz("
+digraph {
+  graph [ranksep = 0.2, rankdir=LR]
+  node [shape=plaintext]
+    X
+    Y
+    Z
+  edge [minlen = 3]
+   X -> Z
+   Z -> Y
+}
+", width = 150, height = 20)
+```
+
+En este caso, 
+
+- Existe  asociación entre $X$ y $Y$, pero no existe relación directa entre ellas.
+- Si condicionamos a un valor de $Z$, $X$ y $Y$ son condicionalmente independientes.
+
+Podemos pensar en $Z$ como un mediador del efecto de $X$ sobre $Y$. Si no 
+permitimos que $Z$ varíe, entonces la información de $X$ no fluye a $Y$.
+
+Por ejemplo, si $X$ tomar o no una medicina para el dolor de cabeza,
+$Z$ es dolor de cabeza y $Y$ es bienestar general, $X$ y $Y$ están 
+relacionadas. Sin embargo, si condicionamos a un valor fijo de dolor
+de cabeza, no hay relación entre tomar la medicina y bienestar general.
+
+En términos de factorización, podemos checar la independencia condicional:
+como $p(x,y,z) = p(x)p(z|x)p(y|z)$, entonces
+
+$$p(x, y | z) = p(x,y,z) / p(z) = (p(x)(z|x)) (p(y|z) / p(z))$$
+y vemos que el lado izquierdo se factoriza en una parte que sólo involucra a $x$ y $z$
+y otro factor que sólo tiene a $y$ y $z$: no hay términos que incluyan conjuntamente a 
+$x$, $y$ y $z$. Podemos de cualquier forma continuar notando
+
+$$p(x)p(z|x)/p(z) = p(x,z)/p(z) = p(x | z)$$
+de modo que
+
+$$p(x, y | z) = p(x|z) p(y|z) $$
+
+Y mostramos un ejemplo simulado:
+
+```{r}
+rbern <- function(n, prob){
+  rbinom(n, 1, prob = prob)
+} 
+simular_mediador <- function(n = 10){
+  x <- rbern(n, p = 0.5) |> as.numeric()
+  z <- rbern(n, p = x * 0.8 + (1 - x) * 0.3)
+  y <- rbinom(n, 2, z * 0.7 + (1 - z) * 0.5)
+  tibble(x, z, y)
+}
+sims_mediador <- simular_mediador(50000)
+```
+
+$X$ y $Y$ son dependientes:
+
+```{r}
+#| fig-width: 5
+#| fig-height: 3
+sims_mediador |> select(x, y) |> 
+  count(x, y) |> 
+  group_by(x) |> 
+  mutate(p_cond = n / sum(n)) |>
+  select(x, y, p_cond) |> 
+ggplot(aes(x = y, y = p_cond, fill = factor(x))) +
+  geom_col(position = "dodge") +
+  labs(subtitle = "Condicional de Y dada X")
+```
+
+Sin embargo, si condicionamos a $Z$, que puede tomar los valores 0 o 1:
+
+```{r}
+#| fig-width: 5
+#| fig-height: 3
+sims_mediador |> 
+  count(x, y, z) |> 
+  group_by(x, z) |> 
+  mutate(p_cond = n / sum(n)) |>
+  select(x, y, z, p_cond) |> 
+ggplot(aes(x = y, y = p_cond, fill = factor(x))) +
+  geom_col(position = "dodge") + facet_wrap(~ z) +
+  labs(subtitle = "Condicional de Y dada X y Z")
+```
+Y vemos que la condicional de $Y$ dada $Z$ y $X$ sólo depende de $Z$. Una consecuencia
+es por ejemplo que la correlación debe ser cero:
+
+```{r}
+cor(sims_mediador |> filter(z == 1) |> select(x,y)) |> round(3)
+cor(sims_mediador |> filter(z == 0) |> select(x,y)) |> round(3)
+```
+
+Podemos también hacer un ejemplo continuo:
+
+```{r}
+simular_mediador <- function(n = 10){
+  x <- rnorm(n, 100, 10)
+  prob <- 1 / (1 + exp(-(x - 100)/5))
+  z <- rbern(n, p = prob)
+  y <- rnorm(n, 100 + 30 * z, 15)
+  tibble(x, z, y)
+}
+sims_mediador <- simular_mediador(2000)
+```
+
+$X$ y $Y$ son dependientes (por ejemplo si vemos la media condicional
+de $Y$ dado $X$:
+
+```{r}
+#| fig-width: 5
+#| fig-height: 3
+ggplot(sims_mediador, aes(x = x, y = y, colour = z)) + geom_point() +
+  geom_smooth(span = 1, se = FALSE)
+```
+
+Si condicionamos a $Z$, no hay dependencia entre $X$ y $Y$
+
+```{r}
+ggplot(sims_mediador, aes(x = x, y = y, colour = z, group = z)) + 
+  geom_point() +
+  geom_smooth(span = 2)
+```
+
+
+
+### Bifurcaciones o causa común
+
+En el siguiente ejemplo, llamamos a $Z$ una causa que es común a $X$ y $Y$.
+
+```{r}
+#| code-fold: true
+
+grViz("
+digraph {
+  graph [ranksep = 0.2]
+  node [shape=plaintext]
+    X
+    Y
+    Z
+  edge [minlen = 3]
+   Z -> X
+   Z -> Y
+}
+", width = 200, height = 50)
+```
+
+En este caso, 
+
+- $X$ y $Y$ tienen asociación
+- Si condicionamos a  $Z$, entonces $X$ y $Y$ son condicionalmente
+independientes.
+
+
+Este tipo de estructura también se llama bifurcación, o decimos que $Z$ es un
+**confusor** en esta gráfica. Variación en $Z$ produce variación conjunta de $X$ y $Y$.
+
+Por ejemplo,  podríamos encontrar que el uso de aspirina $X$ está asociado
+a una mortalidad más alta $Y$. Una causa común es enfermedad grave que produce dolor ($Z$). Sin embargo, si condicionamos a personas sanas, veríamos
+que no hay relación entre uso de aspirina y mortalidad, igualmente veríamos
+que entre las personas enfermas el uso de aspirina no les ayuda a vivir más tiempo.
+
+En este caso, tenemos:
+
+$$p(x, y, z) =  p(z)p(x|z)p(y|z)$$
+Y como el lado izquierdo es igual (en general) a $p(x,y|z)p(z)$, obtenemos
+la independiencia condicional de $X$ y $Y$ dado $Z$.
+
+
+### Ejemplo (simulación) {-}
+
+```{r}
+rbern <- function(n, prob){
+  rbinom(n, 1, prob = prob)
+} 
+simular_confusor <- function(n = 10){
+  z <- rbern(n, p = 0.5) |> as.numeric()
+  x <- rbern(n, p = z * 0.3 + (1 - z) * 0.8)
+  y <- rbinom(n, 4, z * 0.9 + (1 - z) * 0.3)
+  tibble(x, z, y)
+}
+sims_confusor <- simular_confusor(50000)
+```
+
+$X$ y $Y$ son dependientes:
+
+```{r}
+sims_confusor |> select(x, y) |> 
+  count(x, y) |> 
+  group_by(x) |> 
+  mutate(p_cond = n / sum(n)) |>
+  select(x, y, p_cond) |> 
+ggplot(aes(x = y, y = p_cond, fill = factor(x))) +
+  geom_col(position = "dodge") +
+  labs(subtitle = "Condicional de Y dada X")
+```
+
+Sin embargo, si condicionamos a $Z$, que puede tomar los valores 0 o 1:
+
+```{r}
+sims_confusor |> 
+  count(x, y, z) |> 
+  group_by(x, z) |> 
+  mutate(p_cond = n / sum(n)) |>
+  select(x, y, z, p_cond) |> 
+ggplot(aes(x = y, y = p_cond, fill = factor(x))) +
+  geom_col(position = "dodge") + facet_wrap(~ z) +
+  labs(subtitle = "Condicional de Y dada X y Z")
+```
+Y vemos que la condicional de $Y$ dada $Z$ y $X$ sólo depende de $Z$. Una consecuencia
+es por ejemplo que la correlación debe ser cero:
+
+```{r}
+cor(sims_confusor |> filter(z == 1) |> select(x,y)) |> round(3)
+cor(sims_confusor |> filter(z == 0) |> select(x,y)) |> round(3)
+```
+
+
+```{r}
+simular_bifurcacion <- function(n = 10){
+  z <- rbern(n, p = 0.5)
+  x <- rnorm(n, 100 + 20 * z, 15)
+  y <- rnorm(n, 100 + 30 * z, 20)
+  tibble(x, z, y)
+}
+sims_bifurcacion <- simular_bifurcacion(5000)
+```
+
+$X$ y $Y$ son dependientes (por ejemplo si vemos la media condicional
+de $Y$ dado $X$:
+
+```{r}
+ggplot(sims_bifurcacion, aes(x = x, y = y, colour = z)) + 
+  geom_point(alpha = 0.2) +
+  geom_smooth(span = 1)
+```
+
+Si condicionamos a $Z$, no hay dependencia entre $X$ y $Y$
+
+```{r}
+ggplot(sims_bifurcacion, aes(x = x, y = y, colour = z, group = z)) + 
+  geom_point(alpha = 0.2) +
+  geom_smooth(span = 2)
+```
+
+### Ejemplo {-}
+
+En este ejemplo de @rethinking, se muestra que regiones de Estados Unidos
+con tasas más altas de matrimonio también tienen tasas más altas de divorcio.
+
+```{r}
+data(WaffleDivorce)
+WaffleDivorce |> 
+  ggplot(aes(x = Marriage, y = Divorce)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+
+Nos interesa en este caso el efecto causal directo de $M\to D$. Es importante
+notar que hay considerable variabilidad de la edad promedio al casarse a lo
+largo de los estados:
+
+```{r}
+WaffleDivorce |> 
+  ggplot(aes(sample = MedianAgeMarriage, label = Loc)) +
+  geom_qq() 
+
+```
+Para el modelo causal, tenemos que considerar las siguientes afirmaciones 
+que no son muy difíciles de justificar:
+
+- La **edad al casarse** es un
+factor que influye en la tasa de divorcio (menor edad a casarse implica mayores
+tasas de divorcio, pues las parejas tienen más tiempo para divorciarse, porque
+la gente cambia más cuando es joven). 
+- Adicionalmente, si la gente tiende a casarse más joven, en cualquier momento
+hay *más* gente con probabilidad de casarse, por lo que esperaríamos que la edad
+al casarse también influye en la tasa de matrinomio
+
+Esto implica que tenemos que considerar una causa común de la edad al casarse
+en nuestro diagrama causal:
+
+```{r}
+#| code-fold: true
+
+grViz("
+digraph {
+  graph [ranksep = 0.2]
+  node [shape=plaintext]
+    M
+    D
+    Edad
+  edge [minlen = 3]
+   Edad -> M
+   Edad -> D
+   M -> D
+{rank=same; M; D;}
+
+}
+", width = 200, height = 50)
+```
+Por la discusión de arriba, es claro que es necesario considerar la edad al casarse
+si queremos estimar el efecto de tasa de matrimonio en la tasa de divorcio. Es posible
+que la relación entre estas dos tasas puede ser explicada por la edad al casarse.
+
+Ya que tenemos este modelo causal básico, tendríamos que proponer un proceso generador,
+proponer un modelo estadístico, y probar nuestra estimación. Este paso nos lo
+saltaremos (ver sección anterior). 
+
+Por el momento recordemos que si condicionamos (se dice también
+*estratificar*) por edad al casarse, y no vemos relación
+condicional entre las dos tasas, la relación que vimos en los datos es factible que
+haya aparecido por la causa común que induce correlación. Una manera en que 
+estratificamos o condicionamos a una variable continua es con un modelo lineal,
+como sigue:
+
+$$D_i\sim N(\mu_i, \sigma)$$
+donde
+$$\mu_i = \alpha + \beta_M M_i + \beta_E Edad_i$$
+¿De qué manera estamos estratificando por edad en este ejemplo? Obsérvese
+que para cada Edad que fijemos, la relación entre $M$ y $D$ es:
+
+$$\mu_i = (\alpha + \beta_E Edad) + \beta_M M_i  $$
+Cada valor de $E$ produce una relación diferente entre $M$ y $D$ (en este caso
+particular, la ordenada al origen cambia). Ahora tenemos que poner iniciales para
+terminar nuestro modelo estadístico.
+
+En este punto poner iniciales informadas para estos coeficientes puede ser
+complicado (depende de cuánta demografía sabemos). Podemos usar un enfoque más
+simple, considerando las variables estandarizadas. De esta forma podemos 
+poner iniciales más estándar. Utilizaremos
+
+```{r}
+escalar <- function(x){
+  (x - mean(x))/sd(x)
+}
+WaffleDivorce <- WaffleDivorce |> 
+  mutate(Marriage_est = escalar(Marriage), 
+         Divorce_est = escalar(Divorce), 
+         MedianAgeMarriage_est = escalar(MedianAgeMarriage))
+datos_lista <- list(
+  N = nrow(WaffleDivorce),
+  d = WaffleDivorce$Divorce_est, 
+  m = WaffleDivorce$Marriage_est, 
+  edad = WaffleDivorce$MedianAgeMarriage_est)
+```
+
+```{r}
+mod_mat_div <- cmdstan_model("./src/matrimonio-divorcio-1.stan")
+sims_mod <- mod_mat_div$sample(data = datos_lista, 
+                   chains = 4, 
+                   init = 0.1, stepsize = 0.1,
+                   iter_warmup = 1000, 
+                   iter_sampling = 1000)
+```
+
+```{r}
+resumen <- sims_mod$summary(c("alpha", "beta_M", "beta_E", "sigma"))
+```
+
+```{r}
+resumen |> 
+  ggplot(aes(x = variable, y = mean, ymin = q5, ymax = q95)) +
+  geom_hline(yintercept = 0, color = "red") +
+  geom_point() +
+  geom_linerange() +
+  coord_flip()
+```
+Y el resultado que obtenemos es que no observamos un efecto considerable
+de las tasas de matrimonio en las tasas de divorcio, una vez que 
+estratificamos por la causa común de edad de matrimonio. Este ejemplo es simple
+y podemos ver el efecto causal directo en un sólo coeficiente $\beta_M$, pero
+de todas formas haremos contrastes como hicimos en la parte anterior.
+
+```{r}
+sims_tbl <- sims_mod$draws(format = "df") |> 
+  select(dif) 
+ggplot(sims_tbl, aes(x = dif)) +
+  geom_histogram() +
+  geom_vline(xintercept = 0, color = "red")
+```
+
+
+
+
+
+
+
+## Colisionador o causas alternativas
+
+En este caso, a $Z$ también le llamamos un **colisionador**. Este es
+el caso que puede ser más difícil de entender en un principio.
+
+```{r}
+#| code-fold: true
+
+grViz("
+digraph {
+  graph [ranksep = 0.2]
+  node [shape=plaintext]
+    X
+    Y
+    Z
+  edge [minlen = 3]
+   X -> Z
+   Y -> Z
+}
+", width = 200, height = 50)
+```
+
+- En este caso $X$ y $Y$ son independientes
+- Sin embargo, si condicionamos a $Z$ entonces $X$ y $Y$ están asociados.
+
+
+Por ejemplo, si observamos que el 
+pasto está mojado, entonces saber que no llovió implica que probablemente
+se encendieron los aspersores.
+
+Como la conjunta se factoriza como:
+
+$$p(x,y,z) = p(x)p(y)p(z|x,y)$$
+podemos integrar sobre $Z$:
+
+$$p(x,y) = \int p(x,y,z)dz = p(x)p(y)\int p(z|x,y)\, dz$$
+pero $p(z|x,y)$ integra uno porque es una densidad, de forma que $x$ y $y$ son 
+independientes.
+
+Y mostramos un ejemplo simulado:
+
+```{r}
+simular_colisionador <- function(n = 10){
+  x <- rbern(n, 0.5) 
+  y <- rbinom(n, 2, 0.7)
+  z <- rbern(n, p = 0.1 + 0.7 * x * (y > 1)) 
+  tibble(x, z, y)
+}
+sims_colisionador <- simular_colisionador(50000)
+```
+
+$X$ y $Y$ son independientes:
+
+```{r}
+sims_colisionador|> select(x, y) |> 
+  count(x, y) |> 
+  group_by(x) |> 
+  mutate(p_cond = n / sum(n)) |>
+  select(x, y, p_cond) |> 
+ggplot(aes(x = y, y = p_cond, fill = factor(x))) +
+  geom_col(position = "dodge") +
+  labs(subtitle = "Condicional de Y dada X")
+```
+
+Sin embargo, si condicionamos a $Z$, que puede tomar los valores 0 o 1:
+
+```{r}
+sims_colisionador |> 
+  count(x, y, z) |> 
+  group_by(x, z) |> 
+  mutate(p_cond = n / sum(n)) |>
+  select(x, y, z, p_cond) |> 
+ggplot(aes(x = y, y = p_cond, fill = factor(x))) +
+  geom_col(position = "dodge") + facet_wrap(~ z) +
+  labs(subtitle = "Condicional de Y dada X y Z")
+```
+Y vemos que la condicional de $Y$ dada $Z$ y $X$ depende de $X$ y de $Z$.  
+Las correlaciones condicionales, por ejemplo, no son cero:
+
+```{r}
+print("Dado Z = 0")
+cor(sims_colisionador |> filter(z == 0) |> select(x,y)) |> round(3)
+print("Dado Z = 1")
+cor(sims_colisionador |> filter(z == 1) |> select(x,y)) |> round(3)
+```
+
+Otro ejemplo con variables continuas:
+
+```{r}
+simular_colisionador_2 <- function(n = 10){
+  x <- rnorm(n, 100, 20) 
+  y <- rnorm(n, 100, 20)
+  z <- rbern(n, p = 0.92 * ((x + y) > 220) + 0.05) 
+  tibble(x, z, y)
+}
+sims_colisionador <- simular_colisionador_2(1000)
+```
+
+$X$ y $Y$ son independientes:
+
+```{r}
+ggplot(sims_colisionador, aes(x = x, y = y)) + geom_point()
+```
+
+Sin embargo, si condicionamos a un valor de $Z$, $X$ y $Y$ ya no son independientes:
+
+```{r}
+ggplot(sims_colisionador, aes(x = x, y = y, group = z, colour = factor(z))) + 
+  geom_point() + geom_smooth(method = "lm", se = FALSE) 
+```
+
+Y vemos que condicional a $Z$, $X$ y $Y$ no son dependientes.
+
+### Razonamiento de descendientes de efecto común
+
+Condicionar a un descendiente de un colisionador también produce dependencias 
+condicionales:
+
+```{r}
+#| code-fold: true
+
+grViz("
+digraph {
+  graph [ranksep = 0.2]
+  node [shape=plaintext]
+    X
+    Y
+    Z
+    A
+  edge [minlen = 3]
+   X -> Z
+   Y -> Z
+   Z -> A
+}
+", width = 200, height = 50)
+```
+
+En este caso,
+
+- $X$ y $Y$ son independientes
+- $X$ y $Y$ son  dependientes si condicionamos a $A$.
+
+Dependiendo de la naturaleza de la asociación entre el colisionador $Z$ y su descendiente
+$A$, esta dependencia puede ser más fuerte o más débil. 
+
+Por ejemplo, en nuestro ejemplo donde el pasto mojado es un colisionador entre
+cuánta agua dieron los aspersores y cuánta lluvia cayó, un descendiente del pasto
+mojado es el estado de las plantas del jardín. Aunque los aspersores trabajan independientemente
+de la lluvia, si observamos que las plantas se secaron entonces lluvia y aspersores están
+correlacionados: por ejemplo, si noto que los aspersores están descompuestos, entonces
+concluimos que no hubo lluvia.
+
+```{r}
+grViz("
+digraph {
+  graph [ranksep = 0.2]
+  node [shape=plaintext]
+    X [label = lluvia]
+    Y [label = aspersores]
+    Z [label = humedad]
+    A [label = plantas]
+  edge [minlen = 3]
+   X -> Z
+   Y -> Z
+   Z -> A
+}
+", width = 200, height = 50)
+
+```
+
+
+
+### Ejemplo: dependencias de colisionador
+
+Verificamos que en nuestro modelo de Santa Clara, efectivamente nuestro
+modelo no implica ninguna dependencia no condicional entre sensibilidad de la
+prueba y prevalencia. Eso debería ser claro de la simulación, pero de
+todas formas lo checamos
+
+```{r}
+library(cmdstanr)
+mod_sc <- cmdstan_model("./src/sclara.stan")
+print(mod_sc)
+```
+
+En este caso, no pondremos información acerca de positivos en la prueba:
+
+```{r}
+datos_lista <- list(N = 0, n = 0,
+ kit_pos = 103, n_kit_pos = 122,
+ kit_neg = 399, n_kit_neg = 401)
+ajuste <- mod_sc$sample(data = datos_lista, refresh = 1000, iter_sampling = 400)
+sims <- ajuste$draws(c("p", "sens", "esp"), format = "df")
+resumen <- ajuste$summary(c("p"))
+```
+
+```{r}
+ggplot(sims, aes(x = p, y = sens)) + geom_point() +
+  scale_x_sqrt()
+```
+
+No vemos ninguna asocación entre estas dos variables. 
+
+Sin embargo, al condicionar al valor de Positivos, creamos una relación que 
+no podemos interpretar como casual. En este caso particular supondremos
+prácticamente fija la sensibilidad para ver solamente lo que sucede 
+en el colisionador de especificidad y número de positivos (la especificidad
+en este ejemplo es más crítica):
+
+```{r}
+datos_lista <- list(N = 3300, n = 50,
+ kit_pos = 1030000, n_kit_pos = 1220000, # números grandes para que esté practicamente
+# fija la sensibilidad
+ kit_neg = 399, n_kit_neg = 401)
+ajuste <- mod_sc$sample(data = datos_lista, refresh = 1000, iter_sampling = 400)
+sims <- ajuste$draws(c("p", "sens", "esp"), format = "df")
+resumen <- ajuste$summary(c("p"))
+```
+
+```{r}
+ggplot(sims, aes(x = p, y = esp)) + geom_point() 
+```
+Y vemos que condiconando al colisionador, obtenemos una relación fuerte entre prevalencia
+y especificidad de la prueba: necesitaríamos más datos de especificidad para
+obtener una estimación útil.
+
+- La razón de que la especificidad es más importante en este ejemplo es que
+la prevalencia es muy baja al momento del estudio, y los falsos positivos pueden introducir
+más error en la estimación
+- También repetimos nótese que el análisis correcto de estos datos no se puede
+hacer con intervalos separados para cada cantidad, sino que debe examinarse la conjunta
+de estos parámetros.
+
+---
+
+
+Con estas tres estructuras elementales podemos entender de manera abstracta
+la existencia o no de asociaciones entre nodos de cualquier gráfica dirigida.
+
+
+
+## d-separación
+
+
+Ahora buscaremos describir todas las posibles independendencias condicionales
+y no condicionales que pueden aparecer en una gráfica, para entender cómo aparecen
+asociaciones entre variables de nuestro modelo, y dependiendo del tipo de condicionamiento
+que hacemos.
+
+Veremos que el criterio es algorítmico. Más adelante discutiremos cuáles de estas
+asociaciones se deben a efectos causales y cuáles no, y esto nos permitirá establecer
+estrategias de condicionamiento (qué variables controlar o no), recolección de datos
+para construir los estimadores correctos de los efectos causales de interés.
+
+
+::: callout-note
+# d-separación: Caminos activos y bloqueados
+
+
+- Un **camino** entre $X$ y $Y$ es una sucesión de aristas que conecta a $X$ con $Y$
+(sin importar) la dirección de las aristas.
+
+Ahora supongamos que $Z = \{Z_1,Z_2,\ldots, Z_q\}$ son una colección
+de nodos. Decimos que un camino $p$ entre $X$ y $Y$ está **activo condicional a los nodos en** $Z$ cuando:
+
+1. Siempre que hay un colisionador $X_i\to U\gets X_j$ en el camino $p$, entonces $U$ o alguno de sus descendientes está en $Z$
+2. Ningún otro nodo a lo largo de $p$ está en $Z$.
+
+En caso contrario, decimos que el camino $p$ está **bloqueado**.
+
+
+Si $Z$ bloquea todos los caminos posibles entre $X$ y $Y$, decimos que $X$ y $Y$ están
+$d$-**separados** condicionalmente a $Z$, o $d$-separados por $Z$.
+:::
+
+Según la discusión que tuvimos arriba de los modos de razonamiento en gráficas de modelos
+probabilísticos, el siguiente teorema no es sorpresa:
+
+::: callout-note
+# Criterio de d-separación
+
+En una DAG $G$:
+
+- Si dos variables están d-separadas por las variables $Z$, entonces $X$ y $Y$ son condicionalmente independientes dadas las variables en $Z$ para cualquier conjunta representada por $G$.
+- Si dos variables **no** están d-separadas por $Z$, entonces existen conjuntas representadas por $G$ tales que $X$ y $Y$ **no** tienen dependencia condicional dado $Z$.
+:::
+
+**Nota 1**: nótese que este teorema nos da una manera abstracta de razonar acerca
+de la asociación en un modelo gráfico: no es necesario saber la forma particular
+de las condicionales para utilizarlo.
+
+**Nota 2**: Vale la pena mencionar que el segundo inciso en general es una implicación más fuerte:  cuando no hay $d$-separación, existe algún tipo de dependencia casi seguro (en el sentido probabilístico de posible conjuntas).
+
+**Nota 3**: Las independencias condicionales también pueden ser útiles para checar
+los supuestos de nuestro modelo: si encontramos asociaciones fuertes
+(condicionales o no)
+entre variables que nuestra estructura implica independencia condicional,
+entonces puede ser que nuestra estructura causal requiera revisión. Qué tanto podemos
+probar esto depende del tamaño de los datos que tengamos y de el tipo de condicionamiento
+que estamos haciendo.
+
+
+Finalmente (ver por ejemplo @koller2009, p 75), existe un algoritmo eficiente para encontrar
+todas las posibles independencias condicionales implicadas por una gráfica:
+
+::: callout-note
+# Cálculo de d-separación
+
+Existe un algoritmo de complejidad lineal en el tamaño de la gráfica para encontrar 
+todos los nodos con caminos activos a un nodo $X$ condicional a las variables $A$.
+:::
+
+
+Ver por ejemplo el sitio [dagitty.net](http://www.dagitty.net/dags.html), donde
+podemos poner nuestra gráfica y enlistar todas los supuestos de independencia
+condicional implicados por un modelo.
+
+
+### Ejemplo {-}
+
+```{r}
+#| code-fold: true
+grViz("
+digraph {
+  graph [ranksep = 0.2]
+  node [shape=plaintext]
+    Z 
+    W 
+    X
+    Y 
+    U
+  edge [minlen = 3]
+    Z -> W
+    X -> W
+    X -> Y
+    W -> U
+    S -> Y
+    UZ -> Z
+    V -> Z
+    V -> S
+}
+")
+```
+
+Consideremos la relación entre Z y Y. Primero vemos que hay dos
+caminos entre $Z$ y $Y$, que son $p_1:X\gets V \to S$ y $p_2: Z\to W \gets X \to Y$
+
+
+- En primer lugar, ¿son independientes si no condicionamos a ninguna variable? 
+No, pues el camino $p_1$ es activo, e induce correlación. 
+
+- ¿Son condicionalmente independientes si condicionamos a $V$? En este caso,
+condicionar a $V$ bloquea el camino $p_1$. El camino $p_2$ está bloqueado por
+el colisionador $W$, así que todos los caminos están bloqueados si condicionamos a $V$.
+
+- Si condicionamos a $W y V$, ¿son independientes? No. El camino $p_1$ está bloqueado,
+así que ese no induce asociación. Sin embargo, al condicionar al colisionador $W$ activamos
+el camino $p_2$.
+
+- Ahora supongamos que tenemos datos condicionales a algún valor de $W$ solamente.
+Condicionando a $V$ bloqueamos el camino $p_1$, pero el camino $p_2$ está activo.
+¿Qué pasaría si condicionamos adicionalmente a $X$? En este caso, el conjunto
+de condicionamiento es $\{V, W, X\}$. El camino $p_2$ está bloqueado. Y aunque
+condicionamos al colisionador, $X$ bloque el camino. Por lo tanto 
+$Z$ y $Y$ son condicionalmente independientes dado $\{V, W, X\}$.
+
+
+### Ejercicio
+
+Repite el ejemplo anterior para la siguiente gráfica. 
+Analiza que pasa si condicionamos o no a valores de $T$, y qué pasa si adicionalmente
+condicionamos a $W$, y luego repite los pasos del ejemplo anterior.
+
+```{r}
+#| code-fold: true
+grViz("
+digraph {
+  graph [ranksep = 0.2]
+  node [shape=plaintext]
+    Z 
+    W 
+    X
+    Y 
+    U
+    T
+  edge [minlen = 3]
+    T -> Z
+    T -> Y
+    Z -> W
+    X -> W
+    X -> Y
+    W -> U
+    S -> Y
+    UZ -> Z
+}
+")
+
+```
+
+## Relación con inferencia causal
+
+Si el DAG que consideramos representa relaciones causales (mecanísticas) entre
+las variables, es decir, qué variable "escucha" a qué otras para decidir su valor,
+entonces podemos hacer una definición adicional
+
+::: callout-note
+# Caminos causales
+
+En un DAG, los caminos causales entre $X$ y $Y$ son de la forma
+$X\to U_1\to U_2 \to \cdots U_j \to Y$. Puede haber varios de ellos en un
+diagrama dado, y cada uno representa un mecanismo en que cambios en $X$ producen
+cambios en $Y$
+
+Si nos interesa el efecto **total** de $X$ sobre $Y$, 
+
+- Queremos que todos los caminos causales de $X$ a $Y$ estén activos,
+- Queremos condicionar para que todos los caminos no causales estén bloqueados, en particular, no queremos condicionar a colisionadores o sus descendientes que introduzcan relaciones 
+no causales, y queremos bloquear caminos no casuales creados por bifurcaciones.
+
+:::
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
