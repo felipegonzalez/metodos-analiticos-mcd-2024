@@ -81,7 +81,7 @@ de manera lineal, de forma que podemos escribir:
 
 $$W = \alpha + \beta H + U$$
 Como $U$ no es observada, tenemos que definir cómo generar esta variable. Una distribución natural para esta variable es una distribución normal con media 0 y desviación estándar $\sigma$ no conocida, que escribimos
-como $U\sim N(0,\sigma). Tenemos entonces que dados los valores
+como $U\sim N(0,\sigma)$. Tenemos entonces que dados los valores
 $\alpha$ y $\beta$,
 
 $$E[W|H] = \alpha + \beta H,$$
@@ -833,6 +833,7 @@ lo calcularemos manualmente:
 sims_post_tbl <- mod_2_fit$draws() |> as_draws_df() |> 
   as_tibble()
 simular_diferencia_post <- function(sims_post_tbl){
+  # Simulamos parámetros de la posterior
   pars <- sample_n(sims_post_tbl, 1) |> 
     select(starts_with("alpha"), sigma)
   # Simulamos datos
@@ -1052,7 +1053,7 @@ diferente en comparación al modelo que no incluye estatura.
 
 ## Regresión logística: tiros de golf
 
-Este caso está basado en el paper @GelmanGolf y [el caso de estudio de Gelman]  (https://mc-stan.org/users/documentation/case-studies/golf.html).
+Este caso está basado en el paper @GelmanGolf y [el caso de estudio de Gelman](https://mc-stan.org/users/documentation/case-studies/golf.html).
 
 Queremos entender la probabilidad de éxito de putts de Golf (putts: tiros relativamente cerca del hoyo que buscan que la pelota ruede al hoyo o muy cerca de él), y *cómo depende el éxito de la distancia del tiro*. ¿Qué tan precisos son los profesionales a diferentes
 distancias? Los datos que tenemos son varios putts de Golf de profesionales a varias
@@ -1102,10 +1103,13 @@ el éxito de un tiro.
 Esto es, queremos conocer la curva $p(Y=1|D=d)$, que es una función de $d$, y también
 hacer contrastes del tipo $p(Y=1|D=d + 10) - p(Y = 1|D=d),$ por ejemplo.
 
-**Modelo estadístico**: Nuestro diagrama causal justifica, aún cuando no tengamos la variable de ángulo, el uso de un modelo genérico como regresión logística (por ejemplo,
-no es necesario controlar por velocidad del tiro, y tampoco no nos interesa saber la distribución
-de distancias a la que intentan un putt), donde
-usamos $Y$ como respuesta y $D$ como variable independiente. Planteamos entonces un 
+**Modelo estadístico**: Nuestro diagrama causal justifica que no es necesario considerar
+$V$ o $\theta$ en el modelo, pues nos interesa el efecto total de la distancia sobre
+$Y$. Esto justifica el uso de un modelo genérico 
+usamos $Y$ como respuesta y $D$ como variable independiente. Intentaremos con
+un modelo genérico como regresión logística.
+
+Planteamos entonces un 
 modelo logístico:
 
 $p(Y = 1| D = d) = \frac{1}{1 + \exp(-\alpha - \beta d)} = h(\alpha +\beta d)$
@@ -1115,7 +1119,7 @@ Y nuestro modelo es:
 $$
 \begin{align}
 Y_i &\sim Bern(p_i(D_i)) \\
-p_i &= \frac{1}{1+exp(-\alpha - \beta D_i)} \\
+p_i &= \frac{1}{1+\exp(-\alpha - \beta D_i)} \\
 \end{align}
 $$
 
@@ -1147,7 +1151,8 @@ simular_putts(distancias, 3, -0.005) |>
 ```
 
 Nótese que para este ejemplo utilizamos valores de $\alpha$ y $\beta$ fijos.
-Valores imposibles para golfistas profesionales, por ejemplo:
+Valores imposibles para golfistas profesionales, por ejemplo, podrían ser los
+siguientes:
 
 ```{r}
 set.seed(22)
@@ -1165,7 +1170,7 @@ que esto no es cierto.
 
 Para completar nuestro modelo generativo, es necesario especificar los
 valores que pueden tomar estas variables.
-Pondremos distribuciones **iniciales** o **a priori** apropiadas para los parámetros. En
+Pondremos distribuciones iniciales o a priori apropiadas para los parámetros. En
 este punto no hemos visto ningún dato, así que podemos experimentar para hacer
 una selección apropiada desde el punto de vista del conocimiento del área
 que tenemos actualmente.
@@ -1213,7 +1218,7 @@ reps_sim |>
   #geom_line(aes(group = id), alpha = 0.2) +
   labs(x = "Distancia (cm)", y = "Probabilidad de Éxito") +
   geom_ribbon(data = resumen, aes(ymin = p_5, ymax = p95), alpha = 0.2) +
-  geom_line(data = resumen, color = "red", size = 2) 
+  geom_line(data = resumen, color = "red", linewidth = 2) 
 ```
 
 Una vez que estamos satisfechos con nuestro modelo (nótese que hay lugar
@@ -1325,7 +1330,7 @@ Ahora simulamos la posterior y la contrastamos con los datos:
 ```{r}
 grafs_tbl <- sims |>
   rowwise() |>
-  mutate(graf = list(tibble(d = 30.48 * datos_golf$x) |> 
+  mutate(graf = list(tibble(d = 30.48 * seq(0, 20, 0.5)) |> 
            mutate(p = 1 / (1 + exp(-alpha - beta * d)))
   )) |> 
   ungroup() |> 
@@ -1419,7 +1424,7 @@ al centro del hoyo. El tiro es exitoso cuando (si $\theta$ está en radianes):
 
 $$\tan(\theta) < \frac{R - r}{2d}$$
 
-![Tiro de golf](figuras/golf-put.png)
+![Tiro de golf](figuras/golf-putt-2.png)
 Tenemos que
 
 ```{r}
@@ -1427,6 +1432,7 @@ Tenemos que
 ```
 
 Así que para nuestro problema simplificado, la condición de éxito es
+(d está dado en centímetros y $\theta$ en radianes):
 
 $$\tan(\theta) < \frac{3.25}{d}$$
 
@@ -1443,7 +1449,7 @@ ggplot(aes(d, theta_grados)) + geom_point() +
   scale_y_log10()
 ```
 Por el momento, sólo consideraremos el ángulo y la distancia. Supongamos
-que un tirador profesional tira con un ángula $\theta$ que se distribuye
+que un tirador profesional tira con un ángulo $\theta$ que se distribuye
 como
 
 $$\theta\sim N(0,\sigma),$$
@@ -1496,10 +1502,53 @@ map_df(1:100,  \(x) simular_putts_angulo(distancias) |> mutate(id = x)) |>
   geom_line(alpha = 0.2) +
   labs(x = "Distancia (cm)", y = "Probabilidad de Éxito")
 ```
-Podemos comenzar con esta inicial, que espera que en general
+Esta inicial  espera que en general
 los tiros a menos de menos de 50cm se consigan con mucha frecuencia o casi seguro,
 2 metros se consigan con cierta frecuencia, y 6 metros se consigan con relativamente
-menos frecuencia.
+menos frecuencia. Tiene el defecto de que pone mucho peso en desviaciones
+muy chicas, lo cual es poco creíble (las rectas que se pegan mucho probabilidad
+uno para todas las distancias).
+
+Un cambio razonable que podemos hacer, por ejemplo, es poner:
+
+$$\theta_{grados} \sim Gamma(a, b)$$
+
+Cuya media queremos poner por ejemplo en 2 grados $a/b = 2$, y suponemos
+una desviación estándar de unos $a/b^2 = 0.5$ grados. En este caso,
+
+```{r}
+mu <- 2
+beta  <- 2
+qplot(rgamma(1e5, mu * beta, beta))
+```
+
+```{r}
+simular_putts_angulo <- function(distancias) {
+  sigma <- (pi/180) * rgamma(1, mu * beta, beta) 
+  p <- 2 * pnorm(atan(3.25 / distancias)/sigma) - 1
+  tibble(y = rbinom(length(distancias), 1, p), p = p, d = distancias) |> 
+    select(d, p, y) |> 
+    mutate(sigma = sigma)
+}
+```
+
+Y podemos ver cómo se ven diversas curvas que incluye nuestro modelo:
+
+```{r}
+distancias <- seq(0, 600, 1) 
+map_df(1:200,  \(x) simular_putts_angulo(distancias) |> mutate(id = x)) |> 
+  ggplot(aes(x = d, y = p, group = id)) +
+  geom_line(alpha = 0.2) +
+  labs(x = "Distancia (cm)", y = "Probabilidad de Éxito") +
+  ylim(c(0,1))
+```
+
+**Nota**: Checando con 
+esta gráfica podemos modificar
+los parámetros de la Gamma para poner una inicial apropiada.
+
+
+
 
 Dejaremos como ejercicio hacer las pruebas predictivas a priori, y continuaremos
 con el ajuste a los datos para checar el ajuste de este modelo:
@@ -1516,9 +1565,9 @@ set.seed(225)
 ajuste_2 <- mod_golf$sample(
   data = list(N = nrow(datos_golf),
               d =  30.48 * datos_golf$x, y = datos_golf$y, n = datos_golf$n),
-  refresh = 1000, init = 0, step_size = 0.01)
-sims_2 <- ajuste_2$draws(c("sigma"), format = "df")
-resumen_2 <- ajuste_2$summary("sigma")
+  refresh = 1000, init = 0.01, step_size = 0.01)
+sims_2 <- ajuste_2$draws(c("sigma", "sigma_ang"), format = "df")
+resumen_2 <- ajuste_2$summary(c("sigma", "sigma_ang"))
 
 ```
 
@@ -1532,7 +1581,7 @@ Ahora simulamos la posterior y la contrastamos con los datos:
 ```{r}
 grafs_2_tbl <- sims_2 |>
   rowwise() |>
-  mutate(graf = list(tibble(d = 30.48 * datos_golf$x) |>
+  mutate(graf = list(tibble(d = 30.48 * seq(0, 20, 0.5)) |>
                        mutate(p = 2 * pnorm(atan(3.25 / d)/sigma) - 1))) |>
   ungroup() |>
   slice_sample(n = 100) |>
@@ -1554,11 +1603,14 @@ grafs_2_tbl |>
   geom_linerange(data = resumen_golf,
                  aes(ymin = p - 2 * sqrt(p * (1 - p) / n),
                      ymax = p + 2 * sqrt(p * (1 - p) / n)),
-                 color = "red")
+                 color = "red") +
+  ylim(c(0,1))
 ```
 
 
-
+Este es un modelo relativamente simple que sólo toma en cuenta ángulos y 
+distancia. Puedes ver en el artículo del Gelman et al citado arriba cómo
+refinarlo para poner condiciones sobre la velocidad inicial, por ejemplo.
 
 
 
