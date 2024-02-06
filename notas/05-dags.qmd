@@ -22,11 +22,8 @@ En primer lugar, podemos pensar cómo se asignan los valores de las variables
 en nuestro proceso generador de datos. Pensamos entonces de qué depende directamente
 cada variable para determinar su valor, de manera que cada nodo $X$ de la variable
 se puede escribir por ejemplo como $Y = f(X, W)$ y $Z = g(X)$. Esto es desde
-el punto de vista téorico y de conocimiento de área que tenemos, y respresenta
-supuestos causales. 
-
-En este caso, tenemos un *modelo gráfico* asociado, que en este ejemplo escribimos
-como:
+el punto de vista téorico y de conocimiento de área que tenemos, y representa
+supuestos causales. En este ejemplo particular, tenemos un *modelo gráfico* asociado, escribimos como:
 
 ```{r}
 #| code-fold: true
@@ -45,7 +42,7 @@ digraph {
 }
 ", width = 150, height = 40)
 ```
-En este caso, no describimos exactamente cómo son las funciones que relacionan
+Nótese que no describimos exactamente cómo son las funciones que relacionan
 las variables, sino más bien qué variables son causas directas de qué otras.
 Por ejemplo, aunque en nuestro ejemplo de arriba $Y$ depende de $Z$, no hay una
 causa *directa* a $Y$, porque cambios en $Z$ afectan a $X$, y es el cambio en $X$
@@ -162,7 +159,7 @@ digraph {
 Los modelos gráficos también nos muestran cómo hacer factorizaciones
 útiles de los datos.
 
-Recordamos primero que si tenemos cualquier conjunto
+Si tenemos cualquier conjunto
 de variables aleatorias $X_1,\ldots,X_p$, la *distibución conjunta* de estas variables
 $p(x_1,x_2,\ldots, x_n)$ nos sirve para calcular cualquier cantidad de interés
 que involucra estas variables.
@@ -251,10 +248,22 @@ simular_juego(5)
 
 ## Estructuras básicas de DAGs
 
-Veremos que para razonar acerca de las asociaciones e independencias
-que pueden aparecer en una conjunta, podemos examinar la gráfica que la represente, o dicho de otra manera, entender bajo qué condiciones
+Veremos que para razonar acerca de las asociaciones e independencias (condicionales o no)
+que pueden aparecer o no en una conjunta, podemos examinar la gráfica que la represente, o dicho de otra manera, entender bajo qué condiciones
 puede propagarse información de un nodo a otro.
 
+::: callout-tip
+Las independencias condicionales que se cumplen para cualquier
+relación funcional entre variables del sistema, pueden
+leerse directamente de la estructura del modelo gráfico que representa
+la conjunta.
+
+Esto nos permite hacer razonamiento lógico de qué puede estar
+asociado o no según nuestros supuestos causales.
+:::
+
+Para entender modelos gráficos en general, basta endender cuatro estructuras
+básicas que pueden aparecer.
 Consideremos entonces tres variables $X$, $Y$ y $Z$. Las cuatro estructuras
 que tenemos que entender en primer lugar pueden verse también como métodos de
 razonamiento lógico derivados de las leyes de probabilidad:
@@ -358,6 +367,7 @@ cor(sims_confusor |> filter(z == 1) |> select(x,y)) |> round(3)
 cor(sims_confusor |> filter(z == 0) |> select(x,y)) |> round(3)
 ```
 
+Un ejemplo con variables continuas podría ser como sigue:
 
 ```{r}
 simular_bifurcacion <- function(n = 10){
@@ -926,11 +936,11 @@ Existen muchos ejemplos de colisionadores en análisis de datos. Algunos
 ejemplos se deben a *sesgo de selección* (puedes dibujar diagramas para
 cada uno de estos):
 
--  Podemos observar correlaciones entre habilidades que en realidad 
+- Podemos observar correlaciones entre habilidades que en realidad 
 son independientes si observamos muestras de estudiantes seleccionados 
 por un examen de admisión (por ejemplo, para entrar es necesario tener alta habilidad
 atlética y/o alta habilidad académica).
-- (@rethinking) Entre los artículos científicos publicados, aquellos que son más tomados 
+-  Entre los artículos científicos publicados (ver @rethinking), aquellos que son más tomados 
 por las noticias son los menos confiables. Esta correlación puede aparecer 
 aunque no exista relación en proyectos científicos entre confiabilidad e interés
 de los medios, pues lo que se fondea o publica puede tener dos razones: ser
