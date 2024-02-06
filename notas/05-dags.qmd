@@ -160,12 +160,20 @@ digraph {
 ## Modelos gráficos y regla del producto
 
 Los modelos gráficos también nos muestran cómo hacer factorizaciones
-útiles de los datos. Recordamos la regla del producto, para cualquier conjunto
-de variables aleatorias $X_1,\ldots,X_p$, la conjunta se puede
+útiles de los datos.
+
+Recordamos primero que si tenemos cualquier conjunto
+de variables aleatorias $X_1,\ldots,X_p$, la *distibución conjunta* de estas variables
+$p(x_1,x_2,\ldots, x_n)$ nos sirve para calcular cualquier cantidad de interés
+que involucra estas variables.
+
+Recordamos ahora la regla del producto: para cualquier conjunto
+de variables aleatorias $X_1,\ldots,X_p$, la conjunta se puede factorizar
+siempre como:
 
 $$p(x_1,x_2,\ldots, x_n) = p(x_1)p(x_2|x_1)p(x_3|x_1,x_2)\ldots p(x_p|x_1,x_2,\ldots,x_{p-1})$$
-
-El modelo gráfico nos da un ordenamiento natural de las variables que nos permite
+Hay muchas manera de escribir esta factorización, dependiendo de cómo ordenamos
+las variables. El modelo gráfico nos da un *ordenamiento natural* (primero van padres y luego hijos) de las variables que nos permite
 aplicar la regla del producto, según la dirección de las flechas del diagrama:
 
 ### Ejemplo {-}
@@ -174,21 +182,24 @@ En el ejemplo de arriba, un ordenamiento es $X,S1,S2,D,G$. Entonces, podemos
 escribir la regla del producto:
 
 $$p(x,s_1,s_2,d,g) = p(x)p(s_1|x)p(s_2|x,s_1)p(d|x,s_1,s_2,d)p(g|x,s1,s2,d)$$
-Que podemos simplificar porque por ejeemplo, $p(s_2|x, s_1) = p(s_2|x)$, ya
+Que podemos simplificar porque por ejemplo, $p(s_2|x, s_1) = p(s_2|x)$, ya
 que  $s_1$ no influye directamente en $s_2$. Por la misma lógica,
 $p(d|x,s_1,s_2) = p(d|x)$ y $p(g|x,s_1,s_2,d) = p(g|s_1,s_2,d)$. Entonces:
 
 $$p(x,s_1,s_2,d,g) = p(x)p(d)p(s_1|x)p(s_2|x)p(g|s_1,s_2,d)$$
 Que nos da una manera mucho más parsimoniosa de modelar las relaciones entre estas
-variables. 
+variables. Bajo nuestros supuestos no es necesario modelar toda la cadena
+de dependencias, pues algunas flechas no están presentes.
 
-En nuestro caso, $p(x)$ es uniforme en $[0,1]$, supondremos
+En nuestro caso, 
+
+- $p(x)$ es uniforme en $[0,1]$, 
+- supondremos
 por ejemplos que $p(d=lluvioso) =0.3$ (tomando un día del año al azar),
-$S_1|X$ y $S_2|X$ son binomiales con probabilidad $X$, y $G|S_1,S_2,D$ es 
+- $S_1|X$ y $S_2|X$ son binomiales con 5 pruebas y probabilidad $X$, y 
+- $G|S_1,S_2,D$ es 
 determinística: $G$ toma el valor $S_1+ S_2$ si $D$ es lluvioso, y $S_1$ en
 otro caso. Con esto, tenemos un modelo conjunto completo del sistema de interés.
-
-
 
 
 ### Ejemplo {-}
@@ -205,7 +216,7 @@ para $p(z|y)$, etc. En total, sólo necesitamos 9 parámetros.
 
 Supongamos que tenemos un DAG con variables
 $X_i$. Si denotamos por $pa_i$ a los padres de $X_i$, entonces siempre
-podemos factorizar:
+podemos factorizar la conjunta como
 
 $$p(x_1,\ldots, x_p) = \prod_{i=1}^p p(x_i|pa_i)$$
 :::
@@ -244,9 +255,351 @@ Veremos que para razonar acerca de las asociaciones e independencias
 que pueden aparecer en una conjunta, podemos examinar la gráfica que la represente, o dicho de otra manera, entender bajo qué condiciones
 puede propagarse información de un nodo a otro.
 
-Consideremos entonces tres variables $X$, $Y$ y $Z$. Las tres estructuras
+Consideremos entonces tres variables $X$, $Y$ y $Z$. Las cuatro estructuras
 que tenemos que entender en primer lugar pueden verse también como métodos de
 razonamiento lógico derivados de las leyes de probabilidad:
+
+- Causa común o bifurcaciones $X\leftarrow Z \rightarrow Y$.
+- Cadenas o mediación $X\rightarrow Z \rightarrow Y$.
+- Colisionadores $X\rightarrow Z \leftarrow Y$.
+- Descendientes en cadenas $X\rightarrow Z \rightarrow Y, Z\to A$.
+
+
+
+
+## Bifurcaciones o causa común
+
+En el siguiente ejemplo, llamamos a $Z$ una causa que es común a $X$ y $Y$.
+
+```{r}
+#| code-fold: true
+
+grViz("
+digraph {
+  graph [ranksep = 0.2]
+  node [shape=plaintext]
+    X
+    Y
+    Z
+  edge [minlen = 3]
+   Z -> X
+   Z -> Y
+}
+", width = 200, height = 50)
+```
+
+En este caso, 
+
+- $X$ y $Y$ tienen asociación
+- Si condicionamos (o estratificas) con  $Z$, entonces $X$ y $Y$ son condicionalmente
+independientes.
+
+
+Este tipo de estructura también se llama bifurcación, o decimos que $Z$ es un
+**confusor** en esta gráfica. Variación en $Z$ produce variación conjunta de $X$ y $Y$.
+
+Por ejemplo,  podríamos encontrar que el uso de aspirina $X$ está asociado
+a una mortalidad más alta $Y$. Una causa común es enfermedad grave que produce dolor ($Z$). Sin embargo, si condicionamos a personas sanas, veríamos
+que no hay relación entre uso de aspirina y mortalidad, igualmente veríamos
+que entre las personas enfermas el uso de aspirina no les ayuda a vivir más tiempo.
+
+En este caso, tenemos:
+
+$$p(x, y, z) =  p(z)p(x|z)p(y|z)$$
+Y como el lado izquierdo es igual (en general) a $p(x,y|z)p(z)$, obtenemos
+la independiencia condicional de $X$ y $Y$ dado $Z$.
+
+
+### Ejemplo (simulación) {-}
+
+```{r}
+rbern <- function(n, prob){
+  rbinom(n, 1, prob = prob)
+} 
+simular_confusor <- function(n = 10){
+  z <- rbern(n, p = 0.5) |> as.numeric()
+  x <- rbern(n, p = z * 0.3 + (1 - z) * 0.8)
+  y <- rbinom(n, 4, z * 0.9 + (1 - z) * 0.3)
+  tibble(x, z, y)
+}
+sims_confusor <- simular_confusor(50000)
+```
+
+$X$ y $Y$ son dependientes:
+
+```{r}
+sims_confusor |> select(x, y) |> 
+  count(x, y) |> 
+  group_by(x) |> 
+  mutate(p_cond = n / sum(n)) |>
+  select(x, y, p_cond) |> 
+ggplot(aes(x = y, y = p_cond, fill = factor(x))) +
+  geom_col(position = "dodge") +
+  labs(subtitle = "Condicional de Y dada X")
+```
+
+Sin embargo, si condicionamos a $Z$, que puede tomar los valores 0 o 1:
+
+```{r}
+sims_confusor |> 
+  count(x, y, z) |> 
+  group_by(x, z) |> 
+  mutate(p_cond = n / sum(n)) |>
+  select(x, y, z, p_cond) |> 
+ggplot(aes(x = y, y = p_cond, fill = factor(x))) +
+  geom_col(position = "dodge") + facet_wrap(~ z) +
+  labs(subtitle = "Condicional de Y dada X y Z")
+```
+Y vemos que la condicional de $Y$ dada $Z$ y $X$ sólo depende de $Z$. Una consecuencia
+es por ejemplo que la correlación debe ser cero:
+
+```{r}
+cor(sims_confusor |> filter(z == 1) |> select(x,y)) |> round(3)
+cor(sims_confusor |> filter(z == 0) |> select(x,y)) |> round(3)
+```
+
+
+```{r}
+simular_bifurcacion <- function(n = 10){
+  z <- rbern(n, p = 0.5)
+  x <- rnorm(n, 100 + 20 * z, 15)
+  y <- rnorm(n, 100 + 30 * z, 20)
+  tibble(x, z, y)
+}
+sims_bifurcacion <- simular_bifurcacion(5000)
+```
+
+$X$ y $Y$ son dependientes (por ejemplo si vemos la media condicional
+de $Y$ dado $X$:
+
+```{r}
+#| warning: false
+#| message: false
+ggplot(sims_bifurcacion, aes(x = x, y = y, colour = z)) + 
+  geom_point(alpha = 0.2) +
+  geom_smooth(span = 1, se = FALSE)
+```
+
+Si condicionamos a $Z$, no hay dependencia entre $X$ y $Y$
+
+```{r}
+#| warning: false
+#| message: false
+ggplot(sims_bifurcacion, aes(x = x, y = y, colour = z, group = z)) + 
+  geom_point(alpha = 0.2) +
+  geom_smooth(span = 2)
+```
+
+### Ejemplo: matrimonio y divorcio {-}
+
+En este ejemplo de @rethinking, se muestra que regiones de Estados Unidos
+con tasas más altas de matrimonio también tienen tasas más altas de divorcio.
+
+```{r}
+data(WaffleDivorce)
+WaffleDivorce |> 
+  ggplot(aes(x = Marriage, y = Divorce)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+Aunque esta es una correlación clara, lo que 
+nos interesa en este caso el efecto causal de $M\to D$. Es importante
+notar que hay considerable variabilidad de la edad promedio al casarse a lo
+largo de los estados:
+
+```{r}
+WaffleDivorce |> 
+  ggplot(aes(sample = MedianAgeMarriage)) +
+  geom_qq() +
+  geom_qq_line()
+
+```
+Para el modelo causal, tenemos que considerar las siguientes afirmaciones 
+que no son muy difíciles de justificar:
+
+- La **edad al casarse** es un
+factor que influye en la tasa de divorcio (menor edad a casarse implica mayores
+tasas de divorcio, pues las parejas tienen más tiempo para divorciarse, porque
+la gente cambia más cuando es joven). 
+- Adicionalmente, si la gente tiende a casarse más joven, en cualquier momento
+hay *más* gente con probabilidad de casarse, por lo que esperaríamos que la edad
+al casarse también influye en la tasa de matrinomio
+
+Esto implica que tenemos que considerar una causa común de la edad al casarse
+en nuestro diagrama causal:
+
+```{r}
+#| code-fold: true
+
+grViz("
+digraph {
+  graph [ranksep = 0.2]
+  node [shape=plaintext]
+    M
+    D
+    Edad
+  edge [minlen = 3]
+   Edad -> M
+   Edad -> D
+   M -> D
+{rank=same; M; D;}
+
+}
+", width = 200, height = 50)
+```
+Por la discusión de arriba, es claro que es necesario considerar la edad al casarse
+si queremos estimar el efecto de tasa de matrimonio en la tasa de divorcio. Es posible
+que la correlación entre estas dos tasas puede ser explicada por la edad al casarse,
+y que en realidad al flecha $M\to D$ sea muy débil o inexistente.
+
+Ya que tenemos este modelo causal básico, tendríamos que proponer un proceso generador,
+proponer un modelo estadístico, y probar nuestra estimación. Este paso nos lo
+saltaremos (ver sección anterior), aunque sigue siendo necesario.
+
+Por el momento recordemos que si condicionamos (se dice también
+*estratificar*) por edad al casarse, y no vemos relación
+condicional entre las dos tasas, la relación que vimos en los datos es factible que
+haya aparecido por la causa común que induce correlación. Una manera en que 
+estratificamos o condicionamos a una variable continua en un modelo lineal,
+como sigue:
+
+$$D_i\sim N(\mu_i, \sigma)$$
+donde
+$$\mu_i = \alpha + \beta_M M_i + \beta_E Edad_i$$
+¿De qué manera estamos estratificando por edad en este ejemplo? Obsérvese
+que para cada Edad que fijemos, la relación entre $M$ y $D$ es:
+
+$$\mu_i = (\alpha + \beta_E Edad) + \beta_M M_i  $$
+Cada valor de $E$ produce una relación diferente entre $M$ y $D$ (en este caso
+particular, una recta diferente con distinta altura). 
+
+
+Ahora tenemos que poner iniciales para
+terminar nuestro modelo estadístico. En este punto poner iniciales informadas para estos coeficientes puede ser
+complicado (depende de cuánta demografía sabemos). Podemos usar un enfoque más
+simple, considerando las variables estandarizadas. De esta forma podemos 
+poner iniciales más estándar. Utilizaremos
+
+```{r}
+escalar <- function(x){
+  (x - mean(x))/sd(x)
+}
+WaffleDivorce <- WaffleDivorce |> 
+  mutate(Marriage_est = escalar(Marriage), 
+         Divorce_est = escalar(Divorce), 
+         MedianAgeMarriage_est = escalar(MedianAgeMarriage))
+datos_lista <- list(
+  N = nrow(WaffleDivorce),
+  d_est = WaffleDivorce$Divorce_est, 
+  m_est = WaffleDivorce$Marriage_est, 
+  edad_est = WaffleDivorce$MedianAgeMarriage_est)
+```
+
+```{r}
+mod_mat_div <- cmdstan_model("./src/matrimonio-divorcio-1.stan")
+print(mod_mat_div)
+```
+
+```{r}
+sims_mod <- mod_mat_div$sample(data = datos_lista, 
+                   chains = 4, 
+                   init = 0.1, step_size = 0.1,
+                   iter_warmup = 1000, 
+                   iter_sampling = 1000,
+                   refresh = 0)
+```
+
+```{r}
+resumen <- sims_mod$summary(c("alpha", "beta_M", "beta_E", "sigma"))
+```
+
+```{r}
+#| fig-width: 5 
+#| fig-height: 4
+resumen |> 
+  ggplot(aes(x = variable, y = mean, ymin = q5, ymax = q95)) +
+  geom_hline(yintercept = 0, color = "red") +
+  geom_point() +
+  geom_linerange() +
+  coord_flip()
+```
+Y el resultado que obtenemos es que no observamos un efecto considerable
+de las tasas de matrimonio en las tasas de divorcio, una vez que 
+estratificamos por la causa común de edad de matrimonio. Este ejemplo es simple
+y podemos ver el efecto causal directo en un sólo coeficiente $\beta_M$, pero
+de todas formas haremos contrastes como hicimos en la parte anterior.
+
+### Simulando intervenciones
+
+La manera más directa de definir efecto causal, bajo nuestros supuestos
+causales, es a través de intervenciones (imaginarias o reales)
+
+::: callout-note
+Entendemos saber una causa como poder predecir correctamente las consecuencias
+de una intervención en el sistema generador de datos.
+:::
+
+En nuestro caso, el diagrama de arriba muestra nuestro modelo causal. Si nosotros
+**alteramos** este proceso causal, interviniendo en la tasa de matrimonio, 
+la distribución de matrimonio ya no depende de la Edad (pues está bajo nuestro
+control). Esto quiere decir que ahora consideramos el siguiente diagrama,
+en donde la nueva dependendencia del divorcio del matrimonio la escribiremos
+como $p(D|do(M))$:
+
+
+```{r}
+#| code-fold: true
+#| fig-caption: Diagrama causal con intervención do(M)
+grViz("
+digraph {
+  graph [ranksep = 0.2]
+  node [shape=plaintext]
+    M
+    D
+    Edad
+  edge [minlen = 3]
+   Edad -> D
+   M -> D
+{rank=same; M; D;}
+
+}
+", width = 200, height = 50)
+```
+
+Es decir, borramos todas las flechas que caen en $M$ (pues la estamos
+interveniendo al valor que queramos), y luego simulando $D$.
+
+En nuestro ejemplo (ve el código de Stan de arriba, la parte de 
+*generated quantities*) simularemos los 50 estados bajo dos intervenciones:
+todos tienen la tasa promedio de matrimonio vs. los 50 estados con tasa de
+matrimonio un error estándar por encima de la tasa promedio. Repetimos
+esta comparación sobre todas las simulaciones de la posterior:
+
+
+```{r}
+#| warning: false
+sims_tbl <- sims_mod$draws(format = "df") |> 
+  select(dif) 
+sims_tbl |> summarize(
+  q5 = quantile(dif, 0.05),
+  q95 = quantile(dif, 0.95)
+)
+```
+
+```{r}
+ggplot(sims_tbl, aes(x = dif)) +
+  geom_histogram(bins = 50) +
+  geom_vline(xintercept = 0, color = "red")
+```
+En este caso, vemos que el resultado de la intervención no tienen una tendencia
+clara hacia incrementar o disminuir la tasa de divorcio, aunque existe variabilidad
+por la incertidumbre que tenemos acerca de las relaciones modeladas.
+
+Finalmente, antes de terminar sería apropiado hacer chequeos predictivos posteriores,
+pero por el momento los omitiremos para avanzar en los otros tipos de estructuras
+básicas en los DAGs.
+
 
 ## Cadenas o mediación
 
@@ -272,6 +625,7 @@ digraph {
 En este caso, 
 
 - Existe  asociación entre $X$ y $Y$, pero no existe relación directa entre ellas.
+Decimos que $Z$ es un mediador del efecto de $X$ sobre $Y$.
 - Si condicionamos a un valor de $Z$, $X$ y $Y$ son condicionalmente independientes.
 
 Podemos pensar en $Z$ como un mediador del efecto de $X$ sobre $Y$. Si no 
@@ -378,264 +732,71 @@ ggplot(sims_mediador, aes(x = x, y = y, colour = z, group = z)) +
   geom_smooth(span = 2)
 ```
 
+Nótese que en este ejemplo *sí* hay un efecto causal de $X$ sobre $Y$, pero
+está mediado por otra variable $Z$. Si condicionamos a $Z$, no hay relación
+entre $X$ y $Y$. El análisis condicionado podría llevarnos a una conclusión
+errónea de que $X$ no influye sobre $Y$.
 
 
-### Bifurcaciones o causa común
-
-En el siguiente ejemplo, llamamos a $Z$ una causa que es común a $X$ y $Y$.
-
-```{r}
-#| code-fold: true
-
-grViz("
-digraph {
-  graph [ranksep = 0.2]
-  node [shape=plaintext]
-    X
-    Y
-    Z
-  edge [minlen = 3]
-   Z -> X
-   Z -> Y
-}
-", width = 200, height = 50)
-```
-
-En este caso, 
-
-- $X$ y $Y$ tienen asociación
-- Si condicionamos a  $Z$, entonces $X$ y $Y$ son condicionalmente
-independientes.
+::: callout-tip
+Nota que no existe una diferencia *estadística* entre una bifurcación y una cadena:
+en ambos casos, las variables $X$ y $Y$ están correlacionadas, y son
+independientes una vez que condicionamos o estratificamos por $Z$. Sin embargo,
+su tratamiento en inferencia causal es muy diferente.
+:::
 
 
-Este tipo de estructura también se llama bifurcación, o decimos que $Z$ es un
-**confusor** en esta gráfica. Variación en $Z$ produce variación conjunta de $X$ y $Y$.
-
-Por ejemplo,  podríamos encontrar que el uso de aspirina $X$ está asociado
-a una mortalidad más alta $Y$. Una causa común es enfermedad grave que produce dolor ($Z$). Sin embargo, si condicionamos a personas sanas, veríamos
-que no hay relación entre uso de aspirina y mortalidad, igualmente veríamos
-que entre las personas enfermas el uso de aspirina no les ayuda a vivir más tiempo.
-
-En este caso, tenemos:
-
-$$p(x, y, z) =  p(z)p(x|z)p(y|z)$$
-Y como el lado izquierdo es igual (en general) a $p(x,y|z)p(z)$, obtenemos
-la independiencia condicional de $X$ y $Y$ dado $Z$.
 
 
-### Ejemplo (simulación) {-}
+### Sesgo post-tratamiento {-}
 
-```{r}
-rbern <- function(n, prob){
-  rbinom(n, 1, prob = prob)
-} 
-simular_confusor <- function(n = 10){
-  z <- rbern(n, p = 0.5) |> as.numeric()
-  x <- rbern(n, p = z * 0.3 + (1 - z) * 0.8)
-  y <- rbinom(n, 4, z * 0.9 + (1 - z) * 0.3)
-  tibble(x, z, y)
-}
-sims_confusor <- simular_confusor(50000)
-```
+En @rethinking se discute que en algunos estudios experimentales, se estratifica por variables que son
+consecuencia del tratamiento. Esto induce *sesgo post-tratamiento*, lo cual
+puede llevar a equivocaciones en donde parece que el tratamiento no tiene
+efecto cuando sí lo tiene. Incluso bajo condiciones de experimento (donde el tratamiento
+es asignado al azar) estratificar por mediadores es una mala idea. Ver más en 
+@rethinking, donde por ejemplo cita una fuente que en estudios experimentales
+de Ciencia Política, casi la mitad de ellos sufre de este tipo de sesgo por
+estratificación por mediadores.
 
-$X$ y $Y$ son dependientes:
+### Ejemplo: Burks {-}
 
-```{r}
-sims_confusor |> select(x, y) |> 
-  count(x, y) |> 
-  group_by(x) |> 
-  mutate(p_cond = n / sum(n)) |>
-  select(x, y, p_cond) |> 
-ggplot(aes(x = y, y = p_cond, fill = factor(x))) +
-  geom_col(position = "dodge") +
-  labs(subtitle = "Condicional de Y dada X")
-```
-
-Sin embargo, si condicionamos a $Z$, que puede tomar los valores 0 o 1:
-
-```{r}
-sims_confusor |> 
-  count(x, y, z) |> 
-  group_by(x, z) |> 
-  mutate(p_cond = n / sum(n)) |>
-  select(x, y, z, p_cond) |> 
-ggplot(aes(x = y, y = p_cond, fill = factor(x))) +
-  geom_col(position = "dodge") + facet_wrap(~ z) +
-  labs(subtitle = "Condicional de Y dada X y Z")
-```
-Y vemos que la condicional de $Y$ dada $Z$ y $X$ sólo depende de $Z$. Una consecuencia
-es por ejemplo que la correlación debe ser cero:
-
-```{r}
-cor(sims_confusor |> filter(z == 1) |> select(x,y)) |> round(3)
-cor(sims_confusor |> filter(z == 0) |> select(x,y)) |> round(3)
-```
-
-
-```{r}
-simular_bifurcacion <- function(n = 10){
-  z <- rbern(n, p = 0.5)
-  x <- rnorm(n, 100 + 20 * z, 15)
-  y <- rnorm(n, 100 + 30 * z, 20)
-  tibble(x, z, y)
-}
-sims_bifurcacion <- simular_bifurcacion(5000)
-```
-
-$X$ y $Y$ son dependientes (por ejemplo si vemos la media condicional
-de $Y$ dado $X$:
-
-```{r}
-ggplot(sims_bifurcacion, aes(x = x, y = y, colour = z)) + 
-  geom_point(alpha = 0.2) +
-  geom_smooth(span = 1)
-```
-
-Si condicionamos a $Z$, no hay dependencia entre $X$ y $Y$
-
-```{r}
-ggplot(sims_bifurcacion, aes(x = x, y = y, colour = z, group = z)) + 
-  geom_point(alpha = 0.2) +
-  geom_smooth(span = 2)
-```
-
-### Ejemplo {-}
-
-En este ejemplo de @rethinking, se muestra que regiones de Estados Unidos
-con tasas más altas de matrimonio también tienen tasas más altas de divorcio.
-
-```{r}
-data(WaffleDivorce)
-WaffleDivorce |> 
-  ggplot(aes(x = Marriage, y = Divorce)) +
-  geom_point() +
-  geom_smooth(method = "lm")
-```
-
-
-Nos interesa en este caso el efecto causal directo de $M\to D$. Es importante
-notar que hay considerable variabilidad de la edad promedio al casarse a lo
-largo de los estados:
-
-```{r}
-WaffleDivorce |> 
-  ggplot(aes(sample = MedianAgeMarriage, label = Loc)) +
-  geom_qq() 
-
-```
-Para el modelo causal, tenemos que considerar las siguientes afirmaciones 
-que no son muy difíciles de justificar:
-
-- La **edad al casarse** es un
-factor que influye en la tasa de divorcio (menor edad a casarse implica mayores
-tasas de divorcio, pues las parejas tienen más tiempo para divorciarse, porque
-la gente cambia más cuando es joven). 
-- Adicionalmente, si la gente tiende a casarse más joven, en cualquier momento
-hay *más* gente con probabilidad de casarse, por lo que esperaríamos que la edad
-al casarse también influye en la tasa de matrinomio
-
-Esto implica que tenemos que considerar una causa común de la edad al casarse
-en nuestro diagrama causal:
+Este ejemplo es de @PearlWhy. En 1926 Burks recolectó datos sobre qué tanto podría esperarse que la inteligencia de padres se hereda a los hijos (medido según
+una prueba de IQ). Construyó un diagrama parecido al de abajo:
 
 ```{r}
 #| code-fold: true
-
 grViz("
 digraph {
   graph [ranksep = 0.2]
+  node [shape = circle]
+    U
   node [shape=plaintext]
-    M
-    D
-    Edad
   edge [minlen = 3]
-   Edad -> M
-   Edad -> D
-   M -> D
-{rank=same; M; D;}
-
+    IntPadres -> NSE
+    NSE -> IntHijos
+    U -> NSE
+    U -> IntHijos
+    IntPadres -> IntHijos
+{rank = same; U}
 }
-", width = 200, height = 50)
-```
-Por la discusión de arriba, es claro que es necesario considerar la edad al casarse
-si queremos estimar el efecto de tasa de matrimonio en la tasa de divorcio. Es posible
-que la relación entre estas dos tasas puede ser explicada por la edad al casarse.
+")
 
-Ya que tenemos este modelo causal básico, tendríamos que proponer un proceso generador,
-proponer un modelo estadístico, y probar nuestra estimación. Este paso nos lo
-saltaremos (ver sección anterior). 
-
-Por el momento recordemos que si condicionamos (se dice también
-*estratificar*) por edad al casarse, y no vemos relación
-condicional entre las dos tasas, la relación que vimos en los datos es factible que
-haya aparecido por la causa común que induce correlación. Una manera en que 
-estratificamos o condicionamos a una variable continua es con un modelo lineal,
-como sigue:
-
-$$D_i\sim N(\mu_i, \sigma)$$
-donde
-$$\mu_i = \alpha + \beta_M M_i + \beta_E Edad_i$$
-¿De qué manera estamos estratificando por edad en este ejemplo? Obsérvese
-que para cada Edad que fijemos, la relación entre $M$ y $D$ es:
-
-$$\mu_i = (\alpha + \beta_E Edad) + \beta_M M_i  $$
-Cada valor de $E$ produce una relación diferente entre $M$ y $D$ (en este caso
-particular, la ordenada al origen cambia). Ahora tenemos que poner iniciales para
-terminar nuestro modelo estadístico.
-
-En este punto poner iniciales informadas para estos coeficientes puede ser
-complicado (depende de cuánta demografía sabemos). Podemos usar un enfoque más
-simple, considerando las variables estandarizadas. De esta forma podemos 
-poner iniciales más estándar. Utilizaremos
-
-```{r}
-escalar <- function(x){
-  (x - mean(x))/sd(x)
-}
-WaffleDivorce <- WaffleDivorce |> 
-  mutate(Marriage_est = escalar(Marriage), 
-         Divorce_est = escalar(Divorce), 
-         MedianAgeMarriage_est = escalar(MedianAgeMarriage))
-datos_lista <- list(
-  N = nrow(WaffleDivorce),
-  d = WaffleDivorce$Divorce_est, 
-  m = WaffleDivorce$Marriage_est, 
-  edad = WaffleDivorce$MedianAgeMarriage_est)
 ```
 
-```{r}
-mod_mat_div <- cmdstan_model("./src/matrimonio-divorcio-1.stan")
-sims_mod <- mod_mat_div$sample(data = datos_lista, 
-                   chains = 4, 
-                   init = 0.1, stepsize = 0.1,
-                   iter_warmup = 1000, 
-                   iter_sampling = 1000)
-```
+Como el NSE es del hogar (una medida general de estatus social), 
+se consideró en principio como una variable pre-tratamiento a la inteligencia
+de los niños por la
+que tradicionalmente se controlaba. Burks notó que hacer esto tenía no era
+apropiado, pues tiene como
+consecuencia cortar parte del efecto total de la inteligencia 
+sobre el la inteligencia de los hijos. En otras palabras:  la
+inteligencia de los padres hace más probable mejor NSE, y mejor NSE
+presenta mejores condiciones de desarrollo para sus hijos. Estatificar
+por esta variable ignora este efecto.
 
-```{r}
-resumen <- sims_mod$summary(c("alpha", "beta_M", "beta_E", "sigma"))
-```
-
-```{r}
-resumen |> 
-  ggplot(aes(x = variable, y = mean, ymin = q5, ymax = q95)) +
-  geom_hline(yintercept = 0, color = "red") +
-  geom_point() +
-  geom_linerange() +
-  coord_flip()
-```
-Y el resultado que obtenemos es que no observamos un efecto considerable
-de las tasas de matrimonio en las tasas de divorcio, una vez que 
-estratificamos por la causa común de edad de matrimonio. Este ejemplo es simple
-y podemos ver el efecto causal directo en un sólo coeficiente $\beta_M$, pero
-de todas formas haremos contrastes como hicimos en la parte anterior.
-
-```{r}
-sims_tbl <- sims_mod$draws(format = "df") |> 
-  select(dif) 
-ggplot(sims_tbl, aes(x = dif)) +
-  geom_histogram() +
-  geom_vline(xintercept = 0, color = "red")
-```
+Adicionalmente, como veremos, condicionar
+a NSE abre un camino no causal entre Inteligencia de Padres e Hijos.
 
 
 
@@ -646,7 +807,8 @@ ggplot(sims_tbl, aes(x = dif)) +
 ## Colisionador o causas alternativas
 
 En este caso, a $Z$ también le llamamos un **colisionador**. Este es
-el caso que puede ser más difícil de entender en un principio.
+el caso que puede ser más difícil de entender en un principio. Consiste de la
+siguiente estructura:
 
 ```{r}
 #| code-fold: true
@@ -665,7 +827,7 @@ digraph {
 ", width = 200, height = 50)
 ```
 
-- En este caso $X$ y $Y$ son independientes
+- En este caso $X$ y $Y$ son independientes. Tanto $X$ como $Y$ influyen en $Z$.
 - Sin embargo, si condicionamos a $Z$ entonces $X$ y $Y$ están asociados.
 
 
@@ -676,13 +838,13 @@ se encendieron los aspersores.
 Como la conjunta se factoriza como:
 
 $$p(x,y,z) = p(x)p(y)p(z|x,y)$$
-podemos integrar sobre $Z$:
+Entonces integrando sobre $Z$:
 
 $$p(x,y) = \int p(x,y,z)dz = p(x)p(y)\int p(z|x,y)\, dz$$
 pero $p(z|x,y)$ integra uno porque es una densidad, de forma que $x$ y $y$ son 
 independientes.
 
-Y mostramos un ejemplo simulado:
+Mostramos un ejemplo simulado:
 
 ```{r}
 simular_colisionador <- function(n = 10){
@@ -754,11 +916,49 @@ ggplot(sims_colisionador, aes(x = x, y = y, group = z, colour = factor(z))) +
   geom_point() + geom_smooth(method = "lm", se = FALSE) 
 ```
 
-Y vemos que condicional a $Z$, $X$ y $Y$ no son dependientes.
+Y vemos que condicional a $Z$, $X$ y $Y$ están correlacionadas, aunque no
+hay relación causal entre $X$ y $Y$.
 
-### Razonamiento de descendientes de efecto común
+### Ejemplos
 
-Condicionar a un descendiente de un colisionador también produce dependencias 
+
+Existen muchos ejemplos de colisionadores en análisis de datos. Algunos
+ejemplos se deben a *sesgo de selección* (puedes dibujar diagramas para
+cada uno de estos):
+
+-  Podemos observar correlaciones entre habilidades que en realidad 
+son independientes si observamos muestras de estudiantes seleccionados 
+por un examen de admisión (por ejemplo, para entrar es necesario tener alta habilidad
+atlética y/o alta habilidad académica).
+- (@rethinking) Entre los artículos científicos publicados, aquellos que son más tomados 
+por las noticias son los menos confiables. Esta correlación puede aparecer 
+aunque no exista relación en proyectos científicos entre confiabilidad e interés
+de los medios, pues lo que se fondea o publica puede tener dos razones: ser
+trabajo muy confiable, o ser trabajo que "está de moda" o atrae la atención de los medios.
+
+Pero también puede ser consecuencia de condicionar a colisionadores endógenos, y 
+ocurren como parte del procesamiento o construcción de
+modelos. Un ejemplo interesante de @rethinking es el siguiente:
+
+- Nos interesa saber si *la edad influye en la felicidad o bienestar de las personas*.
+- Algún investigador puede pensar que es necesario controlar por sí las personas
+están casadas o no, por ejemplo, para "quitar" ese efecto o algo así.
+- Esto puede ser mala idea si consideramos que un diagrama apropiado
+puede ser $F \rightarrow Matrim \leftarrow Edad$, que se basa en las observaciones
+de que personas más felices generalmente tienen mayor posibilidad de casarse, y también
+conforme pasa el tiempo, hay más oportunidades para casarse.
+- Esto induce una correlación no causal entre edad y felicidad dentro de los grupos
+de casados y no casados, y puede llevar a conclusiones incorrectas.
+
+
+
+## Razonamiento de descendientes 
+
+Condicionar a un descendiente puede entenderse como "condicionar parcialmente" o
+"débilmente" a los padres de ese descendiente. 
+
+
+Por ejemplo, condicionar a un colisionador también produce dependencias 
 condicionales:
 
 ```{r}
@@ -783,7 +983,7 @@ digraph {
 En este caso,
 
 - $X$ y $Y$ son independientes
-- $X$ y $Y$ son  dependientes si condicionamos a $A$.
+- $X$ y $Y$ son dependientes si condicionamos a $A$.
 
 Dependiendo de la naturaleza de la asociación entre el colisionador $Z$ y su descendiente
 $A$, esta dependencia puede ser más fuerte o más débil. 
@@ -812,7 +1012,29 @@ digraph {
 ", width = 200, height = 50)
 
 ```
+### Ejemplo {-}
 
+```{r}
+simular_desc <- function(n = 10){
+  x <- rbern(n, 0.5) 
+  y <- rbinom(n, 2, 0.7)
+  z <- rbern(n, p = 0.1 + 0.7 * x * (y > 1)) 
+  a <- rbern(n, p = 0.5 + 0.5 * z)
+  tibble(x, z, y, a)
+}
+sims_colisionador <- simular_desc(50000)
+# No hay correlación
+cor(sims_colisionador$x, sims_colisionador$y)
+```
+
+Sin embargo,
+
+```{r}
+cor(sims_colisionador |> filter(a ==0) |> select(x,y))
+```
+```{r}
+cor(sims_colisionador |> filter(a ==1) |> select(x,y))
+```
 
 
 ### Ejemplo: dependencias de colisionador
@@ -835,12 +1057,12 @@ datos_lista <- list(N = 0, n = 0,
  kit_pos = 103, n_kit_pos = 122,
  kit_neg = 399, n_kit_neg = 401)
 ajuste <- mod_sc$sample(data = datos_lista, refresh = 1000, iter_sampling = 400)
-sims <- ajuste$draws(c("p", "sens", "esp"), format = "df")
-resumen <- ajuste$summary(c("p"))
+sims <- ajuste$draws(c("theta", "sens", "esp"), format = "df")
+resumen <- ajuste$summary(c("theta"))
 ```
 
 ```{r}
-ggplot(sims, aes(x = p, y = sens)) + geom_point() +
+ggplot(sims, aes(x = theta, y = sens)) + geom_point() +
   scale_x_sqrt()
 ```
 
@@ -858,12 +1080,12 @@ datos_lista <- list(N = 3300, n = 50,
 # fija la sensibilidad
  kit_neg = 399, n_kit_neg = 401)
 ajuste <- mod_sc$sample(data = datos_lista, refresh = 1000, iter_sampling = 400)
-sims <- ajuste$draws(c("p", "sens", "esp"), format = "df")
-resumen <- ajuste$summary(c("p"))
+sims <- ajuste$draws(c("theta", "sens", "esp"), format = "df")
+resumen <- ajuste$summary(c("theta"))
 ```
 
 ```{r}
-ggplot(sims, aes(x = p, y = esp)) + geom_point() 
+ggplot(sims, aes(x = theta, y = esp)) + geom_point() 
 ```
 Y vemos que condiconando al colisionador, obtenemos una relación fuerte entre prevalencia
 y especificidad de la prueba: necesitaríamos más datos de especificidad para
@@ -889,7 +1111,7 @@ la existencia o no de asociaciones entre nodos de cualquier gráfica dirigida.
 
 Ahora buscaremos describir todas las posibles independendencias condicionales
 y no condicionales que pueden aparecer en una gráfica, para entender cómo aparecen
-asociaciones entre variables de nuestro modelo, y dependiendo del tipo de condicionamiento
+asociaciones entre variables de nuestro modelo, dependiendo del tipo de condicionamiento
 que hacemos.
 
 Veremos que el criterio es algorítmico. Más adelante discutiremos cuáles de estas
@@ -1042,7 +1264,7 @@ digraph {
 
 ```
 
-## Relación con inferencia causal
+## Caminos causales
 
 Si el DAG que consideramos representa relaciones causales (mecanísticas) entre
 las variables, es decir, qué variable "escucha" a qué otras para decidir su valor,
