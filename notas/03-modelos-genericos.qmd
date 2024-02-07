@@ -1609,8 +1609,172 @@ grafs_2_tbl |>
 
 
 Este es un modelo relativamente simple que sólo toma en cuenta ángulos y 
-distancia. Puedes ver en el artículo del Gelman et al citado arriba cómo
-refinarlo para poner condiciones sobre la velocidad inicial, por ejemplo.
+distancia. Para más refinaciones que toman en cuenta la velocidad, puedes revisar también 
+[este análisis de M. Broadie](https://statmodeling.stat.columbia.edu/wp-content/uploads/2019/03/putt_models_20181017.pdf), en donde se extiende este modelo bajo principios geométricos
+y físicos.
+
+
+## Modelos genéricos para ajustar curvas
+
+Otra posibilidad es utilizar un modelo más flexible creando variables
+derivadas de la distancia. En este caso, quizá podemos ajustar una curva
+que sea aceptable desde el punto de vista predictivo, pero no podremos aprender
+mucho acerca de cómo funciona la probabilidad de éxitos de los tiros de putts
+
+::: callout-tip
+# Splines y ajuste de curvas
+
+Los splines nos dan una manera estándar de ajustar curvas más flexibles,
+de tipo polinomial por tramos. Usualmente son numéricamente más conveniente que polinomios.
+:::
+
+Aunque hay muchos tipos de splines (los más comunes son B-splines), 
+para este problema consideraremos
+una base de splines cuadráticos que resultan en curvas monótonas (I-splines). Puedes
+ver más detalles de splines en @rethinking
+
+En este caso, haremos expansión de entradas de las siguiente manera. Supongamos
+que tenemos la variable de distancia $d$ que va de 0 a 750 cm, por ejemplo. Construimos
+entradas derivadas de la siguiente manera:
+
+```{r}
+#| message: false
+library(splines2)
+nudos <- c(25, 50, 100, 200, 400)
+distancias <- seq(0, 750, 1)
+splines_tbl <- iSpline(distancias, knots = nudos, 
+  Boundary.knots = c(0, 750), degree = 2, intercept = FALSE) |> 
+  as_tibble() |> 
+  mutate(d = distancias) |> 
+  pivot_longer(-d, names_to = "spline", values_to = "valor")
+ggplot(splines_tbl) +
+  geom_line(aes(x = d, y = valor, color = spline)) +
+  geom_vline(xintercept = nudos, color = "red", linetype = 2) 
+```
+Esta gráfica muestra cómo para cada distancia $x$ generamos 
+valores $x_1,\ldots, x_p$ que son variables derivadas de $x$. Podemos
+entonces obtener más flexibilidad hacer regresión en estas 
+nuevas $p$ variables en lugar de usar solamente $x$. Por la elección de
+la base, obsérvese que siempre que $\beta_1, \ldots, \beta_p$ sean no negativos,
+entonces la función 
+$$\alpha + \beta_1 x_1 + \cdots + \beta_p x_p$$
+será monótona no decreciente, que es lo que necesitamos para este problema.
+
+Nuestra función generadora para este modelo puede ser:
+
+```{r}
+simular_putts <- function(distancias, nudos) {
+  # Simular intercepto
+  alpha <- rnorm(1, 4, 2)
+  # Simular coeficientes de splines
+  beta <-  - abs(rnorm(7, 0, 1.5))
+  # Calcular splines para distancias dadas
+  mat_splines <- splines2::iSpline(distancias, 
+    Boundary.knots = c(0, 750), knots = nudos, degree = 2, intercept = FALSE) 
+  # Calcular probabilidad de éxito con regresión logística
+  p <- 1 / (1 + exp(- alpha - mat_splines %*% beta))
+  tibble(y = rbinom(length(distancias), 1, p), p = p, d = distancias) |> 
+    select(d, p, y) |> 
+    mutate(alpha = alpha, beta = list(beta))
+}
+```
+
+```{r}
+set.seed(8123)
+distancias <- seq(1, 600, 5) |> rep(each = 5)
+simular_putts(distancias, nudos) |> 
+  ggplot(aes(x = d, y = y)) +
+  geom_jitter(height = 0.1) +
+  labs(x = "Distancia (cm)", y = "Éxito") +
+  geom_smooth(span = 1, se = FALSE)
+```
+
+Y podemos hacer simulaciones a priori para entender nuestros supuestos:
+
+```{r}
+map_df(1:100,  \(x) simular_putts(distancias, nudos) |> mutate(id = x)) |> 
+  ggplot(aes(x = d, y = p, group = id)) +
+  geom_line(alpha = 0.2) +
+  labs(x = "Distancia (cm)", y = "Probabilidad de Éxito")
+```
+Ahora construimos nuestro nuevo modelo en Stan, donde $x$ será la matriz de
+splines (entradas derivadas como se explicó arriba):
+
+
+```{r}
+#! message: false
+library(cmdstanr)
+mod_logistica_splines <- cmdstan_model("./src/golf-logistico-splines.stan")
+print(mod_logistica_splines)
+```
+
+
+
+
+```{r}
+set.seed(1225)
+mat_splines <- splines2::iSpline(30.48 * datos_golf$x, 
+      Boundary.knots = c(0, 750), knots = nudos, degree = 2, intercept = FALSE) 
+ajuste <- mod_logistica_splines$sample(
+  data = list(N = nrow(datos_golf), p = ncol(mat_splines),
+              d = 30.48 * datos_golf$x, 
+              x = mat_splines,
+              y = datos_golf$y, n = datos_golf$n), 
+  refresh = 1000, init = 0.1, 
+  step_size = 0.1, adapt_delta = 0.99)
+sims <- ajuste$draws(c("alpha", "beta"), format = "df")
+
+resumen <- ajuste$summary()
+```
+
+```{r}
+resumen
+```
+
+Ahora simulamos la posterior y la contrastamos con los datos:
+
+
+```{r}
+d <- 30.48 * seq(0, 20, 0.5)
+mat_splines_pred <- splines2::iSpline(30.48 * seq(0, 20, 0.5), 
+       Boundary.knots = c(0, 750), knots = nudos, degree = 2,
+                                 intercept = FALSE) 
+sims_2 <- sims  |> group_by(.draw, .chain, .iteration) |> nest() 
+grafs <- purrr::map(sims_2$data, function(pars){
+  pars <- as.numeric(pars)
+  alpha <- pars[1]
+  beta <- pars[2:8]
+  p <- 1/(1 + exp(- alpha - mat_splines_pred %*% beta))
+  tibble(p = as.numeric(p), d = d)
+})
+sims_graf_tbl <- sims_2 |> add_column(graf = grafs) |> select(-data) |> 
+  ungroup() |> 
+  slice_sample(n = 100) |> 
+  select(.draw, graf) |> 
+  unnest(graf) 
+```
+
+
+
+```{r}
+sims_graf_tbl |> 
+  ggplot(aes(x = d, y = p)) +
+  geom_line(aes(group = .draw), alpha = 0.1) +
+  labs(x = "Distancia (cm)", y = "Probabilidad de Éxito") +
+  geom_point(data = resumen_golf, color = "red") +
+  geom_linerange(data = resumen_golf, 
+    aes(ymin = p - 2 * sqrt(p * (1 - p) / n),  
+        ymax = p + 2 * sqrt(p * (1 - p) / n)),
+    color = "red")
+```
+
+Este modelo ajusta mejor, y puede ser usado para
+hacer comparaciones de probabilidad de éxito a diferentes distancias. Su defecto
+es que no es interpetable como nuestro modelo anterior (aprendemos poco
+sobre cómo funcionan los putts), y es considerablemente más difícil de ajustar.
+
+Puedes ver más de splines en @rethinking, y en @ESL. Puedes revisar
+también [este caso de Stan](https://mc-stan.org/users/documentation/case-studies/splines_in_stan.html) que explica cómo utilizar splines de forma más general en Stan.
 
 
 
