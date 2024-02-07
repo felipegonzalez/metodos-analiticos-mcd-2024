@@ -104,6 +104,31 @@
       ],
       "Hash": "45f0398006e83a5b10b72a90663d8d8c"
     },
+    "Rcpp": {
+      "Package": "Rcpp",
+      "Version": "1.0.11",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "methods",
+        "utils"
+      ],
+      "Hash": "ae6cbbe1492f4de79c45fce06f967ce8"
+    },
+    "RcppArmadillo": {
+      "Package": "RcppArmadillo",
+      "Version": "0.12.6.6.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "Rcpp",
+        "methods",
+        "stats",
+        "utils"
+      ],
+      "Hash": "d2b60e0a15d73182a3a766ff0a7d0d7f"
+    },
     "abind": {
       "Package": "abind",
       "Version": "1.4-5",
@@ -1512,6 +1537,20 @@
         "stats"
       ],
       "Hash": "9067f962730f58b14d8ae54ca885509f"
+    },
+    "splines2": {
+      "Package": "splines2",
+      "Version": "0.5.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "Rcpp",
+        "RcppArmadillo",
+        "graphics",
+        "stats"
+      ],
+      "Hash": "12194b295d87fb2ade6d6f4cca7c6384"
     },
     "stringi": {
       "Package": "stringi",
