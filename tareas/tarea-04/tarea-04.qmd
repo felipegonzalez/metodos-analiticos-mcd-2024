@@ -1,0 +1,352 @@
+---
+title: "Tarea 4"
+format: html
+---
+
+Este ejercicio es del Statistical Rethinking de McElreath. Buscamos
+en este ejercicio:
+
+1. Considerar un diagrama causal y razones para su estructura.
+2. Plantear modelos de regresión para contestar preguntas causales basados
+en supuestos del diagrama y datos observados.
+3. En estos problemas nos concentraremos en la parte de plantear modelos
+que tengan sentido desde el punto de vista causal (no consideramos
+todo el flujo bayesiano, sólo la parte de propuesta de modelos
+estadístico y cálculo de contrastes para estimar efectos causales)
+
+
+
+```{r}
+#| message: false
+library(tidyverse)
+library(DiagrammeR)
+```
+
+
+Los datos para este problema son una población de 116 zorros
+de 30 distintos grupos urbanos en Inglaterra. El tamaño
+**groupsize*
+de grupo varía de 2 a 8 individuos. Cada grupo cuida su
+propio territorio urbano, y los territorios varían
+en temaño. La variable *area* tiene esta información. Algunos
+territorios tienen más comida que otros, lo cual está 
+en la variable *avgfood*. Finalmente, la cantidad de
+comida influye en el peso *weight* de cada zorro. Suponemos
+que las áreas de cada grupo están fijas (es decir, están separadas
+por razones geográficas).
+
+```{r}
+# foxes.csv es el paquete rethinking de McElreath
+zorros <- read_delim("datos/foxes.csv", delim = ";")
+head(zorros)
+```
+
+Supondremos
+el siguiente diagrama:
+
+```{r}
+#| out-width: 100%
+#| code-fold: true
+grViz("
+digraph {
+  graph [ranksep = 0.3, rankdir = LR]
+  node [shape=plaintext]
+    A
+    F
+    G
+    W
+  edge [minlen = 3]
+    A -> F
+    F -> G
+    F -> W
+    G -> W
+}
+")#, width = 200, height = 50)
+```
+
+Es decir, el área urbana $A$ influye en cuánta comida $F$ está
+disponible, lo cual influye en tanto tamaño de grupo $G$ como
+peso de los zorros $W$. Adiconalmente, el tamaño de grupo $G$
+también influye en el peso de los zorros $W$.
+
+**Pregunta 1**: Argumenta: 1) ¿por qué una flecha incorrecta sería G -> F?
+Ojo: $F$ es disponibilidad de comida en el área.
+2) ¿Por qué hay una flecha de A-> F? 3) ¿Por qué no puede haber una flecha 
+directa de área $A$ a peso de los zorros $W$? Explica por
+qué aunque vieras una corrrelación de los datos 
+entre área $A$ y peso de los zorros $W$ eso
+no implica que deba existir un mecanismo causal donde el área afecte
+directamente al peso de los zorros. Nota: en estas preguntas no necesariamente
+hay una respuesta única correcta.
+
+**Pregunta 2**: Como crítica a estos supuestos, argumenta por qué
+quizá podría haber una flecha directa de área a tamaño de grupo (tienes
+que proponer un mecanismo causal). Nota: en esta pregunta no necesariamente
+hay una respuesta única correcta.
+
+Para el resto del ejericicio, tomaremos el diagrama de arriba como
+nuestros supuestos. Queremos estimar:
+
+
+1. El efecto causal **total** de incrementar el área de una región en
+la disponibilidad de comida.
+1. El efecto causal **total** de añadir comida $F$ a un territorio
+sobre el peso $W$ del zorros.
+2. El efecto causal **directo** de añadir comida $F$ a 
+un territorio sobre el peso $W$ de los zorros.
+
+
+
+## Efecto causal total de incrementar área
+
+
+**Pregunta 3** Argumenta intuitivamente
+por qué no es necesario condicionar a ninguna
+variable que no sea área $A$ para estimar su efecto sobre disponibilidad
+de comida $F$.
+
+Empezamos considerando entonces un modelo de regresión ( a nivel área),
+con variables estándarizadas:
+
+```{r}
+zorros_areas <- zorros |> 
+  group_by(group) |> 
+  summarise(avgfood = first(avgfood), area = first(area)) |> 
+  mutate(avgfood_est = scale(avgfood)[,1],
+         area_est = scale(area)[,1])
+```
+
+Como las variables están estandarizadas, proponemos las iniciales de
+abajo para este modelo (por ejemplo $\alpha$ debe ser chico porque
+ambas variables de la regresión tienen media cero)
+
+```{r}
+library(cmdstanr)
+set_cmdstan_path(".cmdstan/cmdstan-2.34.1/")
+mod_area <- cmdstanr::cmdstan_model("zorros-preg-area.stan")
+print(mod_area)
+```
+
+
+Corremos el modelo (que supondremos pasa las pruebas de simulaciones a priori):
+
+```{r}
+sims_mod <- mod_area$sample(
+  data = list(n = nrow(zorros_areas),
+              a = zorros_areas$area_est,
+              f = zorros_areas$avgfood_est),
+  init = 0.1, step_size = 0.1,
+  refresh = 2000)
+```
+
+
+```{r}
+sims_tbl <- sims_mod$draws(format = "df")
+sims_mod$summary() |> 
+  select(variable, mean, sd, q5, q95)
+```
+
+
+**Pregunta 4** Argumenta que el tamaño del área parece tener un efecto
+considerable sobre la cantidad de comida disponible. ¿Qué coeficiente 
+puedes examinar para esto? 
+
+
+### Chequeo predictivo posterior {-}
+
+Ahora hacemos un chequeo predictivo posterior. Como vimos en clase,
+tomamos un conjunto de parámetros simulados, y simulamos nuevos
+datos del modelo que comparamos contra los datos observados:
+
+```{r}
+sim_datos_pred_post <- function(n, sims_tbl, area = area){
+  # como queremos n conjuntos de datos, extraemos n simulaciones
+  # de la posterior
+  datos_sims_tbl <- map_df(1:n, function(i){
+    pars <- slice_sample(sims_tbl, n = 1, replace = TRUE)
+    alpha <- pars$alpha
+    beta <- pars$beta
+    sigma <- pars$sigma
+    # simular tantos territorios como longitud del vector de areas
+    # según modelo estadístico
+    datos_sim_tbl <- tibble(
+      rep = i,
+      area = area,
+      avgfood = rnorm(length(area), alpha + beta * area, sigma)
+    )
+  })
+  datos_sims_tbl
+}
+# simular tres terrorios ( con áreas 0.1, 0.1 y 1.3),
+# dos veces
+sim_datos_pred_post(2, sims_tbl, area = c(0.1, 0.1, 1.3))
+```
+
+**Nota 1**: recuerda que son datos estandarizados, así que puedes
+ver valores negativos en esta tabla.
+
+**Nota 2** (opcional): 
+Si quieres, puedes verificar que la función *sim_pred_post* 
+que vimos en clase (sección 4.3)
+hace lo mismo, aunque la simulación se hace en orden diferente (esto
+puede ser confuso por la vectorización pero checa donde aparece *rep*):
+en la función de las notas de clase, 
+para cada estatura simulamos $n$ repeticiones con $n$ vectores de parámetros.
+
+
+Usamos las áreas observadas y contrastamos con los datos (pondremos
+los datos verdaderos en el índice 12, aunque idealmente estarían
+en un lugar al azar para no sesgarnos):
+
+```{r}
+chequeo_pred_post <- sim_datos_pred_post(11, sims_tbl, area = zorros_areas$area_est) |> 
+  bind_rows(zorros_areas |> select(area = area_est, avgfood = avgfood_est ) |> 
+            mutate(rep = 12)) 
+chequeo_pred_post |> 
+  ggplot(aes(x= area, y = avgfood)) +
+  geom_point() +
+  facet_wrap(~ rep)
+```
+
+
+
+
+
+### Estimación de efecto causal de área
+
+
+En este ejemplo simple, es fácil extraer la información causal directamente
+de un coeficiente. Sin embargo, haremos de todas formas 
+una comparación causal usando simulaciones.
+
+Primero pondremos el área del territorio en 0, y simularemos para un
+territorio hipotético cuánta comida está disponible. Después
+repetiremos suponiendo que el territorio tiene área 1 (una deviación estándar
+arriba de la media). Calcularemos la diferencia entre estas dos
+cantidades.
+
+
+```{r}
+simular_dif <- function(sims_tbl, n = 1000){
+  # extraer una simulación posterior de parámetros
+  params <- sample_n(sims_tbl, size = 1)
+  # simular población hipotética de área promedio
+  comida_0 <- rnorm(n, params$alpha + params$beta * 0, params$sigma) 
+  # simular población hipotética de área una desv est arriba del promedio
+  comida_1 <- rnorm(n, params$alpha + params$beta * 1, params$sigma) 
+  # calcular la media de la diferencia sobre todas las poblaciones
+  dif <- mean(comida_1 - comida_0)
+  dif
+}
+simular_dif(sims_tbl)
+```
+
+ahora repetimos para una cantidad grande de territorios hipotéticos
+y examinamos la posterior de nuestro contraste:
+
+```{r}
+sims_post_dif <- map_dbl(1:10000, ~ simular_dif(sims_tbl)) |> 
+  tibble(dif = _)
+ggplot(sims_post_dif, aes(x = dif)) +
+  geom_histogram(bins = 50)
+
+```
+
+**Pregunta 5** Verifica este resultado con lo que viste en el resumen
+de los coeficientes de arriba. Argumenta por qué en general
+es mejor utilizar el método de simulación.
+
+
+
+## Efecto causal total de comida sobre peso
+
+Ahora queremos calcular el efecto **total** de la cantidad de 
+comida sobre el peso de los zorros. Utilizaremos los siguientes
+datos a nivel de zorro, que estandarizamos igualmente:
+
+```{r}
+zorros_est <- zorros |> 
+  mutate(avgfood_est = scale(avgfood)[,1],
+         weight_est = scale(weight)[,1],
+         groupsize_est = scale(groupsize)[,1])
+```
+
+
+Utiliza esto datos y adapta 
+el código de arriba  para escribir un
+modelo y estimar el efecto causal **total** de la cantidad de comida
+sobre el peso de los zorros. En este ejemplo no es necesario que
+hagas chequeos y puedes utilizar si quieres solamente el resumen de
+los coeficientes.
+
+**Pregunta 6**: Según tu análisis ¿Puedes decir que este efecto es positivo o negativo? ¿Puede ser un efecto grande? Explica por qué (a partir del
+diagrama causal), aunque no haya efecto grande total, esto no quiere decir que la cantidad de comida no influya en el peso de los zorros.
+
+
+## Efecto causal directo de comida sobre peso
+
+Ahora veremos el efecto causal directo de la disponibilidad de
+comida sobre el peso de los zorros. 
+
+**Pregunta 7**: Explica intuitivamente por qué para el efecto
+causal directo queremos estratificar o condicionar (o "controlar")
+por tamaño de grupo, es decir, incluir la variable tamaño de grupo
+en nuestro modelo.
+
+Utilizaremos el siguiente modelo de regresión:
+
+
+```{r}
+mod_w_directo <- cmdstanr::cmdstan_model("zorros-preg-directo.stan")
+print(mod_w_directo)
+```
+
+
+Corremos el modelo que supondremos pasa las pruebas de simulaciones a priori:
+
+```{r}
+sims_mod <- mod_w_directo$sample(
+  data = list(n = nrow(zorros_est),
+              w = zorros_est$weight_est,
+              f = zorros_est$avgfood_est,
+              g = zorros_est$groupsize_est),
+  init = 0.1, step_size = 0.1,
+  refresh = 2000)
+```
+
+
+```{r}
+sims_mod$summary() |> 
+  select(variable, mean, sd, q5, q95)
+```
+
+**Pregunta 8**: ¿Qué dice este modelo acerca del efecto directo causal
+de disponibilidad de comida sobre el peso de los zorros? ¿Por qué este
+resultado no contradice tu respuesta acerca del efecto total?
+
+**Pregunta 9** (más difícil, opcional): 
+Supón qué alguien que viera el modelo del efecto total
+de comida sobre peso de zorros (antes de incluir tamaño de grupo), y concluyera
+que no hay mecanismo causal entre la cantidad de comida y el peso de los
+zorros, y que debe quitarse esa flecha del diagrama causal. ¿Por qué este 
+argumento es incorrecto? ¿Qué pasaría con los zorros 
+si intervinieras incrementando la comida artificialmente para un grupo de zorros, y al mismo tiempo implementas un programa de control de número de zorros
+en esa área?
+
+Finalmente explica por qué aunque tamaño de grupo y comida tienen una
+correlación muy alta, esto no justifica "excluir algunas variables del modelo porque están muy correlacionadas":
+
+```{r}
+cor(zorros)
+```
+
+
+
+
+
+
+
+
+
+
+
