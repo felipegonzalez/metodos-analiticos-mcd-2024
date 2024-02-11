@@ -511,7 +511,8 @@ digraph {
 ```
 Por la discusión de arriba, es claro que es necesario considerar la edad al casarse
 si queremos estimar el efecto de tasa de matrimonio en la tasa de divorcio. Es posible
-que la correlación entre estas dos tasas puede ser explicada por la edad al casarse,
+que la correlación entre estas dos tasas puede ser explicada solamente 
+por la edad al casarse,
 y que en realidad al flecha $M\to D$ sea muy débil o inexistente.
 
 Ya que tenemos este modelo causal básico, tendríamos que proponer un proceso generador,
@@ -656,6 +657,12 @@ ggplot(sims_tbl, aes(x = dif)) +
 En este caso, vemos que el resultado de la intervención no tienen una tendencia
 clara hacia incrementar o disminuir la tasa de divorcio, aunque existe variabilidad
 por la incertidumbre que tenemos acerca de las relaciones modeladas.
+
+::: callout-tip
+La relación que vimos entre matrimonio y divorcio en nuestro ejemplo
+es probablemente producida por la causa común Edad, y no necesariamente
+es causal.
+:::
 
 Finalmente, antes de terminar sería apropiado hacer chequeos predictivos posteriores,
 pero por el momento los omitiremos para avanzar en los otros tipos de estructuras
