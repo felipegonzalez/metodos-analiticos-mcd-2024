@@ -11,8 +11,8 @@ ggplot2::theme_set(ggplot2::theme_light())
 
 En esta sección formalizaremos el concepto de modelos gráficos, en particular
 gráficas dirigidas acícilcas (DAGs), y veremos cómo sirven para representar
-supuestos causales acerca de lso procesos que nos interesa modelar para contestar
-preguntas, o dicho de otra manera, cómo expresamos más formalmente supuesto
+supuestos causales acerca de los procesos que nos interesa modelar para contestar
+preguntas, o dicho de otra manera, cómo expresamos más formalmente supuestos
 acerca de la historia de los datos que nos interesa examinar.
 
 
@@ -22,8 +22,8 @@ En primer lugar, podemos pensar cómo se asignan los valores de las variables
 en nuestro proceso generador de datos. Pensamos entonces de qué depende directamente
 cada variable para determinar su valor, de manera que cada nodo $X$ de la variable
 se puede escribir por ejemplo como $Y = f(X, W)$ y $Z = g(X)$. Esto es desde
-el punto de vista téorico y de conocimiento de área que tenemos, y representa
-supuestos causales. En este ejemplo particular, tenemos un *modelo gráfico* asociado, escribimos como:
+el punto de vista téorico y de conocimiento de área que tenemos, y representan
+supuestos causales. En este ejemplo particular, tenemos un *modelo gráfico* asociado, que escribimos como:
 
 ```{r}
 #| code-fold: true
@@ -44,7 +44,7 @@ digraph {
 ```
 Nótese que no describimos exactamente cómo son las funciones que relacionan
 las variables, sino más bien qué variables son causas directas de qué otras.
-Por ejemplo, aunque en nuestro ejemplo de arriba $Y$ depende de $Z$, no hay una
+Por ejemplo, aunque en nuestro ejemplo de arriba $Y$ puede estar *correlacionado* con $Z$, no hay una
 causa *directa* a $Y$, porque cambios en $Z$ afectan a $X$, y es el cambio en $X$
 que es causa directa de $Y$.
 
@@ -117,9 +117,9 @@ digraph {
 ")
 ```
 
-Sabemos que no podemos saber $U1$ y $U2$, y no nos interesa modelar la física de
+En este ejemplos no podemos saber $U1$ y $U2$, y no nos interesa modelar la física de
 monedas, manera de lanzarlas, etc. En este ejemplo también no consideraremos
-qué hace un día soleado o lluvioso (no nos interesa modelar el clima). En este
+qué hace que un día sea soleado o lluvioso (no nos interesa modelar el clima). En este
 momento, en teoría tenemos **ecuaciones determinísticas** para todas las variables,
 y si conocemos todas las variables exógenas $X,U1,U2,U3$ podríamos determinar
 exactamente lo que va a suceder con la ganancia, por ejemplo, o cualquier otra
@@ -154,6 +154,17 @@ digraph {
 ")
 ```
 
+::: callout-tip
+Usualmente, consideramos que las flechas en un DAG indican que un cambio
+en el nodo padre causa un cambio en la **distribución de probabilidades** de los
+hijos (no necesariamente lo determina).
+
+Usamos estas distribuciones para abstraer otros efectos exógenos que determinan
+los hijos cuyo mecanismo no nos interesa modelar causalmente.
+
+:::
+
+
 ## Modelos gráficos y regla del producto
 
 Los modelos gráficos también nos muestran cómo hacer factorizaciones
@@ -184,14 +195,17 @@ que  $s_1$ no influye directamente en $s_2$. Por la misma lógica,
 $p(d|x,s_1,s_2) = p(d|x)$ y $p(g|x,s_1,s_2,d) = p(g|s_1,s_2,d)$. Entonces:
 
 $$p(x,s_1,s_2,d,g) = p(x)p(d)p(s_1|x)p(s_2|x)p(g|s_1,s_2,d)$$
-Que nos da una manera mucho más parsimoniosa de modelar las relaciones entre estas
-variables. Bajo nuestros supuestos no es necesario modelar toda la cadena
+Al incluir sólo las causas directas obtenemos una manera 
+más parsimoniosa de modelar las relaciones entre estas
+variables, lo cual nos servirá más tarde cuando apliquemos modelos estadísticos
+para aprender de estas relaciones.
+Bajo nuestros supuestos no es necesario modelar toda la cadena
 de dependencias, pues algunas flechas no están presentes.
 
-En nuestro caso, 
+En nuestro caso, suponemos de acuerdo con lo que sabemos:
 
 - $p(x)$ es uniforme en $[0,1]$, 
-- supondremos
+- Supondremos
 por ejemplos que $p(d=lluvioso) =0.3$ (tomando un día del año al azar),
 - $S_1|X$ y $S_2|X$ son binomiales con 5 pruebas y probabilidad $X$, y 
 - $G|S_1,S_2,D$ es 
@@ -203,8 +217,9 @@ otro caso. Con esto, tenemos un modelo conjunto completo del sistema de interés
 
 Para entender mejor la parsimonia que podemos alcanzar usando supuestos
 causales, considera la cadena $X\to Y\to Z\to W\to A$. Imagina que cada una de estas
-variables puede tomar 2 valores. La conjunta de cuatro variables $(X,Y,Z,W)$, en general,
-requiere $2^5-1=31$ parámetros. Sin embargo, si se satisface
+variables puede tomar 2 valores. La conjunta de cinco variables binarias
+$(X,Y,Z,W)$, en general,
+requiere de $2^5-1=31$ parámetros. Sin embargo, si se satisface
 $X\to Y\to Z\to W\to A$ sólo requirimos 1 parámetro para $p(x)$, 2 para $p(y|x)$, 2
 para $p(z|y)$, etc. En total, sólo necesitamos 9 parámetros.
 
@@ -216,6 +231,8 @@ $X_i$. Si denotamos por $pa_i$ a los padres de $X_i$, entonces siempre
 podemos factorizar la conjunta como
 
 $$p(x_1,\ldots, x_p) = \prod_{i=1}^p p(x_i|pa_i)$$
+Las posibles conjuntas que satisfacen esta ecuación decimos que son 
+*consistentes* con el DAG. 
 :::
 
 ## Regla del producto y simulación
@@ -252,17 +269,40 @@ Veremos que para razonar acerca de las asociaciones e independencias (condiciona
 que pueden aparecer o no en una conjunta, podemos examinar la gráfica que la represente, o dicho de otra manera, entender bajo qué condiciones
 puede propagarse información de un nodo a otro.
 
-::: callout-tip
-Las independencias condicionales que se cumplen para cualquier
-relación funcional entre variables del sistema, pueden
-leerse directamente de la estructura del modelo gráfico que representa
-la conjunta.
+Recuerda qué es la independencia condicional. Decimos por ejemplo que
+$X$ y $Y$ son **condicionalmente independientes** dada $Z$ cuando se cumplen
+las siguientes ecuaciones equivalentes:
 
-Esto nos permite hacer razonamiento lógico de qué puede estar
+- $p(x|y,z) = p(x |z)$
+- $p(y|x,z) = p(y|z)$
+- $p(x,y|z) = p(x|z)p(y|z)$
+
+Es decir, en estos casos si conocemos $Y$, por ejemplo, información
+acerca de $Z$ no cambia la condicional $p(y|x,z)=p(y|z)$. También
+vemos que la conjunta de $X$ y $Y$ condicionada a $Z$ se factoriza
+como el producto de las condicionales de $X$ y $Y$ dada $Z$.
+
+Este es un concepto fundamental en estadística, y también en inferencia
+causal. Como vimos arriba, nos permite construir modelos para sistemas considerablemente grandes, pues muchas veces las relaciones causales directas
+importantes son *ralas* (es decir, no todo está conectado con todo).
+
+
+::: callout-tip
+# Independencia condicional
+
+Las independencias condicionales que se cumplen para cualquier
+relación funcional entre variables del sistema (o dicho de otra manera,
+cualquier conjunta consistente con el DAG), pueden
+leerse directamente de la estructura del modelo gráfico (DAG) correspondiente.
+
+- Esto nos permite hacer razonamiento lógico de qué puede estar
 asociado o no según nuestros supuestos causales.
+- Nota: Pueden existir otras independiencias condicionales adicionales para
+algunas conjuntas que son también consistentes con subgrafos del DAG original
 :::
 
-Para entender modelos gráficos en general, basta endender cuatro estructuras
+Para entender modelos gráficos en general, y que independencias
+condicionales implican o no, basta endender cuatro estructuras
 básicas que pueden aparecer.
 Consideremos entonces tres variables $X$, $Y$ y $Z$. Las cuatro estructuras
 que tenemos que entender en primer lugar pueden verse también como métodos de
@@ -271,9 +311,11 @@ razonamiento lógico derivados de las leyes de probabilidad:
 - Causa común o bifurcaciones $X\leftarrow Z \rightarrow Y$.
 - Cadenas o mediación $X\rightarrow Z \rightarrow Y$.
 - Colisionadores $X\rightarrow Z \leftarrow Y$.
-- Descendientes en cadenas $X\rightarrow Z \rightarrow Y, Z\to A$.
+- Descendientes, como en $X\rightarrow Z \rightarrow Y, Z\to A$.
 
-
+Todas estas estructuras pueden ser fuente de confusión, en el sentido
+de que producen patrones de correlación que pueden ser malinterpretados causalmente
+si no utilizamos supuestos causales.
 
 
 ## Bifurcaciones o causa común
@@ -300,11 +342,11 @@ digraph {
 En este caso, 
 
 - $X$ y $Y$ tienen asociación
-- Si condicionamos (o estratificas) con  $Z$, entonces $X$ y $Y$ son condicionalmente
-independientes.
+- Si condicionamos (o estratificamos) con  $Z$, entonces $X$ y $Y$ son condicionalmente independientes.
 
 
-Este tipo de estructura también se llama bifurcación, o decimos que $Z$ es un
+Este tipo de estructura también se llama bifurcación, o decimos más tradicionalmente 
+que $Z$ es un
 **confusor** en esta gráfica. Variación en $Z$ produce variación conjunta de $X$ y $Y$.
 
 Por ejemplo,  podríamos encontrar que el uso de aspirina $X$ está asociado
@@ -334,7 +376,7 @@ simular_confusor <- function(n = 10){
 sims_confusor <- simular_confusor(50000)
 ```
 
-$X$ y $Y$ son dependientes:
+$X$ y $Y$ están asociadas
 
 ```{r}
 sims_confusor |> select(x, y) |> 
@@ -347,7 +389,16 @@ ggplot(aes(x = y, y = p_cond, fill = factor(x))) +
   labs(subtitle = "Condicional de Y dada X")
 ```
 
-Sin embargo, si condicionamos a $Z$, que puede tomar los valores 0 o 1:
+Lo cual lo vemos también si calculamos la correlación:
+
+```{r}
+cor(sims_confusor |> select(x,y)) |> round(3)
+```
+
+
+Sin embargo, si condicionamos a $Z$, que puede tomar los valores 0 o 1,
+vemos que $X$ y $Y$ son independientes, o dicho de otra manera,
+la condicional de $Y$ dada $Z$ y $X$ sólo depende de $Z$:
 
 ```{r}
 sims_confusor |> 
@@ -359,7 +410,7 @@ ggplot(aes(x = y, y = p_cond, fill = factor(x))) +
   geom_col(position = "dodge") + facet_wrap(~ z) +
   labs(subtitle = "Condicional de Y dada X y Z")
 ```
-Y vemos que la condicional de $Y$ dada $Z$ y $X$ sólo depende de $Z$. Una consecuencia
+ Una consecuencia
 es por ejemplo que la correlación debe ser cero:
 
 ```{r}
@@ -414,7 +465,7 @@ WaffleDivorce |>
 ```
 
 Aunque esta es una correlación clara, lo que 
-nos interesa en este caso el efecto causal de $M\to D$. Es importante
+nos interesa en este caso el efecto causal $M\to D$. Es importante
 notar que hay considerable variabilidad de la edad promedio al casarse a lo
 largo de los estados:
 
@@ -428,13 +479,13 @@ WaffleDivorce |>
 Para el modelo causal, tenemos que considerar las siguientes afirmaciones 
 que no son muy difíciles de justificar:
 
-- La **edad al casarse** es un
+- La **edad promedio al casarse** de cada estado es un
 factor que influye en la tasa de divorcio (menor edad a casarse implica mayores
 tasas de divorcio, pues las parejas tienen más tiempo para divorciarse, porque
 la gente cambia más cuando es joven). 
 - Adicionalmente, si la gente tiende a casarse más joven, en cualquier momento
 hay *más* gente con probabilidad de casarse, por lo que esperaríamos que la edad
-al casarse también influye en la tasa de matrinomio
+al casarse también influye en la tasa de matrimonio.
 
 Esto implica que tenemos que considerar una causa común de la edad al casarse
 en nuestro diagrama causal:
@@ -803,7 +854,7 @@ consecuencia cortar parte del efecto total de la inteligencia
 sobre el la inteligencia de los hijos. En otras palabras:  la
 inteligencia de los padres hace más probable mejor NSE, y mejor NSE
 presenta mejores condiciones de desarrollo para sus hijos. Estatificar
-por esta variable ignora este efecto.
+por esta variable bloquea este efecto.
 
 Adicionalmente, como veremos, condicionar
 a NSE abre un camino no causal entre Inteligencia de Padres e Hijos.
@@ -877,6 +928,8 @@ sims_colisionador|> select(x, y) |>
 ggplot(aes(x = y, y = p_cond, fill = factor(x))) +
   geom_col(position = "dodge") +
   labs(subtitle = "Condicional de Y dada X")
+cor(sims_colisionador |> select(x,y))
+
 ```
 
 Sin embargo, si condicionamos a $Z$, que puede tomar los valores 0 o 1:
@@ -929,8 +982,7 @@ ggplot(sims_colisionador, aes(x = x, y = y, group = z, colour = factor(z))) +
 Y vemos que condicional a $Z$, $X$ y $Y$ están correlacionadas, aunque no
 hay relación causal entre $X$ y $Y$.
 
-### Ejemplos
-
+### Ejemplos de colisionadores
 
 Existen muchos ejemplos de colisionadores en análisis de datos. Algunos
 ejemplos se deben a *sesgo de selección* (puedes dibujar diagramas para
@@ -1126,15 +1178,14 @@ que hacemos.
 
 Veremos que el criterio es algorítmico. Más adelante discutiremos cuáles de estas
 asociaciones se deben a efectos causales y cuáles no, y esto nos permitirá establecer
-estrategias de condicionamiento (qué variables controlar o no), recolección de datos
-para construir los estimadores correctos de los efectos causales de interés.
+estrategias de condicionamiento (qué variables controlar o no), recolección de datos y diseño de experimentos para construir los estimadores correctos de los efectos causales de interés.
 
 
 ::: callout-note
 # d-separación: Caminos activos y bloqueados
 
 
-- Un **camino** entre $X$ y $Y$ es una sucesión de aristas que conecta a $X$ con $Y$
+- Un **camino** $p$ entre $X$ y $Y$ es una sucesión de aristas que conecta a $X$ con $Y$
 (sin importar) la dirección de las aristas.
 
 Ahora supongamos que $Z = \{Z_1,Z_2,\ldots, Z_q\}$ son una colección
@@ -1294,13 +1345,79 @@ Si nos interesa el efecto **total** de $X$ sobre $Y$,
 - Queremos condicionar para que todos los caminos no causales estén bloqueados, en particular, no queremos condicionar a colisionadores o sus descendientes que introduzcan relaciones 
 no causales, y queremos bloquear caminos no casuales creados por bifurcaciones.
 
+
+Si nos interesa el efecto **directo** de $X$ sobre $Y$,
+
+- Adicionalmente a los puntos del efecto directo, queremos condicionar
+para bloquear también todos los caminos causales uqe no sean directos.
+
 :::
 
 
 
+### Ejemplo
 
+En la tarea vimos un diagrama como sigue para el problema de los zorros:
 
+```{r}
+#| out-width: 100%
+#| code-fold: true
+grViz("
+digraph {
+  graph [ranksep = 0.3, rankdir = LR]
+  node [shape=plaintext]
+    A
+    F
+    G
+    W
+  edge [minlen = 3]
+    A -> F
+    F -> G
+    F -> W
+    G -> W
+}
+")#, width = 200, height = 50)
+```
 
+Vimos que para calcular el efecto directo de $F$ sobre $W$, por ejemplo,
+es necesario bloquear el camino que pasa por $G$ (estratificar por este nodo).
+Para el efecto total no es necesario condicionar a ningún otro nodo.
+
+Ahora supongamos que creemos que $G$ y $W$ tienen una causa común $U$ no
+observada.
+
+```{r}
+#| out-width: 100%
+#| code-fold: true
+grViz("
+digraph {
+  graph [ranksep = 0.3, rankdir = LR]
+  node [shape = circle]
+  U
+  node [shape=plaintext]
+    A
+    F
+    G
+    W
+  edge [minlen = 3]
+    A -> F
+    F -> G
+    F -> W
+    G -> W
+    U -> G
+    U -> W
+{rank=same U;G}
+
+}
+")#, width = 200, height = 50)
+```
+En este caso:
+
+- Podemos estimar el efecto total de $F$ sobre $W$ sin condicionar a nada. La adición
+de $U$ no crea ningún nuevo camino no causal activo entre $F$ y $W$.
+- Sin embargo, no es posible estimar el efecto directo de $F$ sobre $W$: la
+razón es que si condicionamos a $G$, entonces el camino no causal
+$F\rightarrow G \leftarrow U \rightarrow W$ se activa. Si conociéramos $U$ podríamos bloquearlo.
 
 
 
