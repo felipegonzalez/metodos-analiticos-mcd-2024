@@ -341,6 +341,36 @@ Causas y mecanismos
 </thead>
 <tbody>
 <tr class="odd">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">grandes</td>
+<td style="text-align: left;">mejora</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">chicos</td>
+<td style="text-align: left;">mejora</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">A</td>
+<td style="text-align: left;">chicos</td>
+<td style="text-align: left;">mejora</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">chicos</td>
+<td style="text-align: left;">mejora</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">grandes</td>
+<td style="text-align: left;">sin_mejora</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">A</td>
+<td style="text-align: left;">chicos</td>
+<td style="text-align: left;">mejora</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">A</td>
 <td style="text-align: left;">grandes</td>
 <td style="text-align: left;">sin_mejora</td>
@@ -351,43 +381,13 @@ Causas y mecanismos
 <td style="text-align: left;">mejora</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">B</td>
-<td style="text-align: left;">chicos</td>
-<td style="text-align: left;">mejora</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">A</td>
-<td style="text-align: left;">grandes</td>
-<td style="text-align: left;">sin_mejora</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">B</td>
-<td style="text-align: left;">chicos</td>
-<td style="text-align: left;">mejora</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">B</td>
-<td style="text-align: left;">grandes</td>
-<td style="text-align: left;">mejora</td>
-</tr>
-<tr class="odd">
 <td style="text-align: left;">A</td>
 <td style="text-align: left;">grandes</td>
 <td style="text-align: left;">mejora</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">B</td>
+<td style="text-align: left;">A</td>
 <td style="text-align: left;">grandes</td>
-<td style="text-align: left;">sin_mejora</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">B</td>
-<td style="text-align: left;">grandes</td>
-<td style="text-align: left;">mejora</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">B</td>
-<td style="text-align: left;">chicos</td>
 <td style="text-align: left;">mejora</td>
 </tr>
 </tbody>
@@ -632,8 +632,8 @@ Nota
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-26c6226c96eb9dd341a3" style="width:100%;height:162px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-26c6226c96eb9dd341a3">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    T \n    M \n    C\n  edge [minlen = 3]\n    T -> M\n    C -> T\n    C -> M\n{ rank = same; M; T }\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-45fdc0d5ca5e252499c4" style="width:100%;height:162px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-45fdc0d5ca5e252499c4">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    T \n    M \n    C\n  edge [minlen = 3]\n    T -> M\n    C -> T\n    C -> M\n{ rank = same; M; T }\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Es decir, el tamaño de los cálculos es una causa común de tratamiento (T) y resultado (M). Veremos más adelante que la decisión de condicionar a el tipo de cálculos proviene de un análisis relativamente simple de este diagrama causal, independientemente de los métodos que usemos para estimar las proporciones de interés (en este ejemplo, examinar las tablas cruzadas es equivalente a hacer estimaciones de máxima verosimlitud).</p>
@@ -750,8 +750,8 @@ Nota
 <span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-b1de587f9ac7264807b2" style="width:100%;height:162px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-b1de587f9ac7264807b2">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    P\n    T \n    M \n  edge [minlen = 3]\n    T -> P\n    P -> M\n    T -> M\n{ rank = same; M; T}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-23fbd700b60cefd046bb" style="width:100%;height:162px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-23fbd700b60cefd046bb">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    P\n    T \n    M \n  edge [minlen = 3]\n    T -> P\n    P -> M\n    T -> M\n{ rank = same; M; T}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Nótese que el análisis más apropiado no está en los datos: en ambos casos la tabla de datos es exactamente la misma. Los supuestos acerca del proceso que genera los datos sin embargo nos lleva a respuestas opuestas.</p>
