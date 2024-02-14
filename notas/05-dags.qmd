@@ -97,6 +97,7 @@ digraph {
     U1
     U2
     U3
+    U4
   node [shape=plaintext]
     S1
     S2
@@ -110,6 +111,7 @@ digraph {
    S2 -> G
    D -> G
    U3 -> D
+   U4 -> X
 {
   rank = same; S1; S2;U1;U2
 }
@@ -122,7 +124,7 @@ En este ejemplos no podemos saber $U1$ y $U2$, y no nos interesa modelar la fís
 monedas, manera de lanzarlas, etc. En este ejemplo también no consideraremos
 qué hace que un día sea soleado o lluvioso (no nos interesa modelar el clima). En este
 momento, en teoría tenemos **ecuaciones determinísticas** para todas las variables,
-y si conocemos todas las variables exógenas $X,U1,U2,U3$ podríamos determinar
+y si conocemos todas las variables exógenas $U1,U2,U3,U4$ podríamos determinar
 exactamente lo que va a suceder con la ganancia, por ejemplo, o cualquier otra
 variable del sistema.
 
@@ -187,13 +189,13 @@ aplicar la regla del producto, según la dirección de las flechas del diagrama:
 
 ### Ejemplo {-}
 
-En el ejemplo de arriba, un ordenamiento es $X,S1,S2,D,G$. Entonces, podemos
+En el ejemplo de arriba, un ordenamiento es $X,D,S1,S2,G$. Entonces, podemos
 escribir la regla del producto:
 
-$$p(x,s_1,s_2,d,g) = p(x)p(s_1|x)p(s_2|x,s_1)p(d|x,s_1,s_2,d)p(g|x,s1,s2,d)$$
-Que podemos simplificar porque por ejemplo, $p(s_2|x, s_1) = p(s_2|x)$, ya
+$$p(x,s_1,s_2,d,g) = p(x)p(d|x)p(s_1|x,d)p(s_2|x,d,s_1)p(g|x,d,s1,s2)$$
+Que podemos simplificar porque por ejemplo, $p(s_2|x, d,s_1) = p(s_2|x)$, ya
 que  $s_1$ no influye directamente en $s_2$. Por la misma lógica,
-$p(d|x,s_1,s_2) = p(d|x)$ y $p(g|x,s_1,s_2,d) = p(g|s_1,s_2,d)$. Entonces:
+$p(d|x) = p(d)$ y $p(g|x,s_1,s_2,d) = p(g|s_1,s_2,d)$, etc. Entonces:
 
 $$p(x,s_1,s_2,d,g) = p(x)p(d)p(s_1|x)p(s_2|x)p(g|s_1,s_2,d)$$
 Al incluir sólo las causas directas obtenemos una manera 
