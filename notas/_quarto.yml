@@ -11,6 +11,7 @@ book:
     - 02-flujo-basico-2.qmd
     - 03-modelos-genericos.qmd
     - 05-dags.qmd
+    - 06-calculo-do.qmd
 bibliography: referencias/book.bib
 
 format:
