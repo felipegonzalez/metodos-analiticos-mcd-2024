@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.549">
+<meta name="generator" content="quarto-1.4.550">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -302,8 +302,8 @@ window.Quarto = {
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)<span class="co">#, width = 200, height = 50)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-6fa6949aa452cd0a5d08" style="width:100%;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-6fa6949aa452cd0a5d08">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    p\n    Npos\n  node [shape=plaintext]\n    N\n    Npos [label = <N<SUB>+<\/SUB>>]\n    Nobs [label = <N<SUB>obs<\/SUB>>]\n    #Nneg [label = <N<SUB>-<\/SUB>>]\n    #sens\n    #esp\n  edge [minlen = 3]\n    p -> Npos\n    #p -> Nneg\n    N -> Npos\n    Npos -> Nobs\n    #N -> Nneg\n    esp -> Nobs\n    sens -> Nobs\n    #esp -> Nneg\n    #sens -> Nneg\n{ rank = same; p; N }\n{ rank = same; Npos}\n{ rank = max; sens; esp}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-207f4e47d2a962848dfa" style="width:100%;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-207f4e47d2a962848dfa">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    p\n    Npos\n  node [shape=plaintext]\n    N\n    Npos [label = <N<SUB>+<\/SUB>>]\n    Nobs [label = <N<SUB>obs<\/SUB>>]\n    #Nneg [label = <N<SUB>-<\/SUB>>]\n    #sens\n    #esp\n  edge [minlen = 3]\n    p -> Npos\n    #p -> Nneg\n    N -> Npos\n    Npos -> Nobs\n    #N -> Nneg\n    esp -> Nobs\n    sens -> Nobs\n    #esp -> Nneg\n    #sens -> Nneg\n{ rank = same; p; N }\n{ rank = same; Npos}\n{ rank = max; sens; esp}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Donde vemos ahora que el estado real de cada persona de la prueba es desconocido, aunque el resultado de la prueba depende de ese estado, y la cantidad de positivos que observamos es ahora <span class="math inline">\(N_{obs}\)</span>, que depende también de la sensibilidad y especificidad de la prueba.</p>
@@ -545,8 +545,8 @@ Figura&nbsp;3.2: Verificación a priori fallida (modelo incorrecto)
 <span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)<span class="co">#, width = 200, height = 50)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-e301eb748e0746dcfb76" style="width:100%;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-e301eb748e0746dcfb76">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    theta\n    esp\n    sens\n    Npos [label = <N<SUB>+<\/SUB>>]\n  node [shape=plaintext]\n    Nobs [label = <N<SUB>obs<\/SUB>>]\n   # Nneg [label = <N<SUB>-<\/SUB>>]\n  edge [minlen = 3]\n    theta -> Npos\n    #p -> Nneg\n    N -> Npos\n    Npos -> Nobs\n    #N -> Nneg\n    esp -> Nobs\n    sens -> Nobs\n    #esp -> Nneg\n    #sens -> Nneg\n    esp -> Ref\n    sens -> Ref\n{ rank = same; theta; N }\n#{ rank = same; Npos; Nneg}\n{ rank = max; sens; esp}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-6e2b530edc9f99099bb9" style="width:100%;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-6e2b530edc9f99099bb9">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    theta\n    esp\n    sens\n    Npos [label = <N<SUB>+<\/SUB>>]\n  node [shape=plaintext]\n    Nobs [label = <N<SUB>obs<\/SUB>>]\n   # Nneg [label = <N<SUB>-<\/SUB>>]\n  edge [minlen = 3]\n    theta -> Npos\n    #p -> Nneg\n    N -> Npos\n    Npos -> Nobs\n    #N -> Nneg\n    esp -> Nobs\n    sens -> Nobs\n    #esp -> Nneg\n    #sens -> Nneg\n    esp -> Ref\n    sens -> Ref\n{ rank = same; theta; N }\n#{ rank = same; Npos; Nneg}\n{ rank = max; sens; esp}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Usando argumentos como los del modelo original, las distribuciones de esp y sens son beta y podemos incorporarlas en la simulación de la posterior. Nuestra nueva función para simular el proceso generativo es:</p>
@@ -1082,12 +1082,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./02-flujo-basico.html" class="pagination-link  aria-label=" &lt;span="" de="" trabajo="" básico:="" motivación&lt;="" span&gt;"="">
+      <a href="./02-flujo-basico.html" class="pagination-link" aria-label="Flujo de trabajo básico: motivación">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Flujo de trabajo básico: motivación</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./03-modelos-genericos.html" class="pagination-link" aria-label="<span class='chapter-number'>4</span>&nbsp; <span class='chapter-title'>Componentes de modelación 1</span>">
+      <a href="./03-modelos-genericos.html" class="pagination-link" aria-label="Componentes de modelación 1">
         <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Componentes de modelación 1</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>

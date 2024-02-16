@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.549">
+<meta name="generator" content="quarto-1.4.550">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -331,6 +331,7 @@ Causas y mecanismos
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">sample_n</span>(<span class="dv">10</span>) <span class="sc">|&gt;</span> <span class="fu">kable</span>() <span class="sc">|&gt;</span> </span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable_paper</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
+<div>
 <table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
@@ -341,6 +342,26 @@ Causas y mecanismos
 </thead>
 <tbody>
 <tr class="odd">
+<td style="text-align: left;">A</td>
+<td style="text-align: left;">grandes</td>
+<td style="text-align: left;">mejora</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">A</td>
+<td style="text-align: left;">grandes</td>
+<td style="text-align: left;">mejora</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">grandes</td>
+<td style="text-align: left;">mejora</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">chicos</td>
+<td style="text-align: left;">mejora</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">B</td>
 <td style="text-align: left;">grandes</td>
 <td style="text-align: left;">mejora</td>
@@ -352,38 +373,18 @@ Causas y mecanismos
 </tr>
 <tr class="odd">
 <td style="text-align: left;">A</td>
-<td style="text-align: left;">chicos</td>
+<td style="text-align: left;">grandes</td>
 <td style="text-align: left;">mejora</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">B</td>
-<td style="text-align: left;">chicos</td>
-<td style="text-align: left;">mejora</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">B</td>
+<td style="text-align: left;">A</td>
 <td style="text-align: left;">grandes</td>
 <td style="text-align: left;">sin_mejora</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">A</td>
-<td style="text-align: left;">chicos</td>
-<td style="text-align: left;">mejora</td>
-</tr>
 <tr class="odd">
 <td style="text-align: left;">A</td>
 <td style="text-align: left;">grandes</td>
 <td style="text-align: left;">sin_mejora</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">B</td>
-<td style="text-align: left;">grandes</td>
-<td style="text-align: left;">mejora</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">A</td>
-<td style="text-align: left;">grandes</td>
-<td style="text-align: left;">mejora</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">A</td>
@@ -396,6 +397,7 @@ Causas y mecanismos
 
 </div>
 </div>
+</div>
 <p>Aunque estos datos contienen información de 700 pacientes, los datos pueden resumirse sin pérdida de información contando como sigue:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>calculos_agregada <span class="ot">&lt;-</span> calculos <span class="sc">|&gt;</span> </span>
@@ -404,6 +406,7 @@ Causas y mecanismos
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>calculos_agregada <span class="sc">|&gt;</span> <span class="fu">kable</span>() <span class="sc">|&gt;</span> </span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable_paper</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
+<div>
 <table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
@@ -468,6 +471,7 @@ Causas y mecanismos
 
 </div>
 </div>
+</div>
 <p>Como en este caso nos interesa principalmente la tasa de éxito de cada tratamiento, podemos mejorar mostrando como sigue:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>calculos_agregada <span class="sc">|&gt;</span> <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> resultado, <span class="at">values_from =</span> n) <span class="sc">|&gt;</span> </span>
@@ -478,6 +482,7 @@ Causas y mecanismos
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable</span>() <span class="sc">|&gt;</span> </span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable_paper</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
+<div>
 <table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
@@ -518,6 +523,7 @@ Causas y mecanismos
 
 </div>
 </div>
+</div>
 <p>Esta tabla descriptiva es una reescritura de los datos, y no hemos resumido nada todavía. Pero es apropiada para empezar a contestar la pregunta:</p>
 <ul>
 <li>¿Qué indican estos datos acerca de qué tratamiento es mejor? ¿Acerca del tamaño de cálculos grandes o chicos?</li>
@@ -529,6 +535,7 @@ Causas y mecanismos
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable</span>() <span class="sc">|&gt;</span> </span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable_paper</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
+<div>
 <table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
@@ -551,6 +558,7 @@ Causas y mecanismos
 
 </div>
 </div>
+</div>
 <p>y parece ser que el tratamiento <span class="math inline">\(B\)</span> es mejor que el <span class="math inline">\(A\)</span>. Esta es una paradoja (un ejemplo de la <a href="https://es.wikipedia.org/wiki/Paradoja_de_Simpson">paradoja de Simpson</a>) . Si un médico no sabe que tipo de cálculos tiene el paciente, ¿entonces debería recetar <span class="math inline">\(B\)</span>? ¿Si sabe debería recetar <span class="math inline">\(A\)</span>? Esta discusión parece no tener mucho sentido.</p>
 <p>Podemos investigar por qué está pasando esto considerando la siguiente tabla, que solo examina cómo se asignó el tratamiento dependiendo del tipo de cálculos de cada paciente:</p>
 <div class="cell">
@@ -558,6 +566,7 @@ Causas y mecanismos
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable</span>() <span class="sc">|&gt;</span> </span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable_paper</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
+<div>
 <table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
@@ -591,6 +600,7 @@ Causas y mecanismos
 </table>
 
 
+</div>
 </div>
 </div>
 <p>Nuestra hipótesis aquí es que la decisión de qué tratamiento usar depende del tamaño de los cálculos. En este caso, hay una decisión pues A es una cirugía y B es un procedimiento menos invasivo, y se prefiere utilizar el tratamiento <span class="math inline">\(A\)</span> para cálculos grandes, y <span class="math inline">\(B\)</span> para cálculos chicos. Esto quiere decir que en la tabla total <em>el tratamiento</em> <span class="math inline">\(A\)</span> está en desventaja porque se usa en casos más difíciles, pero el tratamiento <span class="math inline">\(A\)</span> parece ser en general mejor. La razón es probablemente un proceso de optimización de recursos y riesgo que hacen los doctores.</p>
@@ -632,8 +642,8 @@ Nota
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-45fdc0d5ca5e252499c4" style="width:100%;height:162px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-45fdc0d5ca5e252499c4">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    T \n    M \n    C\n  edge [minlen = 3]\n    T -> M\n    C -> T\n    C -> M\n{ rank = same; M; T }\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-93e9edc232ef1c5b4a71" style="width:100%;height:162px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-93e9edc232ef1c5b4a71">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    T \n    M \n    C\n  edge [minlen = 3]\n    T -> M\n    C -> T\n    C -> M\n{ rank = same; M; T }\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Es decir, el tamaño de los cálculos es una causa común de tratamiento (T) y resultado (M). Veremos más adelante que la decisión de condicionar a el tipo de cálculos proviene de un análisis relativamente simple de este diagrama causal, independientemente de los métodos que usemos para estimar las proporciones de interés (en este ejemplo, examinar las tablas cruzadas es equivalente a hacer estimaciones de máxima verosimlitud).</p>
@@ -656,6 +666,7 @@ Nota
 <span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable</span>() <span class="sc">|&gt;</span> </span>
 <span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable_paper</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
+<div>
 <table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
@@ -696,12 +707,14 @@ Nota
 
 </div>
 </div>
+</div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>corazon <span class="sc">|&gt;</span> <span class="fu">group_by</span>(tratamiento) <span class="sc">|&gt;</span> </span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">summarise</span>(<span class="at">prop_mejora =</span> <span class="fu">mean</span>(resultado <span class="sc">==</span> <span class="st">"mejora"</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)) <span class="sc">|&gt;</span> </span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable</span>() <span class="sc">|&gt;</span> </span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable_paper</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
+<div>
 <table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
@@ -722,6 +735,7 @@ Nota
 </table>
 
 
+</div>
 </div>
 </div>
 <p>¿Cuál creemos que es el mejor tratamiento en este caso? ¿Deberíamos usar la tabla agregada o la desagregada por presión?</p>
@@ -750,8 +764,8 @@ Nota
 <span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-23fbd700b60cefd046bb" style="width:100%;height:162px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-23fbd700b60cefd046bb">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    P\n    T \n    M \n  edge [minlen = 3]\n    T -> P\n    P -> M\n    T -> M\n{ rank = same; M; T}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-c82381a89650aa227904" style="width:100%;height:162px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-c82381a89650aa227904">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    P\n    T \n    M \n  edge [minlen = 3]\n    T -> P\n    P -> M\n    T -> M\n{ rank = same; M; T}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Nótese que el análisis más apropiado no está en los datos: en ambos casos la tabla de datos es exactamente la misma. Los supuestos acerca del proceso que genera los datos sin embargo nos lleva a respuestas opuestas.</p>
@@ -803,6 +817,7 @@ Nota
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>adm_original <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>() <span class="sc">|&gt;</span> </span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable_paper</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
+<div>
 <table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
@@ -891,6 +906,7 @@ Nota
 
 </div>
 </div>
+</div>
 <p>y las proporciones de admisión por sexo y departamente son las siguientes:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>adm_tbl <span class="ot">&lt;-</span> adm_original <span class="sc">|&gt;</span> </span>
@@ -900,6 +916,7 @@ Nota
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>adm_tbl <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>() <span class="sc">|&gt;</span> </span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable_paper</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
+<div>
 <table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
@@ -959,6 +976,7 @@ Nota
 
 </div>
 </div>
+</div>
 <p>Complementamos con las tasas de aceptación a total por género, y tasas de aceptación por departamento:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>adm_original <span class="sc">|&gt;</span> <span class="fu">group_by</span>(Gender) <span class="sc">|&gt;</span> </span>
@@ -967,6 +985,7 @@ Nota
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable</span>() <span class="sc">|&gt;</span> </span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable_paper</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
+<div>
 <table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
@@ -995,6 +1014,7 @@ Nota
 
 </div>
 </div>
+</div>
 <p>La pregunta que queremos hacer es: ¿existe discriminación por sexo en la selección de candidatos? Examinando las tablas no está clara cuál es la respuesta.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>adm_original <span class="sc">|&gt;</span> <span class="fu">group_by</span>(Dept) <span class="sc">|&gt;</span> </span>
@@ -1003,6 +1023,7 @@ Nota
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable</span>() <span class="sc">|&gt;</span> </span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">kable_paper</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
+<div>
 <table class="lightable-paper table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
@@ -1053,6 +1074,7 @@ Nota
 </table>
 
 
+</div>
 </div>
 </div>
 <p>Discutiremos este ejemplo con más detalle más adelante. La interpretación debe ser hecha con cuidado, y debemos establecer claramente los supuestos que fundamentan nuestra decisión de mostrar cada tabla y de qué forma mostrarlas.</p>
@@ -1508,12 +1530,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./index.html" class="pagination-link  aria-label=" temario="" y="" referencias"="">
+      <a href="./index.html" class="pagination-link" aria-label="Temario y referencias">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Temario y referencias</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./02-flujo-basico.html" class="pagination-link" aria-label="<span class='chapter-number'>2</span>&nbsp; <span class='chapter-title'>Flujo de trabajo básico: motivación</span>">
+      <a href="./02-flujo-basico.html" class="pagination-link" aria-label="Flujo de trabajo básico: motivación">
         <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Flujo de trabajo básico: motivación</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
