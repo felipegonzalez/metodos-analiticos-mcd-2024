@@ -1,0 +1,276 @@
+---
+title: "Tarea 5"
+format: html
+---
+
+```{r}
+library(tidyverse)
+library(DiagrammeR)
+library(DiagrammeRsvg)
+library(rsvg)
+exportar_graf <- function(grafica, ruta){
+  grafica |> export_svg() |>  charToRaw() |> rsvg_png(ruta)
+}
+```
+
+
+En esta tarea comenzaremos a discutir las estructuras básicas que aparecen
+en gráficas causales (DAGS), y que explican qué sucede cuando
+condicionamos o controlamos por distintas variables en el diagrama. Discutiremos las 
+siguientes estructuras:
+
+- Causa común o bifurcaciones $X\leftarrow Z \rightarrow Y$.
+- Cadenas o mediación $X\rightarrow Z \rightarrow Y$.
+- Colisionadores $X\rightarrow Z \leftarrow Y$.
+- Descendientes, como en $X\rightarrow Z \rightarrow Y, Z\to A$.
+
+Seguiremos la estructura de las notas y repasaremos la próxima clase
+
+## Causa común o bifurcaciones
+
+La estructura de una bifurcación es la siguiente:
+
+- $Z$ es causa común de $X$ y $Y$
+- No hay relación causal directa entre $X$ y $Y$.
+
+![Diagrama](diagramas/bifurcacion.png)
+Ahora veremos las implicaciones estadísticas de estas relaciones causales:
+
+- $X$ y $Y$ están típicamente asociadas o correlacionadas
+- Sin embargo, si condicionamos o estratificamos por $Z$, $X$ y $Y$ son independientes,
+es decir, $X$ y $Y$ son condiconalmente independientes (en particular no tienen asociación condicional).
+
+
+**Forma de pensar en términos de transmisión de información**: 
+La asociación de $X$ y $Y$ se debe a variación conjunta producida por $Z$. Si fijamos 
+a un valor de $Z$, la variación de $X$ es independiente de la variación de $Y$ (no hay
+manera de que pase información de $X$ a $Y$).
+
+
+**Pregunta 1**: este es el ejemplo clásico
+de "correlación no implica causalidad". Explica por qué (en términos de causas y 
+correlaciones implicadas).
+
+Consideramos un ejemplo simple para entender cómo pasa esto:
+
+```{r}
+rbern <- function(n, prob){
+  rbinom(n, 1, prob = prob)
+} 
+simular_bif <- function(n = 1000){
+  # z es una variable binaria (bernoulli)
+  z <- rbern(n, prob = 0.5) |> as.numeric()
+  # x es una variable binaria (bernoulli) condicional a z
+  x <- rbern(n, prob = z * 0.3 + (1 - z) * 0.8)
+  # y es binomial condicional a z
+  y <- rbinom(n, 4, z * 0.9 + (1 - z) * 0.3)
+  tibble(x, z, y)
+}
+```
+
+**Pregunta 2**: explica por qué este proceso de simulación es consistente
+con el diagrama causal de la bifurcación.
+
+Ahora simulamos los datos para verificar la correlación entre $X$ y $Y$:
+
+
+```{r}
+datos_bif <- simular_bif(20000)
+datos_bif |> select(x, y) |> cor()
+```
+
+**Pregunta 3**: explica según el diagrama por qué aparece esta correlación
+negativa.
+
+Ahora estratificamos o condicionamos $Z$ y recalculamos correlaciones:
+
+```{r}
+datos_bif |> filter(z == 0) |> select(x, y) |> cor()
+datos_bif |> filter(z == 1) |> select(x, y) |> cor()
+```
+Y como esperábamos, dentro de cada valor de $Z$ no hay correlación entre $X$ y $Y$.
+
+Ahora veremos que condicional a $Z$, $X$ y $Y$ son independientes, no sólo con 
+correlación 0. Para esto veremos que $p(y|x,z)$ no depende de $x$ ( es decir, si ya
+conocemos $z$, el valor de $x$ no da información adicional acerca de $y$) :
+
+```{r}
+# Para el caso z= 0
+cond_x_z <- datos_bif |> filter(z == 0) |> 
+  group_by(x, y) |> 
+  summarise(n_1 = n(), .groups = "drop") |> 
+  group_by(x) |> 
+  mutate(prob = n_1 / sum(n_1))
+cond_x_z
+```
+
+
+**Pregunta 4**: Argumenta en esta última tabla dónde ves que 
+$X$ y $Y$ son condicionalmente independientes dada $z = 0$. Termina de verificar
+haciendo el análisis para $z=1$, de modo que puedas concluir que 
+$p(y|x,z) = p(y|z)$ para toda $x, y, z$.
+
+**Pregunta 5**: Usualmente, la independencia de $X$ y $Y$ se escribe como
+$$p(x,y) = p(x)p(y)$$. La independencia condicional a $Z$ usa la misma definición,
+pero con TODO condicionado a $Z$, es decir 
+$$p(x,y|z) = p(x|z)p(y|z)$$
+Demuestra que esta última ecuación se cumple a partir del resultado de la pregunta
+anterior, que es $p(y|x,z) = p(y|z)$
+
+
+
+
+
+
+**Pregunta 4**: Como vimos en clase, el diagrama implica una factorización
+de la conjunta de $X$, $Y$ y $Z$, que es $p(z)p(x|z)p(y|z)$. Demuestra de 
+esta factorización que $X$ y $Y$ son condicionalmente independientes dada $Z$.
+Hay varias maneras de hacer esto, pero puedes por ejemplo demostrar que:
+
+$$p(x, y|z) = p(x|z)p(y|z)$$
+Nota: si te confunde, recuerda que independencia significa que $p(x,y) = p(x)p(y)$,
+de modo que independiencia condicional a $Z$ es $p_z(x,y) = p_z(x)p_z(y)$, donde el subíndice
+$z$ indica que estamos condicionando a $Z$ todo. Esto lo escribimos más usualmente como
+$p(x,y|z) = p(x|z)p(y|z)$.
+
+
+**Pregunta 5**: En términos causales, por qué si en este caso de la bifurcación haces
+una regresión de $Y$ sobre $X$, 1) no es posible interpretar el coeficiente de $X$ como
+un efecto causal, 2) por qué ese coeficiente es distinto de cero aunque no hay una flecha de $Y$ a $X$,
+3) Por qué la alta significancia del coeficiente de $x$ no ayuda a decir si ese coeficiente
+se puede interpretar como causal.
+
+```{r}
+lm(y ~ x, data = datos_bif) |> summary()
+```
+
+
+
+## Cadenas o "pipes"
+
+La estructura de una cadena es la siguiente:
+
+- $X$ es causa de $Z$ y $Z$ es causa de $Y$.
+- No hay relación causal directa entre $X$ y $Y$.
+
+![Diagrama](diagramas/cadena.png)
+
+Ahora veremos las implicaciones estadísticas de estas relaciones causales:
+
+- $X$ y $Y$ están típicamente asociadas o correlacionadas.
+- Sin embargo, si condicionamos o estratificamos por $Z$, $X$ y $Y$ son independientes,
+es decir, $X$ y $Y$ son condiconalmente independientes (en particular no tienen asociación condicional).
+
+**Pregunta 6**: Compara estas implicaciones estadísticas con las de la bifurcación.
+¿Crees que hay una manera estadística de distinguir una cadena de una bifurcación?
+
+**Forma de pensar en términos de transmisión de información**: 
+La asociación de $X$ y $Y$ está mediada por variación en $Z$. Si fijamos 
+a un valor de $Z$, la variación de $X$ es independiente de la variación de $Y$ (no hay
+manera de que pase información de $X$ a $Y$).
+
+
+Consideramos un ejemplo simple para entender cómo ocurren estas asociaciones:
+
+```{r}
+rbern <- function(n, prob){
+  rbinom(n, 1, prob = prob)
+} 
+simular_mediador <- function(n = 10){
+  x <- rbern(n, p = 0.5) |> as.numeric()
+  z <- rbern(n, p = x * 0.9 + (1 - x) * 0.2)
+  y <- rbinom(n, 2, z * 0.8 + (1 - z) * 0.2)
+  tibble(x, z, y)
+}
+datos_mediador <- simular_mediador(50000)
+```
+
+
+**Pregunta 7**: explica por qué este proceso de simulación es consistente
+con el diagrama causal de la cadena.
+
+Verificamos que existe dependencia entre $X$ y $Y$, por ejemplo:
+
+```{r}
+datos_mediador |> select(x, y) |> cor()
+```
+
+
+
+
+**Pregunta 8**: explica según el diagrama por qué aparece esta correlación
+positiva.
+
+Ahora estratificamos o condicionamos $Z$ y recalculamos correlaciones:
+
+```{r}
+datos_mediador |> filter(z == 0) |> select(x, y) |> cor()
+datos_mediador |> filter(z == 1) |> select(x, y) |> cor()
+```
+Y como esperábamos, dentro de cada valor de $Z$ no hay correlación entre $X$ y $Y$.
+
+
+**Pregunta 9**: Puedes checar ahora que para la cadena, que
+condicional a $Z$, $X$ y $Y$ son independientes, no sólo con 
+correlación 0 (usa el código de arriba y muestra dónde ves la independencia condicional). 
+
+
+
+## Colisionador
+
+El patrón de colisionador se muestra en la siguiente gráfica,
+que es uno de "causas alternativas"
+
+![Diagrama](diagramas/colisionador.png)
+En este caso, tenemos que las implicaciones estadísticas de esta estructura
+en los datos es que:
+
+- $X$ y $Y$ son independientes.
+- Condicional a $Z$, $X$ y $Y$ usualmente están asociadas.
+
+**Forma de pensar en términos de transmisión de información**: 
+Si no consideramos $Z$, $X$ y $Y$ no están asociadas, pero influyen en la variable $Z$. Si fijamos
+un valor particular de $Z$, entonces $X$ y $Y$ debe "balancearse" para producir
+es valor particular de $Z$, lo que resulta en que $X$ y $Y$ están asociadas o
+correlacionadas. 
+
+Para simular de datos de esta estructura, por ejemplo podemos escribir:
+
+```{r}
+simular_colisionador <- function(n = 10){
+  x <- rbern(n, 0.5) 
+  y <- rbinom(n, 2, 0.7)
+  z <- rbern(n, p = 0.1 + 0.7 * x * (y > 1)) 
+  tibble(x, z, y)
+}
+datos_colisionador <- simular_colisionador(50000)
+```
+
+
+**Pregunta 10**: Explica por qué este proceso generador es consistente
+con la gráfica del colisionador que vimos arriba.
+
+
+$X$ y $Y$ son independientes, por ejemplo, calcula la correlación:
+
+```{r}
+cor(datos_colisionador |> select(x,y)) 
+```
+
+**Opcional**: explica cómo verificarías en este caso que condicional a $Z$, $X$ y $Y$
+son dependientes.
+
+
+**Pregunta 11**: Según el diagrama, explica por qué no hay efecto causal de $X$ sobre $Y$.
+En términos causales, por qué si en este caso  haces
+una regresión de $Y$ sobre $X$ y $Z$, 1) no es posible interpretar el coeficiente de $X$ como
+un efecto causal, 2) ¿por qué ese coeficiente es distinto de cero aunque no hay una flecha de $X$ a $Y$?,
+3) ¿Por qué la alta significancia del coeficiente de $x$ no ayuda a decir si ese coeficiente
+se puede interpretar como causal?
+
+```{r}
+lm(y ~ x + z, datos_colisionador) |> summary()
+```
+
+
+
