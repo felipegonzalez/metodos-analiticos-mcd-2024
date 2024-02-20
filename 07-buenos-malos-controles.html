@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.550">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Métodos analíticos - 7&nbsp; Buenos y malos controles</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./06-calculo-do.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+<script src="site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="site_libs/viz-1.8.2/viz.js"></script>
+<link href="site_libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
+<script src="site_libs/grViz-binding-1.0.10/grViz.js"></script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./07-buenos-malos-controles.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Buenos y malos controles</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Métodos analíticos</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Temario y referencias</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-introduccion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-flujo-basico.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Flujo de trabajo básico: motivación</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-flujo-basico-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Flujo de trabajo básico: refinando el modelo</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-modelos-genericos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Componentes de modelación 1</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-dags.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Modelos gráficos y causalidad</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-calculo-do.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Identificación y cálculo-do</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-buenos-malos-controles.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Buenos y malos controles</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#controles-buenos-o-neutros" id="toc-controles-buenos-o-neutros" class="nav-link active" data-scroll-target="#controles-buenos-o-neutros"><span class="header-section-number">7.1</span> Controles buenos o neutros</a>
+  <ul class="collapse">
+  <li><a href="#ejemplo" id="toc-ejemplo" class="nav-link" data-scroll-target="#ejemplo"><span class="header-section-number">7.1.1</span> Ejemplo</a></li>
+  </ul></li>
+  <li><a href="#malos-controles-sobrecontrol" id="toc-malos-controles-sobrecontrol" class="nav-link" data-scroll-target="#malos-controles-sobrecontrol"><span class="header-section-number">7.2</span> Malos controles: sobrecontrol</a></li>
+  <li><a href="#malos-controles-variables-post-tratamiento" id="toc-malos-controles-variables-post-tratamiento" class="nav-link" data-scroll-target="#malos-controles-variables-post-tratamiento"><span class="header-section-number">7.3</span> Malos controles: variables post-tratamiento</a>
+  <ul class="collapse">
+  <li><a href="#ejemplo-1" id="toc-ejemplo-1" class="nav-link" data-scroll-target="#ejemplo-1">Ejemplo</a></li>
+  </ul></li>
+  <li><a href="#malos-controles-sesgo-de-colisionador" id="toc-malos-controles-sesgo-de-colisionador" class="nav-link" data-scroll-target="#malos-controles-sesgo-de-colisionador"><span class="header-section-number">7.4</span> Malos controles: sesgo de colisionador</a>
+  <ul class="collapse">
+  <li><a href="#ejemplo-la-paradoja-de-peso-de-recién-nacidos" id="toc-ejemplo-la-paradoja-de-peso-de-recién-nacidos" class="nav-link" data-scroll-target="#ejemplo-la-paradoja-de-peso-de-recién-nacidos">Ejemplo: la paradoja de peso de recién nacidos</a></li>
+  </ul></li>
+  <li><a href="#malos-controles-parásito-de-precisión" id="toc-malos-controles-parásito-de-precisión" class="nav-link" data-scroll-target="#malos-controles-parásito-de-precisión"><span class="header-section-number">7.5</span> Malos controles: parásito de precisión</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Buenos y malos controles</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="cell">
+<details class="code-fold">
+<summary>Código</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DiagrammeR)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">theme_set</span>(ggplot2<span class="sc">::</span><span class="fu">theme_light</span>())</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>inv_logit <span class="ot">&lt;-</span> \(x) <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>x)) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>En esta parte discutiremos una guía para decidir cuáles son buenos o malos “controles” para identificar efectos causales.</p>
+<p>Si nos interencia inferencia causal, estas son malas maneras de seleccionar variables o controles:</p>
+<ul>
+<li>Incluir toda la información que tengamos.</li>
+<li>Usar criterios predictivos para seleccionar variables.</li>
+<li>Incluir variables si “salen” significativas, omitirlas si no.</li>
+<li>Excluir variables que tienen alta correlación otras.</li>
+</ul>
+<p>Como hemos discutido, la decisión debe basarse primero en los supuestos causales (gráfica causal). Adicionalmente, también podemos considerar que, sujeto al anterior criterio, algunos modelos son más precisos o fáciles de estimar que otros.</p>
+<p>Ejemplos de buenos controles son los de la fórmula de ajuste o los del criterio de puerta trasera que vimos en la sección anterior. Consideraremos los patrones que se presentan en <span class="citation" data-cites="Pearl2022gb">Cinelli, Forney, y Pearl</span>.</p>
+<section id="controles-buenos-o-neutros" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="controles-buenos-o-neutros"><span class="header-section-number">7.1</span> Controles buenos o neutros</h2>
+<p>Consideramos el siguiente diagrama: en este caso, <span class="math inline">\(Z\)</span> causa variación en <span class="math inline">\(Y\)</span>. Controlar por <span class="math inline">\(Y\)</span> puede mejorar la precisión de nuestras estimaciones causales, sin abrir ningún camino no causal (Modelo 8 en <span class="citation" data-cites="Pearl2022gb">Cinelli, Forney, y Pearl</span>, <a href="https://ftp.cs.ucla.edu/pub/stat_ser/r493.pdf">A Crash Course in Good and Bad Controls</a>) :</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Código</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grViz</span>(<span class="st">'</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="st">digraph {</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="st">  graph [ranksep = 0.2, rankdir = LR]</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="st">  subgraph caso_1 {</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="st">    node [shape=plaintext]</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="st">    Z [fontcolor="red"]</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="st">    edge [minlen = 3]</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="st">    Z -&gt; Y</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="st">    T -&gt; Y</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>, <span class="at">width =</span> <span class="dv">250</span>, <span class="at">height =</span> <span class="dv">60</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="htmlwidget-721063c873229b8fd9af" style="width:100%;height:156px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-721063c873229b8fd9af">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir = LR]\n  subgraph caso_1 {\n    node [shape=plaintext]\n    Z [fontcolor=\"red\"]\n    edge [minlen = 3]\n    Z -> Y\n    T -> Y\n  }\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<section id="ejemplo" class="level3" data-number="7.1.1">
+<h3 data-number="7.1.1" class="anchored" data-anchor-id="ejemplo"><span class="header-section-number">7.1.1</span> Ejemplo</h3>
+<p>Queremos probar un tratamiento para reducir peso. Aleatorizaremos las personas al tratamiento (por ejemplo una medicina), y antes de comenzar el estudio registramos su peso inicial y estatura. Nuestro diagrama es el siguiente, donde incluímos también el peso inicial que influye en el peso final después del tratamiento, y otras variables no observadas que influyen tanto en peso final como peso inicial (por ejemplo, si las personas estuvieron haciendo alguna dietas o no). También medimos una cantidad, al final del experimento, que es bienestar general de la persona (o una calificación de su estado de salud general). Adicionalmente medimos una variable <span class="math inline">\(C\)</span> (cansancio), pues sabemos que esta medicina puede tener ese efecto. El cansancio puede afectar el peso final pues los niveles de actividad pueden cambiar. <span class="math inline">\(B\)</span> puede ser en este caso una medición de circunferencia de abdomen, por ejemplo.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Código</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grViz</span>(<span class="st">"</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="st">digraph {</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="st">  graph [ranksep = 0.2, rankdir=LR]</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="st">  node[shape=circle]</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="st">      U</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="st">      V</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="st">  node [shape=plaintext]</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="st">    Z</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="st">    T</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="st">  edge [minlen = 3]</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="st">   #G -&gt; H</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="st">   #H -&gt; PI</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="st">   Z -&gt; T</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="st">   T -&gt; PF</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="st">   #G -&gt; PF</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="st">   PI -&gt; PF</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="st">   U -&gt; PI</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="st">   U -&gt; PF</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="st">   V -&gt; PF</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="st">   T -&gt; C -&gt; PF</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="st">   PF -&gt; B</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="grViz html-widget html-fill-item" id="htmlwidget-d93f557b299e26772a32" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-d93f557b299e26772a32">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir=LR]\n  node[shape=circle]\n      U\n      V\n  node [shape=plaintext]\n    Z\n    T\n  edge [minlen = 3]\n   #G -> H\n   #H -> PI\n   Z -> T\n   T -> PF\n   #G -> PF\n   PI -> PF\n   U -> PI\n   U -> PF\n   V -> PF\n   T -> C -> PF\n   PF -> B\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>No hay ninguna variable confusora, y una estrategia de estimación es comparar <span class="math inline">\(PF\)</span> entre los grupos.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>sim_peso <span class="ot">&lt;-</span> <span class="cf">function</span>(n){</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  Z <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="dv">0</span>, <span class="fl">0.5</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">inv_logit</span>( Z)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  T <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, p)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  C <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="fu">exp</span>(<span class="sc">-</span>(<span class="sc">-</span><span class="dv">2</span> <span class="sc">+</span> <span class="dv">4</span> <span class="sc">*</span> T))))</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  U <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="dv">0</span>, <span class="dv">5</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  G <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.5</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  H <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="dv">170</span> <span class="sc">-</span> <span class="dv">10</span> <span class="sc">*</span> G, <span class="dv">20</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  PI <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="sc">-</span><span class="dv">20</span> <span class="sc">+</span>  <span class="fl">0.5</span> <span class="sc">*</span> H <span class="sc">+</span> U, <span class="dv">10</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  PF <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, PI <span class="sc">+</span> U <span class="sc">-</span> <span class="dv">20</span> <span class="sc">*</span> T <span class="sc">+</span> <span class="dv">3</span> <span class="sc">*</span> C , <span class="dv">5</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="co">#V &lt;- PF - (PI + U - 10 * T + 2 * C)</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  B <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>(PF<span class="dv">-50</span>)<span class="sc">/</span><span class="dv">2</span>)))</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(G, H, T, PI, PF, B, C, Z)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">226</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>peso_tbl <span class="ot">&lt;-</span> <span class="fu">sim_peso</span>(<span class="dv">1200</span>)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>peso_tbl</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1,200 × 8
+       G     H     T    PI    PF     B     C       Z
+   &lt;int&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;int&gt;   &lt;dbl&gt;
+ 1     0  152.     0  53.8  46.8     0     0 -0.701 
+ 2     0  211.     0  87.2  87.0     1     0 -0.328 
+ 3     0  169.     1  71.8  48.1     0     1 -0.256 
+ 4     0  174.     0  66.4  61.6     1     0  0.208 
+ 5     1  164.     0  64.0  63.9     1     0 -0.470 
+ 6     0  146.     0  46.9  48.9     0     0 -0.126 
+ 7     1  201.     0  69.9  74.4     1     0 -0.892 
+ 8     1  153.     0  40.2  28.7     0     1 -0.0218
+ 9     0  168.     1  58.1  26.3     0     1  0.221 
+10     1  162.     0  56.0  63.4     1     0  0.126 
+# ℹ 1,190 more rows</code></pre>
+</div>
+</div>
+<p>En aplicaciones realidad, no sabemos cuál es el efecto causal, pero en ejemplos simulados sí podemos calcularlo. En este caso, hacemos la siguiente simulación para tener nuestra referencia:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>peso_sims_tbl <span class="ot">&lt;-</span> <span class="fu">sim_peso</span>(<span class="dv">100000</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>peso_sims_tbl <span class="sc">|&gt;</span> <span class="fu">group_by</span>(T) <span class="sc">|&gt;</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">peso_final_medio =</span> <span class="fu">mean</span>(PF)) <span class="sc">|&gt;</span> </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(T) <span class="sc">|&gt;</span> </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">dif =</span> peso_final_medio <span class="sc">-</span> <span class="fu">lag</span>(peso_final_medio))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 3
+      T peso_final_medio   dif
+  &lt;int&gt;            &lt;dbl&gt; &lt;dbl&gt;
+1     0             62.8  NA  
+2     1             45.2 -17.6</code></pre>
+</div>
+</div>
+<p>Podemos hacer simplemente</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(PF <span class="sc">~</span> T, peso_tbl) <span class="sc">|&gt;</span> broom<span class="sc">::</span><span class="fu">tidy</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 5
+  term        estimate std.error statistic  p.value
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1 (Intercept)     64.1     0.774      82.8 0       
+2 T              -18.7     1.11      -16.9 1.38e-57</code></pre>
+</div>
+</div>
+<p>y el coeficiente de <span class="math inline">\(T\)</span> sería una estimación del efecto causal promedio. Sin embargo, si condicionamos a <span class="math inline">\(PI\)</span> tampoco creamos ninguna ruta no causal entre <span class="math inline">\(T\)</span> y <span class="math inline">\(PF\)</span>. Podemos hacer también</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(PF <span class="sc">~</span> T <span class="sc">+</span> PI, peso_tbl) <span class="sc">|&gt;</span> broom<span class="sc">::</span><span class="fu">tidy</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 5
+  term        estimate std.error statistic   p.value
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+1 (Intercept)    -7.30    0.855      -8.54 3.91e- 17
+2 T             -17.8     0.404     -44.1  5.19e-253
+3 PI              1.13    0.0127     88.5  0        </code></pre>
+</div>
+</div>
+<p>Y notamos que nuestra estimación es más precisa. Esto es porque <span class="math inline">\(PI\)</span> absorbe una parte importante de la variación de PF. Al incluir este control no cambiamos la cantidad que estamos estimando, pero sí el estimador particular, que en este caso tiene menos incertidumbre.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Falacia de la Tabla 2
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Nótese que no necesariamente podemos interpetar el coeficiente de <span class="math inline">\(PI\)</span> fácilmente, pues existen rutas no casuales activas entre <span class="math inline">\(PF\)</span> y <span class="math inline">\(PI\)</span>. Como explicamos antes, un modelo que se usa para identificar un efecto causal particular no implica que puedan interpretarse como causales otros coeficientes.</p>
+</div>
+</div>
+<p><strong>Nota</strong>: este error se llama “Falacia de Tabla 2” porque muchas veces se presenta, después de una tabla de descriptivos de los grupos de tratamiento y de no-trameinto, una tabla con los resultados de un modelo de regresión que identifica el efecto causal de interés. Aunque la identificación puede ser correcta, <em>esto no quiere decir que podamos interpretar el coeficiente de las variables de estratificación o control</em>.</p>
+</section>
+</section>
+<section id="malos-controles-sobrecontrol" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="malos-controles-sobrecontrol"><span class="header-section-number">7.2</span> Malos controles: sobrecontrol</h2>
+<p>En los siguientes diagramas, condicionar por <span class="math inline">\(Z\)</span> corta parte del efecto causal de <span class="math inline">\(T\)</span> sobre <span class="math inline">\(Y\)</span> (modelos 11 y 12 de <span class="citation" data-cites="Pearl2022gb">Cinelli, Forney, y Pearl</span>):</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Código</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grViz</span>(<span class="st">'</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="st">digraph {</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="st">  graph [ranksep = 0.2, rankdir = LR]</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="st">  subgraph caso_1 {</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="st">    node [shape=plaintext]</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="st">    Z [fontcolor="red"]</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="st">    edge [minlen = 3]</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="st">    T -&gt; Z</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="st">    Z -&gt; Y</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="st">    T -&gt; Y</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="st">  subgraph caso_2 {</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="st">    node [shape=plaintext]</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="st">    Ya [label="Y"]</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="st">    Ta [label="T"]</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="st">    Za [label="Z"][fontcolor="red"]</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="st">    edge [minlen = 3]</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="st">    Ta -&gt; M</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="st">    M -&gt; Ya</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="st">    M -&gt; Za</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="st">    Ta -&gt; Ya</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>, <span class="at">width =</span> <span class="dv">250</span>, <span class="at">height =</span> <span class="dv">120</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="htmlwidget-85284c17039c45471840" style="width:100%;height:312px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-85284c17039c45471840">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir = LR]\n  subgraph caso_1 {\n    node [shape=plaintext]\n    Z [fontcolor=\"red\"]\n    edge [minlen = 3]\n    T -> Z\n    Z -> Y\n    T -> Y\n  }\n  \n  subgraph caso_2 {\n    node [shape=plaintext]\n    Ya [label=\"Y\"]\n    Ta [label=\"T\"]\n    Za [label=\"Z\"][fontcolor=\"red\"]\n    edge [minlen = 3]\n    Ta -> M\n    M -> Ya\n    M -> Za\n    Ta -> Ya\n  }\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(PF <span class="sc">~</span> T <span class="sc">+</span>  C, peso_tbl) <span class="sc">|&gt;</span> broom<span class="sc">::</span><span class="fu">tidy</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 5
+  term        estimate std.error statistic  p.value
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1 (Intercept)   64.0       0.805    79.5   0       
+2 T            -19.1       1.69    -11.3   2.38e-28
+3 C              0.514     1.69      0.305 7.60e- 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(PF <span class="sc">~</span> T <span class="sc">+</span>  PI <span class="sc">+</span> C, peso_tbl) <span class="sc">|&gt;</span> broom<span class="sc">::</span><span class="fu">tidy</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 5
+  term        estimate std.error statistic   p.value
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+1 (Intercept)    -7.77    0.856      -9.08 4.41e- 19
+2 T             -19.8     0.610     -32.4  7.57e-166
+3 PI              1.13    0.0126     89.2  0        
+4 C               2.59    0.610       4.25 2.32e-  5</code></pre>
+</div>
+</div>
+<p>Y vemos que nuestra estimación del efecto del tratamiento está sesgada, aparentando ser más efectiva de lo que es. La razón es que el camino que pasa por <span class="math inline">\(C\)</span> “daña” en lugar de ayudar. El efecto causal total toma en cuenta tanto beneficios como daños.</p>
+</section>
+<section id="malos-controles-variables-post-tratamiento" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="malos-controles-variables-post-tratamiento"><span class="header-section-number">7.3</span> Malos controles: variables post-tratamiento</h2>
+<p>Variables que son efectos de la variable respuesta que nos interesa son en general malos controles. Es un caso particular de cómo se produce sesgo <strong>casos-control</strong> (por ejemplo, cuando seleccionamos individuos para observar dependiendo de una variable post-tratamiento). Para entender eso, agregamos explícitamente nodos que usualmente no mostramos en nuestros diagramas (están ahí implícitamente), que son efectos sobre <span class="math inline">\(Y\)</span> que no tienen conexiones causales con otras partes del diagrama:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Código</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grViz</span>(<span class="st">'</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="st">digraph {</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="st">  graph [ranksep = 0.2, rankdir = LR]</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="st">  subgraph caso_1 {</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="st">    node[shape= circle]</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="st">    U_y</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="st">    node [shape=plaintext]</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="st">    Z [fontcolor="red"]</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="st">    edge [minlen = 3]</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="st">    Y -&gt; Z</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="st">    T -&gt; Y  </span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="st">    U_y -&gt; Y</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>, <span class="at">width =</span> <span class="dv">250</span>, <span class="at">height =</span> <span class="dv">120</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="htmlwidget-72e7d7396cb477054c27" style="width:100%;height:312px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-72e7d7396cb477054c27">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir = LR]\n  subgraph caso_1 {\n    node[shape= circle]\n    U_y\n    node [shape=plaintext]\n    Z [fontcolor=\"red\"]\n    edge [minlen = 3]\n    Y -> Z\n    T -> Y  \n    U_y -> Y\n  }\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>Hemos añadido un nodo implícito (otros factores que afectan <span class="math inline">\(Y\)</span> y no tienen relación con otras variables del sistema) para explicar qué es lo que pasa cuando condicionamos a <span class="math inline">\(Z\)</span>: como <span class="math inline">\(Z\)</span> es un descendiente del colisionador en <span class="math inline">\(Y\)</span>, se activa una ruta no causal entre <span class="math inline">\(U_y\)</span> y <span class="math inline">\(T\)</span>, y estas dos cantidades aparecen como correlacionadas (es una correlación no causal). Esto en consecuencia modifica la correlación entre <span class="math inline">\(T\)</span> y <span class="math inline">\(Y\)</span>.</p>
+<section id="ejemplo-1" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="ejemplo-1">Ejemplo</h3>
+<p>En nuestro ejemplo, podemos comparar las pendientes condicionando o no a la variable <span class="math inline">\(B\)</span>: vemos que dentro de cada grupo de <span class="math inline">\(B\)</span>, la pendiente es más chica que la que sugiere el efecto del tratamiento:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(peso_tbl, <span class="fu">aes</span>(<span class="at">x =</span> T, <span class="at">y =</span> PF, <span class="at">colour =</span> <span class="fu">factor</span>(B))) <span class="sc">+</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>() <span class="sc">+</span> </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>) <span class="sc">+</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">formula =</span> <span class="st">"y~ 1+x"</span>, <span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">colour =</span> <span class="st">"red"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="07-buenos-malos-controles_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Como vemos, la pendiente en cada grupo de <span class="math inline">\(B\)</span> es más baja que la que obtendríamos si no condicionáramos a <span class="math inline">\(B\)</span>. Podemos explicarlo así, bajo el supuesto de que el tratamiento tiene algún efecto:</p>
+<ul>
+<li><strong>En el grupo <span class="math inline">\(B=0\)</span></strong>: tiende a haber gente de peso más bajo. Para los que <strong>no</strong> recibieron el tratamiento, esto quiere decir que otros factores externos <span class="math inline">\(U_y\)</span> fueron los explican por qué que cayeran en un nivel bajo (tienen <span class="math inline">\(U_y\)</span> bajas. Por otro lado, el peso bajo de los que recibieron el tratamiento se debe también al tratamiento, por lo tanto, este grupo tiene <span class="math inline">\(U_y\)</span> parecidas más parecidas a la población. Esto implica que estamos comparando grupos distintos de personas, y negamos ventajas de la aleatorización.</li>
+<li><strong>En el grupo <span class="math inline">\(B=1\)</span></strong>: el argumento es similar. Aquí tiene a haber gente de peso más alto. Para los que recibieron tratamiento, esto implica que tienden a tener <span class="math inline">\(U_y\)</span>’s más altas que la población. Para el grupo que no recibió el tratamiento, sus <span class="math inline">\(U_y\)</span> son más parecidas a la población.</li>
+</ul>
+<p>En ambos casos, obtenemos una estimación sesgada del efecto causal. En una regresión, <span class="math inline">\(B\)</span> absorbe entonces parte de la variación que en realidad le corresponde al tratamiento:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(PF <span class="sc">~</span> T <span class="sc">+</span>  B, peso_tbl) <span class="sc">|&gt;</span> broom<span class="sc">::</span><span class="fu">tidy</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 5
+  term        estimate std.error statistic   p.value
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+1 (Intercept)    40.3      0.810     49.8  4.04e-294
+2 T              -7.68     0.798     -9.62 3.73e- 21
+3 B              31.0      0.811     38.2  1.09e-209</code></pre>
+</div>
+</div>
+<p>En la regresión el coeficiente de <span class="math inline">\(T\)</span> está contaminado por esa asociación que creamos al condicionar a un descendiente de un colisionador: este coeficiente “explica” otra variación del peso final que no tiene qué ver con el tratamiento, en lugar de explicar solamente la variación por el tratamiento.</p>
+</section>
+</section>
+<section id="malos-controles-sesgo-de-colisionador" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="malos-controles-sesgo-de-colisionador"><span class="header-section-number">7.4</span> Malos controles: sesgo de colisionador</h2>
+<p>Los modelo 16 y 17 ya los hemos examinado antes: cuando condicionamos a un colisionador activamos no causales que distorsionan la asociación.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Código</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grViz</span>(<span class="st">'</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="st">digraph {</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="st">  graph [ranksep = 0.2, rankdir = LR]</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="st">  subgraph caso_1 {</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="st">    node [shape=plaintext]</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="st">    Z [fontcolor="red"]</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="st">    edge [minlen = 3]</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="st">    T -&gt; Z</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="st">    Y -&gt; Z</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="st">    T -&gt; Y</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="st">  subgraph caso_2 {</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="st">    node [shape=circle]</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="st">    U</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="st">    node [shape=plaintext]</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a><span class="st">    Ya [label="Y"]</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a><span class="st">    Ta [label="T"]</span></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a><span class="st">    Za [label="Z"][fontcolor="red"]</span></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="st">    edge [minlen = 3]</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a><span class="st">    U -&gt; Za</span></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a><span class="st">    U -&gt; Ya</span></span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a><span class="st">    Ta -&gt; Ya</span></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a><span class="st">    Ta -&gt; Za</span></span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a><span class="st">  {rank=same; Za; Ta}</span></span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>, <span class="at">width =</span> <span class="dv">250</span>, <span class="at">height =</span> <span class="dv">140</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="htmlwidget-546716d38287f28b6418" style="width:100%;height:364px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-546716d38287f28b6418">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir = LR]\n  subgraph caso_1 {\n    node [shape=plaintext]\n    Z [fontcolor=\"red\"]\n    edge [minlen = 3]\n    T -> Z\n    Y -> Z\n    T -> Y\n  }\n  \n  subgraph caso_2 {\n    node [shape=circle]\n    U\n    node [shape=plaintext]\n    Ya [label=\"Y\"]\n    Ta [label=\"T\"]\n    Za [label=\"Z\"][fontcolor=\"red\"]\n    edge [minlen = 3]\n    U -> Za\n    U -> Ya\n    Ta -> Ya\n    Ta -> Za\n  {rank=same; Za; Ta}\n  }\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<section id="ejemplo-la-paradoja-de-peso-de-recién-nacidos" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="ejemplo-la-paradoja-de-peso-de-recién-nacidos">Ejemplo: la paradoja de peso de recién nacidos</h3>
+<p>Para ilustrar la primera de estas gráficas referimos al caso de la paradajo del peso bajo de los recién nacidos (<span class="citation" data-cites="birthweight">Hernández-Díaz, Schisterman, y Hernán (<a href="#ref-birthweight" role="doc-biblioref">2006</a>)</span>), <a href="https://academic.oup.com/aje/article/164/11/1115/61454">The Birth Weight “Paradox” Uncovered?</a></p>
+<p>En 1991, se observó que bebés nacidos de madres fumadoras tenían tanto peso más bajo como más alta mortalidad. Sin embargo, si excluíamos el análisis a bebés nacidos con bajo peso, los bebés de fumadoras tenían menos mortalidad que los de no fumadoras. Aunque hubo algunas especulaciones si fumar “protegía” a niños de bajo peso, podemos explicar la aparición de esta correlación por la activación de una ruta no causal al condicionar a niños de bajo peso.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Código</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grViz</span>(<span class="st">"</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="st">digraph {</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="st">  graph [ranksep = 0.2, rankdir = LR]</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="st">  subgraph caso_1 {</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="st">    node [shape=plaintext]</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="st">    T [label = 'T']</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="st">    Y [label = 'Y']</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="st">    Z [label = 'Z'][fontcolor = 'red']</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="st">    node [shape=circle]</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="st">    U</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="st">    edge [minlen = 3]</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="st">    T -&gt; Y</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="st">    T -&gt; Z</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="st">    Z -&gt; Y</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="st">    U -&gt; Z</span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a><span class="st">    U -&gt; Y</span></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a><span class="st">}"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="grViz html-widget html-fill-item" id="htmlwidget-174eade10a283f1b28aa" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-174eade10a283f1b28aa">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir = LR]\n  subgraph caso_1 {\n    node [shape=plaintext]\n    T [label = \"T\"]\n    Y [label = \"Y\"]\n    Z [label = \"Z\"][fontcolor = \"red\"]\n    node [shape=circle]\n    U\n    edge [minlen = 3]\n    T -> Y\n    T -> Z\n    Z -> Y\n    U -> Z\n    U -> Y\n  }\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>En la gráfica de arriba, <span class="math inline">\(T\)</span> indica si la madre es fumadora o no, y <span class="math inline">\(Y\)</span> la mortalidad. <span class="math inline">\(Z\)</span> si el bebé nació con bajo peso o no.</p>
+<p><span class="math inline">\(U\)</span> son posibles defectos de nacimiento no observados, que causan peso bajo e incrementan el riesgo de muerte. Cuando observamos a mujeres fumadoras, tenemos una explicación para el peso bajo, lo cual hace más improbable que se trate de un defecto grave de nacimiento. En consecuencia, el riesgo de muerte es más bajo.</p>
+<p>Esta es una asociación no causal creada por condicionar a un colisionador.</p>
+</section>
+</section>
+<section id="malos-controles-parásito-de-precisión" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="malos-controles-parásito-de-precisión"><span class="header-section-number">7.5</span> Malos controles: parásito de precisión</h2>
+<p>Consideramos el siguiente diagrama:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Código</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grViz</span>(<span class="st">'</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="st">digraph {</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="st">  graph [ranksep = 0.2, rankdir = LR]</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="st">  subgraph caso_1 {</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="st">    node [shape=plaintext]</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="st">    Z [fontcolor="red"]</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="st">    edge [minlen = 3]</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="st">    Z -&gt; T</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="st">    T -&gt; Y</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="st">}'</span>, <span class="at">width =</span> <span class="dv">100</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="htmlwidget-2d7513c3b11b68a19c71" style="width:100%;height:325px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2d7513c3b11b68a19c71">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir = LR]\n  subgraph caso_1 {\n    node [shape=plaintext]\n    Z [fontcolor=\"red\"]\n    edge [minlen = 3]\n    Z -> T\n    T -> Y\n  }\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>En este caso, condicionar a <span class="math inline">\(Z\)</span> no sesga nuestras estimaciones, pues no activamos ninguna ruta no causal. La dificultad es que típicamente disminuye la precisión de la estimación (usamos un modelo más grande donde no es necesario):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(PF <span class="sc">~</span> T <span class="sc">+</span> Z, <span class="at">data =</span> peso_tbl) <span class="sc">|&gt;</span> broom<span class="sc">::</span><span class="fu">tidy</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 5
+  term        estimate std.error statistic  p.value
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1 (Intercept)   64.1       0.784    81.8   0       
+2 T            -18.8       1.14    -16.5   2.21e-55
+3 Z              0.446     1.15      0.388 6.98e- 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(PF <span class="sc">~</span> T, <span class="at">data =</span> peso_tbl) <span class="sc">|&gt;</span> broom<span class="sc">::</span><span class="fu">tidy</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 5
+  term        estimate std.error statistic  p.value
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1 (Intercept)     64.1     0.774      82.8 0       
+2 T              -18.7     1.11      -16.9 1.38e-57</code></pre>
+</div>
+</div>
+<p>Estos parásitos en ciertas circunstancias pueden empeorar estimaciones causales y causar sesgo adicional. Consideremos el siguiente diagrama:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Código</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grViz</span>(<span class="st">'</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="st">digraph {</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="st">  graph [ranksep = 0.2, rankdir = LR]</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="st">  subgraph caso_1 {</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="st">    node [shape=plaintext]</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="st">    Z [fontcolor="red"]</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="st">    X</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="st">    Y</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="st">    node [shape = circle]</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="st">    U</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="st">    edge [minlen = 3]</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a><span class="st">    U -&gt; X</span></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a><span class="st">    U -&gt; Y</span></span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a><span class="st">    Z -&gt; X</span></span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a><span class="st">    X -&gt; Y</span></span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a><span class="st">}'</span>, <span class="at">width =</span> <span class="dv">100</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="htmlwidget-ec3b8120d2cf632950cb" style="width:100%;height:325px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-ec3b8120d2cf632950cb">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir = LR]\n  subgraph caso_1 {\n    node [shape=plaintext]\n    Z [fontcolor=\"red\"]\n    X\n    Y\n    node [shape = circle]\n    U\n    edge [minlen = 3]\n    U -> X\n    U -> Y\n    Z -> X\n    X -> Y\n  }\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>En este caso, tenemos una variable confusora <span class="math inline">\(U\)</span> que no nos permite estimar sin sesgo el efecto de <span class="math inline">\(T\)</span> sobre <span class="math inline">\(Y\)</span>. Sin embargo, si condicionamos a <span class="math inline">\(Z\)</span>, la situación puede emperorar (amplificación de sesgo), pues dentro de cada nivel de <span class="math inline">\(Z\)</span> hay menos variación de <span class="math inline">\(X\)</span>, y eso implica que la covarianza entre <span class="math inline">\(X\)</span> y <span class="math inline">\(Y\)</span>, en cada nivel de <span class="math inline">\(Z\)</span>, se debe más a la variable confusora.</p>
+<p>Podemos hacer un ejemplo simulado (ver más en <span class="citation" data-cites="rethinking">McElreath (<a href="#ref-rethinking" role="doc-biblioref">2020</a>)</span>):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">5000</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.5</span>)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>u <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="dv">5</span> <span class="sc">*</span> z <span class="sc">+</span> u, <span class="dv">1</span>)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, x <span class="sc">+</span>  u, <span class="dv">1</span>)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> x, <span class="at">z =</span> z, <span class="at">u =</span> u, <span class="at">y =</span> y) </span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x, datos) <span class="sc">|&gt;</span> broom<span class="sc">::</span><span class="fu">tidy</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 5
+  term        estimate std.error statistic  p.value
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1 (Intercept)   -0.278   0.0265      -10.5 1.47e-25
+2 x              1.12    0.00697     161.  0       </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x <span class="sc">+</span> z, datos) <span class="sc">|&gt;</span> broom<span class="sc">::</span><span class="fu">tidy</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 5
+  term        estimate std.error statistic   p.value
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+1 (Intercept)   0.0254    0.0250      1.02 3.09e-  1
+2 x             1.51      0.0124    121.   0        
+3 z            -2.56      0.0708    -36.2  1.78e-254</code></pre>
+</div>
+</div>
+<p>El efecto causal es de 1 unidad. Los modelos presentan estimaciones sesgadas, pero es peor el que incluye la variable parásito.</p>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-Pearl2022gb" class="csl-entry" role="listitem">
+Cinelli, Carlos, Andrew Forney, y Judea Pearl. <span>«A Crash Course in Good and Bad Controls»</span>. <em>Sociological Methods &amp; Research</em> 0 (0): 00491241221099552. <a href="https://doi.org/10.1177/00491241221099552">https://doi.org/10.1177/00491241221099552</a>.
+</div>
+<div id="ref-birthweight" class="csl-entry" role="listitem">
+Hernández-Díaz, Sonia, Enrique F. Schisterman, y Miguel A. Hernán. 2006. <span>«<span>The Birth Weight <span>“Paradox”</span> Uncovered?</span>»</span> <em>American Journal of Epidemiology</em> 164 (11): 1115-20. <a href="https://doi.org/10.1093/aje/kwj275">https://doi.org/10.1093/aje/kwj275</a>.
+</div>
+<div id="ref-rethinking" class="csl-entry" role="listitem">
+McElreath, R. 2020. <em>Statistical Rethinking: A Bayesian Course with Examples in R and Stan</em>. A Chapman &amp; Hall libro. CRC Press. <a href="https://books.google.com.mx/books?id=Ie2vxQEACAAJ">https://books.google.com.mx/books?id=Ie2vxQEACAAJ</a>.
+</div>
+</div>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./06-calculo-do.html" class="pagination-link" aria-label="Identificación y cálculo-do">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Identificación y cálculo-do</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
