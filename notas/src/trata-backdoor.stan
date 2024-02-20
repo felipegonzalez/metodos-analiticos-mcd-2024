@@ -52,8 +52,6 @@ generated quantities {
         inv_logit(gamma_0 + gamma_1 * 0 +
               gamma_2 * (peso_sim - media_peso)));
     }
-    p_trata = mean(res_trata);
-    p_no_trata = mean(res_no_trata);
+    dif_trata = mean(res_trata) - mean(res_no_trata);
   }
-  dif_trata = p_trata - p_no_trata;
 }

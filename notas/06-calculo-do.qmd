@@ -35,7 +35,7 @@ grViz("
     U -> Y;
   {rank = same; X; Y;}
   }
-  ")
+  ", width = 200, height = 50)
 ```
 Nos interesa estimar el efecto causal de $X$ sobre $Y$. Sucede que
 en muchas ocasiones existen variables como $U$ que son causas comunes de
@@ -74,7 +74,7 @@ grViz("
     R -> X
     X -> Y;
     U -> Y;
-  {rank = same; X; Y;}
+  {rank = same; R;X; Y;}
   }
   ")
 ```
@@ -83,9 +83,10 @@ Nótese que:
 1. La variable $R$ no puede ser endógena (es decir, ninguna flecha del sistema
 puede incidir en ella), pues se utiliza un dado o algo totalmente no relacionado
 para asignar el tratamiento. Por ejemplo, también podríamos asignar el tratamiento 
-utilizando la segunda letra del apellido de las personas.
+otra manera determinística como si el día de nacimiento de la persona es par
+o impar.
 
-2. No puede existir una flecha de $U$ a $X$, pues nada en $X$ responde a cambios en
+2. En este nuevo diseño, no puede existir una flecha de $U$ a $X$, pues nada en $X$ responde a cambios en
 $X$, qué solo depende del proceso de aleatorización $R$.
 
 En este caso, no es necesario estratificar por ninguna variable y podemos proponer
@@ -141,11 +142,14 @@ En el siguiente ejemplo vemos la distinción entre las dos distribuciones:
 
 
 
-### Ejemplo (Pearl) {-}
-Supongamos que tenemos el siguiente modelo del diagrama causal: 
+### Ejemplo  {-}
+Supongamos que tenemos el siguiente diagrama causal. Supondremos
+también que conocemos todas las relaciones funcionales involucradas.
 
 ```{r}
 #| code-fold: true
+#| fig-cap: Gráfica de datos observacionales
+
 grViz("
 digraph {
   graph [ranksep = 0.2]
@@ -157,7 +161,8 @@ digraph {
    
    
 }
-")
+", width = 100, height = 50)
+
 ```
 
 donde
@@ -190,7 +195,9 @@ simular_dias <- simular_t(50)
 Si simulamos, vemos que $mosquitos$ y $unidades$ son dependientes, pues tenemos
 un camino abierto dado por la bifurcación en temperatura:
 
-```{r, fig.width = 5, fig.height=3.5}
+```{r}
+#| fig-width: 5
+#| fig-height: 3.5
 ggplot(simular_dias, aes(x = a_unidades, y = mosquitos)) + geom_point() +
   geom_smooth(method = "loess", method.args = list(degree = 1)) +
   xlab("Ventas de agua embotellada")
@@ -201,38 +208,20 @@ variables dos variables, pero que hay una dependencia debido a la bifurcación e
 $T$. La gráfica muestra que la media condicional $E[M|A=a]$ depende fuertemente
 de $a$, lo que quiere decir que $p(m|a)$ depende de $a$ fuertemente.
 
-
-### Una intervención simple {-}
-
 En este caso, nos interesaría saber qué sucede si alteramos artificalmente el número
 de botellas de agua vendidas (puedes imaginar distintas maneras de hacer esto).
 
-Cuando hacemos esto, quitamos las aristas que van hacia $A$,
-pues $A$ ya no está determinado por el proceso generador de datos. Tenemos
-entonces la nueva gráfica:
+**Como en este ejemplo conocemos todas las relaciones funcionales**, y. nuestros
+supuesto es que el diagrama mostrado es correcto, podemos
+cambiar nuestra simulación para simular **el proceso generador de datos del
+experimento asociado**.
 
-```{r}
-#| code-fold: true
-grViz("
-digraph {
-  graph [ranksep = 0.2]
-  node [shape=plaintext]
-   A
-  edge [minlen = 3]
-   U_t -> T
-   T -> Z
-   U_m -> Z
-{ rank = same; A; Z }
-}
-")
-```
+Como veremos, esto se puede entender como una cirugía de la gráfica
+original donde quitamos las aristas que inciden en $A$. Desde el punto
+de vista del proceso generador, si intervenimos el proceso generador
+deberíamos excluir cómo $A$ responde a otras variables, pues
+ahora la estamos fijando:
 
-En esta nueva gráfica, $A$ y $Z$ son independientes, que es la respuesta correcta.
-Como cambiamos la gráfica, su proceso generador es diferente al original
-de los datos observados. Sin embargo, en este ejemplo puedes ver por qué es
-claro que el cambio que hicimos (manipular $A$ en lugar de que esté determinado
-por su proceso generador original) no cambia el modelo de $Z$, de manera
-que podemos simular de nuestro nuevo proceso generador donde manipulamos $A$:
 
 ```{r}
 simular_cirugia <- function(n = 10, a_unidades = a_unidades){
@@ -258,25 +247,64 @@ simular_dias_2 <- map_df(seq(10000, 30000, 1000),
 ```
 
 
-```{r, fig.width = 5, fig.height=3.5}
+```{r}
+#| fig-width: 5
+#| fig-height: 3.5
 ggplot(simular_dias_2, aes(x = a_unidades, y = mosquitos)) +
   geom_point() + geom_smooth()
+cor(simular_dias_2$mosquitos, simular_dias_2$a_unidades)
+
 ```
 
 y vemos, como esperaríamos, que no hay relación entre unidades de agua embotellada
 y mosquitos.
 
+Desde el punto de vista de la gráfica, la manipulación donde fijamos
+manualmente $A$ sería:
+
+
+Cuando hacemos esto, quitamos las aristas que van hacia $A$,
+pues $A$ ya no está determinado por el proceso generador de datos. Tenemos
+entonces la nueva gráfica:
+
+```{r}
+#| code-fold: true
+#| fig-cap: Gráfica con intervención en A
+grViz("
+digraph {
+  graph [ranksep = 0.2]
+  node [shape=plaintext]
+   A
+  edge [minlen = 3]
+   T -> Z
+{ rank = same; A; Z }
+}
+", width = 100, height = 50)
+```
+
+En esta nueva gráfica, $A$ y $Z$ son independientes, que es la respuesta correcta.
+Como cambiamos la gráfica, su proceso generador es diferente al original
+de los datos observados. Sin embargo, en este ejemplo puedes ver por qué es
+claro que el cambio que hicimos (manipular $A$ en lugar de que esté determinado
+por su proceso generador original) no cambia el modelo de $Z$, de manera
+que podemos simular de nuestro nuevo proceso generador donde manipulamos $A$:
+
 
 ## Cálculo-do de Pearl
 
 El cálculo do nos da reglas para operar con probabilidades que incluyen
-nuestro operador *do* de intervención. En este ejemplo particular, veremos 
+nuestro operador *do* de intervención,  y nos dice cómo pasar de cantidades
+que incluyen manipulaciones *do* a cantidades estadísticas que se pueden
+estimar directamente de los datos.
+
+
+En este ejemplo anterior, veremos 
 cómo es el argumento:
 
 Nótese que al intervenir $A$ hemos modificado el proceso generador. Si la conjunta original
 tiene distribución $p$, escribimos $p_m$ para la conjunta de la gráfica modificada,
 de manera que $p(Z|do(A)) = p_m(Z|A)$: con esto podemos pasar de una pregunta
-causal (lado izquierdo con operador *do*) a una estadpística (lado derecho).
+causal (lado izquierdo con operador *do*) a una estadística (lado derecho).
 
 Aunque intuitivamente vimos cómo simular de esta distribución arriba, especificamos
 abajo qué reglas son las que nos permiten hacer esto: ¿cómo calculamos $p_m$?
@@ -294,9 +322,9 @@ $A$ fue modificada artificalmente o no.
 
 Juntamos estos argumentos. Primero, por definición,
 
-$$p(Z|do(A=a)) = p_m(Z|A=a)$$
+$$p(Z|do(A=a)) = p_m(Z|A=a).$$
 
-Por la regla de probabilidad total, podemos condicionar todo a $T$ y marginalizar.
+Ahora por la regla de probabilidad total, podemos condicionar todo a $T$ y marginalizar.
 La segunda igualdad la obtenemos por la independencia entre $T$ y $Z$ en nuestra
 gráfica modificada (están $d$ separadas):
 
@@ -331,16 +359,6 @@ calcular **contrastes** particulares, como qué pasaría si las ventas
 de agua las aumentamos en 10 mil unidades:
 
 $$E(Z|do(A=30000)) - E(Z|do(A=20000)),$$
-que podemos calcular de manera simple con simulación:
-
-```{r}
-simular_contraste <- map_df(c(20000, 30000),
-  \(u) simular_cirugia(1000, a_unidades = u)) |> 
-  group_by(a_unidades) |> 
-  summarise(media_mosquitos = mean(mosquitos))
-simular_contraste
-```
-Y vemos que no hay diferencia entre las dos medias.
 
 ### Ejemplo {-}
 
@@ -468,7 +486,7 @@ parece ser lineal, así que podríamos resumir con un modelo lineal:
 lm(unidades ~ desabasto_agua, simular_dias_c)
 ```
 Aproximadamente, cada incremento en puntos porcentuales de 10% en desabasto incrementa las
-ventas en unas 800 unidades. Compara con el análisis donde no estratificamos o
+ventas en unas 800 unidades. Compara con el análisis donde **no estratificamos** o
 controlamos por la temperatura:
 
 ```{r}
@@ -491,7 +509,7 @@ En resumen, tenemos la primera regla de Pearl de inferencia causal:
 ::: callout-note
 # Fórmula de ajuste (Pearl)
 
-Sea $G$ donde los padres de $X$ son $Z_1,Z_2$. El efecto causal total de $X$ en $Y$ se puede calcular como
+Consideramos una DAG donde los padres de $X$ son $Z_1,Z_2$. El efecto causal total de $X$ en $Y$ se puede calcular como
 
 $$p(y|do(x)) = \int p(y|x, z_1,z_2) p(z_1,z_2)\, dz_1dz_2$$
 Es decir, condicionamos al valor de $x$ y todos los padres de $X$ para
@@ -561,11 +579,27 @@ las variables de control. Sin embargo, este no siempre es el caso.
 
 **Nota 3** Sin nuestro modelo $p(y|t,z)$ es lineal, y nos interesa calcular
 el efecto causal promedio de la variable $t$, no es necesario promediar por
-la conjunta de $p(z)$. Bajo estas condiciones, el efecto causal promedio está simplemente 
+la conjunta de $p(z)$. Bajo estas condiciones, el efecto causal promedio está simplemente dado
 por el coeficiente de $t$ en el modelo lineal. Sin embargo, si este no es el caso,
 entonces para estimar el efecto causal promedio es necesario promediar apropiadamente
 según la fórmula de ajuste.
 
+#### Ejemplo: variación de efectos causales {-}
+
+En @rethinking, McElreath presenta un ejemplo interesante de por qué es
+necesario marginalizar sobre las variables de estratificación que no son el
+tratamiento. En su diagrama causal, la cantidad de guepardos afecta la población
+de babuinos y de gacelas, y también la población de babuinos afecta la población
+de gacelas. Cuando hay muchos guepardos, los babuinos no cazan, de forma que el efecto
+$Babuinos\to Gazelas$ es débil. Cuando hay pocos guepardos, sin embargo,
+el efecto $Babuinos\to Gazelas$ es fuerte pues los babuinos pueden aventurarse a cazar. Podemos obtener un efecto causal promedio marginalizando sobre la cantidad
+de guepardos.
+
+Otro ejemplo que podríamos considerar es el de intervenir por ejemplo
+un semáforo para agilizar la vialidad. El tráfico previo influye la decisión
+de intervenir un semáforo, y también influye en el tráfico actual. Cuando
+el tráfico previo es bajo, la intervención tiene poco efecto, pero cuando
+el tráfico previo es alto, al intervención tiene un efecto más fuerte. 
 
 
 
@@ -579,9 +613,8 @@ causales sean aproximadamente correctos).
 
 Sin embargo, esta aplicación de la fórmula de ajuste no funciona
 si existen padres que no fueron observados, y por tanto no podemos estratificar por ellos. El siguiente método (ajuste por "puerta trasera")
-nos da una técnica adicional que podemos usar dado ciertos tipos
-de estructura en nuestro modelo causal, y presenta una
-mejoría sobre la fórmula de ajuste simple (veremos también por ejemplo, que a veces podemos usar menos variables que padres de la variable de interés). Nótese que una vez más,
+nos da una generalización que podemos usar dado ciertos tipos
+de estructura en nuestro modelo causal (veremos también por ejemplo, que a veces podemos usar menos variables que padres de la variable de interés). Nótese que una vez más,
 este criterio sólo depende de la gráfica causal $G$ asociada a nuestro
 modelo, y no los modelos locales que utilizemos para modelar la
 condicional de cada nodo.
