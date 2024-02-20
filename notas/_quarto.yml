@@ -12,6 +12,7 @@ book:
     - 03-modelos-genericos.qmd
     - 05-dags.qmd
     - 06-calculo-do.qmd
+    - 07-buenos-malos-controles.qmd
 bibliography: referencias/book.bib
 
 format:
