@@ -398,7 +398,7 @@ Esta es una asociación no causal creada por condicionar
 a un colisionador.
 
 
-## Malos controles: parásito de precisión
+## Controles neutros o malos: parásito de precisión
 
 Consideramos el siguiente diagrama:
 
