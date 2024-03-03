@@ -1,0 +1,245 @@
+---
+title: "Tarea 07"
+format: html
+---
+
+```{r}
+library(tidyverse)
+library(DiagrammeR)
+```
+
+
+Consideramos el siguiente ejemplo de @Rethinking, que proviene de
+Westreich y Greenland 2013, The Table 2 Fallacy
+
+En un estudio nos interesa considerar **el efecto de infección de VIH
+sobre la probabilidad de tener un derrame cerebral** (Y). Causas que cambian
+el riesgo de derrames son fumar o no y edad, las cuales también influyen en
+riesgo de riesgo de infección (la edad por conducta y fumar por evidencia de
+que es más probable que un fumador se contagie si entra en contacto con el virus
+que un no fumador, como explica en https://www.dovepress.com/hiv-and-smoking-associated-risks-and-prevention-strategies-peer-reviewed-fulltext-article-HIV). Adicionalmente, la edad influye en la probabilidad
+de tabaquismo.
+
+Proponemos el siguiente diagrama causal:
+
+```{r}
+grViz("
+  digraph {
+    graph [ rankdir = LR]
+    node [shape = plaintext]
+    VIH [label = 'VIH'];
+    Y [label = 'Y'];
+    E [label = 'Edad'];
+    F
+    node [shape = circle]
+    #U
+    VIH -> Y
+    F -> VIH 
+    E -> VIH
+    #U -> F
+    #E -> U
+    #U -> VIH
+    F -> Y
+    E -> Y
+    E -> F
+  {rank = same; E;F;}
+
+  }
+  ", width = 300, height = 200)
+```
+
+**Pregunta 1**: explica por qué para contestar pregunta (efecto de VIH sobre riesgo
+de derrames Y) no es posible conducir un experimento aleatorizado con personas.
+
+**Pregunta 2**. Suponiendo el diagrama, explica por qué hacer una regresión
+de $Y$ en función de $VIH$ **no** da la respuesta correcta.
+
+
+**Pregunta 3**: Utiliza el criterio de la fórmula de ajuste para proponer un modelo
+estadístico con el que podamos estimar el efecto de VIH sobre Y: 1) Enumera
+los caminos de puerta trasera para el "tratamiento" VIH que están abiertos (es decir,
+caminos abiertos que conectan tratamiento con resultado que tienen una flecha
+apuntando al tratamiento, nota: son 3).
+2) Enumera los padres de VIH, 3) Explica por qué estratificar por los padres
+del tratamiento bloquea estos caminos de puerta trasera. 4) Suponiendo que utilizas
+un modelo simple de regresión logística, qué variables incluirías entonces
+para estimar el efecto de VIH sobre Y?
+
+**Pregunta 4** (opcional) Verifica tus respuestas usando daggity.net
+(o el paquete daggity de R). Localiza "Minimal sufficient adjustment sets" qué
+calcula cuales son los conjuntos más chicos de controles para poder identificar 
+el efecto causal de interés (pon la variable tratamiento como "exposure" y el
+resultado de interés como "outcome" del lado izquierdo de la interfaz).
+
+
+
+Recuerda que por la discusión del cálculo do que vimos, 
+estratificar y marginalizar por los padres transforma el diagrama anterior 
+en un diagrama donde podemos considerar al tratamiento VIH como exógena, de modo
+que bajo los supuestos del diagrama podemos pensar que el tratamiento se "asigna"
+aleatoriamente:
+
+```{r}
+grViz("
+  digraph {
+    graph [ rankdir = LR]
+    node [shape = plaintext]
+    VIH [label = 'VIH'];
+    Y [label = 'Y'];
+    E [label = 'Edad'];
+    F
+    VIH -> Y
+    F -> Y
+    E -> Y
+    E  -> F
+  {rank = same; E;F;}
+
+  }
+  ", width = 300, height = 200)
+```
+
+**Pregunta 5**: Si tuvieras todas las relaciones del diagrama de arriba (por
+ejemplo estimadas de los datos), explica cómo simularías $Y$ dado que ponemos
+$VIH=1$ (comienza
+con Edad). Después explica cómo simularias $Y$ dado que ponemos $VIH=0$. 
+
+
+Ahora consideramos un segundo diagrama posible, que considera que 
+existen otras causas comunes no medidas entre fumar
+y derrame cerebral (otras conductas que causan fumar y también producen riesgo de derrame):
+  
+```{r}
+grViz("
+  digraph {
+    graph [ rankdir = LR]
+    node [shape = plaintext]
+    VIH [label = 'VIH'];
+    Y [label = 'Y'];
+    E [label = 'Edad'];
+    F
+    node [shape = circle]
+    U
+    VIH -> Y
+    F -> VIH 
+    E -> VIH
+    U -> F
+    U -> Y
+    F -> Y
+    E -> Y
+    E  -> F
+  {rank = same; E;F;}
+
+  }
+  ", width = 300, height = 200)
+```
+
+
+**Pregunta 6**: Explica por qué tu modelo de la pregunta 3 
+sigue siendo válido para estimar el efecto de VIH sobre Y, aún
+cuando exista la variable U no observada, y que antes de condicionar
+hay un camino no causal entre VIH y Y que pasa por U. Opcional: verifica usando dagitty.net.
+
+
+
+
+**Pregunta 7**: (más difícil) Supón el diagrama original de la pregunta 1 y 2. 
+Después de hacer este análisis, el investigador muestra la
+tabla de los coeficientes de la regresión que utilizó para estimar $VIH \to Y$.
+Como controló por $F$ y $E$,  hay también coeficientes para estos valores. 
+Como lector de esta tabla, y usando
+el diagrama, explica por qué no se puede interpretar el coeficiente de $F$ como
+el efecto causal total de fumar sobre el riesgo de derrame. Dibuja el diagrama
+mutilado correspondiente a esta pregunta. Explica por qué esta situación empeora 
+con los supuestos del diagrama de la pregunta 6.
+
+
+
+Este error de interpretación muchas veces se llama "Falacia de la Tabla 2". En
+la tabla 2 de artículos muchas veces se presentan los modelos estimados para contestar una
+pregunta causal. Sin embargo, esto no quiere decir que **todos** los coeficientes
+de esta tabla se pueden interpretar de manera causal. Puedes
+ver la explicación de McElreath de este ejemplo aquí https://youtu.be/uanZZLlzKHw?si=SRRe5oNokD0X2DL5&t=4307
+
+
+### Sección opcional: un tipo de control neutro/malo
+
+Esta sección es opcional para los que se quedaron con dudas acerca del
+control neutro que le llamamos "parásito de precisión".
+
+Consideramos el diagrama 
+
+$$Z\to X \to Y,$$
+
+donde nos interesa estimar el efecto
+causal de $X$ sobre $Y$. En clase vimos la fórmula de ajuste, que establece que
+si estratificamos o controlamos sobre todos los padres del tratamiento, podemos
+marginalizar para estimar el efecto causal de $X$ sobre $Y$. 
+
+Sin embargo, la fórmula de ajuste no dice que esta es la mejor manera ni la única manera
+de hacerlo. En este caso particular, como veremos con el criterio de puerta trasera,
+nos damos cuenta de que no es **necesario** controlar por $Z$, pues no tienen ninguna
+puerta trasera que llegue a $Y$ (la situación sería diferente si existiera por ejemplo
+otro nodo que va a $Z$ y a $Y$, en ese caso **sí** necesitamos controlar $Z$ o $U$).
+
+En nuestro diagrama original, aunque no sesgamos nuestra estimación, controlar por $Z$ puede
+producir errores estándar más grande (pues utilizamos modelos más grandes). Puedes ver el ejemplo de 7.5 de las notas, y nota los errores estándar para el coeficiente de $T$.
+
+También discutimos otra situación donde teníamos el siguiente diagrama:
+
+
+```{r}
+grViz("
+  digraph {
+    graph [ rankdir = LR]
+    node [shape = plaintext]
+    T ;
+    Y [label = 'Y'];
+    Z ;
+    node [shape = circle]
+    U
+    T -> Y
+    Z -> T 
+    U -> T
+    U -> Y
+  
+  }
+  ", width = 300, height = 200)
+```
+
+En este caso no es posible obtener una estimación insesgada del efecto causal 
+de $T$ sobre $Y$ pues no podemos controlar por $U$. Incluir $Z$ en la regresión
+puede **empeorar** el sesgo. Del ejemplo de clase:
+
+```{r}
+n <- 5000
+z <- rbinom(n, 1, 0.5)
+u <- rnorm(n, 0, 2)
+x <- rnorm(n, 5 + 5 * z + u, 1)
+y <- rnorm(n, 4 + x +  u, 1)
+datos <- tibble(x = x, z = z, u = u, y = y) 
+lm(y ~ x, datos) |> broom::tidy()
+```
+
+Aquí mostramos la estimación estratificada por z, incluyendo el verdadero
+efecto causal en negro. El sesgo es alto porque dentro de cada grupo el efecto
+relativo de la variable confusora $u$ es grande:
+
+```{r}
+ggplot(datos, aes(x = x, y = y, colour = factor(z))) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_abline(slope = 1, colour = "black")
+```
+Si **no** estratificamos por $z$, entonces el sesgo sigue existiendo pero es menor,
+pues ahora influye relativamente más el efecto de $x$ sobre $y$:
+
+```{r}
+ggplot(datos, aes(x = x, y = y)) +
+  geom_point(alpha = 0.4, colour = "salmon") +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_abline(slope = 1, colour = "black")
+```
+
+
+
+
