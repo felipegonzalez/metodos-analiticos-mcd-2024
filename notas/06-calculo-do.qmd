@@ -996,7 +996,7 @@ La igualdad se debe a que una vez que condicionamos a $F$ no hay
 puertas traseras entre $F$ y $A$ (pues no condicionamos a $C$). Esta dependencia causal la podemos entonces estimar de los datos.
 
 El efecto de $A$ sobre $C$ también es identificable, pues el camino no
-causal se bloquea cuando condicionamos a $A$, de forma
+causal se bloquea cuando condicionamos a $F$, de forma
 que por la fórmula de ajuste:
 
 $$p(c|do(a)) = \int p(c|a, f') p(f')\, df'$$
@@ -1006,9 +1006,9 @@ Ahora encadenamos estas dos ecuaciones:
 
 $$p(c|do(f)) = \int p(c|do(a))p(a|f)\,da$$
 
-que equivale en simulación a: dado un valor de $F$, simulamos $A=a$ 
+que equivale en simulación a: dado un valor de $F$, simulamos $A$ 
 con nuestro modelo ajustado con datos naturales. 
-Ahora intervenimos $A$ con el valor a que obtuvimos y simulamos $C$.
+Ahora intervenimos $A$ con el valor $a$ que obtuvimos y simulamos $C$.
 Sin embargo, para hacer este último paso con datos naturales, necesitamos usar
 el criterio de puerta trasera como explicamos arriba: simulamos entonces $f´$ de $p(f)$, y después simulamos $C$ en función de
 $a$ y $f´$ (con una distribución construida a partir de datos).

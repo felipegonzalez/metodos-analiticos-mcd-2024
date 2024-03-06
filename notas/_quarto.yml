@@ -13,6 +13,7 @@ book:
     - 05-dags.qmd
     - 06-calculo-do.qmd
     - 07-buenos-malos-controles.qmd
+    - 08-mcmc.qmd
 bibliography: referencias/book.bib
 
 format:
