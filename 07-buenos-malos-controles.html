@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.550">
+<meta name="generator" content="quarto-1.4.551">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -84,6 +84,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./08-mcmc.html" rel="next">
 <link href="./06-calculo-do.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -240,6 +241,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Buenos y malos controles</span></span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-mcmc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Markov Chain Monte Carlo</span></span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -329,8 +336,8 @@ window.Quarto = {
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>, <span class="at">width =</span> <span class="dv">250</span>, <span class="at">height =</span> <span class="dv">60</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-c28bbd15ad8419fe5561" style="width:100%;height:156px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-c28bbd15ad8419fe5561">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir = LR]\n  subgraph caso_1 {\n    node [shape=plaintext]\n    Z [fontcolor=\"red\"]\n    edge [minlen = 3]\n    Z -> Y\n    T -> Y\n  }\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-8b9ebc20455a7e6c8717" style="width:100%;height:156px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-8b9ebc20455a7e6c8717">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir = LR]\n  subgraph caso_1 {\n    node [shape=plaintext]\n    Z [fontcolor=\"red\"]\n    edge [minlen = 3]\n    Z -> Y\n    T -> Y\n  }\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <section id="ejemplo" class="level3" data-number="7.1.1">
@@ -364,8 +371,8 @@ window.Quarto = {
 <span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-4b2849da605849a2ae93" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-4b2849da605849a2ae93">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir=LR]\n  node[shape=circle]\n      U\n      V\n  node [shape=plaintext]\n    Z\n    T\n  edge [minlen = 3]\n   #G -> H\n   #H -> PI\n   Z -> T\n   T -> PF\n   #G -> PF\n   PI -> PF\n   U -> PI\n   U -> PF\n   V -> PF\n   T -> C -> PF\n   PF -> B\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-44639880fc0598d3f96b" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-44639880fc0598d3f96b">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir=LR]\n  node[shape=circle]\n      U\n      V\n  node [shape=plaintext]\n    Z\n    T\n  edge [minlen = 3]\n   #G -> H\n   #H -> PI\n   Z -> T\n   T -> PF\n   #G -> PF\n   PI -> PF\n   U -> PI\n   U -> PF\n   V -> PF\n   T -> C -> PF\n   PF -> B\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>No hay ninguna variable confusora, y una estrategia de estimación es comparar <span class="math inline">\(PF\)</span> entre los grupos.</p>
@@ -492,8 +499,8 @@ Falacia de la Tabla 2
 <span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>, <span class="at">width =</span> <span class="dv">250</span>, <span class="at">height =</span> <span class="dv">120</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-b905a43689f37afae101" style="width:100%;height:312px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-b905a43689f37afae101">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir = LR]\n  subgraph caso_1 {\n    node [shape=plaintext]\n    Z [fontcolor=\"red\"]\n    edge [minlen = 3]\n    T -> Z\n    Z -> Y\n    T -> Y\n  }\n  \n  subgraph caso_2 {\n    node [shape=plaintext]\n    Ya [label=\"Y\"]\n    Ta [label=\"T\"]\n    Za [label=\"Z\"][fontcolor=\"red\"]\n    edge [minlen = 3]\n    Ta -> M\n    M -> Ya\n    M -> Za\n    Ta -> Ya\n  }\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-5254d8c6364c29ce4e2e" style="width:100%;height:312px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-5254d8c6364c29ce4e2e">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir = LR]\n  subgraph caso_1 {\n    node [shape=plaintext]\n    Z [fontcolor=\"red\"]\n    edge [minlen = 3]\n    T -> Z\n    Z -> Y\n    T -> Y\n  }\n  \n  subgraph caso_2 {\n    node [shape=plaintext]\n    Ya [label=\"Y\"]\n    Ta [label=\"T\"]\n    Za [label=\"Z\"][fontcolor=\"red\"]\n    edge [minlen = 3]\n    Ta -> M\n    M -> Ya\n    M -> Za\n    Ta -> Ya\n  }\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <div class="cell">
@@ -542,8 +549,8 @@ Falacia de la Tabla 2
 <span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>, <span class="at">width =</span> <span class="dv">250</span>, <span class="at">height =</span> <span class="dv">120</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-d57513e92441dafc930e" style="width:100%;height:312px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-d57513e92441dafc930e">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir = LR]\n  subgraph caso_1 {\n    node[shape= circle]\n    U_y\n    node [shape=plaintext]\n    Z [fontcolor=\"red\"]\n    edge [minlen = 3]\n    Y -> Z\n    T -> Y  \n    U_y -> Y\n  }\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-6296bdcac50adefe8007" style="width:100%;height:312px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6296bdcac50adefe8007">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir = LR]\n  subgraph caso_1 {\n    node[shape= circle]\n    U_y\n    node [shape=plaintext]\n    Z [fontcolor=\"red\"]\n    edge [minlen = 3]\n    Y -> Z\n    T -> Y  \n    U_y -> Y\n  }\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Hemos añadido un nodo implícito (otros factores que afectan <span class="math inline">\(Y\)</span> y no tienen relación con otras variables del sistema) para explicar qué es lo que pasa cuando condicionamos a <span class="math inline">\(Z\)</span>: como <span class="math inline">\(Z\)</span> es un descendiente del colisionador en <span class="math inline">\(Y\)</span>, se activa una ruta no causal entre <span class="math inline">\(U_y\)</span> y <span class="math inline">\(T\)</span>, y estas dos cantidades aparecen como correlacionadas (es una correlación no causal). Esto en consecuencia modifica la correlación entre <span class="math inline">\(T\)</span> y <span class="math inline">\(Y\)</span>.</p>
@@ -622,8 +629,8 @@ Falacia de la Tabla 2
 <span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>, <span class="at">width =</span> <span class="dv">250</span>, <span class="at">height =</span> <span class="dv">140</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-b538ee1a0bdd2c1b4ec3" style="width:100%;height:364px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-b538ee1a0bdd2c1b4ec3">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir = LR]\n  subgraph caso_1 {\n    node [shape=plaintext]\n    Z [fontcolor=\"red\"]\n    edge [minlen = 3]\n    T -> Z\n    Y -> Z\n    T -> Y\n  }\n  \n  subgraph caso_2 {\n    node [shape=circle]\n    U\n    node [shape=plaintext]\n    Ya [label=\"Y\"]\n    Ta [label=\"T\"]\n    Za [label=\"Z\"][fontcolor=\"red\"]\n    edge [minlen = 3]\n    U -> Za\n    U -> Ya\n    Ta -> Ya\n    Ta -> Za\n  {rank=same; Za; Ta}\n  }\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-5267107e72b44688f77e" style="width:100%;height:364px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-5267107e72b44688f77e">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir = LR]\n  subgraph caso_1 {\n    node [shape=plaintext]\n    Z [fontcolor=\"red\"]\n    edge [minlen = 3]\n    T -> Z\n    Y -> Z\n    T -> Y\n  }\n  \n  subgraph caso_2 {\n    node [shape=circle]\n    U\n    node [shape=plaintext]\n    Ya [label=\"Y\"]\n    Ta [label=\"T\"]\n    Za [label=\"Z\"][fontcolor=\"red\"]\n    edge [minlen = 3]\n    U -> Za\n    U -> Ya\n    Ta -> Ya\n    Ta -> Za\n  {rank=same; Za; Ta}\n  }\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <section id="ejemplo-la-paradoja-de-peso-de-recién-nacidos" class="level3 unnumbered">
@@ -653,8 +660,8 @@ Falacia de la Tabla 2
 <span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a><span class="st">}"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-1f168aeec2e00274f28b" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-1f168aeec2e00274f28b">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir = LR]\n  subgraph caso_1 {\n    node [shape=plaintext]\n    T [label = \"T\"]\n    Y [label = \"Y\"]\n    Z [label = \"Z\"][fontcolor = \"red\"]\n    node [shape=circle]\n    U\n    edge [minlen = 3]\n    T -> Y\n    T -> Z\n    Z -> Y\n    U -> Z\n    U -> Y\n  }\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-f21e2d40049a82cb32fa" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-f21e2d40049a82cb32fa">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir = LR]\n  subgraph caso_1 {\n    node [shape=plaintext]\n    T [label = \"T\"]\n    Y [label = \"Y\"]\n    Z [label = \"Z\"][fontcolor = \"red\"]\n    node [shape=circle]\n    U\n    edge [minlen = 3]\n    T -> Y\n    T -> Z\n    Z -> Y\n    U -> Z\n    U -> Y\n  }\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>En la gráfica de arriba, <span class="math inline">\(T\)</span> indica si la madre es fumadora o no, y <span class="math inline">\(Y\)</span> la mortalidad. <span class="math inline">\(Z\)</span> si el bebé nació con bajo peso o no.</p>
@@ -681,8 +688,8 @@ Falacia de la Tabla 2
 <span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="st">}'</span>, <span class="at">width =</span> <span class="dv">100</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-513996d4d67c8d73bde9" style="width:100%;height:325px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-513996d4d67c8d73bde9">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir = LR]\n  subgraph caso_1 {\n    node [shape=plaintext]\n    Z [fontcolor=\"red\"]\n    edge [minlen = 3]\n    Z -> T\n    T -> Y\n  }\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-69c66db369115ba5aee8" style="width:100%;height:325px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-69c66db369115ba5aee8">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir = LR]\n  subgraph caso_1 {\n    node [shape=plaintext]\n    Z [fontcolor=\"red\"]\n    edge [minlen = 3]\n    Z -> T\n    T -> Y\n  }\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>En este caso, condicionar a <span class="math inline">\(Z\)</span> no sesga nuestras estimaciones, pues no activamos ninguna ruta no causal. La dificultad es que típicamente disminuye la precisión de la estimación (usamos un modelo más grande donde no es necesario):</p>
@@ -728,8 +735,8 @@ Falacia de la Tabla 2
 <span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a><span class="st">}'</span>, <span class="at">width =</span> <span class="dv">100</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-498ce40e0f15f2d4536d" style="width:100%;height:325px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-498ce40e0f15f2d4536d">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir = LR]\n  subgraph caso_1 {\n    node [shape=plaintext]\n    Z [fontcolor=\"red\"]\n    X\n    Y\n    node [shape = circle]\n    U\n    edge [minlen = 3]\n    U -> X\n    U -> Y\n    Z -> X\n    X -> Y\n  }\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-3fdc2d23812514385786" style="width:100%;height:325px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3fdc2d23812514385786">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir = LR]\n  subgraph caso_1 {\n    node [shape=plaintext]\n    Z [fontcolor=\"red\"]\n    X\n    Y\n    node [shape = circle]\n    U\n    edge [minlen = 3]\n    U -> X\n    U -> Y\n    Z -> X\n    X -> Y\n  }\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>En este caso, tenemos una variable confusora <span class="math inline">\(U\)</span> que no nos permite estimar sin sesgo el efecto de <span class="math inline">\(T\)</span> sobre <span class="math inline">\(Y\)</span>. Sin embargo, si condicionamos a <span class="math inline">\(Z\)</span>, la situación puede emperorar (amplificación de sesgo), pues dentro de cada nivel de <span class="math inline">\(Z\)</span> hay menos variación de <span class="math inline">\(X\)</span>, y eso implica que la covarianza entre <span class="math inline">\(X\)</span> y <span class="math inline">\(Y\)</span>, en cada nivel de <span class="math inline">\(Z\)</span>, se debe más a la variable confusora.</p>
@@ -855,6 +862,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -889,7 +914,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -1170,6 +1199,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="./08-mcmc.html" class="pagination-link" aria-label="Markov Chain Monte Carlo">
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Markov Chain Monte Carlo</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->
