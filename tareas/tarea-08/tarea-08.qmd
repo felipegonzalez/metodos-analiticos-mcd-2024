@@ -1,0 +1,250 @@
+---
+title: "Tarea 8: puertas traseras"
+format: html
+---
+
+
+
+En este ejercicio resolveremos el problema que vimos en clase
+acerca del criterio de puertas traseras, identificaremos el efecto causal de interés
+y usaremos Stan para hacer una estimación de este efecto casual.
+
+```{r}
+library(tidyverse)
+library(DiagrammeR)
+library(cmdstanr)
+```
+
+
+
+El modelo gráfico que consideramos es el siguiente,  donde queremos
+evaluar la efectividad de un tratamiento en cierta enfermedad.
+Los datos que tenemos disponibles (son datos observados de una encuesta, por
+ejemplo), son si una persona
+utilizó o no un tratamiento,  y si se recuperó o no.
+No se registró el nivel socioeconómico, pero sabemos que el tratamiento
+es caro, de forma que fue accedido más por gente de NSE más alto. 
+
+También que sabemos que para este tipo de tratamiento, el peso de la
+persona es un factor importante para la recuperación, independiente
+de si tomó el tratamiento o no.
+
+Nuestros supuestos están en la siguiente gráfica:
+
+```{r}
+#| code-fold: true
+grViz("
+digraph {
+  graph [ranksep = 0.2, rankdir = LR]
+  node [shape=plaintext]
+    Trata
+    Res
+  node [shape = circle]
+    NSE
+    Peso
+  edge [minlen = 3]
+    NSE -> Peso
+    NSE -> Trata
+    Trata -> Res
+    Peso -> Res
+   
+}
+")
+
+```
+
+
+
+## Parte 1: Cantidades a estimar teóricas, simulación y aleatorización
+
+Primero supondremos que conocemos el proceso generador, y veremos cómo
+podemos calcular el efecto causal de interés, que es:
+
+- Si asignáramos el tratamiento al azar en la población, ¿que efecto
+tendría? Otra forma de decir esto es decir: ¿cómo se compararía una
+población grande de este proceso generador que toma el tratamiento
+vs una que no toma el tratamiento?
+
+
+En este caso usamos directamente
+las relaciones funcionales entre los nodos que por el momento suponemos conocidas:
+
+```{r}
+inv_logit <- function(x) 1 / (1 + exp(-x))
+simular_datos <- function(n = 10){
+  nse <- sample(c(0, 1), n, replace = TRUE)
+  peso <- rnorm(n, 70 - 7 * nse, 12 + 2 * nse) |> round()
+  trata <- rbinom(n, 1, 0.8 * nse + 0.2 * (1 - nse))
+  ## aquí es donde el tratamiento acúta sobre el resultado
+  p_trata <- inv_logit(0.5 * trata - 0.2 * (peso - 70))
+  res <- rbinom(n, 1, p_trata)
+  # regresar los datos
+  tibble(nse, peso, trata, res)
+}
+```
+
+Podríamos con estos datos calcular cómo se relaciona el tratamiento 
+con el resultado, de forma observacional:
+
+
+```{r}
+datos_sim <- simular_datos(5000)
+head(datos_sim)
+```
+
+Nótese, que por lo que sabemos del proceso generador, es incorrecto hacer
+simplemente (no contesta la pregunta de interés):
+
+```{r}
+ datos_sim |> 
+  group_by(trata) |> 
+  summarise(p_res = mean(res)) |>
+  pivot_wider(names_from = trata, values_from = p_res) |> 
+  mutate(dif_p_trata = `1` - `0`) 
+```
+
+Sin embargo, como conocemos todos los detalles el proceso generador, podemos
+simular el mismo proceso, pero suponiendo que asignamos al azar 
+el tratamiento. Lo único que tenemos que hacer que es que tratamiento
+**no** dependa de nse en nuestra gráfica. Como conocemos todos los detalles,
+nuestro nuevo proceso generador modificado por esta intervención es:
+
+
+```{r}
+simular_intervencion <- function(n = 10){
+  nse <- sample(c(0, 1), n, replace = TRUE)
+  peso <- rnorm(n, 70 - 7 * nse, 12 + 2 * nse) |> round()
+  # el tratamiento lo asignamos al azar, no responde a nse ahora
+  trata <- rbinom(n, 1, 0.5)
+  #trata <- rbinom(n, 1, 0.8 * nse + 0.2 * (1 - nse))
+  p_trata <- inv_logit(0.5 * trata - 0.2 * (peso - 70))
+  res <- rbinom(n, 1, p_trata)
+  tibble(nse, peso, trata, res)
+}
+```
+
+```{r}
+datos_sim_intervencion <- simular_intervencion(5000)
+datos_sim_intervencion |> 
+  group_by(trata) |> 
+  summarise(p_res = mean(res)) |>
+  pivot_wider(names_from = trata, values_from = p_res) |> 
+  mutate(dif_p_trata = `1` - `0`) 
+```
+**Esta es la cantidad correcta que queremos estimar.**
+
+
+**Pregunta 1**: Explica por qué estos dos resultados son diferentes. Justifica
+que si planeamos hacer una intervención general sobre la población,
+esta útlima cantidad es nuestro objetivo a estimar.
+
+
+
+## Parte 2: Usando datos y el critero de puerta trasera
+
+Ahora supongamos que tenemos los datos pero no conocemos todos los detalles
+del proceso generador. Solamente consideramos nuestro modelo gráfico como
+supuestos.
+
+En este caso, sabemos que hay un camino no causal que pasa por NSE, que
+llega a tratamiento y resultado. Ese camino está abierto originalmente.
+
+**Pregunta 2 **: explica por qué (recuerda que no medimos nse) no podemos usar
+la fórmula de ajuste que estratifica por padres del tratamiento. Explica sin
+embargo por qué podemos usar el criterio de puerta trasera para identificar
+el efecto causal de interés.
+
+De modo que el camino no causal en donde
+NSE es una bifuración puede ser bloqueado si condicionamos a peso, que es una
+variable que sí observamos. Por el
+**criterio de puerta trasera** que vimos en clase, entonces es posible modelar
+el efecto del tratamiento sobre la respuesta una vez que estratificamos por
+peso.
+
+Usaremos un modelo logístico, y hacemos las simulaciones para el contraste
+dentro del modelo
+
+```{r}
+mod_trata <- cmdstan_model("backdoor-logistico.stan")
+print(mod_trata)
+```
+```{r}
+datos_lista <- list(N = nrow(datos_sim),
+  trata = datos_sim$trata, res = datos_sim$res,
+  peso = datos_sim$peso)
+ajuste <- mod_trata$sample(data = datos_lista, refresh = 1000)
+sims <- ajuste$draws(c("dif_trata"), format = "df")
+```
+
+
+Obtenemos el resultado correcto. 
+
+```{r}
+resumen <- ajuste$summary(c("dif_trata"))
+resumen
+```
+
+
+**Pregunta 3**: Nuestro modelo logístico incluye tratamiento y peso. ¿Dónde
+ocurre y como se marginaliza el peso en el código de arriba?
+
+
+**Pregunta 4**: Imagínate que sólo nos interesara saber cuál es el efecto 
+del tratamiento para la población con un peso de 70 kg. Modifica el código de Stan para calcularlo.
+Verifica tu resultado usando el proceso generador modificado que consideramos arriba.
+
+
+
+
+## Parte 3: Estimando y usando el proceso generador completo
+
+Otra manera de estimar nuestra cantidad de interés es modelando
+el sistemo de manera completa. En este caso, no es necesario usar cálculo-do
+(criterio de la puerta trasera), sino:
+
+- Modelamos todos los nodos como indica nuestro diagrama causal y con modelos
+estadísticos apropiados.
+- Simulamos de la gráfica "mutilada" que no tiene flechas al tratamiento, que
+vamos a fijar. Para el resto de los nodos, los simulamos según el modelo ajustado.
+
+Observa que esto es lo mismo que hicimos en la Parte 1, teórica, donde conocíamos
+todas las relaciones funcionales. Este es un camino más complicado pero 
+también da los resultados correctos.
+
+
+
+```{r}
+mod_completo <- cmdstan_model("proceso-completo.stan")
+print(mod_completo)
+```
+
+
+```{r}
+datos_lista <- list(N = nrow(datos_sim),
+  trata = datos_sim$trata, 
+  nse = datos_sim$nse,
+  res = datos_sim$res,
+  peso = datos_sim$peso)
+ajuste_comp <- mod_trata$sample(data = datos_lista, refresh = 1000)
+sims_comp <- ajuste_comp$draws(c("dif_trata"), format = "df")
+```
+
+
+Obtenemos otra vez el resultado correcto. 
+
+```{r}
+resumen_comp <- ajuste_comp$summary(c( "dif_trata"))
+resumen_comp
+```
+
+**Pregunta 5**: explica en general por qué si ya hemos modelado el sistema completo
+que propone el modelo gráfico, no es necesario usar ningún "truco" para estimar
+el efecto causal de interés.
+
+
+
+
+
+
+
+
