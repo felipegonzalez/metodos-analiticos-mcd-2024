@@ -523,7 +523,7 @@ Idea básica de MCMC
 <span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>z_tbl <span class="ot">&lt;-</span> <span class="fu">simular_normal</span>(M, m, Sigma, <span class="dv">1</span>, <span class="dv">1</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.60038</code></pre>
+<pre><code>[1] 0.59844</code></pre>
 </div>
 </div>
 <p>Vemos que tenemos una tasa alta de rechazos. ¿Por qué? Veamos cómo se ven las simulaciones después de 1000 iteraciones:</p>
@@ -560,7 +560,7 @@ Idea básica de MCMC
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>z_tbl <span class="ot">&lt;-</span> <span class="fu">simular_normal</span>(M, m, Sigma, <span class="fl">0.2</span>, <span class="fl">0.2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.1568</code></pre>
+<pre><code>[1] 0.15316</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>graf_tbl <span class="ot">&lt;-</span> <span class="fu">map_df</span>(<span class="fu">seq</span>(<span class="dv">10</span>, <span class="dv">500</span>, <span class="dv">20</span>), <span class="cf">function</span>(i){</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  z_tbl <span class="sc">|&gt;</span> <span class="fu">filter</span>(n_sim <span class="sc">&lt;=</span> i) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">num_sims =</span> i)</span>
