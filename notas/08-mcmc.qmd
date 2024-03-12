@@ -80,7 +80,7 @@ siguiente lugar $x_{i+1}$, condicionada al valor actual $x_i$ no depende
 de valores anteriores de las $x$.
 
 ```{r}
-#set.seed(451123)
+set.seed(45123)
 # definimos estas p
 k <- 40
 p <- exp(-(1:k - k/3)^2 / 10)
@@ -187,7 +187,7 @@ Y podemos ver cómo evoluciona nuestra cadena de Markov:
 
 ```{r}
 ggplot(resultados_sim_2 |> filter(n_sim < 400), aes(x = n_sim, y = x)) +
-  geom_line() + scale_y_continuous(breaks = 1:10)
+  geom_line() + scale_y_continuous(breaks = 1:20)
 ```
 
 ¿Cómo se comparan estos dos métodos? Podemos ver por ejemplo cómo
@@ -233,48 +233,60 @@ En este caso, considera qué es lo que sucede en cada uno de estos casos:
 2. El algoritmo que da saltos chicos puede tardar en explorar regiones
 de probabilidad relativamente alta con suficiente frecuencia (tarda un moverse de un lugar a otro), por su naturaleza de "caminata aleatoria". Pero sus tasas de aceptación son más altas.
 
-Este es el primer balance que existe en este algoritmo: tomar pasos grandes y balancear las probabilidades quizá rechazando muy frecuentemente (no es eficiente),
-o tomar pasos chicos y vagar más tiempo para visitar regiones de alta probabilidad, aunque con menos tasa de rechazo. Dependiendo de la distribución que queremos aproximar podemos inclinarnos más por una o por otra opción.
-
-
-
-¿Por qué funcionan estos algoritmos? Supongamos que en cada paso,
-se cumple que (balance detallado):
-$${q(x|y)}p(y) = {q(y|x)}{p(x)}$$
-donde $q(x|y)$ son las probabilidades de transición de nuestra cadena de Markov
-propuesta. Esta ecuación dice que si la probabilidad se distribuye como $p(x)$,
-entonces al transicionar con $q$ la probabilidad fluje de manera que se mantiene
-estática en $p$, es decir $p$ es una distribución estacionaria. 
-Esto es fácil de demostrar pues
-$$\sum_{y} q(x|y)p(y) = \sum_{y} q(y|x)p(x) = p(x) \sum_{y} q(y|x) = p(x).$$
-
-Bajo otros supuestos adicionales de ergodicidad (aperiodicidad y tiempos de recurrencia finitos, es decir, las transiciones *mezclan* bien los estados),
-entonces podemos simular la cadena de Markov por un tiempo suficientemente largo
-y con esto obtener una muestra de la distribución objetivo $p$.
-
-¿Cómo podemos diseñar entonces las $q(x|y)$ correspondientes? Comenzamos
-considerando distribuciones propuesta $q_0(x|y)$ que no satisfacen 
-la ecuación de balance, y supondremos como en los ejemplos de arriba
-(verifícalo) que nuestras transiciones tienen probabilidades simétricas $q_0(y|x) = q_0(x|y)$. Entonces, cuando $p(y)/p(x) > 1$, queremos transicionar
-de $x$ a $y$ con más frecuencia que de $y$ a $x$. Comenzando en $x$, 
-si la propuesta de $q_0$ es $y$, podríamos
-poner entonces que el sistema transicione con probabilidad 1 a $y$. Sin embargo, si empezamos en $y$ y la propuesta es $x$, el sistema sólo transiciona de  $y$ a $x$  con probabilidad $p(x)/p(y)$. 
-
-De esta manera, obtenemos que bajo $q(y|x)$, $x$ transiciona a $y$ 
-con probabilidad $\min\{1, p(y)/p(x)\}$. Entonces, el cociente
-$\frac{q(y|x)}{q(x|y)}$ es igual a $\frac{p(y)}{p(x)}$ si $p(y)<p(x)$, y es igual
-a $1/\frac{p(x)}{p(y)} = \frac{p(y)}{p(x)}$ si $p(y)>p(x)$.
-
-
+Este es el primer *trade-off* que existe en este algoritmo: tomar pasos grandes y balancear las probabilidades quizá rechazando muy frecuentemente (no es eficiente),
+o tomar pasos chicos y vagar más tiempo para visitar regiones de alta probabilidad, aunque con menos tasa de rechazo. Dependiendo de la distribución que queremos aproximar podemos inclinarnos más por una o por otra opción. En dimensiones altas generalmente ninguna combinación es muy buena.
 
 ::: callout-note
 # Idea básica de MCMC
 
 En MCMC, buscamos un cadena de Markov que, en el largo plazo, 
-visite cada posible parámetro proporcionalmente a la probabildad posterior
-de cada parámetro.
+visite cada posible valor del parámetro proporcionalmente a la probabildad posterior
+del parámetro. En el caso multivariado es la misma idea: cada combinación
+de parámetros debe ser visitada por la cadena en proporción a su probabilidad
+posterior.
 
 :::
+
+### Balance detallado {-}
+
+¿Por qué funcionan estos algoritmos? Supongamos que en cada paso,
+se cumple que (balance detallado):
+$${q(x|y)}p(y) = {q(y|x)}{p(x)}$$
+donde $q(x|y)$ son las probabilidades de transición de nuestra cadena de Markov
+propuesta. Esta ecuación dice que la proporción de transiciones de $y$ a $x$ en relación a las transiciones de $x$ a $y$ es la misma que la proporción de probabildad que hay entre $y$ y $x$ en la distribución objetivo.
+
+Esta ecuación implica que si la probabilidad se distribuye como $p(x)$,
+entonces al transicionar con $q$ la probabilidad fluje de manera que se mantiene
+estática en $p$, es decir $p$ es una *distribución estacionaria* para la cadena de Markov producida por las transiciones.
+
+Esto es fácil de demostrar pues
+$$\sum_{y} q(x|y)p(y) = \sum_{y} q(y|x)p(x) = p(x) \sum_{y} q(y|x) = p(x).$$
+
+Bajo otros supuestos adicionales de ergodicidad (aperiodicidad y tiempos de recurrencia finitos, es decir, las transiciones *mezclan* bien los estados),
+entonces podemos simular la cadena de Markov por un tiempo suficientemente largo
+y con esto obtener una muestra de la distribución objetivo $p$, es decir, la distribución estacionaria $p(x)$ también es la distribución de largo plazo para
+cualquier cadena que simulemos.
+
+
+¿Cómo podemos diseñar entonces las $q(x|y)$ correspondientes? 
+
+Comenzamos
+considerando distribuciones propuesta $q_0(x|y)$ que no necesariamente satisfacen 
+la ecuación de balance, y supondremos como en los ejemplos de arriba
+(verifícalo) que nuestras transiciones tienen probabilidades simétricas $q_0(y|x) = q_0(x|y)$. Entonces, cuando $p(y)/p(x) > 1$, queremos transicionar
+de $x$ a $y$ con más frecuencia que de $y$ a $x$. Comenzando en $x$, 
+si la propuesta de $q_0(y|x)$ es $y$, podríamos
+poner entonces que el sistema transicione con probabilidad 1 a $y$. Sin embargo, si empezamos en $y$ y la propuesta es $x$, ponemos que el sistema sólo transiciona de  $y$ a $x$  con probabilidad $p(x)/p(y)$. 
+
+De esta manera, obtenemos que bajo $q(y|x)$, $x$ transiciona a $y$ 
+con probabilidad $\min\{1, p(y)/p(x)\}$. Entonces, el cociente
+$\frac{q(y|x)}{q(x|y)}$ es igual a $\frac{p(y)}{p(x)}$ si $p(y)<p(x)$, y es igual
+a $1/\frac{p(x)}{p(y)} = \frac{p(y)}{p(x)}$ si $p(y)>p(x)$. Esto demuestra
+que se cumple el balance detallado.
+
+
+
+
 
 ### Ejemplo: Metropolis bivariado {-}
 
@@ -288,13 +300,15 @@ La distribución objetivo $p$ está dada entonces (módulo una constante
 de proporcionalidad):
 
 ```{r}
-Sigma <- matrix(c(1, 0.8, 0.8, 1), nrow = 2)
-Sigma_inv <- solve(Sigma)
-m <- c(2, 3)
-log_p <- function(z){
-  - 0.5 * (t(z-m) %*% Sigma_inv %*% (z-m))
+construir_log_p <- function(m, Sigma){
+  Sigma_inv <- solve(Sigma)
+  function(z){
+    - 0.5 * (t(z-m) %*% Sigma_inv %*% (z-m))
+  }
 }
-
+Sigma <- matrix(c(1, 0.8, 0.8, 1), nrow = 2)
+m <- c(2, 3)
+log_p <- construir_log_p(m, Sigma)
 ```
 
 Nótese que como Metropolis hace cocientes de probabilidades, sólo es necesario
@@ -305,7 +319,7 @@ Una algoritmo  de Metropolis podría ser el siguiente:
 ```{r}
 # simulamos
 M <- 50000
-simular_normal <- function(M, m, Sigma, delta_x, delta_y){
+simular_normal <- function(M, log_p, delta_x, delta_y){
   z <- matrix(nrow = M, ncol = 2)
   z[1, ] <- c(2.5, 3.2)
   colnames(z) <- c("x", "y")
@@ -327,28 +341,60 @@ simular_normal <- function(M, m, Sigma, delta_x, delta_y){
     mutate(n_sim = row_number())
   z_tbl
 }
-z_tbl <- simular_normal(M, m, Sigma, 1, 1)
+z_tbl <- simular_normal(M, log_p, 1.0, 1.0)
 ```
 
 
-Vemos que tenemos una tasa alta de rechazos. ¿Por qué? Veamos cómo se ven las simulaciones después de 1000 iteraciones:
+Vemos que tenemos una tasa alta de rechazos. ¿Por qué? Veamos cómo se ven las simulaciones hasta 500 iteraciones:
 
 ```{r}
+#| code-fold: true
 # estas las usamos para graficar
-sims_normal <- mvtnorm::rmvnorm(10000, mean = m, sigma = Sigma)
+sims_normal <- mvtnorm::rmvnorm(100000, mean = m, sigma = Sigma)
 colnames(sims_normal) <- c("x", "y")
 sims_normal <- as_tibble(sims_normal)
+elipses_normal <-list(stat_ellipse(data = sims_normal, aes(x, y), 
+               level = c(0.9), type = "norm", colour = "salmon"),
+  stat_ellipse(data = sims_normal, aes(x, y), 
+               level = c(0.5), type = "norm", colour = "salmon"), 
+  stat_ellipse(data = sims_normal, aes(x, y), 
+               level = c(0.2), type = "norm", colour = "salmon"))
+```
+
+
+```{r}
 graf_tbl <- map_df(seq(10, 500, 20), function(i){
   z_tbl |> filter(n_sim <= i) |> mutate(num_sims = i)
 })
 ggplot(graf_tbl, aes(x, y)) + 
-  stat_ellipse(data = sims_normal, aes(x, y), 
-               level = c( 0.9), type = "norm", colour = "salmon") +
-  stat_ellipse(data = sims_normal, aes(x, y), 
-               level = c( 0.5), type = "norm", colour = "salmon") +
+  elipses_normal +
   geom_point(alpha = 0.1) +
   facet_wrap(~num_sims) + theme_minimal()
 ```
+
+```{r}
+#| eval: false
+library(gganimate)
+anim_mh_1 <- z_tbl |> filter(n_sim < 50) |> 
+  ggplot() + 
+  geom_point(aes(x, y, group = n_sim), size = 3) +
+  transition_reveal(n_sim) +
+  elipses_normal +
+  labs(title = 'Iteración: {frame_along}') +
+  theme_minimal()
+anim_save(animation = anim_mh_1, filename = "figuras/mh-1-normal.gif", 
+          renderer = gifski_renderer())
+```
+
+![Metropolis Hastings](figuras/mh-1-normal.gif)
+
+
+
+
+
+
+
+
 **Observaciones**: 
 
 - Los puntos que tienen intensidad alta son puntos donde hubo varios rechazos. Esto es porque las propuestas a veces caen en elipses de baja probabilidad (en la gráfica mostramos una elipse de 50% probabilidad y otra de 95%).
@@ -358,7 +404,7 @@ ggplot(graf_tbl, aes(x, y)) +
 Podemos entonces proponer saltos más chicos, por ejemplo:
 
 ```{r}
-z_tbl <- simular_normal(M, m, Sigma, 0.2, 0.2)
+z_tbl <- simular_normal(M, log_p, 0.2, 0.2)
 graf_tbl <- map_df(seq(10, 500, 20), function(i){
   z_tbl |> filter(n_sim <= i) |> mutate(num_sims = i)
 })
@@ -371,20 +417,37 @@ ggplot(graf_tbl, aes(x, y)) +
   facet_wrap(~num_sims) + theme_minimal()
 ```
 
+
+```{r}
+#| eval: false
+anim_mh_2 <- z_tbl |> filter(n_sim < 150) |> 
+  ggplot() + 
+  geom_point(aes(x, y, group = n_sim), size = 3) +
+  transition_reveal(n_sim) +
+  elipses_normal +
+  labs(title = 'Iteración: {frame_along}') +
+  theme_minimal()
+anim_save(animation = anim_mh_2, filename = "figuras/mh-2-normal.gif", 
+          renderer = gifski_renderer())
+```
+
+![Metropolis Hastings salto chico](figuras/mh-2-normal.gif)
+
+
+
 **Observaciones**: 
 
 - En este caso tenemos una tasa de aceptación más alta.
 - Sin embargo, la cadena parece "vagar" en la regiones de probabilidad alta,
-y tiene dificultades para explorar correctamente estas regiones.
+y tiene dificultades para explorar correctamente estas regiones: se comporta localmente como una caminata aleatoria.
 - Sin embargo, a largo plazo, vemos cómo la cadena está visitando las regiones de alta probabilidad con aparentemente la frecuencia correcta.
 
 
 :::callout-note
 # Metropolis-Hastings
 
-En el algoritmo de Metropolis Hastings hay una tensión natural en tamaño
-de salto y tasa de aceptación. Si el tamaño de los saltos es muy grande, la tasa de aceptación es baja y esto producen ineficiencias. Si el tamaño de los saltos es
-muy chico, la tasa de aceptación es más alta, pero esto también es ineficiente.
+En el algoritmo de Metropolis Hastings hay una tensión natural entre el tamaño
+de salto y la tasa de aceptación. Si el tamaño de los saltos es muy grande, la tasa de aceptación puede ser baja y esto producen ineficiencias. Si el tamaño de los saltos es muy chico, la tasa de aceptación es más alta, pero esto también es ineficiente pues la cadena puede explorar muy lentamente el espacio de parámetros.
 :::
 
 Existen métodos que pueden superar este problema, como son muestreo 
@@ -394,4 +457,353 @@ no siempre es posible. Veremos más el segundo, donde usaremos información
 del gradiente de la distribución objetivo para proponer exploración más eficiente.
 
 ## Monte Carlo Hamiltoniano
+
+Una manera de mejorar la exploración de Metropolis es utilizar una distribución
+de propuestas más apropiada. La intuición en el caso anterior es: 
+
+- Hay direcciones de más curvatura de la posterior que otras: movimientos relativamente chicos en las direcciones de alta curvatura nos lleva a regiones de probabilidad demasiado baja, y entonces tendemos a rechazar. Pero hacer movimientos aún más chicos para evitar rechazos nos lleva a explorar muy lentamente el espacio de parámetros.
+- Podríamos evitar esto si nuestros saltos siguieran la curvatura natural de la distribución, como una pelota que rueda por la superficie de la distribución objetivo (con signo negativo, de forma que regiones de probabilidad alta sean valles o regiones bajas).
+
+La idea de HMC es considerar el problema de muestrear de una distribución
+como un problema físico, donde introducimos aleatoridad solamente en cuanto
+a la "energía" de la pelota que va a explorar la posterior. Inicialmente
+impartimos un momento tomado al azar a la pelota, seguimos su trayectoria
+por un tiempo y el lugar a donde llega es nuestra nueva simulación. Esto 
+permite que podamos dar saltos más grandes, sin "despeñarnos" en regiones de probabilidad muy baja y así evitar rechazos. 
+
+Adicionalmente, veremos que si definimos el sistema físico apropiadamente,
+es posible obtener ecuaciones de balance detallado, lo cual en teoría nos
+garantiza una manera de transicionar que resultará a largo plazo en
+una muestra de la distribución objetivo.
+
+
+### Formulación Hamiltoniana 1: introducción {-}
+
+Primero veremos cuál es la formulación Hamiltoniana (muy simple) 
+de un sistema físico que
+nos sirve para encontrar la trayectoria de partículas del sistema. Consideremos
+una sola partícula cuya posición está dada por $q$, que suponemos en una sola
+dimensión. La partícula rueda en una superficie cuya altura describimos
+como $V(q)$, y tiene en cada instante tiene momento $p = m\dot{q}$. 
+
+El Hamiltoniano
+es la energía total de este sistema, en el *espacio fase* que describe el
+estado de cada partícula dadas su posición y momento $(p,q)$, y es la suma de energía cinética más energía potencial:
+
+$H(p,q) = T(p) + V(q)$
+
+donde $V(q) = q^2/2$ está dada y $T(p) = \frac{p^2}{2m}$, de modo que 
+
+$$H(p, q) = \frac{p^2}{2m} + V(q) = \frac{p^2}{2m} + \frac{q^2}{2}$$
+
+Ahora consideremos las curvas de nivel de $H$, que en este caso se conservan
+a lo largo del movimiento de la partícula. Como sabemos por cálculo, estas curvas son perpendiculares al gradiente
+del Hamiltoniano, que es $(\partial{H}/\partial{p}, \partial{H}/\partial{q})$.
+ El movimiento
+de las partículas, sin embargo, es a lo largo de las curvas de nivel, de manera
+que el flujo instantáneo debe estar dado por el gradiente de $H$ rotado 90 grados, es decir, por $(\partial{H}/\partial{q}, -\partial{H}/\partial{p})$.
+
+Entonces tenemos que el movimiento de la partícula debe cumplir las ecuaciones
+de Hamilton:
+
+$$\frac{dp}{dt} = \frac{\partial{H}}{\partial{q}}, \frac{dq}{dt} = -\frac{\partial{H}}{\partial{p}}$$
+Simplificando y usando la definición de $H$, obtenemos que
+$$\frac{dq}{dt} = \frac{p}{m}, \frac{dp}{dt} = -\frac{\partial{V}}{\partial{q}} = -q$$
+Ilustramos este campo vectorial en la siguiente gráfica, donde escogemos $V(q) = q^2/2$, $m=1$, y dibujamos algunas curvas de nivel del Hamiltoniano:
+
+```{r}
+#| code-fold: true
+espacio_fase_1 <- tibble(p = seq(-3, 3, length.out = 1000), q = seq(-3, 3, length.out = 1000)) |> 
+  expand(p, q) |> 
+  mutate(dq = p, dp = -q) |> 
+  mutate(H = p^2/2 + q^2/2)
+espacio_fase <- tibble(p = seq(-3, 3, length.out = 10), q = seq(-3, 3, length.out = 10)) |> 
+  expand(p, q) |> 
+  mutate(dq = p, dp = -q)
+espacio_fase |> 
+  ggplot(aes(p, q)) +
+  geom_contour(data = espacio_fase_1, aes(x = p, y = q, z = H)) +
+  geom_segment(aes(xend = p + dp/5, yend = q + dq/5), 
+               arrow = arrow(length = unit(0.1, "inches"))) +
+  theme_minimal() +
+  labs(subtitle = "Movimiento en espacio fase: 1 dimensión")
+```
+
+**Ojo**: este no es le movimiento de una partícula en dimensión 2: es el movimiento de la partícula en el espacio fase $(p,q)$, y la variable
+de posición $q$ es de dimensión 1. Los ciclos de la gráfica muestran como
+conforme la partícula se mueve, energía potencial y cinética se intercambian
+a lo largo de su trayectoria en un "hilo".
+
+
+### Formulación Hamiltoniana 2: densidades de probabilidad {-}
+
+Consideremos
+una partícula en el espacio de parámetros $\theta$. 
+En esta formulación, si $\theta$ son
+los parámetros de interés, consideramos la energía potencial del sistema
+como $V(p) = -\log p(\theta)$, donde $p(\theta)$ es la distribución objetivo. 
+
+Buscamos
+simular del sistema con ecuaciones de movimiento para $\theta$. Como hicimos
+antes, vamos a levantar al espacio fase incluyendo el momento, que denotaremos como $\rho$. La energía cinética, en el caso más simple,
+podemos definirla (en la práctica existen reescalamientos) como 
+como $T(\rho) =\frac{1}{2}\sum_i \rho_i^2$ (la energía cinética es proporcional
+al momento cuadrado, pues el momento es masa por velocidad).
+
+El Hamiltoniano por definición $H(\rho, \theta) = T(\rho) + V(\theta)$, y las ecuaciones de Hamilton son las mismas que arriba, que en este caso nos dan
+
+$$\frac{d\theta}{dt} = \rho, \frac{d\rho}{dt} = \nabla(\log(p(\theta)).$$
+
+Si resolvemos estas ecuaciones, podemos entonces simular del sistema como
+sigue:
+
+1. Dado un punto inicial $\theta$, escogemos un momento inicial $\rho$ al azar, por ejemplo cada componente normal $N(0,1)$ (en la práctica existe un reescalamiento, pero en general queremos que $p(\rho) = p(-\rho)$). Es decir, agregamos inicialmente una cantidad de energía a la partícula.
+2. Usando las ecuaciones de Hamilton, actualizamos la posición $\theta$ 
+y el momento de la partícula un cierto tiempo $t$ fijo, de manera que no quedemos muy cerca
+del valor inicial, pero tampoco hagamos demasiado trabajo computacional.
+3. La posición nueva $\theta^*$ es aceptada como nuestra nueva simulación 
+(si el paso 2 es *exacto*, pero frecuentemente no lo es).
+4. Repetimos los pasos 1-3 un número suficiente de veces para obtener
+simulaciones de la posterior.
+
+Este método produce simulaciones de la distribución objetivo bajo condiciones de regularidad. Podemos demostrar
+por ejemplo, que se cumple el balance detallado.
+
+### Balance detallado para HMC {-}
+
+Supongamos que las transiciones que da este sistema son $q(y|x)$. Nótese
+que dado el momento simulado, tenemos el estado $(\rho, x)$, y 
+la transición $x\to\y$ es determinista,
+gobernada por las ecuaciones de Hamilton. Escribimos la transición como
+$$(\rho, x) \to (\rho^*, y).$$
+Nótese que $\rho$ y $x$ determinan la transición, de modo que
+
+$$p(x)q(y|x) = p(x)p(\rho) = \exp(-H(\rho, x)) = \exp(-H(\rho^*, y))$$
+Que es cierto por conservación de la energía total y la transición
+sigue exactamente trayectorias del Hamiltoniano. Esta última cantidad,
+usando un argumento similar, es igual a
+
+$$p(y)p(\rho^*) = p(y)p(-\rho^*) = p(y) q(x|y)$$
+La segunda igualdad se da porque $p(\rho)$ es Gaussiana (simétrica). Y finalmente,
+la última igualdad se da porque si necesitamos momento $\rho$ para llegar de $x$ a $(\rho^*, y)$, entonces necesitamos $-\rho^*$ (volteamos la velocidad ifnal) para llegar de $y$ a $(\rho, x)$, pues el sistema físico es reversible.
+
+Nótese que este argumento se rompe si por ejemplo si es imposible transicionar
+de un punto a otro (por ejemplo, cuando la distribución objetivo $p$ tiene dos
+regiones separadas de probabilidad positiva).
+
+
+### Integración de las ecuaciones de Hamilton {-}
+
+Para aproximar soluciones de estas ecuaciones diferenciales utilizamos
+el integrador [leapfrog](https://en.wikipedia.org/wiki/Leapfrog_integration), 
+en el que hacemos actualizaciones alternadas
+de posición y momento con un tamaño de paso $\epsilon$ chico. Hacemos este
+paso un número $L$ de veces, para no quedar muy cerca del valor inicial.
+
+En nuestro ejemplo, actualizaríamos por ejemplo el momento a la mitad del paso:
+
+$$\rho_{t+\epsilon/2} = \rho_t - \frac{\epsilon}{2}\nabla(\log(p(\theta_t)))$$
+Seguido de una actualización de la posición:
+
+$$\theta_{t+\epsilon} = \theta_t + \epsilon \rho_{t+\epsilon/2}$$
+y finalmente otra actualización del momento:
+
+$$\rho_{t+\epsilon} = \rho_{t+\epsilon/2} - \frac{\epsilon}{2}\nabla(\log(p(\theta_{t+\epsilon})))$$
+Al final de este proceso, encontraremos que por errores numéricos, quizá
+el Hamiltoniano varió un poco. Si esto sucede, podemos hacer un
+paso de aceptación y rechazo como en Metropolis Hastings, donde la probabilidad
+de aceptar es
+
+$$\min\left(1, \exp(H(\rho,\theta) - H(\rho^{*},\theta^{*}))\right)$$
+donde $\rho^{*}$ y $\theta^{*}$ son los valores de momento y posición nuevos
+y $H(\rho,\theta)$ es el Hamiltoniano en el paso anterior.
+
+**Observaciones**:
+
+1. Un caso posible obtengamos desbordes o casi desbordes numéricos
+del momento o la posición. Esto indica
+problemas graves con el algoritmo de integración, y en general marcamos
+estas iteraciones como **divergentes**. Estas fallas pueden producir, como
+veremos, exploración insuficiente de la distribución objetivo.
+2. Si queremos usar HMC directamente, es delicado afinar el tamaño de paso,
+la distribución de propuesta para el momento, y el número de saltos $L$. En
+Stan, que usa una variación de HMC, estos valores son ajustados
+en el periodo de calentamiento o *warmup*, antes de 
+
+
+### Ejemplo: HMC en una distribución normal bivariada {-}
+
+Primero calculamos el gradiente que requerimos. En este caso, podemos
+hacerlo analíticamente:
+
+```{r}
+construir_log_p <- function(m, Sigma){
+  Sigma_inv <- solve(Sigma)
+  function(z){
+    - 0.5 * (t(z-m) %*% Sigma_inv %*% (z-m))
+  }
+}
+Sigma <- matrix(c(1, 0.8, 0.8, 1), nrow = 2)
+m <- c(2, 3)
+log_p <- construir_log_p(m, Sigma)
+# en diferenciación automática, el siguiente constructor
+# puede tomar como argumento log_p, pero aquí la escribimos
+# explícitamente
+construir_grad_log_p <- function(m, Sigma){
+  Sigma_inv <- solve(Sigma)
+  function(theta){
+    - Sigma_inv %*% (theta-m)
+  }
+}
+grad_log_p <- construir_grad_log_p(m, Sigma)
+construir_H <- function(m, Sigma){
+  Sigma_inv <- solve(Sigma)
+  function(theta, rho){
+    - log_p(theta) + 0.5 * sum(rho^2)
+  }
+}
+H <- construir_H(m, Sigma)
+log_p(c(1,3))
+grad_log_p(c(1,3))
+```
+
+Ahora, implementamos el algoritmo de HMC. Primero, definimos una función
+
+```{r}
+hamilton_mc <- function(n, theta_0 = c(0,0), log_p, grad_log_p, epsilon, L){
+  p <- length(theta_0)
+  theta <- matrix(0, n, p)
+  theta[1, ] <- theta_0
+  rho <- matrix(0, n, p)
+  theta_completa <- matrix(0, n*L, p)
+  theta_completa[1, 0] <- theta_0
+  rho_completa <- matrix(0, n*L, p) 
+  indice_completa <- 2
+  rechazo <- 0
+  for(i in 2:n){
+    prop_rho <- rnorm(p)
+    rho[i-1, ] <- prop_rho
+    prop_theta <- theta[i-1, ]
+    for(t in 1:L){
+      prop_rho <- prop_rho + 0.5 * epsilon * grad_log_p(prop_theta)
+      prop_theta <- prop_theta + epsilon * prop_rho 
+      prop_rho  <- prop_rho + 0.5 * epsilon * grad_log_p(prop_theta)
+      theta_completa[indice_completa,] <- prop_theta
+      rho_completa[indice_completa,] <- prop_rho
+      indice_completa <- indice_completa + 1
+    }
+  
+    q <- min(1, exp(H(theta[i-1, ], rho[i-1, ]) - 
+                  H(prop_theta, prop_rho))) 
+    if(runif(1) < q){
+      theta[i, ] <- prop_theta
+    } else {
+      rechazo <- rechazo + 1
+      theta[i, ] <- theta[i-1, ]
+      rho[i, ] <- rho[i-1, ]
+      theta_completa[indice_completa - 1,] <- theta[i-1, ]
+      rho_completa[indice_completa - 1,] <- rho[i-1, ]
+    } 
+  }
+  print(rechazo / n)
+  list(sims = tibble(x = theta[,1], y = theta[,2]),
+       trayectorias = tibble(x = theta_completa[,1], y = theta_completa[,2]) |>
+         mutate(iteracion = rep(1:n, each = L), paso = rep(1:L, times = n)))
+}
+
+```
+
+
+Revisamos que la muestra aproxima apropiadamente nuestra distribución
+
+```{r}
+hmc_salida <- hamilton_mc(1000, c(0,0), log_p, grad_log_p, 0.2, 12)
+
+ggplot(hmc_salida$sims, aes(x = x, y = y)) + geom_point() +
+  stat_ellipse(data = sims_normal, aes(x, y), 
+               level = c(0.9), type = "norm", colour = "salmon") +
+  stat_ellipse(data = sims_normal, aes(x, y), 
+               level = c( 0.5), type = "norm", colour = "salmon") +
+  stat_ellipse(level = c( 0.9), colour = "green", type = "norm") +
+  stat_ellipse(level = c( 0.5), colour = "green", type = "norm") 
+```
+
+```{r}
+tray_tbl <- hmc_salida$trayectorias
+head(tray_tbl)
+```
+
+
+```{r}
+#| eval: false
+library(gganimate)
+anim_hmc <- ggplot(tray_tbl |> mutate(iter = 4*as.numeric(paso == 1), 
+                          s = as.numeric(paso == 2)) |> 
+         filter(iteracion < 20) |> 
+         mutate(tiempo = row_number()) |> 
+         mutate(tiempo = tiempo + cumsum(50 * s)), 
+       aes(x = x, y = y)) + 
+    geom_point(aes(colour = iter, alpha = iter, size = iter, group = tiempo)) +
+    geom_path(colour = "gray", alpha = 0.5) +
+  transition_reveal(tiempo) +
+  elipses_normal +
+  theme(legend.position = "none") +
+anim_save(animation = anim_hmc, filename = "figuras/hmc-normal.gif", 
+          renderer = gifski_renderer())
+```
+
+![HMC](figuras/hmc-normal.gif)
+
+
+**Observaciones**:
+
+- Nótese que ahora podemos dar pasos más grandes a lo largo de los lugares
+donde concentra mayor probabilidad.
+- Esto implica dos cosas: evitamos el comportamiento de caminata aleatoria (pasos muy cortos), y también tasas de rechazo alto (cuando los pasos son muy grandes en HMC)
+- El algoritmo utiliza información adicional: además de calcular la posterior, como en metropolis, es necesario calcular también el gradiente de la posterior.
+- Este algoritmo hace más trabajo para cada iteración (requiere la integración leapfrog), pero cada iteración es más informativa
+- Bien afinado, funciona para problemas de dimensión alta (cientos o miles de parámetros), donde geométricamente la densidad está concentrada en un espacio geométricamente chico. Existen todavía dificultades que discutiremos en otros modelos más adelante.
+
+::: callout-tip
+Observamos que hasta ahora no hemos aplicado estos algoritmos para simular
+de la posterior de un modelo: hemos tomado distribuciones fijas y usamos MCMC para simular de ellas. El proceso para una posterior es el mismo, pero usualmente más complicado pues generalmente involucra mucho más parámetros y una
+posterior que no tiene una forma analítica conocida.
+
+Sin embargo, la aplicación para una posterior es la misma: siempre podemos
+calcular el logaritmo de la posterior (al menos hasta una constante de proporcionalidad), y siempre podemos usar diferenciación automática para 
+calcular el gradiente de la log posterior. Podemos aplicar entonces HMC o Metropolis.
+:::
+
+### Comparación de HMC y Metropolis {-}
+
+Finalmente, haremos una comparación 
+entre el desempeño de HMC y Metropolis en el caso de la distribución normal.
+Utilizaremos otra normal bivariada con más correlación.
+
+
+
+
+
+### HMC en Stan {-}
+
+En Stan se incluyen tres componentes adicionales importantes para
+estimar posteriores de manera eficiente:
+
+1. Periodos de *warm-up* (calentamiento) y *sampling* (muestreo). En el periodo de calentamiento, el muestreador afina tamaños de paso, escalamiento de la distribución de propuesta (normal multivariada), y otros parámetros de manera automática.
+2. Implementación de [diferenciación automática](https://en.wikipedia.org/wiki/Automatic_differentiation) para no tener que calcular el grandiente de la log posterior directamente. A partir del código que damos, se crean automáticamente funciones que calculan el grandiente (no es una aproximación numérica).
+3. Implementación de HMC sin vueltas en U (NUTS): una afinación adicional es dinámicamente adaptar el número de pasos de integración para evitar "regresos", como vimos que sucedía en los ejemplos de arriba. Ver por ejemplo [aquí](https://elevanth.org/blog/2017/11/28/build-a-better-markov-chain/), o
+la documentación de Stan.
+
+## Diagnósticos de convergencia
+
+Usualmente no es posible demostrar rigurosamente que un algoritmo MCMC es una
+buena aproximación de la distribución posterior de interés-
+
+
+
+
+
+
+
+
 
