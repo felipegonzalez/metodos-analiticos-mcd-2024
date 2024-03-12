@@ -319,9 +319,9 @@ Una algoritmo  de Metropolis podría ser el siguiente:
 ```{r}
 # simulamos
 M <- 50000
-simular_normal <- function(M, log_p, delta_x, delta_y){
+metropolis_mc <- function(M, z_inicial = c(0,0), log_p, delta_x, delta_y){
   z <- matrix(nrow = M, ncol = 2)
-  z[1, ] <- c(2.5, 3.2)
+  z[1, ] <-z_inicial
   colnames(z) <- c("x", "y")
   rechazo <- 0
   for(i in 1:(M-1)){
@@ -341,7 +341,7 @@ simular_normal <- function(M, log_p, delta_x, delta_y){
     mutate(n_sim = row_number())
   z_tbl
 }
-z_tbl <- simular_normal(M, log_p, 1.0, 1.0)
+z_tbl <- metropolis_mc(M, c(2.5, 3.5), log_p, 1.0, 1.0)
 ```
 
 
@@ -404,7 +404,7 @@ anim_save(animation = anim_mh_1, filename = "figuras/mh-1-normal.gif",
 Podemos entonces proponer saltos más chicos, por ejemplo:
 
 ```{r}
-z_tbl <- simular_normal(M, log_p, 0.2, 0.2)
+z_tbl <- metropolis_mc(M, c(2.5, 3.5), log_p, 0.2, 0.2)
 graf_tbl <- map_df(seq(10, 500, 20), function(i){
   z_tbl |> filter(n_sim <= i) |> mutate(num_sims = i)
 })
@@ -717,6 +717,7 @@ hamilton_mc <- function(n, theta_0 = c(0,0), log_p, grad_log_p, epsilon, L){
 Revisamos que la muestra aproxima apropiadamente nuestra distribución
 
 ```{r}
+set.seed(10)
 hmc_salida <- hamilton_mc(1000, c(0,0), log_p, grad_log_p, 0.2, 12)
 
 ggplot(hmc_salida$sims, aes(x = x, y = y)) + geom_point() +
@@ -739,7 +740,7 @@ head(tray_tbl)
 library(gganimate)
 anim_hmc <- ggplot(tray_tbl |> mutate(iter = 4*as.numeric(paso == 1), 
                           s = as.numeric(paso == 2)) |> 
-         filter(iteracion < 20) |> 
+         filter(iteracion < 30) |> 
          mutate(tiempo = row_number()) |> 
          mutate(tiempo = tiempo + cumsum(50 * s)), 
        aes(x = x, y = y)) + 
@@ -747,7 +748,7 @@ anim_hmc <- ggplot(tray_tbl |> mutate(iter = 4*as.numeric(paso == 1),
     geom_path(colour = "gray", alpha = 0.5) +
   transition_reveal(tiempo) +
   elipses_normal +
-  theme(legend.position = "none") +
+  theme(legend.position = "none") 
 anim_save(animation = anim_hmc, filename = "figuras/hmc-normal.gif", 
           renderer = gifski_renderer())
 ```
@@ -780,8 +781,42 @@ Finalmente, haremos una comparación
 entre el desempeño de HMC y Metropolis en el caso de la distribución normal.
 Utilizaremos otra normal bivariada con más correlación.
 
+```{r}
+set.seed(737)
+Sigma <- matrix(c(1, -0.9, -0.9, 1), nrow = 2)
+m <- c(1, 1)
+log_p <- construir_log_p(m, Sigma)
+grad_log_p <- construir_grad_log_p(m, Sigma)
+system.time(hmc_1 <- hamilton_mc(1000, c(1,2), log_p, grad_log_p, 0.2, 12))
+system.time(metropolis_1 <- metropolis_mc(1000, c(1,2), log_p, 0.2, 0.2))
+system.time(metropolis_2 <- metropolis_mc(1000, c(1,2), log_p, 1, 1))
 
+```
 
+```{r}
+#| eval: false
+#| fig-width: 10
+#| fig-height: 5
+library(gganimate)
+sims_hmc <- hmc_1$sims |> mutate(n_sim = row_number()) |> 
+  mutate(algoritmo = "hmc")
+sims_metropolis_1 <- metropolis_1 |> 
+  mutate(algoritmo = "metropolis (corto)") 
+sims_metropolis_2 <- metropolis_2 |> 
+  mutate(algoritmo = "metropolis (largo)") 
+sims_comp <- bind_rows(sims_hmc, sims_metropolis_1, sims_metropolis_2)
+anim_comp <- ggplot(sims_comp |> filter(n_sim < 200)) + 
+  transition_reveal(n_sim) +
+  theme(legend.position = "none") +
+  geom_path(aes(x, y), colour = "gray", alpha = 0.2) + 
+    geom_point(aes(x, y, group = n_sim)) +
+  facet_wrap(~algoritmo)
+anim_save(animation = anim_comp, filename = "figuras/comparacion-normal.gif", height = 250, width = 500,
+          units = "px",
+          renderer = gifski_renderer())
+```
+
+![Comparación](figuras/comparacion-normal.gif) 
 
 
 ### HMC en Stan {-}
