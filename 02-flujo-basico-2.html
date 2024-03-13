@@ -314,8 +314,8 @@ window.Quarto = {
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)<span class="co">#, width = 200, height = 50)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-06267f7f55645c3db649" style="width:100%;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-06267f7f55645c3db649">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    p\n    Npos\n  node [shape=plaintext]\n    N\n    Npos [label = <N<SUB>+<\/SUB>>]\n    Nobs [label = <N<SUB>obs<\/SUB>>]\n    #Nneg [label = <N<SUB>-<\/SUB>>]\n    #sens\n    #esp\n  edge [minlen = 3]\n    p -> Npos\n    #p -> Nneg\n    N -> Npos\n    Npos -> Nobs\n    #N -> Nneg\n    esp -> Nobs\n    sens -> Nobs\n    #esp -> Nneg\n    #sens -> Nneg\n{ rank = same; p; N }\n{ rank = same; Npos}\n{ rank = max; sens; esp}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-c650b9502d269d8189e9" style="width:100%;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-c650b9502d269d8189e9">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    p\n    Npos\n  node [shape=plaintext]\n    N\n    Npos [label = <N<SUB>+<\/SUB>>]\n    Nobs [label = <N<SUB>obs<\/SUB>>]\n    #Nneg [label = <N<SUB>-<\/SUB>>]\n    #sens\n    #esp\n  edge [minlen = 3]\n    p -> Npos\n    #p -> Nneg\n    N -> Npos\n    Npos -> Nobs\n    #N -> Nneg\n    esp -> Nobs\n    sens -> Nobs\n    #esp -> Nneg\n    #sens -> Nneg\n{ rank = same; p; N }\n{ rank = same; Npos}\n{ rank = max; sens; esp}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Donde vemos ahora que el estado real de cada persona de la prueba es desconocido, aunque el resultado de la prueba depende de ese estado, y la cantidad de positivos que observamos es ahora <span class="math inline">\(N_{obs}\)</span>, que depende también de la sensibilidad y especificidad de la prueba.</p>
@@ -557,8 +557,8 @@ Figura&nbsp;3.2: Verificación a priori fallida (modelo incorrecto)
 <span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)<span class="co">#, width = 200, height = 50)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-265d5f39c38fa90a2540" style="width:100%;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-265d5f39c38fa90a2540">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    theta\n    esp\n    sens\n    Npos [label = <N<SUB>+<\/SUB>>]\n  node [shape=plaintext]\n    Nobs [label = <N<SUB>obs<\/SUB>>]\n   # Nneg [label = <N<SUB>-<\/SUB>>]\n  edge [minlen = 3]\n    theta -> Npos\n    #p -> Nneg\n    N -> Npos\n    Npos -> Nobs\n    #N -> Nneg\n    esp -> Nobs\n    sens -> Nobs\n    #esp -> Nneg\n    #sens -> Nneg\n    esp -> Ref\n    sens -> Ref\n{ rank = same; theta; N }\n#{ rank = same; Npos; Nneg}\n{ rank = max; sens; esp}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-c87171af008483dffb49" style="width:100%;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-c87171af008483dffb49">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    theta\n    esp\n    sens\n    Npos [label = <N<SUB>+<\/SUB>>]\n  node [shape=plaintext]\n    Nobs [label = <N<SUB>obs<\/SUB>>]\n   # Nneg [label = <N<SUB>-<\/SUB>>]\n  edge [minlen = 3]\n    theta -> Npos\n    #p -> Nneg\n    N -> Npos\n    Npos -> Nobs\n    #N -> Nneg\n    esp -> Nobs\n    sens -> Nobs\n    #esp -> Nneg\n    #sens -> Nneg\n    esp -> Ref\n    sens -> Ref\n{ rank = same; theta; N }\n#{ rank = same; Npos; Nneg}\n{ rank = max; sens; esp}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Usando argumentos como los del modelo original, las distribuciones de esp y sens son beta y podemos incorporarlas en la simulación de la posterior. Nuestra nueva función para simular el proceso generativo es:</p>
@@ -652,7 +652,7 @@ Chain 4 finished in 0.0 seconds.
 
 All 4 chains finished successfully.
 Mean chain execution time: 0.0 seconds.
-Total execution time: 0.7 seconds.</code></pre>
+Total execution time: 0.6 seconds.</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> ajuste<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"theta"</span>, <span class="st">"sens"</span>, <span class="st">"esp"</span>), <span class="at">format =</span> <span class="st">"df"</span>)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>resumen <span class="ot">&lt;-</span> ajuste<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"theta"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
