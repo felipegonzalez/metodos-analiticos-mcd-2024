@@ -518,13 +518,14 @@ Idea básica de MCMC
 </section>
 <section id="balance-detallado" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="balance-detallado">Balance detallado</h3>
-<p>¿Por qué funcionan estos algoritmos? Supongamos que en cada paso, se cumple que (balance detallado): <span class="math display">\[{q(x|y)}p(y) = {q(y|x)}{p(x)}\]</span> donde <span class="math inline">\(q(x|y)\)</span> son las probabilidades de transición de nuestra cadena de Markov propuesta. Esta ecuación dice que la proporción de transiciones de <span class="math inline">\(y\)</span> a <span class="math inline">\(x\)</span> en relación a las transiciones de <span class="math inline">\(x\)</span> a <span class="math inline">\(y\)</span> es la misma que la proporción de probabildad que hay entre <span class="math inline">\(y\)</span> y <span class="math inline">\(x\)</span> en la distribución objetivo.</p>
+<p>¿Por qué funcionan estos algoritmos? Supongamos que en cada paso, se cumple que (balance detallado): <span class="math display">\[{q(x|y)}p(y) = {q(y|x)}{p(x)}\]</span> donde <span class="math inline">\(q(x|y)\)</span> son las probabilidades de transición de nuestra cadena de Markov propuesta. Esta ecuación dice que la proporción de transiciones de <span class="math inline">\(y\)</span> a <span class="math inline">\(x\)</span> en relación a las transiciones de <span class="math inline">\(x\)</span> a <span class="math inline">\(y\)</span> es la misma que la proporción de probabilidad que hay entre <span class="math inline">\(y\)</span> y <span class="math inline">\(x\)</span> en la distribución objetivo.</p>
 <p>Esta ecuación implica que si la probabilidad se distribuye como <span class="math inline">\(p(x)\)</span>, entonces al transicionar con <span class="math inline">\(q\)</span> la probabilidad fluje de manera que se mantiene estática en <span class="math inline">\(p\)</span>, es decir <span class="math inline">\(p\)</span> es una <em>distribución estacionaria</em> para la cadena de Markov producida por las transiciones.</p>
 <p>Esto es fácil de demostrar pues <span class="math display">\[\sum_{y} q(x|y)p(y) = \sum_{y} q(y|x)p(x) = p(x) \sum_{y} q(y|x) = p(x).\]</span></p>
 <p>Bajo otros supuestos adicionales de ergodicidad (aperiodicidad y tiempos de recurrencia finitos, es decir, las transiciones <em>mezclan</em> bien los estados), entonces podemos simular la cadena de Markov por un tiempo suficientemente largo y con esto obtener una muestra de la distribución objetivo <span class="math inline">\(p\)</span>, es decir, la distribución estacionaria <span class="math inline">\(p(x)\)</span> también es la distribución de largo plazo para cualquier cadena que simulemos.</p>
 <p>¿Cómo podemos diseñar entonces las <span class="math inline">\(q(x|y)\)</span> correspondientes?</p>
 <p>Comenzamos considerando distribuciones propuesta <span class="math inline">\(q_0(x|y)\)</span> que no necesariamente satisfacen la ecuación de balance, y supondremos como en los ejemplos de arriba (verifícalo) que nuestras transiciones tienen probabilidades simétricas <span class="math inline">\(q_0(y|x) = q_0(x|y)\)</span>. Entonces, cuando <span class="math inline">\(p(y)/p(x) &gt; 1\)</span>, queremos transicionar de <span class="math inline">\(x\)</span> a <span class="math inline">\(y\)</span> con más frecuencia que de <span class="math inline">\(y\)</span> a <span class="math inline">\(x\)</span>. Comenzando en <span class="math inline">\(x\)</span>, si la propuesta de <span class="math inline">\(q_0(y|x)\)</span> es <span class="math inline">\(y\)</span>, podríamos poner entonces que el sistema transicione con probabilidad 1 a <span class="math inline">\(y\)</span>. Sin embargo, si empezamos en <span class="math inline">\(y\)</span> y la propuesta es <span class="math inline">\(x\)</span>, ponemos que el sistema sólo transiciona de <span class="math inline">\(y\)</span> a <span class="math inline">\(x\)</span> con probabilidad <span class="math inline">\(p(x)/p(y)\)</span>.</p>
-<p>De esta manera, obtenemos que bajo <span class="math inline">\(q(y|x)\)</span>, <span class="math inline">\(x\)</span> transiciona a <span class="math inline">\(y\)</span> con probabilidad <span class="math inline">\(\min\{1, p(y)/p(x)\}\)</span>. Entonces, el cociente <span class="math inline">\(\frac{q(y|x)}{q(x|y)}\)</span> es igual a <span class="math inline">\(\frac{p(y)}{p(x)}\)</span> si <span class="math inline">\(p(y)&lt;p(x)\)</span>, y es igual a <span class="math inline">\(1/\frac{p(x)}{p(y)} = \frac{p(y)}{p(x)}\)</span> si <span class="math inline">\(p(y)&gt;p(x)\)</span>. Esto demuestra que se cumple el balance detallado.</p>
+<p>De esta manera, obtenemos que bajo <span class="math inline">\(q(y|x)\)</span>, <span class="math inline">\(x\)</span> transiciona a <span class="math inline">\(y\)</span> con probabilidad $q_0(y|x) multiplicada por <span class="math inline">\(\min\{1, p(y)/p(x)\}\)</span>. Entonces, el cociente <span class="math inline">\(\frac{q(y|x)}{q(x|y)}\)</span> (usando también la simetría de <span class="math inline">\(q_0(y|x)\)</span>, es igual a <span class="math inline">\(\frac{p(y)}{p(x)}\)</span> si <span class="math inline">\(p(y)&lt;p(x)\)</span>. Si <span class="math inline">\(p(x)&gt;p(y)\)</span>, entonces siguiendo el mismo argumento, y por simetría de <span class="math inline">\(q_0(y|x)\)</span>, se cumple que el cociente de probabilidades es tambien igual a <span class="math inline">\(\frac{p(y)}{p(x)}\)</span>. Esto demuestra que se cumple el balance detallado.</p>
+<p>De esta forma, balanceamos las transiciones de <span class="math inline">\(q_0(y|x)\)</span> modificando con el proceso de adaptación y rechazo, para que la cadena de Markov resultante tenga la distribución estacionario <span class="math inline">\(p(x)\)</span>, que es la distribución objetivo.</p>
 </section>
 <section id="ejemplo-metropolis-bivariado" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="ejemplo-metropolis-bivariado">Ejemplo: Metropolis bivariado</h3>
@@ -696,7 +697,7 @@ Metropolis-Hastings
 <h2 data-number="8.2" class="anchored" data-anchor-id="monte-carlo-hamiltoniano"><span class="header-section-number">8.2</span> Monte Carlo Hamiltoniano</h2>
 <p>Una manera de mejorar la exploración de Metropolis es utilizar una distribución de propuestas más apropiada. La intuición en el caso anterior es:</p>
 <ul>
-<li>Hay direcciones de más curvatura de la posterior que otras: movimientos relativamente chicos en las direcciones de alta curvatura nos lleva a regiones de probabilidad demasiado baja, y entonces tendemos a rechazar. Pero hacer movimientos aún más chicos para evitar rechazos nos lleva a explorar muy lentamente el espacio de parámetros.</li>
+<li>Hay direcciones de más curvatura de la posterior que otras: movimientos relativamente chicos en las direcciones de alta curvatura nos llevan a regiones de probabilidad demasiado baja, y entonces tendemos a rechazar. Pero hacer movimientos aún más chicos para evitar rechazos nos lleva a explorar muy lentamente el espacio de parámetros.</li>
 <li>Podríamos evitar esto si nuestros saltos siguieran la curvatura natural de la distribución, como una pelota que rueda por la superficie de la distribución objetivo (con signo negativo, de forma que regiones de probabilidad alta sean valles o regiones bajas).</li>
 </ul>
 <p>La idea de HMC es considerar el problema de muestrear de una distribución como un problema físico, donde introducimos aleatoridad solamente en cuanto a la “energía” de la pelota que va a explorar la posterior. Inicialmente impartimos un momento tomado al azar a la pelota, seguimos su trayectoria por un tiempo y el lugar a donde llega es nuestra nueva simulación. Esto permite que podamos dar saltos más grandes, sin “despeñarnos” en regiones de probabilidad muy baja y así evitar rechazos.</p>
@@ -708,7 +709,7 @@ Metropolis-Hastings
 <p><span class="math inline">\(H(p,q) = T(p) + V(q)\)</span></p>
 <p>donde <span class="math inline">\(V(q) = q^2/2\)</span> está dada y <span class="math inline">\(T(p) = \frac{p^2}{2m}\)</span>, de modo que</p>
 <p><span class="math display">\[H(p, q) = \frac{p^2}{2m} + V(q) = \frac{p^2}{2m} + \frac{q^2}{2}\]</span></p>
-<p>Ahora consideremos las curvas de nivel de <span class="math inline">\(H\)</span>, que en este caso se conservan a lo largo del movimiento de la partícula. Como sabemos por cálculo, estas curvas son perpendiculares al gradiente del Hamiltoniano, que es <span class="math inline">\((\partial{H}/\partial{p}, \partial{H}/\partial{q})\)</span>. El movimiento de las partículas, sin embargo, es a lo largo de las curvas de nivel, de manera que el flujo instantáneo debe estar dado por el gradiente de <span class="math inline">\(H\)</span> rotado 90 grados, es decir, por <span class="math inline">\((\partial{H}/\partial{q}, -\partial{H}/\partial{p})\)</span>.</p>
+<p>Ahora consideremos las curvas de nivel de <span class="math inline">\(H\)</span> (energía total constante), que en este caso se conservan a lo largo del movimiento de la partícula. Como sabemos por cálculo, estas curvas son perpendiculares al gradiente del Hamiltoniano, que es <span class="math inline">\((\partial{H}/\partial{p}, \partial{H}/\partial{q})\)</span>. El movimiento de las partículas, sin embargo, es a lo largo de las curvas de nivel, de manera que el flujo instantáneo debe estar dado por el gradiente de <span class="math inline">\(H\)</span> rotado 90 grados, es decir, por <span class="math inline">\((\partial{H}/\partial{q}, -\partial{H}/\partial{p})\)</span>.</p>
 <p>Entonces tenemos que el movimiento de la partícula debe cumplir las ecuaciones de Hamilton:</p>
 <p><span class="math display">\[\frac{dp}{dt} = \frac{\partial{H}}{\partial{q}}, \frac{dq}{dt} = -\frac{\partial{H}}{\partial{p}}\]</span> Simplificando y usando la definición de <span class="math inline">\(H\)</span>, obtenemos que <span class="math display">\[\frac{dq}{dt} = \frac{p}{m}, \frac{dp}{dt} = -\frac{\partial{V}}{\partial{q}} = -q\]</span> Ilustramos este campo vectorial en la siguiente gráfica, donde escogemos <span class="math inline">\(V(q) = q^2/2\)</span>, <span class="math inline">\(m=1\)</span>, y dibujamos algunas curvas de nivel del Hamiltoniano:</p>
 <div class="cell">
@@ -742,12 +743,12 @@ Metropolis-Hastings
 <section id="formulación-hamiltoniana-2-densidades-de-probabilidad" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="formulación-hamiltoniana-2-densidades-de-probabilidad">Formulación Hamiltoniana 2: densidades de probabilidad</h3>
 <p>Consideremos una partícula en el espacio de parámetros <span class="math inline">\(\theta\)</span>. En esta formulación, si <span class="math inline">\(\theta\)</span> son los parámetros de interés, consideramos la energía potencial del sistema como <span class="math inline">\(V(p) = -\log p(\theta)\)</span>, donde <span class="math inline">\(p(\theta)\)</span> es la distribución objetivo.</p>
-<p>Buscamos simular del sistema con ecuaciones de movimiento para <span class="math inline">\(\theta\)</span>. Como hicimos antes, vamos a levantar al espacio fase incluyendo el momento, que denotaremos como <span class="math inline">\(\rho\)</span>. La energía cinética, en el caso más simple, podemos definirla (en la práctica existen reescalamientos) como como <span class="math inline">\(T(\rho) =\frac{1}{2}\sum_i \rho_i^2\)</span> (la energía cinética es proporcional al momento cuadrado, pues el momento es masa por velocidad).</p>
+<p>Buscamos simular del sistema con ecuaciones de movimiento para <span class="math inline">\(\theta\)</span>. Como hicimos antes, vamos a “levantar” al espacio fase incluyendo el momento, que denotaremos como <span class="math inline">\(\rho\)</span>. La energía cinética, en el caso más simple, podemos definirla (en la práctica existen reescalamientos) como como <span class="math inline">\(T(\rho) =\frac{1}{2}\sum_i \rho_i^2\)</span> (la energía cinética es proporcional al momento cuadrado, pues el momento es masa por velocidad).</p>
 <p>El Hamiltoniano por definición <span class="math inline">\(H(\rho, \theta) = T(\rho) + V(\theta)\)</span>, y las ecuaciones de Hamilton son las mismas que arriba, que en este caso nos dan</p>
 <p><span class="math display">\[\frac{d\theta}{dt} = \rho, \frac{d\rho}{dt} = \nabla(\log(p(\theta)).\]</span></p>
 <p>Si resolvemos estas ecuaciones, podemos entonces simular del sistema como sigue:</p>
 <ol type="1">
-<li>Dado un punto inicial <span class="math inline">\(\theta\)</span>, escogemos un momento inicial <span class="math inline">\(\rho\)</span> al azar, por ejemplo cada componente normal <span class="math inline">\(N(0,1)\)</span> (en la práctica existe un reescalamiento, pero en general queremos que <span class="math inline">\(p(\rho) = p(-\rho)\)</span>). Es decir, agregamos inicialmente una cantidad de energía a la partícula.</li>
+<li>Dado un punto inicial <span class="math inline">\(\theta\)</span>, escogemos un momento inicial <span class="math inline">\(\rho\)</span> al azar, por ejemplo cada componente normal <span class="math inline">\(N(0,1)\)</span> (en la práctica existe un reescalamiento, pero en general queremos que <span class="math inline">\(p(\rho) = p(-\rho)\)</span>). Es decir, agregamos inicialmente una cantidad aleatoria de energía a la partícula.</li>
 <li>Usando las ecuaciones de Hamilton, actualizamos la posición <span class="math inline">\(\theta\)</span> y el momento de la partícula un cierto tiempo <span class="math inline">\(t\)</span> fijo, de manera que no quedemos muy cerca del valor inicial, pero tampoco hagamos demasiado trabajo computacional.</li>
 <li>La posición nueva <span class="math inline">\(\theta^*\)</span> es aceptada como nuestra nueva simulación (si el paso 2 es <em>exacto</em>, pero frecuentemente no lo es).</li>
 <li>Repetimos los pasos 1-3 un número suficiente de veces para obtener simulaciones de la posterior.</li>
@@ -957,7 +958,7 @@ Tip
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.065   0.000   0.065 </code></pre>
+  0.066   0.000   0.067 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(metropolis_1 <span class="ot">&lt;-</span> <span class="fu">metropolis_mc</span>(<span class="dv">1000</span>, <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), log_p, <span class="fl">0.2</span>, <span class="fl">0.2</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -965,7 +966,7 @@ Tip
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.017   0.000   0.018 </code></pre>
+  0.018   0.000   0.017 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(metropolis_2 <span class="ot">&lt;-</span> <span class="fu">metropolis_mc</span>(<span class="dv">1000</span>, <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), log_p, <span class="dv">1</span>, <span class="dv">1</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1183,21 +1184,21 @@ Chain 2 Iteration:    1 / 3000 [  0%]  (Warmup)
 Chain 2 Iteration: 1000 / 3000 [ 33%]  (Warmup) 
 Chain 2 Iteration: 1001 / 3000 [ 33%]  (Sampling) 
 Chain 2 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
+Chain 2 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 3 Iteration:    1 / 3000 [  0%]  (Warmup) 
 Chain 3 Iteration: 1000 / 3000 [ 33%]  (Warmup) 
 Chain 3 Iteration: 1001 / 3000 [ 33%]  (Sampling) 
 Chain 3 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
+Chain 3 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 4 Iteration:    1 / 3000 [  0%]  (Warmup) 
 Chain 4 Iteration: 1000 / 3000 [ 33%]  (Warmup) 
 Chain 4 Iteration: 1001 / 3000 [ 33%]  (Sampling) 
 Chain 4 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
 Chain 1 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 1 finished in 0.3 seconds.
-Chain 2 Iteration: 3000 / 3000 [100%]  (Sampling) 
-Chain 3 Iteration: 3000 / 3000 [100%]  (Sampling) 
-Chain 4 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 2 finished in 0.4 seconds.
-Chain 3 finished in 0.4 seconds.
+Chain 3 finished in 0.3 seconds.
+Chain 4 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 4 finished in 0.4 seconds.
 
 All 4 chains finished successfully.
@@ -1530,7 +1531,7 @@ Chain 3 Iteration: 105 / 105 [100%]  (Sampling) </code></pre>
 <pre><code>Chain 3 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Chain 3 Exception: normal_lpdf: Scale parameter is 0, but must be positive! (in '/tmp/Rtmpzl2o5P/model-2944458c03fd.stan', line 25, column 2 to column 33)</code></pre>
+<pre><code>Chain 3 Exception: normal_lpdf: Scale parameter is 0, but must be positive! (in '/tmp/Rtmpdy86fc/model-27e612e38bfb.stan', line 25, column 2 to column 33)</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Chain 3 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,</code></pre>
@@ -1554,7 +1555,7 @@ Chain 4 finished in 0.0 seconds.
 
 All 4 chains finished successfully.
 Mean chain execution time: 0.0 seconds.
-Total execution time: 0.2 seconds.</code></pre>
+Total execution time: 0.3 seconds.</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: 324 of 400 (81.0%) transitions ended with a divergence.
