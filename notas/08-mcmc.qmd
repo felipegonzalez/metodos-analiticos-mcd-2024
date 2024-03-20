@@ -253,7 +253,7 @@ posterior.
 se cumple que (balance detallado):
 $${q(x|y)}p(y) = {q(y|x)}{p(x)}$$
 donde $q(x|y)$ son las probabilidades de transición de nuestra cadena de Markov
-propuesta. Esta ecuación dice que la proporción de transiciones de $y$ a $x$ en relación a las transiciones de $x$ a $y$ es la misma que la proporción de probabildad que hay entre $y$ y $x$ en la distribución objetivo.
+propuesta. Esta ecuación dice que la proporción de transiciones de $y$ a $x$ en relación a las transiciones de $x$ a $y$ es la misma que la proporción de probabilidad que hay entre $y$ y $x$ en la distribución objetivo.
 
 Esta ecuación implica que si la probabilidad se distribuye como $p(x)$,
 entonces al transicionar con $q$ la probabilidad fluje de manera que se mantiene
@@ -279,10 +279,15 @@ si la propuesta de $q_0(y|x)$ es $y$, podríamos
 poner entonces que el sistema transicione con probabilidad 1 a $y$. Sin embargo, si empezamos en $y$ y la propuesta es $x$, ponemos que el sistema sólo transiciona de  $y$ a $x$  con probabilidad $p(x)/p(y)$. 
 
 De esta manera, obtenemos que bajo $q(y|x)$, $x$ transiciona a $y$ 
-con probabilidad $\min\{1, p(y)/p(x)\}$. Entonces, el cociente
-$\frac{q(y|x)}{q(x|y)}$ es igual a $\frac{p(y)}{p(x)}$ si $p(y)<p(x)$, y es igual
-a $1/\frac{p(x)}{p(y)} = \frac{p(y)}{p(x)}$ si $p(y)>p(x)$. Esto demuestra
+con probabilidad $q_0(y|x) multiplicada por $\min\{1, p(y)/p(x)\}$. Entonces, el cociente
+$\frac{q(y|x)}{q(x|y)}$ (usando también la simetría de $q_0(y|x)$, es igual a $\frac{p(y)}{p(x)}$ si $p(y)<p(x)$.
+Si $p(x)>p(y)$, entonces siguiendo el mismo argumento, y por simetría de $q_0(y|x)$, se
+cumple que el cociente de probabilidades es tambien igual a $\frac{p(y)}{p(x)}$. Esto demuestra
 que se cumple el balance detallado.
+
+De esta forma, balanceamos las transiciones de $q_0(y|x)$ modificando con el proceso
+de adaptación y rechazo, para que la cadena de Markov resultante tenga la distribución
+estacionario $p(x)$, que es la distribución objetivo.
 
 
 
@@ -461,7 +466,7 @@ del gradiente de la distribución objetivo para proponer exploración más efici
 Una manera de mejorar la exploración de Metropolis es utilizar una distribución
 de propuestas más apropiada. La intuición en el caso anterior es: 
 
-- Hay direcciones de más curvatura de la posterior que otras: movimientos relativamente chicos en las direcciones de alta curvatura nos lleva a regiones de probabilidad demasiado baja, y entonces tendemos a rechazar. Pero hacer movimientos aún más chicos para evitar rechazos nos lleva a explorar muy lentamente el espacio de parámetros.
+- Hay direcciones de más curvatura de la posterior que otras: movimientos relativamente chicos en las direcciones de alta curvatura nos llevan a regiones de probabilidad demasiado baja, y entonces tendemos a rechazar. Pero hacer movimientos aún más chicos para evitar rechazos nos lleva a explorar muy lentamente el espacio de parámetros.
 - Podríamos evitar esto si nuestros saltos siguieran la curvatura natural de la distribución, como una pelota que rueda por la superficie de la distribución objetivo (con signo negativo, de forma que regiones de probabilidad alta sean valles o regiones bajas).
 
 La idea de HMC es considerar el problema de muestrear de una distribución
@@ -496,7 +501,8 @@ donde $V(q) = q^2/2$ está dada y $T(p) = \frac{p^2}{2m}$, de modo que
 
 $$H(p, q) = \frac{p^2}{2m} + V(q) = \frac{p^2}{2m} + \frac{q^2}{2}$$
 
-Ahora consideremos las curvas de nivel de $H$, que en este caso se conservan
+Ahora consideremos las curvas de nivel de $H$ (energía total constante), 
+que en este caso se conservan
 a lo largo del movimiento de la partícula. Como sabemos por cálculo, estas curvas son perpendiculares al gradiente
 del Hamiltoniano, que es $(\partial{H}/\partial{p}, \partial{H}/\partial{q})$.
  El movimiento
@@ -545,7 +551,7 @@ como $V(p) = -\log p(\theta)$, donde $p(\theta)$ es la distribución objetivo.
 
 Buscamos
 simular del sistema con ecuaciones de movimiento para $\theta$. Como hicimos
-antes, vamos a levantar al espacio fase incluyendo el momento, que denotaremos como $\rho$. La energía cinética, en el caso más simple,
+antes, vamos a "levantar" al espacio fase incluyendo el momento, que denotaremos como $\rho$. La energía cinética, en el caso más simple,
 podemos definirla (en la práctica existen reescalamientos) como 
 como $T(\rho) =\frac{1}{2}\sum_i \rho_i^2$ (la energía cinética es proporcional
 al momento cuadrado, pues el momento es masa por velocidad).
@@ -557,7 +563,7 @@ $$\frac{d\theta}{dt} = \rho, \frac{d\rho}{dt} = \nabla(\log(p(\theta)).$$
 Si resolvemos estas ecuaciones, podemos entonces simular del sistema como
 sigue:
 
-1. Dado un punto inicial $\theta$, escogemos un momento inicial $\rho$ al azar, por ejemplo cada componente normal $N(0,1)$ (en la práctica existe un reescalamiento, pero en general queremos que $p(\rho) = p(-\rho)$). Es decir, agregamos inicialmente una cantidad de energía a la partícula.
+1. Dado un punto inicial $\theta$, escogemos un momento inicial $\rho$ al azar, por ejemplo cada componente normal $N(0,1)$ (en la práctica existe un reescalamiento, pero en general queremos que $p(\rho) = p(-\rho)$). Es decir, agregamos inicialmente una cantidad aleatoria de energía a la partícula.
 2. Usando las ecuaciones de Hamilton, actualizamos la posición $\theta$ 
 y el momento de la partícula un cierto tiempo $t$ fijo, de manera que no quedemos muy cerca
 del valor inicial, pero tampoco hagamos demasiado trabajo computacional.
@@ -1010,3 +1016,5 @@ Hay varios problemas graves:
 - Algunas cadenas parecen "atoradas" en ciertos valores
 - Algunas cadenas parecen caminatas aleatorias (oscilaciones de baja frecuencia)
 - Las cadenas no exploran de manera similar el espacio de parámetros
+
+
