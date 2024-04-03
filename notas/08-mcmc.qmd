@@ -881,6 +881,7 @@ manera que puede existir un efecto directo de Origen en Calificación (no pasa p
 
 ```{r}
 #| code-fold: true
+library(DiagrammeR)
 grViz("
 digraph {
   graph [ranksep = 0.2, rankdir = LR]
@@ -972,13 +973,18 @@ ajuste_vinos_1$summary(c("Q", "sigma")) |>
   filter(variable != "lp__") |> kable()
 ```
 
+### Diagnóstico: Trazas de cadenas
 
-Para hacer diagnósticos, podemos comenzar con las trazas de una cadena para todas las estimaciones de calidad de vino:
+Para hacer diagnósticos, podemos comenzar con las trazas de una cadena para todas las estimaciones de calidad de vino.
+Cada cadena se inicia con distintos valores aleatorios, pero cumplen en teoría que su distribución
+de equilibrio es la posterior de interés pues sus transiciones usan el mismo mecanismo.
 
 ```{r}
+#| message: false
 library(bayesplot)
 mcmc_trace(ajuste_vinos_1$draws("Q", format = "df") |> filter(.chain == 1))
 ```
+
 ::: callout-tip
 La traza de una cadena es la gráfica de las simulaciones de cada parámetro. Generalmente
 buscamos que: no tenga tendencia, que no se quede "atorada" en algunos valores, y
@@ -1016,5 +1022,517 @@ Hay varios problemas graves:
 - Algunas cadenas parecen "atoradas" en ciertos valores
 - Algunas cadenas parecen caminatas aleatorias (oscilaciones de baja frecuencia)
 - Las cadenas no exploran de manera similar el espacio de parámetros
+
+::: callout-note
+# Traza de cadenas
+
+El diagnóstico de traza consiste en graficar las cadenas de los parámetros en el
+orden de la iteración. Buscamos ver que:
+
+1. Las cadenas no tienen tendencia o oscilaciones de frecuencia muy baja.
+2. Las cadenas no se atoran en valores específicos.
+3. Las distintas cadenas exploran de manera similar el espacio de parámetros.
+
+Cuando falla alguna de estas, en el mejor de los casos las cadenas son ineficientes
+(veremos que requerimos un número mucho mayor de iteraciones), y en el peor de los
+casos dan resultados sesgados que no son confiables.
+:::
+
+### Diagnóstico: valores R-hat
+
+Cuando nuestro método de simulación converge a la distribución posterior, esperamos
+que las cadenas, durante todo su proceso, exploran la misma región del espacio
+de parámetros.
+
+Podemos entonces considerar, para cada parámetro:
+
+- Cuánta variación hay en cada cadena.
+- Qué tan distintas son las cadenas entre ellas.
+
+Esperamos que la variación entre cadenas es chica, y la variación dentro de cada cadena
+es similar para todas las cadenas. Calculamos entonces un cociente de varianzas: la varianza
+total sobre todas las simulaciones de todas las cadenas, y el promedio de varianzas de las cadenas.
+Si las cadenas están explorando regiones similares, esperamos que este cociente de varianzas sea cercano a 1.
+
+Escribiremos ahora esta idea para entender cómo se calculan estas cantidades. Supongamos
+que cada cadena se denota por $\theta_m$, para $M$ cadenas, y las iteraciones de cada cadena
+son $\theta_m^{(i)}$ para $i=1,\ldots, N$ iteraciones. Definimos
+(ver [el manual de Stan](https://mc-stan.org/docs/) o @handbookmc por ejemplo) primero
+la varianza entre cadenas, que es (ojo: usaremos definiciones aproximadas para entender más fácilmente):
+
+$$b=\frac{1}{M-1}\sum_{m=1}^M (\bar{\theta}_m - \bar{\theta})^2$$
+donde $\bar{\theta}_m$ es el promedio de las iteraciones de la cadena $m$, y $\bar{\theta}$ es el promedio
+del las $\bar{\theta}_m$.
+
+Definimos también la varianza dentro de las cadenas, que es el promedio de la varianza
+de cada cadena:
+
+$$w=\frac{1}{M}\sum_{m=1}^M \frac{1}{N}\sum_{i=1}^N (\theta_m^{(i)} - \bar{\theta}_m)^2$$
+Finalmente, la $R$-hat, o estadística de *potencial de reducción de escala*, es
+(para $N$ grande),
+
+$$\hat{R} = \sqrt{\frac{b+w}{w}}$$
+
+Buscamos entonces que este valor **sea cercano a 1**. Si es mayor a 1.05, es señal
+de posibles problemas de convergencia (pocas iteraciones u otras fallas en la convergencia).
+Si es menor que 1.01, generalmente decimos que "pasamos" esta prueba. Esto *no es garantía*
+de que la convergencia se ha alcanzado: la primera razón es que este diagnóstico, por ejemplo,
+sólo considera media y varianza, de forma que en principio podríamos pasar esta prueba aún 
+cuando las cadenas tengan comportamiento distinto en otras estadísticas de orden más alto
+(por ejemplo, una cadena que oscila poco y de vez en cuando salta a un atípico vs otra que
+tiene variación moderada pueden ser similares en medias y varianzas).
+
+En Stan, adicionalmente, se divide cada cadena en dos mitades, y el análisis se hace
+sobre $2M$ medias cadenas. Esto ayuda a detectar por ejemplo problemas donde una cadena
+sube y luego baja, por ejemplo, de modo que puede tener el mismo promedio que otras que exploran
+correctamente. 
+
+
+
+**Nota**: Estas fórmulas pretenden explicar de manera simple el concepto de $R$-hat,
+y son correctas para $N$ grande, lo cual casi siempre es el caso (al menos $N\geq 100$).
+Puedes consultar una definición más estándar con correcciones por grados de libertad en 
+el manual de Stan o cualquier libro de MCMC.
+
+
+::: callout-note
+# Diagnóstico de R-hat
+
+El diagnóstico de R-hat compara la varianza dentro de las cadenas y de cadena a cadena.
+Cuando este valor es relativamente grande (por ejemplo mayor a 1.05), es señal de que
+las cadenas no han explorado apropiadamente el espacio de parámetros (o decimos que
+no están "mezclando"). En general, buscamos que este valor sea menor a 1.02.
+
+Se llama también potencial de reducción a escala porque busca indicar cuánto
+se podría reducir la varianza de la distribución actual si dejáramos correr las cadenas
+por más iteraciones (pues a largo plazo no debe haber varianza entre cadenas).
+:::
+
+En nuestro ejemplo apropiado, observamos valores muy cercanos a 1 para todos los parámetros:
+
+
+```{r}
+ajuste_vinos_1$summary(c("Q", "sigma")) |> 
+  select(variable, mean, sd, q5, q95, rhat, ess_bulk, ess_tail) |> 
+  filter(variable != "lp__") |> kable()
+```
+
+En nuestro ejemplo "malo", obtenemos valores no aceptabels de R-hat para varios
+parámetros. 
+
+```{r}
+ajuste_vinos_malo$summary(c("Q", "sigma")) |> 
+  select(variable, mean, sd, q5, q95, rhat, ess_bulk, ess_tail) |> 
+  filter(variable != "lp__") |> kable()
+```
+**Nota**: si algunos parámetros tienen valores R-hat cercanos a 1 pero otros no, 
+en general no podemos confiar en los resultados de las simulaciones. Esto es señal
+de problemas de convergencia y deben ser diagnosticados.
+
+
+### Diagnóstico: Tamaño de muestra efectivo
+
+Las simulaciones de MCMC típicamente están autocorrelacionadas (pues comenzamos en una
+región y muchas veces nos movemos poco). Esto significa que la cantidad de información
+de $N$ simulaciones MCMC no es la misma que la que obtendríamos con $N$ simulaciones
+**independientes** de la posterior. 
+
+Este concepto también se usa en muestreo: por ejemplo, existe menos información
+en una muestra de 100 personas que fueron muestreadas por conglomerados de 50 casas (por ejemplo,
+seleccionando al azar hogares y luego a dos adultos dentro de cada hogar) que
+seleccionar 100 hogares y escoger a un al azar un adulto de cada hogar. La segunda
+muestra tienen más información de la población, pues en la primera muestra parte
+de la información es "compartida" por el hecho de vivir en el mismo hogar. Para
+encontrar un número "efectivo" de muestra que haga comparables estos dos diseños,
+comparamos la varianza que obtendríamos del estimador de interes en cada caso. Si
+consideramos como base el segundo diseño (muestro aleatorio independiente), el primer
+diseño tendrá más varianza. Eso quiere decir que para que hubiera la misma varianza
+en los dos diseños, bastaría una muestra más chica (digamos 60 hogares) del segundo
+diseño independiente. Decimos que el tamaño efectivo de muestra del primer diseño es de 60 personas
+(el caso donde las varianzas de los dos diseños son iguales).
+
+En el caso de series de tiempo, tenemos que considerar autocorrelación en la serie.
+Supongamos que quisiéramos estimar la media de una serie de tiempo (suponemos que a largo
+plazo el promedio de la serie de tiempo es una constante finita). Una muestra con autocorrelación
+alta produce malos estimadores de esta media incluso para tamaños de muestra relativamente grande:
+
+```{r}
+set.seed(123)
+mu_verdadera <- 10
+simular_series <- function(T = 500, num_series = 100, ar = 0.9){
+  map_df(1:num_series, function(rep){
+    serie <- 10 + arima.sim(n = T, list(ar = ar), n.start = 200, sd = sqrt(1-ar^2))
+    tibble(t = 1:T, serie = serie, serie_id = rep, ar = ar)
+  })
+}
+series_1_tbl <- simular_series(T= 200, n = 4, ar = 0.80)
+series_2_tbl <- simular_series(T= 200, n = 4, ar = 0.00001)
+series_tbl <- bind_rows(series_1_tbl, series_2_tbl)
+series_tbl |> 
+  ggplot(aes(t, serie, group = serie_id, colour = factor(serie_id))) + 
+  geom_line(alpha = 0.9) + 
+  geom_hline(yintercept = mu_verdadera, linetype = 2) + 
+  facet_wrap(~ar, ncol = 1)
+```
+Calculamos las medias para un ejemplo con autocorrelación y otro sin ellas:
+
+```{r}
+series_95_tbl <- simular_series(T= 300, n = 500, ar = 0.80) 
+series_05_tbl <- simular_series(T= 300, n = 500, ar = 0.00001) 
+series_tbl <- bind_rows(series_95_tbl, series_05_tbl)
+series_tbl |> group_by(serie_id, ar) |> 
+  summarise(media = mean(serie)) |> 
+  ggplot(aes(media)) + geom_histogram() + 
+  geom_vline(xintercept = mu_verdadera, linetype = 2) + 
+  labs(title = "Distribución de medias de series de tiempo") +
+  facet_wrap(~ar)
+```
+
+Y vemos que la precisión de la estimación cuando la correlación es relativamente baja
+es mucho más alta que cuando la correlación es alta. ¿Cuál es el tamaño efectivo
+de muestra para series con autocorrelación ar= 0.8? Vemos que
+es aproximadamente 35, o dicho de otra manera, la serie sin correlación
+nos da casi 10 veces más información por observación que la correlacionada:
+
+```{r}
+series_95_tbl <- simular_series(T= 300, n = 1000, ar = 0.8) 
+series_05_tbl <- simular_series(T= 35, n = 1000, ar = 0.00001) 
+series_tbl <- bind_rows(series_95_tbl, series_05_tbl)
+series_tbl |> group_by(serie_id, ar) |> 
+  summarise(media = mean(serie)) |> 
+  ggplot(aes(media)) + geom_histogram() + 
+  geom_vline(xintercept = mu_verdadera, linetype = 2) + 
+  labs(title = "Distribución de medias de series de tiempo") +
+  facet_wrap(~ar)
+```
+
+Es posible hacer una estimación teórica del tamaño efectivo de muestra. Para
+esto, podemos notar que la varianza del promedio de una serie de tiempo depende
+de la estructura de autocorrelación. Supondremos que la serie de tiempo es estacionaria
+y cada $y_t$ tiene varianza $\sigma^2$ y correlación $\rho$ con $y_{t-1}$. Entonces:
+
+$$Var(\bar{y})=\frac{1}{n^2}\text{Var} \left(\sum_{t=1}^n y_t \right) = 
+\frac{n\sigma^2}{n^2}\sum_{t=1}^n \text{Var}(y_t) + \frac{2\sigma^2}{n^2}\sum_{t=1}^{n-1}\sum_{s=t+1}^n\text{Corr}(y_t, y_s)$$
+
+Que se simplifica a (para $n$ grande):
+
+$$\text{Var}(\bar{y}) = \frac{\sigma^2}{n} + \frac{2\sigma^2}{n}\sum_{h=1}^{n-1}(1-h/n)\rho_{h} \approx \frac{\sigma^2}{n}\left (1+2\sum_{h=1}^{n-1}\rho_t\right )$$
+Si suponemos $\rho_h = \text{corr}(y_t, y_{t+h})$ para cualquier $t$. En nuestro
+caso anterior, el factor de corrección es aproximadamente:
+
+```{r}
+1 + 2*(0.8)^(1:1000) |> sum()
+```
+
+::: callout-note
+# Tamaño efectivo de muestra
+
+Si hacemos $N$ iteraciones en una cadena estacionaria con función de autocorrelación $\rho_h$, el tamaño efectivo de muestra teórico se define como
+
+$$N_{eff} = \frac{N}{1 + 2\sum_{h=1}^{\infty}\rho_h}$$
+
+Si pudiéramos hacer simulaciones independientes de la posterior, $N_{eff}$ es el tamaño de muestra 
+requerido para obtener la misma información que la cadena autocorrelacionada de tamaño $N$. Usualmente,
+aunque no siempre, $N_{eff}<N$ para cadenas de MCMC.
+:::
+
+
+
+
+
+
+**Observaciones**:
+
+1. Esta es una definición teórica para entender el concepto. Para ver cómo se 
+estima en la práctica puedes consultar [el manual de Stan](https://mc-stan.org/docs/reference-manual/analysis.html#effective-sample-size.section) o [@handbookmc].
+2. En algunos muestreadores que dan pasos cortos como en los ejemplos de Metropolis-Hastings  que
+vimos, a veces es necesario hacer cientos de miles de iteraciones para obtener un tamaño efectivo de muestra apropiado para hacer inferencia. Stan generalmente obtiene tamaños efectivos de 
+muestra mucho más altos con menos iteraciones (aunque cada iteración es más costosa).
+3. Considerando experiencia y teoría, 
+tamaños efectivos de muestra mínimos se considera de 400 o más (ver [aquí](https://arxiv.org/abs/1903.08008)).
+
+
+
+En nuestro ejemplo, tenemos tamaños de muestra efectivos satisfactorios:
+
+```{r}
+ajuste_vinos_1$summary(c("Q", "sigma")) |> 
+  select(variable, mean, sd, q5, q95, rhat, contains("ess")) |> 
+  filter(variable != "lp__") |> kable()
+```
+- Nótese que versiones más recientes de Stan reportan dos tamaños efectivos
+de muestra (ESS), uno para cantidades que dependen del centro de la distribución,
+como la media y mediana (bulk ESS, que es similar a la definición que vimos arriba, pero
+usando valores normalizados por rango),
+y otro para cantidades que dependen de las colas,
+como percentiles extremos (tail ESS, que estima el tamaño de muestra efectivo
+para los percentiles 5% y 95% ). En este caso, ambos son altos.
+
+Finalmente, podemos checar el error montecarlo, que es error de estimación usual
+
+```{r}
+ajuste_vinos_1$summary(c("Q", "sigma")) |> 
+  select(variable, mean, sd, q5, q95, rhat, contains("ess")) |> 
+  filter(variable != "lp__") |> kable()
+```
+
+## Extendiendo el modelo de variable latente
+
+Ahora continuamos con nuestro modelo de calidad de vinos. Incluímos
+el origen del vino (que tiene dos niveles):
+
+
+```{r}
+wines_2012 <- wines_2012 |> mutate(origen_num = as.numeric(factor(wine.amer)))
+wines_2012 |> select(wine.amer, origen_num) |> unique()
+n_jueces <- length(unique(wines_2012$juez_num))
+n_vinos <- length(unique(wines_2012$vino_num))
+n_origen <- length(unique(wines_2012$origen_num))
+c("num_vinos" = n_jueces, "num_jueces" = n_vinos, "num_datos" = nrow(wines_2012))
+```
+
+```{r}
+mod_vinos_2 <-cmdstan_model("./src/vinos-2.stan")
+print(mod_vinos_2)
+```
+
+
+
+
+```{r}
+datos_lst <- list(
+  N = nrow(wines_2012),
+  n_vinos = n_vinos,
+  n_jueces = n_jueces,
+  n_origen = n_origen,
+  S = wines_2012$score_est,
+  vino = wines_2012$vino_num,
+  juez = wines_2012$juez_num,
+  origen = wines_2012$origen_num
+)
+ajuste_vinos_2 <- mod_vinos_2$sample(
+  data = datos_lst,
+  chains = 4,
+  parallel_chains = 4,
+  iter_warmup = 1000,
+  iter_sampling = 2000,
+  refresh = 1000,
+  step_size = 0.1,
+)
+
+```
+
+```{r}
+ajuste_vinos_2$summary(c("O", "Q", "sigma")) |> 
+  select(variable, mean, sd, q5, q95, rhat, contains("ess")) |> 
+  filter(variable != "lp__") |> kable()
+```
+Todo parece bien con los diagnósticos. Podemos graficar las estimaciones 
+(nota: aquí estan intervalos de 50% y 90%):
+
+```{r}
+library(bayesplot)
+color_scheme_set("red")
+mcmc_intervals(ajuste_vinos_2$draws(c("Q", "O", "sigma")))
+```
+
+- Parece no haber mucha diferencia en calidad debida origen del vinos (tienen relativamente
+poca variabilidad y están traslapadas: aunque podríamos mejor calcular el contraste
+si queremos examinar esto con más cuidado).
+
+Todo parece ir bien, así que podemos expandir el modelo para incluir la forma de
+calificar de los jueces. En primer lugar, definimos un nivel general $H$ que indica qué
+tan alto o bajo califica un juez en general. Adicionalmente, incluímos un parámetro
+de discriminación $D$ de los jueces, que indica qué tanto del rango de la escala usa 
+cada juez  El modelo para el valor esperado del *Score* de un vino $i$ calificado por el juez $j$ es:
+
+$$\mu_{i} = Q_{vino(i)} + U_{origen(i)} - H_{juez(i)}$$
+Podemos pensar que el valor $H$ de cada juez es qué tan duro es en sus calificaciones.
+Para cada vino, un juez con valor alto de $H$ tendrá a calificar más bajo un vino de misma
+calidad y origen que otro juez con un valor más bajo de $H$. Podemos
+incluír un parámetro de discriminación $D$ para cada juez, que indica qué tanto del rango de la 
+escala usa cada juez de la siguiente forma:
+
+$$\mu_{i} = (Q_{vino(i)} + U_{origen(i)} - H_{juez(i)})D_{juez(i)}$$
+Un juez con valor alto de $D$ es más extremo en sus calificaciones: un vino por arriba
+de su promedio lo califica más alto en la escala, y un vino por debajo de su promedio
+lo califica más bajo. El extremo es que $D=0$, que quiere decir que el juez tiende a calificar
+a todos los vinos con un score.
+
+
+
+```{r}
+mod_vinos_3 <-cmdstan_model("./src/vinos-3.stan")
+print(mod_vinos_3)
+```
+
+
+
+
+```{r}
+datos_lst <- list(
+  N = nrow(wines_2012),
+  n_vinos = n_vinos,
+  n_jueces = n_jueces,
+  n_origen = n_origen,
+  S = wines_2012$score_est,
+  vino = wines_2012$vino_num,
+  juez = wines_2012$juez_num,
+  origen = wines_2012$origen_num
+)
+ajuste_vinos_3 <- mod_vinos_3$sample(
+  data = datos_lst,
+  chains = 4,
+  parallel_chains = 4,
+  iter_warmup = 1000,
+  iter_sampling = 2000,
+  refresh = 1000,
+  step_size = 0.1,
+)
+
+```
+
+Checamos diagnósticos:
+
+```{r}
+ajuste_vinos_3$summary(c("O", "Q", "H", "D", "sigma")) |> 
+  select(variable, mean, sd, q5, q95, rhat, contains("ess")) |> 
+  filter(variable != "lp__") |> kable()
+```
+
+
+
+Y vemos efectivamente que el uso de la escala de los jueces es considerablemente diferente,
+y que hemos absorbido parte de la variación con los parámetros $H$ y $D$ ($sigma$ es más
+baja que en los modelos anteriores):
+
+
+```{r}
+mcmc_intervals(ajuste_vinos_3$draws(c("H", "D", "sigma")))
+```
+
+```{r}
+mcmc_intervals(ajuste_vinos_3$draws(c("Q")))
+mcmc_intervals(ajuste_vinos_1$draws(c("Q")))
+```
+
+Con el modelo completo, examinamos ahora el contraste de interés: ¿hay diferencias
+en las calificaciones de vinos de diferentes orígenes? La respuesta es que no hay
+mucha evidencia de que haya una diferencia, aunque hay variación considerable
+en este contraste:
+
+```{r}
+ajuste_vinos_3$summary(c("dif_origen")) |> 
+  select(variable, mean, sd, q5, q95, rhat, contains("ess")) 
+```
+
+
+## Transiciones divergentes
+
+Finalmente, discutiremos otro tipo de diagnósticos de Stan. Cuando una 
+trayectoria tuvo un cambio grande en energía $H$ desde
+su valor actual a la propuesta final, usualmente del orden de 10^3 por ejemplo, esto implica un rechazo
+"fuerte" en el nuevo punto de la trayectoria, e implica que la el integrador numérico
+falló de manera grave. 
+
+:::callout-note
+## Transiciones divergentes
+
+Cuando en Stan obtenemos un número considerable de transiciones divergentes, generalmente
+esto indica que el integrador numérico de Stan no está funcionando bien, y por lo tanto
+la exploración puede ser deficiente y/o puede estar sesgada al espacio de parámetros donde
+no ocurren estos rechazos.
+
+:::
+
+
+Esto puede pasar cuando encontramos zonas de alta curvatura en el espacio de parámetros.
+Que una posterior esté altamente concentrada o más dispersa generalmente no es un problema,
+pero si la concentración varía fuertemente (curvatura) entonces puede ser difícil encontrar la
+escala correcta para que el integrador funcione apropiadamente.
+
+### El embudo de Neal
+
+Para ver un ejemplo, consideremos un ejemplo de una distribución cuya forma aparecerá
+más tarde en modelos jerárquicos. Primero, la marginal de $y$ es normal con media
+0 y desviación estándar 3. La distribución condicional $p(x|y)$ 
+de $x = c(x_1,\ldots, x_9)$ dado $y$ es normal multivariada, todas con media
+cero y desviación estándar $e^{y/2}$. Veamos qué pasa si intentamos simular de 
+esta distribución en Stan:
+
+
+```{r}
+mod_embudo <- cmdstan_model("./src/embudo-neal.stan")
+ajuste_embudo <- mod_embudo$sample(
+  chains = 1,
+  iter_warmup = 1000,
+  iter_sampling = 3000,
+  refresh = 1000)
+```
+Y vemos que aparecen algunos problemas. 
+
+```{r}
+simulaciones <- ajuste_embudo$draws(format = "df")
+diagnosticos <- ajuste_embudo$sampler_diagnostics(format = "df")
+sims_diag <- simulaciones |> inner_join(diagnosticos, by = c(".draw", ".iteration", ".chain"))
+ajuste_embudo$summary() |> 
+  select(variable, mean, rhat, contains("ess")) 
+ggplot(sims_diag, aes(y = y, x = `x[1]`)) +
+  geom_point(alpha = 0.1) +
+  geom_point(data = sims_diag |> filter(divergent__ == 1), color = "red", size = 2) +
+  geom_hline(yintercept = -2.5, linetype = 2) 
+```
+Y vemos que hay transiciones divergentes. Cuando el muestreador entra en el cuello
+del embudo, es muy fácil que se "despeñe" en probabilidad y que no pueda
+explorar correctamente la forma del cuello. Esto lo podemos ver, por ejemplo, si
+hacemos más simulaciones:
+
+
+```{r}
+mod_embudo <- cmdstan_model("./src/embudo-neal.stan")
+print(mod_embudo)
+ajuste_embudo <- mod_embudo$sample(
+  chains = 1,
+  iter_warmup = 1000,
+  iter_sampling = 30000,
+  refresh = 10000)
+ajuste_embudo$summary() |> 
+  select(variable, mean, rhat, contains("ess")) 
+simulaciones <- ajuste_embudo$draws(format = "df")
+diagnosticos <- ajuste_embudo$sampler_diagnostics(format = "df")
+sims_diag <- simulaciones |> inner_join(diagnosticos, by = c(".draw", ".iteration", ".chain"))
+ggplot(sims_diag, aes(y = y, x = `x[1]`)) +
+  geom_point(alpha = 0.1) +
+  geom_point(data = sims_diag |> filter(divergent__ == 1), color = "red", size = 2) +
+  geom_hline(yintercept = -2.5, linetype = 2) 
+```
+
+Y vemos que ahora que en el primer ejemplo estábamos probablemente sobreestimando
+la media de $y$. Las divergencias indican que esto puede estar ocurriendo. En este ejemplo
+particular, también vemos que las R-hat y los tamaños efectivos de muestra son bajos.
+
+Este es un ejemplo extremo. Sin embargo, podemos *reparametrizar* para hacer las cosas más
+fáciles para el muestreador. Podemos simular $y$, y después, simular 
+$x$ como $x \sim e^{y/2} z$ donde $z$ es normal estándar.
+
+
+
+```{r}
+mod_embudo_reparam <- cmdstan_model("./src/embudo-neal-reparam.stan")
+print(mod_embudo_reparam)
+ajuste_embudo <- mod_embudo_reparam$sample(
+  chains = 4,
+  iter_warmup = 1000,
+  iter_sampling = 10000,
+  refresh = 1000)
+```
+
+Y con este truco de reparametrización el muestreador funciona correctamente 
+(observa que la media de $y$ está estimada correctamente, y no hay divergencias).
+
+```{r}
+ajuste_embudo$summary() |> 
+  select(variable, mean, rhat, contains("ess"))
+```
 
 
