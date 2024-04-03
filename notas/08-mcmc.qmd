@@ -970,7 +970,9 @@ Vemos que hay variabilidad en los vinos:
 ```{r}
 ajuste_vinos_1$summary(c("Q", "sigma")) |> 
   select(variable, mean, sd, q5, q95, rhat, ess_bulk, ess_tail) |> 
-  filter(variable != "lp__") |> kable()
+  filter(variable != "lp__") |>
+  mutate(across(c(mean, sd, q5, q95, rhat, ess_bulk, ess_tail), ~round(., 3))) |> 
+  kable()
 ```
 
 ### Diagnóstico: Trazas de cadenas
@@ -1114,6 +1116,7 @@ En nuestro ejemplo apropiado, observamos valores muy cercanos a 1 para todos los
 ```{r}
 ajuste_vinos_1$summary(c("Q", "sigma")) |> 
   select(variable, mean, sd, q5, q95, rhat, ess_bulk, ess_tail) |> 
+  mutate(across(c(mean, sd, q5, q95, rhat, ess_bulk, ess_tail), ~round(., 3))) |> 
   filter(variable != "lp__") |> kable()
 ```
 
@@ -1123,6 +1126,7 @@ parámetros.
 ```{r}
 ajuste_vinos_malo$summary(c("Q", "sigma")) |> 
   select(variable, mean, sd, q5, q95, rhat, ess_bulk, ess_tail) |> 
+  mutate(across(c(mean, sd, q5, q95, rhat, ess_bulk, ess_tail), ~round(., 3))) |> 
   filter(variable != "lp__") |> kable()
 ```
 **Nota**: si algunos parámetros tienen valores R-hat cercanos a 1 pero otros no, 
@@ -1258,6 +1262,7 @@ En nuestro ejemplo, tenemos tamaños de muestra efectivos satisfactorios:
 ```{r}
 ajuste_vinos_1$summary(c("Q", "sigma")) |> 
   select(variable, mean, sd, q5, q95, rhat, contains("ess")) |> 
+  mutate(across(c(mean, sd, q5, q95, rhat, ess_bulk, ess_tail), ~round(., 3))) |> 
   filter(variable != "lp__") |> kable()
 ```
 - Nótese que versiones más recientes de Stan reportan dos tamaños efectivos
@@ -1272,7 +1277,8 @@ Finalmente, podemos checar el error montecarlo, que es error de estimación usua
 
 ```{r}
 ajuste_vinos_1$summary(c("Q", "sigma")) |> 
-  select(variable, mean, sd, q5, q95, rhat, contains("ess")) |> 
+  select(variable, mean, sd, q5, q95, rhat, contains("ess")) |>
+  mutate(across(c(mean, sd, q5, q95, rhat, ess_bulk, ess_tail), ~round(., 3))) |> 
   filter(variable != "lp__") |> kable()
 ```
 
@@ -1324,7 +1330,8 @@ ajuste_vinos_2 <- mod_vinos_2$sample(
 
 ```{r}
 ajuste_vinos_2$summary(c("O", "Q", "sigma")) |> 
-  select(variable, mean, sd, q5, q95, rhat, contains("ess")) |> 
+  select(variable, mean, sd, q5, q95, rhat, contains("ess")) |>
+  mutate(across(c(mean, sd, q5, q95, rhat, ess_bulk, ess_tail), ~round(., 3))) |> 
   filter(variable != "lp__") |> kable()
 ```
 Todo parece bien con los diagnósticos. Podemos graficar las estimaciones 
@@ -1396,7 +1403,8 @@ Checamos diagnósticos:
 
 ```{r}
 ajuste_vinos_3$summary(c("O", "Q", "H", "D", "sigma")) |> 
-  select(variable, mean, sd, q5, q95, rhat, contains("ess")) |> 
+  select(variable, mean, sd, q5, q95, rhat, contains("ess")) |>
+  mutate(across(c(mean, sd, q5, q95, rhat, ess_bulk, ess_tail), ~round(., 3))) |> 
   filter(variable != "lp__") |> kable()
 ```
 
@@ -1423,7 +1431,8 @@ en este contraste:
 
 ```{r}
 ajuste_vinos_3$summary(c("dif_origen")) |> 
-  select(variable, mean, sd, q5, q95, rhat, contains("ess")) 
+  select(variable, mean, sd, q5, q95, rhat, contains("ess")) |> 
+  mutate(across(c(mean, sd, q5, q95, rhat, ess_bulk, ess_tail), ~round(., 3))) 
 ```
 
 
@@ -1532,7 +1541,8 @@ Y con este truco de reparametrización el muestreador funciona correctamente
 
 ```{r}
 ajuste_embudo$summary() |> 
-  select(variable, mean, rhat, contains("ess"))
+  select(variable, mean, rhat, contains("ess")) |> 
+  mutate(across(c(mean, rhat, ess_bulk, ess_tail), ~round(., 3))) 
 ```
 
 
