@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.552">
+<meta name="generator" content="quarto-1.4.553">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -339,8 +339,8 @@ window.Quarto = {
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)<span class="co">#, width = 200, height = 50)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-ad9d31e809eb6c89115d" style="width:100%;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-ad9d31e809eb6c89115d">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    U\n  node [shape=plaintext]\n    H\n    W\n  edge [minlen = 3]\n    H -> W\n    U -> W\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-a2c1dcf7ffa05c5714fb" style="width:100%;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-a2c1dcf7ffa05c5714fb">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    U\n  node [shape=plaintext]\n    H\n    W\n  edge [minlen = 3]\n    H -> W\n    U -> W\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Nótese que no consideramos <span class="math inline">\(W\to H\)</span>, porque podemos pensar en varias intervenciones que podrían cambiar el peso por no cambian la estatura. Por otro lado, es difícil pensar en alguna intervención que cambie la estatura pero no cambie el peso de una persona. Adicionalmente, hay otros factores desconocidos no observados <span class="math inline">\(U\)</span> que afectan el peso de cada persona adicionalmente a su estatura.</p>
@@ -934,8 +934,8 @@ Verificaciones de predictiva posterior
 <span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-c958f58b2aef91822079" style="width:100%;height:162px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-c958f58b2aef91822079">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    U\n    V\n    Z\n  node [shape=plaintext]\n    H\n    W\n    S\n  edge [minlen = 3]\n    H -> W\n    U -> W\n    S -> H\n    S -> W\n    V -> H\n    Z -> S\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-cf6ce42999c0addfee76" style="width:100%;height:162px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-cf6ce42999c0addfee76">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    U\n    V\n    Z\n  node [shape=plaintext]\n    H\n    W\n    S\n  edge [minlen = 3]\n    H -> W\n    U -> W\n    S -> H\n    S -> W\n    V -> H\n    Z -> S\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Omitiendo del diagrama las variables no observadas que también son causas únicamente de <span class="math inline">\(S\)</span> y <span class="math inline">\(W, H\)</span>:</p>
@@ -960,8 +960,8 @@ Verificaciones de predictiva posterior
 <span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-caf22489b400c00e474b" style="width:100%;height:162px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-caf22489b400c00e474b">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n  \n  node [shape=plaintext]\n    H\n    W\n    S\n  edge [minlen = 3]\n    H -> W\n    S -> H\n    S -> W\n\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-7df10eba17a1ab15ec1e" style="width:100%;height:162px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-7df10eba17a1ab15ec1e">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n  \n  node [shape=plaintext]\n    H\n    W\n    S\n  edge [minlen = 3]\n    H -> W\n    S -> H\n    S -> W\n\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Si queremos saber cómo influye el sexo en el peso, este diagrama indica que hay dos tipos de preguntas que podemos hacer:</p>
@@ -1058,7 +1058,7 @@ Chain 4 finished in 0.1 seconds.
 
 All 4 chains finished successfully.
 Mean chain execution time: 0.1 seconds.
-Total execution time: 0.6 seconds.</code></pre>
+Total execution time: 0.7 seconds.</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -1451,8 +1451,8 @@ Tip
 <span id="cb65-21"><a href="#cb65-21" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)<span class="co">#, width = 200, height = 50)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-ac6c3ccbccc7bc9f97ef" style="width:100%;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-ac6c3ccbccc7bc9f97ef">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    V\n    Ang [label = <&theta;>]\n    U\n  node [shape=plaintext]\n    D\n    Y\n  edge [minlen = 3]\n    D -> V\n    D -> Y\n    V -> Y\n    Ang -> Y\n    U -> Y\n{rank = same; D; V}\n{rank = same; Ang; Y}\n{rank = max; U}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-61871258652d7ae1e60b" style="width:100%;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-61871258652d7ae1e60b">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    V\n    Ang [label = <&theta;>]\n    U\n  node [shape=plaintext]\n    D\n    Y\n  edge [minlen = 3]\n    D -> V\n    D -> Y\n    V -> Y\n    Ang -> Y\n    U -> Y\n{rank = same; D; V}\n{rank = same; Ang; Y}\n{rank = max; U}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>En este caso, el modelo causal es como sigue: conocemos la distancia <span class="math inline">\(D\)</span> al hoyo en cada tiro. El éxito (<span class="math inline">\(Y=1\)</span>) o fracaso (<span class="math inline">\(Y=0\)</span>) depende de la distancia, junto con la velocidad a la que sale la pelota (muy alto o muy bajo puede dar un tiro fallido), y el ángulo <span class="math inline">\(\theta\)</span> de salida. Adicionalmente, hay otros factors <span class="math inline">\(U\)</span> que pueden afectar la probabilidad de éxito. Nótese que no escribiríamos, por ejemplo <span class="math inline">\(Y \leftarrow D\)</span>, porque la distancia no cambia causalmente con el resultado del tiro, aunque es cierto que si intervenimos en la distancia, esperaríamos obtener tasas de éxito diferentes. Igualmente, es necesario poner una flecha de <span class="math inline">\(V\)</span> a <span class="math inline">\(D\)</span> y <span class="math inline">\(V\)</span> a <span class="math inline">\(Y\)</span>.</p>
@@ -2201,12 +2201,12 @@ Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup)
 Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 1 finished in 2.9 seconds.
+Chain 1 finished in 3.0 seconds.
 Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
 Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 2 finished in 3.2 seconds.
+Chain 2 finished in 3.1 seconds.
 Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
 Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
