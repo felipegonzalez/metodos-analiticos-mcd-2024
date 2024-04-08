@@ -1,0 +1,206 @@
+---
+title: "Tarea 9 - mcmc"
+format: html
+---
+
+En esta tarea veremos algunos modelos simples y consideraremos diagnósticos
+de MCMC, y distintas fallas que pueden ocurrir:
+
+```{r}
+library(tidyverse)
+library(cmdstanr)
+set_cmdstan_path(".cmdstan/cmdstan-2.34.1/")
+```
+
+Para verificar sin duda nuestro trabajo, es útil comenzar con ejemplos simulados.
+Comenzamos con observaciones de un modelo poisson, con parámetro conocido.
+
+```{r}
+set.seed(554)
+x <- rnorm(40, 0, 1)
+y <- rpois(40, lambda = exp( 0.2 + x))
+```
+
+Si queremos estimar $\lambda$ con estos datos podemos usar el siguiente
+programa, que compilamos con *cmdstan_model*:
+
+```{r}
+mod_1 <- cmdstan_model("ejemplo-1.stan")
+mod_1
+```
+
+## Falla 1: no hay suficientes iteraciones de calentamiento ni simulación {-}
+
+
+Supongamos que hacemos sólo 20 iteraciones por cadena, con calentamiento muy corto:
+
+```{r}
+ajuste_1 <- mod_1$sample(
+  data = list(y = y, N = length(y), x = x),
+  chains = 4,
+  iter_warmup = 10,
+  iter_sampling = 20,
+  refresh = 1000,
+  seed = 522
+)
+```
+
+
+```{r}
+library(bayesplot)
+color_scheme_set(scheme = "viridis")
+mcmc_trace(ajuste_1$draws(c("alpha", "beta"))) 
+```
+
+**Pregunta 1**: ¿qué características notas en las cadenas que demuestran que la simulación no ha convergido?
+Discute en la siguiente salida cuáles diagnósticos no son apropiados, para confirmar tu
+respuesta de la pregunta anterior:
+
+
+```{r}
+ajuste_1$summary(c("alpha", "beta"))
+```
+
+**Pregunta 2**: ¿Puedes confiar en estos resultados para hacer inferencia sobre los parámetros
+alpha y beta?
+
+
+## Falla 2: no hay suficientes iteraciones de  simulación {-}
+
+Incrementamos el periodo de calentamiento:
+
+```{r}
+ajuste_1 <- mod_1$sample(
+  data = list(y = y, N = length(y), x = x),
+  chains = 4,
+  iter_warmup = 300,
+  iter_sampling = 20,
+  refresh = 1000,
+  seed = 522
+)
+```
+
+
+```{r}
+color_scheme_set(scheme = "viridis")
+mcmc_trace(ajuste_1$draws(c("alpha", "beta"))) 
+```
+
+
+**Pregunta 3**: ¿qué características notas en las cadenas que demuestran que la simulación no ha convergido?
+¿Qué mejoró con respecto a la corrida anterior?
+Discute en la siguiente salida cuáles diagnósticos no son apropiados, para confirmar tu
+respuesta de la pregunta anterior:
+
+
+```{r}
+ajuste_1$summary(c("alpha", "beta"))
+```
+
+## Una mejor corrida {-}
+
+Incrementamos el número de simulaciones:
+
+```{r}
+ajuste_1 <- mod_1$sample(
+  data = list(y = y, N = length(y), x = x),
+  chains = 4,
+  iter_warmup = 300,
+  iter_sampling = 2000,
+  refresh = 1000,
+  seed = 522
+)
+```
+
+
+```{r}
+color_scheme_set(scheme = "viridis")
+mcmc_trace(ajuste_1$draws(c("alpha", "beta"))) 
+```
+
+*Pregunta 4**: describe si notas posibles problemas en este diagnóstico de trazas. 
+Revisa la siguiente salida. ¿Notas algún problema?
+
+
+```{r}
+ajuste_1$summary(c("alpha", "beta"))
+```
+
+*Pregunta 5**: Explica si con estos diagnósticos es razonable hacer inferencia sobre alpha y beta.
+En este caso sabemos cuáles son los valores reales de alpha y beta. ¿La inferencia es consistente con estos
+valores o no?
+
+
+
+Repetimos ahora con una muestra grande (de tamaño 1000):
+
+```{r}
+set.seed(5541)
+x <- rnorm(1000, 0, 1)
+y <- rpois(1000, lambda = exp( 0.2 + x))
+```
+
+
+
+
+```{r}
+ajuste_1 <- mod_1$sample(
+  data = list(y = y, N = length(y), x = x),
+  chains = 4,
+  iter_warmup = 300,
+  iter_sampling = 2000,
+  refresh = 1000,
+  seed = 5221
+)
+```
+
+```{r}
+ajuste_1$summary()
+```
+
+
+*Pregunta 6**: En este caso sabemos cuáles son los valores reales de alpha y beta. ¿La inferencia es consistente con estos
+valores o no?
+
+
+## Problemas de especificación
+
+Veremos un ejemplo donde el modelo está incorrectamente especificado. Nótese que
+no hemos puesto información inicial (¿qué crees que pasa en este caso?) y cómo
+es la forma de la $z$ más adelante en la simulación.
+
+
+```{r}
+mod_2 <- cmdstan_model("ejemplo-2.stan")
+mod_2
+```
+
+```{r}
+set.seed(5541)
+x <- rnorm(100, 0, 1)
+z <- rep(1,100)
+y <- rpois(100, lambda = exp( 0.2 + x))
+```
+
+```{r}
+ajuste_2 <- mod_2$sample(
+  data = list(y = y, N = length(y), x = x, z = z),
+  chains = 4,
+  iter_warmup = 300,
+  iter_sampling = 2000,
+  refresh = 1000,
+  seed = 5221
+)
+```
+
+```{r}
+ajuste_2$summary()
+```
+
+```{r}
+mcmc_trace(ajuste_2$draws(c("alpha", "beta", "gamma")))
+```
+
+*Pregunta 7*: ¿Confiarias en los resultados de esta simulación? ¿Por qué si o no?
+ ¿Cuáles son los parámetros más problemáticos?
+¿Por qué crees que pasa eso? ¿Cuáles son posibles remedios para estos problemas?
