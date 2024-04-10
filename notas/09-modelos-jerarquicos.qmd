@@ -1,4 +1,4 @@
-# Modelos multinivel.
+# Modelos jerárquicos
 
 Muchas veces, cuando las observaciones están agrupadas por variables
 categóricas, puede ser que obtengamos mejores estimaciones cuando consideramos modelos no solo para los observaciones, sino también para la variación que esperamos en parámetros relacionadas con los grupos. Esta es
@@ -39,8 +39,7 @@ Consideramos un ejemplo simple, donde queremos estimar el efecto del
 hospital en la tasa de mortalidad de pacientes de cirugía de corazón. Este ejemplo
 se puede encontrar en @albert2009bayesian. Plantearemos  3 alternativas de modelación para resolver el problema: modelo de unidades iguales, modelo de unidades independientes y finalmente modelo jerárquico.
 
-Tenemos datos todas las cirugías de transplante de corazón llevadas a cabo en Estados Unidos en un periodo de 24 meses, entre octubre de  1987 y diciembre de  
-1989. Para cada uno de los  131 hospitales, se registró el número de cirugías de transplante de corazón, y el número de muertes durante los 30 días posteriores a la cirugía $y$.
+Tenemos datos todas las cirugías de transplante de corazón llevadas a cabo en Estados Unidos en un periodo de 24 meses, entre octubre de  1987 y diciembre de 1989. Para cada uno de los  131 hospitales, se registró el número de cirugías de transplante de corazón, y el número de muertes durante los 30 días posteriores a la cirugía $y$.
 Además, se cuenta con una predicción de la probabilidad de muerte de cada paciente individual. Esta predicción esta basada en un modelo logístico que incluye información a nivel paciente como condición médica antes de la cirugía, género, sexo y raza. En cada hospital se suman las probabilidades de muerte de sus pacientes para calcular el número esperado de muertes $e$, que llamamos como la exposición del hospital. $e$ refleja el riesgo de muerte debido a la mezcla de pacientes que componen un hospital particular.
 
 El diagrama simple que consideraremos es uno donde hospital es causa tanto de 
@@ -87,6 +86,7 @@ Es decir, el número de muertes es Poisson con valor esperado igual al número
 de expuestos multiplicado por la tasa común de mortalidad. 
 
 ```{r}
+#| message: false
 library(cmdstanr)
 mod_agregado <- cmdstan_model("./src/heart-agregado.stan")
 datos_agregado <- list(N = nrow(datos_hosp), y = datos_hosp$y, e = datos_hosp$e)
@@ -101,6 +101,8 @@ Los diagnósticos básicos parecen ser apropiados. Procedemos a hacer un
 chequeo predictivo posterior:
 
 ```{r}
+#| warning: false
+#| message: false
 set.seed(912)
 ajuste_agregado$draws("y_sim", format = "df") |> 
   as_tibble() |> 
@@ -200,7 +202,8 @@ ajuste_jer$draws("lambda", format = "df") |>
 ```
 
 
-
+**Ejercicio**: repetir el análisis posterior predictivo que vimos
+para el modelo agregado.
 
 
 
