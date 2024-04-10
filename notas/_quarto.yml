@@ -14,6 +14,7 @@ book:
     - 06-calculo-do.qmd
     - 07-buenos-malos-controles.qmd
     - 08-mcmc.qmd
+    - 09-modelos-jerarquicos.qmd
 bibliography: referencias/book.bib
 
 format:
