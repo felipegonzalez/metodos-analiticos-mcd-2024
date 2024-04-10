@@ -1,0 +1,212 @@
+# Modelos multinivel.
+
+Muchas veces, cuando las observaciones están agrupadas por variables
+categóricas, puede ser que obtengamos mejores estimaciones cuando consideramos modelos no solo para los observaciones, sino también para la variación que esperamos en parámetros relacionadas con los grupos. Esta es
+una técnica de modelación con la que en muchos casos podemos mejorar estimaciones, aprovechando de manera más eficiente la información que tenemos.
+
+En nuestros ejemplos anteriores, por ejemplo, hemos visto casos
+donde al **estratificar** construimos modelos individuales, por ejemplo,
+en regresión lineal, si $g(i)$ es el grupo de la observación $i$, utilizamos modelos de la forma:
+
+$$\alpha_{g(i)} + \beta_{g(i)} x_i + \epsilon_i$$
+Este modelo, donde ordenada al origen y coeficientes varían por grupo, tienen a veces el problema de resultar en estimaciones con alta variabilidad y poco informativas, 
+especialmente cuando tenemos pocos datos por grupo. Cuando es el 
+caso de que estos coeficientes no varían por grupo, podemos adoptar un
+modelo más simple, como
+$$\alpha + \beta x_i + \epsilon_i,$$
+que da estimaciones con menos error, pero perdemos el objetivo de la
+estratificación a menos que en efecto los coeficientes no varían mucho por grupo.
+
+Una alternativa intermedia es construir un modelo donde *aprendamos* la estructura de variabilidad de $\alpha_g$ y $\beta_g$ a lo largo de los grupos: aprendemos de cada grupo, pero los coeficientes de cada grupo
+tienen una distribución a priori con parámetros que podemos aprender de los
+datos. Esto resulta en varias mejorías:
+
+1. Cuando tenemos muchos datos en un grupo $g$, usamos principalmente los
+datos en ese grupo para estimar los parámetros de ese grupo.
+2. Cuando tenemos pocos datos en un grupo $g$, podemos usar información
+del comportamiento a lo largo de los grupos para regularizar las estimaciones relacionadas con ese grupo.
+3. Evitamos por un lado tener modelos subajustados (donde no consideramos distintos modelos por grupo), pero también sobreajustados (cuando tenemos
+poca información por grupo). El nivel de regularización lo aprendemos de los datos.
+
+El objetivo de todo esto es obtener mejores estimaciones de las
+cantidades de interés. Veremos más adelante cómo se relaciona esto
+con inferencia causal.
+
+
+## Primer ejemplo: construyendo un modelo jerárquico.
+
+Consideramos un ejemplo simple, donde queremos estimar el efecto del 
+hospital en la tasa de mortalidad de pacientes de cirugía de corazón. Este ejemplo
+se puede encontrar en @albert2009bayesian. Plantearemos  3 alternativas de modelación para resolver el problema: modelo de unidades iguales, modelo de unidades independientes y finalmente modelo jerárquico.
+
+Tenemos datos todas las cirugías de transplante de corazón llevadas a cabo en Estados Unidos en un periodo de 24 meses, entre octubre de  1987 y diciembre de  
+1989. Para cada uno de los  131 hospitales, se registró el número de cirugías de transplante de corazón, y el número de muertes durante los 30 días posteriores a la cirugía $y$.
+Además, se cuenta con una predicción de la probabilidad de muerte de cada paciente individual. Esta predicción esta basada en un modelo logístico que incluye información a nivel paciente como condición médica antes de la cirugía, género, sexo y raza. En cada hospital se suman las probabilidades de muerte de sus pacientes para calcular el número esperado de muertes $e$, que llamamos como la exposición del hospital. $e$ refleja el riesgo de muerte debido a la mezcla de pacientes que componen un hospital particular.
+
+El diagrama simple que consideraremos es uno donde hospital es causa tanto de 
+su exposición $e$ (por su tamaño, tipo de casos que atrae, etc), como de el número
+de personas fallecidas. A su vez, la exposición $e$ es causa del número de muertes $y$.
+Nos interesa estimar el efecto directo de hospital en el número de muertes. 
+
+
+
+```{r}
+#| code-fold: true
+#| warning: false
+library(tidyverse)
+library(kableExtra)
+library(DiagrammeR)
+ggplot2::theme_set(ggplot2::theme_light())
+```
+
+
+```{r}
+#| message: false
+datos_hosp <- read_csv("../datos/hearttransplants.csv") |> 
+  mutate(hospital = row_number())
+head(datos_hosp)
+```
+
+Consideramos la cantidad $y/e$ como una estimación cruda de la tasa de mortalidad.
+En la siguiente gráfica, observamos que parece ser la variabilidad es alta
+cuando el número de expuestos es relativamente baja. Nótese que
+la tasa de mortalidad no es muy alta en general, y que el número de muertes
+es relativamente bajo en muchos hospitales (puede tomar valores 0, 1, 2, etc.) Esto
+produce variabilidad alta para exposiciones bajas.
+
+
+```{r}
+ggplot(datos_hosp, aes(x = e, y = 1000 * y / e, color = log(1 + y))) +
+  geom_point() + scale_x_log10() + xlab("Número de expuestos e")
+```
+Consideramos primero un modelo donde consideramos que todos los hospitales
+tienen una misma tasa de mortalidad. Si $e_j$ es la exposición del hospital $j$ y $y_j$ el número de muertes, entonces podemos considerar un modelo de la forma
+
+$$y_j \sim \text{Poisson}(e_j \lambda),$$
+Es decir, el número de muertes es Poisson con valor esperado igual al número
+de expuestos multiplicado por la tasa común de mortalidad. 
+
+```{r}
+library(cmdstanr)
+mod_agregado <- cmdstan_model("./src/heart-agregado.stan")
+datos_agregado <- list(N = nrow(datos_hosp), y = datos_hosp$y, e = datos_hosp$e)
+ajuste_agregado <- mod_agregado$sample(data = datos_agregado, chains = 4, refresh = 1000)
+```
+
+```{r}
+ajuste_agregado$summary("lambda")
+```
+
+Los diagnósticos básicos parecen ser apropiados. Procedemos a hacer un
+chequeo predictivo posterior:
+
+```{r}
+set.seed(912)
+ajuste_agregado$draws("y_sim", format = "df") |> 
+  as_tibble() |> 
+  pivot_longer(cols = starts_with("y_sim"), names_to = "variable") |> 
+  separate(variable, into = c("variable", "hospital"), sep = "[\\[\\]]") |>
+  mutate(hospital = as.integer(hospital)) |>
+  left_join(datos_hosp, by = "hospital") |>
+  filter(hospital %in% sample(1:94, 20)) |>
+  ggplot(aes(x = value)) + geom_histogram(binwidth = 1) +
+  facet_wrap(~ hospital) + 
+  geom_vline(aes(xintercept = y), color = "red")
+```
+
+Y vemos fallas en el ajuste del modelo, con varias observaciones
+en los extremos de las colas.
+
+Podemos considerar un modelo donde cada hospital tiene su propia tasa de mortalidad.
+
+
+```{r}
+library(cmdstanr)
+mod_ind <- cmdstan_model("./src/heart-individual.stan")
+print(mod_ind)
+datos_ind <- list(N = nrow(datos_hosp), y = datos_hosp$y, e = datos_hosp$e)
+ajuste_ind <- mod_ind$sample(data = datos_ind, chains = 4, refresh = 1000)
+resumen <- ajuste_ind$summary("lambda") |> 
+  select(variable, mean, sd, rhat, ess_bulk)
+resumen |> kable()
+```
+
+El problema en este caso es que tenemos intervalos que simplemente no
+son creíbles, en particular con aquellos hospitales que tienen poca exposición. 
+
+```{r}
+#| message: false
+#| warning: false
+set.seed(912)
+ajuste_ind$draws("lambda", format = "df") |> 
+  as_tibble() |> 
+  pivot_longer(cols = starts_with("lambda"), names_to = "variable") |> 
+  separate(variable, into = c("variable", "hospital"), sep = "[\\[\\]]") |>
+  mutate(hospital = as.integer(hospital)) |>
+  left_join(datos_hosp, by = "hospital") |>
+  mutate(hospital = factor(hospital)) |>
+  group_by(hospital, e, y) |> 
+  summarise(inf = quantile(value, 0.1), sup = quantile(value, 0.9)) |>
+  ggplot(aes(x = e)) + geom_linerange(aes(ymin = inf, ymax = sup)) +
+  geom_point(aes(y = 1000 * y / e), color = "red") +
+  scale_x_log10() + xlab("Número de expuestos e") + ylab("Muertes por mil expuestos")
+```
+
+En este caso, la variabilidad es muy alta para hospitales con poca exposición, tanto
+en los datos observados como en los intervalos. Los intervalos no aportan
+mucha información. En este punto utilizar iniciales fuertes
+para las $\lambda_j$ si tenemos la información disponible. Sin embargo, los
+resultados serán altamente sensible a esta información inicial.
+
+Una alternativa intermedia es poner una distribución inicial sobre las tasas
+que pueda adaptarse a los datos. Esta es una estrategia intermedia, donde
+permitimos variación en las $\lambda_j$ que sea consistente con la variación
+que observamos a lo largo de los hospitales.
+
+
+
+```{r}
+library(cmdstanr)
+mod_jer <- cmdstan_model("./src/heart-jerarquico.stan")
+print(mod_jer)
+datos_jer <- list(N = nrow(datos_hosp), y = datos_hosp$y, e = datos_hosp$e)
+ajuste_jer <- mod_jer$sample(data = datos_ind, 
+    chains = 4, step_size = 0.5, iter_sampling = 3000, refresh = 1000)
+resumen <- ajuste_jer$summary(c("alpha", "mu")) |> 
+  select(variable, mean, sd, rhat, ess_bulk)
+resumen |> kable()
+```
+
+El problema en este caso es que tenemos intervalos que simplemente no
+son creíbles, en particular con aquellos hospitales que tienen poca exposición. 
+
+```{r}
+#| message: false
+#| warning: false
+set.seed(912)
+ajuste_jer$draws("lambda", format = "df") |> 
+  as_tibble() |> 
+  pivot_longer(cols = starts_with("lambda"), names_to = "variable") |> 
+  separate(variable, into = c("variable", "hospital"), sep = "[\\[\\]]") |>
+  mutate(hospital = as.integer(hospital)) |>
+  left_join(datos_hosp, by = "hospital") |>
+  mutate(hospital = factor(hospital)) |>
+  group_by(hospital, e, y) |> 
+  summarise(inf = quantile(value, 0.1), sup = quantile(value, 0.9), median = median(value)) |>
+  ggplot(aes(x = e)) + geom_linerange(aes(ymin = inf, ymax = sup)) +
+  geom_point(aes(y = 1000 * y / e), color = "red") +
+  geom_point(aes(y = median)) +
+  scale_x_log10() + xlab("Número de expuestos e") + ylab("Muertes por mil expuestos")
+```
+
+
+
+
+
+
+
+
+
+
+
+
