@@ -771,3 +771,21 @@ Nótese que el caso de una dimensión, para centrar multiplicábamos por la
 desviación estándar. El análogo en el caso multivariado es el factor de Cholesky
 de la covarianza, que es una especie de "raíz" de la covarianza.
 
+
+```{r}
+mod_5_bangladesh <- cmdstan_model("./src/bangladesh-5.stan")
+print(mod_5_bangladesh)
+```
+
+
+```{r}
+ajuste_5_bangladesh <- mod_5_bangladesh$sample(data = datos_lst,
+  refresh = 1000, init = 0.1, step_size = 0.1, parallel_chains = 4, seed = 9394)
+```
+
+```{r}
+ajuste_5_bangladesh$summary(c("beta_bar", "sigma", "Omega")) |> 
+  knitr::kable(digits = 2)
+```
+Este resultado es superior al anterior. 
+
