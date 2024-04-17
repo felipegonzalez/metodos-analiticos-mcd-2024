@@ -202,13 +202,598 @@ ajuste_jer$draws("lambda", format = "df") |>
 ```
 
 
-**Ejercicio**: repetir el análisis posterior predictivo que vimos
-para el modelo agregado.
+Los resultados del chequo predictivo posterior da mejores resultados (compara con el modelo agregado):
+
+```{r}
+#| warning: false
+#| message: false
+set.seed(912)
+ajuste_jer$draws("y_sim", format = "df") |> 
+  as_tibble() |> 
+  pivot_longer(cols = starts_with("y_sim"), names_to = "variable") |> 
+  separate(variable, into = c("variable", "hospital"), sep = "[\\[\\]]") |>
+  mutate(hospital = as.integer(hospital)) |>
+  left_join(datos_hosp, by = "hospital") |>
+  filter(hospital %in% sample(1:94, 20)) |>
+  ggplot(aes(x = value)) + geom_histogram(binwidth = 1) +
+  facet_wrap(~ hospital) + 
+  geom_vline(aes(xintercept = y), color = "red")
+```
+
+::: callout-note
+#Modelos jerárquicos y estimación
+Los modelos jerárquicos nos permiten ajustar modelos con *agregación parcial*: es
+decir, estimamos parámetros a nivel de grupo con mejor precisión que
+si ajustamos modelos individuales (varianza muy alta) 
+o agregamos los datos e ignoramos el grupo (sesgo alto). 
+
+La regularización que ocurre en estos modelos está relacionada a la inicial
+que estimamos sobre parámetros indiviiduales: cuando hay muchos datos en un grupo, 
+la inicial es menos importante, y cuando hay más datos en un grupo, la inicial es
+menos importante. El grado de regularización es estimado de la evidencia de 
+variación entre los grupos.
+:::
 
 
+## Modelos jerárquicos para estructuras causales
+
+Tomaremos ahora el ejemplo de @rethinking de un estudio de fertilidad en 
+Bangladesh. Nos interesa entender causas del uso de anticonceptivos en mujeres
+de Bangladesh, en particular:
+
+- ¿Cómo cambia con la edad y el tamaño de la familia el uso de anticonceptivos? Queremos
+ver si es posible contestar esta pregunta de forma causal con los datos disponibles.
+
+En nuestros datos tenemos muestras por distritos (zonas geográficas) que nos puede
+ayudar o controlar efectos relacionados con variables relacionadas
+con distrito (como acceso a servicios de salud, etc).
+
+Comenzamos con un diagrama que describe causas posibles
+de uso de anticonceptivos:
+
+- Los distritos (zona donde vive cada persona) influye causalmente en uso de anticonceptivos.
+- La edad de la mujer influye en el uso de anticonceptivos.
+- El número de hijos influye en el uso de anticonceptivos.
+- El status de urbano/rural influye en el uso de anticonceptivos.
+
+Nuestro primer diagrama es:
+
+```{r}
+#| code-fold: true
+grViz('
+digraph {
+  graph [ranksep = 0.2, rankdir=BT]
+  node [shape=plaintext]
+    AC
+    Distrito
+    Edad
+    Hijos
+    Urbano
+  edge [minlen = 3]
+   Edad -> AC [color="red"]
+   Hijos -> AC [color="red"]
+   Urbano -> AC
+   Distrito -> AC
+   
+{
+  rank = same; Urbano; Hijos
+}
+}
+', width = 350, height = 140)
+```
 
 
+Donde las flechas rojas son efectos causales de interés, y queremos considerar
+si es posible identificarlos y estimarlos posteriormente. Para decidir cómo
+construir nuestro modelo (qué variables podemos incluir o no y por qué), 
+consideraremos relaciones entre las causas, que mostramos como flechas rojas.
 
+- Ninguna variable es causa de edad, pero Edad puede ser causa de número de hijos (más tiempo para tener más hijos).
+- Urbano/rural puede ser causa número de hijos (costumbres)
+- Distritos tienen distintos niveles de regiones urbano/rural
+
+
+```{r}
+#| code-fold: true
+grViz('
+digraph {
+  graph [ranksep = 0.2, rankdir=BT]
+  node [shape=plaintext]
+    AC
+    Distrito
+    Edad
+    Hijos
+    Urbano
+  edge [minlen = 3]
+   Edad -> AC [color="red"]
+   Hijos -> AC [color="red"]
+   Urbano -> AC
+   Distrito -> AC
+   Edad -> Hijos 
+   Urbano -> Hijos
+   Distrito -> Urbano
+{
+  rank = same; Urbano; Hijos
+  rank = min; Urbano; Hijos
+}
+}
+', width = 350, height = 140)
+```
+De este diagrama, concluimos para empezar:
+
+- Para el efecto total de edad, **no** debemos estratificar por número de hijos
+(bloqueamos un camino causal).
+
+Finalmente, puedes pensar en otras relaciones entre causas que puedan
+dificultar la identificación causal, como las 
+que marcamos en naranja en el siguiente diagrama, donde
+
+- Tipo de familia (no observado) puede afectar tanto a número de niños
+como a uso de anticonceptivos. Esta sería una variable confusora para estimar el
+efecto de número de niños sobre uso de anticonceptivos.
+
+
+Vemos que encontrar el efecto causal de número de hijos puede tener dificultades considerables en este caso:
+
+
+```{r}
+#| code-fold: true
+grViz('
+digraph {
+  graph [ranksep = 0.2, rankdir=BT]
+  node [shape=plaintext]
+    AC
+    Distrito
+    Edad
+    Hijos
+    Urbano
+  node [shape=ellipse]
+    Familia
+  edge [minlen = 3]
+   Edad -> AC [color="red"]
+   Hijos -> AC [color="red"]
+   Urbano -> AC
+   Distrito -> AC
+   Edad -> Hijos 
+   Urbano -> Hijos
+   Distrito -> Urbano
+   Familia -> Hijos [color="orange"]
+   Familia -> AC [color="orange"]
+
+{
+  rank = same; Urbano; Hijos
+    rank = min; Urbano; Hijos
+
+}
+}
+', width = 350, height = 140)
+```
+
+## Primera parte de estructura jerárquica
+
+Empecemos primero como en nuestro ejemplo anterior, modelando jerárquicamente
+el uso de anticonceptivos segun distrito (solo vemos el efecto $D\to AC$). Esta variable nos puede ayudar a controlar
+variables asociadas con distrito que mejore la estimación de otras cantidades de interés, 
+y es importante usar una estructura jerárquica pues los tamaños de muestra por
+distrito son considerablemente distintos:
+
+
+```{r}
+bangladesh <- read_csv("../datos/bangladesh.csv") |> 
+  mutate(district = factor(district, levels = 1:61)) 
+```
+
+```{r}
+bangladesh  |> count(district, .drop = FALSE) |> 
+  mutate(district_fct = fct_reorder(district, n)) |>
+  ggplot(aes(x = as.numeric(district), y = n)) + geom_point() +
+  xlab("Distrito num")
+```
+
+Nótese que un distrito no contiene ninguna observación, y que hay distritos con
+muy pocas observaciones. Este es un caso típico donde un modelo jerárquico puede
+mejorar nuestras estimaciones de la relación de distrito con la variable respuesta
+de interés.
+
+Los datos, por persona, los modelamos como sigue (regresión logística):
+$$
+\begin{align}
+C_i &\sim \text{Bernoulli}(p_i)\\
+p_i &= \alpha_{D[i]}  \\
+\alpha_j &\sim N(\bar{\alpha},\sigma) \\
+\bar{\alpha} &\sim N(0, 1) \\
+\sigma &\sim N^+(0, 1) \\
+\end{align}
+$$
+Que implementado en stan puede quedar como:
+
+```{r}
+mod_1_bangladesh <- cmdstan_model("./src/bangladesh-1.stan")
+print(mod_1_bangladesh)
+```
+
+```{r}
+datos_lst <- list(
+  ac_uso = bangladesh$use.contraception,
+  distrito = as.integer(bangladesh$district),
+  N = nrow(bangladesh),
+  N_d = 61
+)
+ajuste_1_bangladesh <- mod_1_bangladesh$sample(data = datos_lst,
+                                               refresh = 1000)
+```
+
+```{r}
+ajuste_1_bangladesh$cmdstan_diagnose()
+```
+
+
+```{r}
+ajuste_1_bangladesh$summary(c("alpha_bar", "sigma", "alpha")) |> 
+  knitr::kable(digits = 2)
+```
+
+Los diagnósticos no apuntan a ningún problema, y obtenemos estimaciones tanto
+para los parámetros poblacionales como para los parámetros por distrito.
+
+Veamos cómo se ven las estimaciones crudas (proporción de uso de anticonceptivos en cada
+distrito) contra las estimaciones de nuestro modelo jerárquico. 
+
+```{r}
+#| warning: false
+#| message: false
+probs_1 <- ajuste_1_bangladesh$draws("prob_distrito", format = "df") |> 
+  as_tibble() |> pivot_longer(cols = starts_with("prob"), names_to = "variable") |>
+  separate(variable, sep = "[\\[\\]]", into = c("variable", "district"), 
+           extra = "drop", convert = TRUE)  |> 
+  group_by(district) |> summarise(media = mean(value),
+                                  q5 = quantile(value, 0.05),
+                                  q95 = quantile(value, 0.95)) 
+resumen_1 <- bangladesh |> group_by(district) |> 
+  summarise(prop_cruda = mean(use.contraception), n = n()) |> 
+  mutate(district = as.integer(district))
+probs_1 |> left_join(resumen_1) |> 
+  ggplot(aes(x = district)) +
+  geom_point(aes(y = media), color = "red") +
+  geom_linerange(aes(ymin = q5, ymax = q95), color = "red") +
+    geom_point(aes(y = prop_cruda, size = n), color = "black", alpha = 0.2) 
+```
+
+**Observaciones**:
+- Nótese que cuando la muestra de un distrito es chica, la cantidad de
+encogimiento es grande (el estimador crudo está cercano de nuestro estimador
+jerárquico si la muestra es grande). El caso extremo es el distrito 53, donde tenemos
+muestra de 0. En ese caso, usamos la inicial ajustada para producir estimaciones
+de la posterior
+- Adicionalmente, cuando la muestra es chica en un distrito, tenemos también más
+incertidumbre en la estimación de la proporción de uso de anticonceptivos.
+- Examina por ejemplo el distrito 11: obtuvimos 0 casos de usos de anticonceptivos,
+y es una mala estimación de esta proporción. El estimador del modelo jerárquico es de
+los más bajos, pero se encoge hacia la media poblacional.
+
+
+## Agregando covariables
+
+Consideremos ahora la variable de urbano-rural. Incluiremos esta variable también,
+considerando que su efecto puede variar por distrito:
+
+
+$$
+\begin{align}
+C_i &\sim \text{Bernoulli}(p_i)\\
+p_i &= \alpha_{D[i]} + \beta_{D[i]} U_i \\
+\alpha_j &\sim N(\bar{\alpha},\sigma_{\alpha}) \\
+\beta_j &\sim N(\bar{\beta},\sigma_{ \beta}) \\
+\bar{\alpha}, \bar{\beta}  &\sim N(0, 1)\\
+\sigma_{\alpha}, \sigma_{\beta} &\sim N^+(0, 1) \\
+\end{align}
+$$
+Que implementado en stan puede quedar como:
+
+```{r}
+mod_2_bangladesh <- cmdstan_model("./src/bangladesh-2.stan")
+print(mod_2_bangladesh)
+```
+
+```{r}
+datos_lst <- list(
+  ac_uso = bangladesh$use.contraception,
+  distrito = as.integer(bangladesh$district),
+  urbano = bangladesh$urban,
+  N = nrow(bangladesh),
+  N_d = 61
+)
+ajuste_2_bangladesh <- mod_2_bangladesh$sample(data = datos_lst,
+                                               refresh = 1000, seed = 9394)
+```
+
+
+Y encontramos divergencias en el ajuste. Veamos los tamaños efectivos de
+muestra y los valores rhat:
+
+```{r}
+ajuste_2_bangladesh$summary(c("alpha_bar", "beta_bar", "sigma_alpha", "sigma_beta")) |> 
+  knitr::kable(digits = 2)
+```
+Aunque los valores de rhat no presentan problema, vemos que los tamaños efectivos de muestra
+para las desviaciones estándar poblacionales son malos (especialmente para el parámetro
+asociado a $\beta$). Las trazas indican que quizá el problema no es muy grave,
+pero las cadenas muestran cierta heterogeneidad y autocorrelación alta:
+
+```{r}
+#| message: false
+library(bayesplot)
+ajuste_2_bangladesh$draws(c("sigma_beta")) |> 
+  mcmc_trace()
+```
+Aunque quizá en este ejemplo es posible correr más iteraciones y obtener resultados
+más confiables, en estos casos es mejor diagnosticar el problema y corregirlo: obtendremos
+mejores estimaciones de manera más rápida.
+
+## Parametrización no centrada
+
+El problema que ocurre en este modelo es uno que aparece con cierta frecuencia
+en modelos jerárquicos, y está relacionado con el embudo de Neal que vimos 
+al final de la sección anterior.
+
+En nuestro ejemplo $\beta_j$ tienen una inicial que depende de
+parámetros $N(\beta_0,\sigma_{\beta})$. Cuando $\sigma_{\beta}$ es chica, esperamos
+que haya poca variación en las $\beta_j$, y cuando es grande, por el contrario, esperamos
+que haya mucha variación. Esto produce una especie de embudo de Neal:
+
+```{r}
+sims_beta <- ajuste_2_bangladesh$draws(c("beta", "sigma_beta"), format = "df")
+diagnosticos_tbl <- ajuste_2_bangladesh$sampler_diagnostics(format = "df")
+sims_beta <- left_join(sims_beta, diagnosticos_tbl)
+```
+
+Podemos examinar gráficas de pares para ver donde aparece el problema: efectivamente,
+ocurre para valores chicos de $\sigma$.
+
+```{r}
+#| warning: false
+sims_beta |> 
+  ggplot(aes(y = log(sigma_beta), x = `beta[1]`, size = factor(divergent__),
+               colour = factor(divergent__))) + geom_point() +
+  ylab("log sigma_beta") + xlab("beta")
+```
+
+
+Para corregir este problema (en el mejor de los casos ineficiencia), podemos usar
+el mismo truco que vimos al final de la sección anterior. En lugar de escribir
+$$\alpha_j = N(\bar{\alpha}, \sigma_{\alpha})$$
+Definimos los valores $z_j$ como $z_j\sim N(0,1)$ y escribimos
+$$\alpha_j = \bar{\alpha} + \sigma_{\alpha} z_j$$
+Y lo mismo para el parámetro $\beta$. **Se trata exactamente del mismo modelo**, pero
+está parametrizado de manera distinta.
+
+Nuestro modelo reparametrizado se vería como sigue:
+
+
+```{r}
+mod_3_bangladesh <- cmdstan_model("./src/bangladesh-3.stan")
+print(mod_3_bangladesh)
+```
+```{r}
+ajuste_3_bangladesh <- mod_3_bangladesh$sample(data = datos_lst,
+                                               refresh = 1000, seed = 9394)
+```
+
+
+El resultado es mejor y logramos mejorar todos los diagnósticos:
+
+```{r}
+ajuste_3_bangladesh$summary(c("alpha_bar", "beta_bar", "sigma_alpha", "sigma_beta")) |> 
+  knitr::kable(digits = 2)
+```
+
+```{r}
+mcmc_trace(ajuste_3_bangladesh$draws(c("sigma_beta")))
+```
+
+Ahora podemos considerar el efecto de la variable urbano rural por distrito,
+donde vemos otra vez el efecto de agregación parcial, aunque esta vez el 
+encogimiento es hacia la media de urbano y rural respectivamente:
+
+
+```{r}
+#| warning: false
+#| message: false
+probs_1 <- ajuste_3_bangladesh$draws(c("prob_distrito_urbano", "prob_distrito_rural"), 
+                                     format = "df") |> 
+  as_tibble() |> pivot_longer(cols = starts_with("prob"), names_to = "variable") |>
+  mutate(tipo = ifelse(str_detect(variable, "urbano"), "urbano", "rural")) |> 
+  separate(variable, sep = "[\\[\\]]", into = c("variable", "district"), 
+           extra = "drop", convert = TRUE)  |> 
+  group_by(district, tipo) |> summarise(media = mean(value),
+                                  q5 = quantile(value, 0.05),
+                                  q95 = quantile(value, 0.95)) 
+resumen_1 <- bangladesh |>
+  mutate(tipo = ifelse(urban == 1, "urbano", "rural")) |> 
+  mutate(tipo = factor(tipo, levels = c("urbano", "rural"))) |> 
+  group_by(district, tipo, .drop = FALSE) |> 
+  summarise(prop_cruda = mean(use.contraception), n = n()) |> 
+  mutate(district = as.integer(district))
+probs_1 |> left_join(resumen_1) |>
+  ggplot(aes(x = district)) +
+  geom_hline(yintercept = 0.5, linetype = 2) +
+  geom_point(aes(y = media), color = "red") +
+  geom_linerange(aes(ymin = q5, ymax = q95), color = "red") +
+    geom_point(aes(y = prop_cruda, size = n), color = "black", alpha = 0.2) +
+  facet_wrap(~tipo, nrow = 2)
+```
+
+**Observaciones**:
+- Nótese que generalmente tenemos muestras más chicos en zonas urbanas, y por
+eso vemos que hay más incertidumbre en las estimaciones urbanas. 
+- Sin embargo, vemos que en general la variable urbana influye en el uso
+de anticonceptivos, aunque tenemos incertidumbre considerable en las estimaciones
+de las zonas urbanas de los distritos (menos muestra).
+
+Podemos también comparar más directamente cómo cambia la probabilidad de 
+zonas urbanas a rurales dentro de cada distrito:
+
+```{r}
+probs_1 |> 
+  select(-q5, -q95) |>
+  pivot_wider(names_from = tipo, values_from = media) |> 
+  ggplot(aes(x = urbano, y = rural)) +
+  geom_abline(intercept = 0, slope = 1, linetype = 2) +
+  geom_point(colour = "red") 
+```
+Nótese que vemos aquí también la diferencia dentro de distritos entre
+zonas urbanas y rurales. Las medias posteriores en general están por debajo
+de la identidad. Adicionalmente, y como es de esperarse, hay correlación
+dentro de distritos entre las tasas de uso de anticonceptivos en zonas urbanas
+y rurales. 
+
+Esta última observación suguiere que todavía podemos mejorar nuestras estimaciones:
+en este modelo, encogemos la estimación de cada zona hacia la media urbana o rural,
+independientemente una de otra. Sin embargo, si queremos obtener mejores estimaciones, 
+el "encogimiento" debe estar correlacionado dentro de los distritos: estamos
+dejando de utilizar información que está en los datos. Si observamos que el uso
+de anticonceptivos en una zona urbana de el distrito A es relativamente alto, 
+esperamos que el uso en la zona rural de ese mismo distrito sea también relativamente
+alto.
+
+
+## Variables correlacionadas
+
+En nuestro ejemplo anterior, observamos que existe correlación entre
+las tasas de uso de anticonceptivos en zonas urbanas y rurales a lo largo
+de los distritos. En términos de nuestro modelo, los coeficientes $\alpha_j +\beta_j$
+están correlacionados con los coeficientes $\alpha_j$. Nótese que la inicial
+(o hiper-inicial) poblacional no incluye esta correlación, pero efectivamente
+la posterior captura la correlación. Podemos hacer la estimación más eficiente
+modelando explícitamente la correlación en la inicial poblacional. Con dos
+coeficientes podríamos modelar la población con una distribución normal multivariada.
+
+Cambiamos nuestra notación por conveniencia: ahora $\beta$ es un vector
+que incluye la ordenada al origen $\beta_1$ y la pendiente $\beta_2$.
+
+$$\beta \sim NMV(\bar{\beta}, \Sigma)$$
+adicionalmente a $\bar{\beta} \sim N(0,I)$ y $\sigma_1, \sigma_2 \sim N^{+}(0,1)$. 
+
+Podemos pensar en la matriz de covarianzas $\Sigma$ como dada en dos partes:
+$\Omega$, una matriz de correlaciones, y dos deviaciones estándar $\sigma$,
+de modo que 
+
+$$\Sigma = \textrm{diag}(\sigma)\,\Omega\, \textrm{diag}(\sigma)$$
+
+En nuestro ejemplo anterior teníamos $\Omega = I$. En general, si $\Omega$ es
+una matriz de correlaciones, entonces $\Sigma$ se escribe como:
+
+La pregunta ahora es qué distribución inicial le podemos dar a la matriz
+$\Omega$ de correlaciones. Aún cuando en este caso bivariado sólo tenemos
+que dar una inicial a la correlación y es posible definir alguna distribución
+inicial para $\rho\in(-1,1)$, en general el problema de poner una distribución
+sobre matrices de correlación no es simple. 
+Usamos la llamada 
+[distribución LKJ](https://mc-stan.org/docs/functions-reference/correlation_matrix_distributions.html#lkj-correlation),
+$$\Omega \sim \textrm{LKJ}(\eta)$$
+con $\eta>0$. $\eta$ indica qué tan concentrada está la distribución en correlaciones
+cercanas a 0, o cuánta dispersión esperamos:
+
+```{r}
+#| warning: false
+#| message: false
+modelo_str <- "
+data{}
+parameters {}
+model {}
+generated quantities {
+  matrix[2,2] Omega_02;
+  matrix[2,2] Omega_2;
+  matrix[2,2] Omega_20;
+  Omega_02 = lkj_corr_rng(2, 0.2);
+  Omega_2 = lkj_corr_rng(2, 2);
+  Omega_20 = lkj_corr_rng(2, 20);
+}
+"
+archivo <-file("./src/ejemplo_lkj.stan")
+writeLines(modelo_str, archivo)
+close(archivo)
+sim_lkj <- cmdstanr::cmdstan_model("./src/ejemplo_lkj.stan")
+salida <- sim_lkj$sample(fixed_param = TRUE, iter_sampling = 1000,
+                         show_messages = FALSE)
+sims <- salida$draws(format = "df") |> 
+  select(contains("[1,2]")) |> 
+  pivot_longer(cols = everything(), names_to = "variable", values_to = "valor") 
+sims |> 
+ggplot(aes(x = valor)) +
+  geom_histogram() +
+  facet_wrap(~variable)
+
+```
+
+
+Ahora intentamos ajustar un modelo con esta nueva distribución poblacional inicial:
+
+```{r}
+mod_4_bangladesh <- cmdstan_model("./src/bangladesh-4.stan")
+print(mod_4_bangladesh)
+```
+
+
+```{r}
+ajuste_4_bangladesh <- mod_4_bangladesh$sample(data = datos_lst,
+  refresh = 1000, init = 0.1, step_size = 0.1, parallel_chains = 4, seed = 9394)
+```
+
+```{r}
+ajuste_4_bangladesh$summary(c("beta_bar", "sigma", "Omega")) |> 
+  knitr::kable(digits = 2)
+```
+Aunque no tiene problemas graves de divergencia, el ajuste es lento como
+vemos en el tamaño efectivo bajo de las correlaciones entre la constante $\beta_1$ y
+el coeficiente de la variable urbana $\beta_2$. Nota: observa que los coeficientes
+$\beta_1$ y $\beta_2$ son negativamente correlacionados. Sin embargo,
+la correlación entre $\beta_1 + \beta_2$ y $\beta_1$ es positiva como veremos
+más adelante.
+
+Podemos usar también una parametrización no centrada para este modelo. Observamos
+primero que si $\Omega$ es una matriz de correlaciones, entonces
+siempre podemos escribir su factorización de Cholesky, dada por
+$\Omega = LL^T$, donde $L$ es una matriz triangular inferior. De esta forma,
+podemos escribir
+
+$$\Sigma = \textrm{diag}(\sigma)\,LL^T\, \textrm{diag}(\sigma)$$
+De forma que el factor de Cholesky para $\Sigma$ es 
+$\textrm{diag}(\sigma)\,L$.
+
+Ahora tomemos $Z\sim NMV(0,I)$ y definamos
+$X = \textrm{diag}(\sigma)\,L\,Z$. Entonces se puede
+demostrar que $X\sim NMV(0,\Sigma)$. De esta forma, si 
+$\beta \sim NMV(\bar{\beta}, \Sigma)$,
+podemos escribir
+$$\beta = \bar{\beta} + \textrm{diag}(\sigma)\,L\,Z.$$
+Nótese que el caso de una dimensión, para centrar multiplicábamos por la 
+desviación estándar. El análogo en el caso multivariado es el factor de Cholesky
+de la covarianza, que es una especie de "raíz" de la covarianza.
+
+
+```{r}
+mod_5_bangladesh <- cmdstan_model("./src/bangladesh-5.stan")
+print(mod_5_bangladesh)
+```
+
+
+```{r}
+ajuste_5_bangladesh <- mod_5_bangladesh$sample(data = datos_lst,
+  refresh = 1000, init = 0.1, step_size = 0.1, parallel_chains = 4, seed = 9394)
+```
+
+```{r}
+ajuste_5_bangladesh$summary(c("beta_bar", "sigma", "Omega")) |> 
+  knitr::kable(digits = 2)
+```
+Este resultado es superior al anterior. Comparamos las medias de los 
+coeficientes para nuestros dos modelos:
+
+```{r}
+ajuste_5_bangladesh$draws(c("beta")) |> 
+  knitr::kable(digits = 2)
+```
 
 
 
