@@ -121,6 +121,10 @@ div.csl-indent {
     "search-label": "Buscar"
   }
 }</script>
+<script src="site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="site_libs/viz-1.8.2/viz.js"></script>
+<link href="site_libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
+<script src="site_libs/grViz-binding-1.0.10/grViz.js"></script>
 
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -259,6 +263,11 @@ window.Quarto = {
    
   <ul>
   <li><a href="#primer-ejemplo-construyendo-un-modelo-jerárquico." id="toc-primer-ejemplo-construyendo-un-modelo-jerárquico." class="nav-link active" data-scroll-target="#primer-ejemplo-construyendo-un-modelo-jerárquico."><span class="header-section-number">9.1</span> Primer ejemplo: construyendo un modelo jerárquico.</a></li>
+  <li><a href="#modelos-jerárquicos-para-estructuras-causales" id="toc-modelos-jerárquicos-para-estructuras-causales" class="nav-link" data-scroll-target="#modelos-jerárquicos-para-estructuras-causales"><span class="header-section-number">9.2</span> Modelos jerárquicos para estructuras causales</a></li>
+  <li><a href="#primera-parte-de-estructura-jerárquica" id="toc-primera-parte-de-estructura-jerárquica" class="nav-link" data-scroll-target="#primera-parte-de-estructura-jerárquica"><span class="header-section-number">9.3</span> Primera parte de estructura jerárquica</a></li>
+  <li><a href="#agregando-covariables" id="toc-agregando-covariables" class="nav-link" data-scroll-target="#agregando-covariables"><span class="header-section-number">9.4</span> Agregando covariables</a></li>
+  <li><a href="#parametrización-no-centrada" id="toc-parametrización-no-centrada" class="nav-link" data-scroll-target="#parametrización-no-centrada"><span class="header-section-number">9.5</span> Parametrización no centrada</a></li>
+  <li><a href="#variables-correlacionadas" id="toc-variables-correlacionadas" class="nav-link" data-scroll-target="#variables-correlacionadas"><span class="header-section-number">9.6</span> Variables correlacionadas</a></li>
   </ul>
 </nav>
     </div>
@@ -378,7 +387,7 @@ Total execution time: 0.6 seconds.</code></pre>
 <pre><code># A tibble: 1 × 10
   variable  mean median     sd    mad    q5   q95  rhat ess_bulk ess_tail
   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-1 lambda   0.942  0.939 0.0567 0.0556 0.852  1.04  1.00    1288.    1799.</code></pre>
+1 lambda   0.942  0.941 0.0561 0.0557 0.851  1.04  1.00    1671.    2425.</code></pre>
 </div>
 </div>
 <p>Los diagnósticos básicos parecen ser apropiados. Procedemos a hacer un chequeo predictivo posterior:</p>
@@ -1316,12 +1325,1865 @@ Total execution time: 3.3 seconds.</code></pre>
 </div>
 </div>
 </div>
-<p><strong>Ejercicio</strong>: repetir el análisis posterior predictivo que vimos para el modelo agregado.</p>
+<p>Los resultados del chequo predictivo posterior da mejores resultados (compara con el modelo agregado):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">912</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>ajuste_jer<span class="sc">$</span><span class="fu">draws</span>(<span class="st">"y_sim"</span>, <span class="at">format =</span> <span class="st">"df"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"y_sim"</span>), <span class="at">names_to =</span> <span class="st">"variable"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(variable, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"variable"</span>, <span class="st">"hospital"</span>), <span class="at">sep =</span> <span class="st">"[</span><span class="sc">\\</span><span class="st">[</span><span class="sc">\\</span><span class="st">]]"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hospital =</span> <span class="fu">as.integer</span>(hospital)) <span class="sc">|&gt;</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(datos_hosp, <span class="at">by =</span> <span class="st">"hospital"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(hospital <span class="sc">%in%</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">94</span>, <span class="dv">20</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> value)) <span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> hospital) <span class="sc">+</span> </span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> y), <span class="at">color =</span> <span class="st">"red"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09-modelos-jerarquicos_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Nota
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>#Modelos jerárquicos y estimación Los modelos jerárquicos nos permiten ajustar modelos con <em>agregación parcial</em>: es decir, estimamos parámetros a nivel de grupo con mejor precisión que si ajustamos modelos individuales (varianza muy alta) o agregamos los datos e ignoramos el grupo (sesgo alto).</p>
+<p>La regularización que ocurre en estos modelos está relacionada a la inicial que estimamos sobre parámetros indiviiduales: cuando hay muchos datos en un grupo, la inicial es menos importante, y cuando hay más datos en un grupo, la inicial es menos importante. El grado de regularización es estimado de la evidencia de variación entre los grupos.</p>
+</div>
+</div>
+</section>
+<section id="modelos-jerárquicos-para-estructuras-causales" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="modelos-jerárquicos-para-estructuras-causales"><span class="header-section-number">9.2</span> Modelos jerárquicos para estructuras causales</h2>
+<p>Tomaremos ahora el ejemplo de <span class="citation" data-cites="rethinking">McElreath (<a href="#ref-rethinking" role="doc-biblioref">2020</a>)</span> de un estudio de fertilidad en Bangladesh. Nos interesa entender causas del uso de anticonceptivos en mujeres de Bangladesh, en particular:</p>
+<ul>
+<li>¿Cómo cambia con la edad y el tamaño de la familia el uso de anticonceptivos? Queremos ver si es posible contestar esta pregunta de forma causal con los datos disponibles.</li>
+</ul>
+<p>En nuestros datos tenemos muestras por distritos (zonas geográficas) que nos puede ayudar o controlar efectos relacionados con variables relacionadas con distrito (como acceso a servicios de salud, etc).</p>
+<p>Comenzamos con un diagrama que describe causas posibles de uso de anticonceptivos:</p>
+<ul>
+<li>Los distritos (zona donde vive cada persona) influye causalmente en uso de anticonceptivos.</li>
+<li>La edad de la mujer influye en el uso de anticonceptivos.</li>
+<li>El número de hijos influye en el uso de anticonceptivos.</li>
+<li>El status de urbano/rural influye en el uso de anticonceptivos.</li>
+</ul>
+<p>Nuestro primer diagrama es:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Código</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grViz</span>(<span class="st">'</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="st">digraph {</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="st">  graph [ranksep = 0.2, rankdir=BT]</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="st">  node [shape=plaintext]</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="st">    AC</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="st">    Distrito</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="st">    Edad</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="st">    Hijos</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="st">    Urbano</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="st">  edge [minlen = 3]</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="st">   Edad -&gt; AC [color="red"]</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="st">   Hijos -&gt; AC [color="red"]</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="st">   Urbano -&gt; AC</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="st">   Distrito -&gt; AC</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="st">   </span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a><span class="st">{</span></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="st">  rank = same; Urbano; Hijos</span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>, <span class="at">width =</span> <span class="dv">350</span>, <span class="at">height =</span> <span class="dv">140</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="htmlwidget-c6b3e204df1a58fcf966" style="width:100%;height:260px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-c6b3e204df1a58fcf966">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir=BT]\n  node [shape=plaintext]\n    AC\n    Distrito\n    Edad\n    Hijos\n    Urbano\n  edge [minlen = 3]\n   Edad -> AC [color=\"red\"]\n   Hijos -> AC [color=\"red\"]\n   Urbano -> AC\n   Distrito -> AC\n   \n{\n  rank = same; Urbano; Hijos\n}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>Donde las flechas rojas son efectos causales de interés, y queremos considerar si es posible identificarlos y estimarlos posteriormente. Para decidir cómo construir nuestro modelo (qué variables podemos incluir o no y por qué), consideraremos relaciones entre las causas, que mostramos como flechas rojas.</p>
+<ul>
+<li>Ninguna variable es causa de edad, pero Edad puede ser causa de número de hijos (más tiempo para tener más hijos).</li>
+<li>Urbano/rural puede ser causa número de hijos (costumbres)</li>
+<li>Distritos tienen distintos niveles de regiones urbano/rural</li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Código</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grViz</span>(<span class="st">'</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="st">digraph {</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="st">  graph [ranksep = 0.2, rankdir=BT]</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="st">  node [shape=plaintext]</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="st">    AC</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="st">    Distrito</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="st">    Edad</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="st">    Hijos</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="st">    Urbano</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="st">  edge [minlen = 3]</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="st">   Edad -&gt; AC [color="red"]</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="st">   Hijos -&gt; AC [color="red"]</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="st">   Urbano -&gt; AC</span></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="st">   Distrito -&gt; AC</span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a><span class="st">   Edad -&gt; Hijos </span></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a><span class="st">   Urbano -&gt; Hijos</span></span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a><span class="st">   Distrito -&gt; Urbano</span></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a><span class="st">{</span></span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a><span class="st">  rank = same; Urbano; Hijos</span></span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a><span class="st">  rank = min; Urbano; Hijos</span></span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>, <span class="at">width =</span> <span class="dv">350</span>, <span class="at">height =</span> <span class="dv">140</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="htmlwidget-e637d7e101c29751d63e" style="width:100%;height:260px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-e637d7e101c29751d63e">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir=BT]\n  node [shape=plaintext]\n    AC\n    Distrito\n    Edad\n    Hijos\n    Urbano\n  edge [minlen = 3]\n   Edad -> AC [color=\"red\"]\n   Hijos -> AC [color=\"red\"]\n   Urbano -> AC\n   Distrito -> AC\n   Edad -> Hijos \n   Urbano -> Hijos\n   Distrito -> Urbano\n{\n  rank = same; Urbano; Hijos\n  rank = min; Urbano; Hijos\n}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>De este diagrama, concluimos para empezar:</p>
+<ul>
+<li>Para el efecto total de edad, <strong>no</strong> debemos estratificar por número de hijos (bloqueamos un camino causal).</li>
+</ul>
+<p>Finalmente, puedes pensar en otras relaciones entre causas que puedan dificultar la identificación causal, como las que marcamos en naranja en el siguiente diagrama, donde</p>
+<ul>
+<li>Tipo de familia (no observado) puede afectar tanto a número de niños como a uso de anticonceptivos. Esta sería una variable confusora para estimar el efecto de número de niños sobre uso de anticonceptivos.</li>
+</ul>
+<p>Vemos que encontrar el efecto causal de número de hijos puede tener dificultades considerables en este caso:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Código</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grViz</span>(<span class="st">'</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="st">digraph {</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="st">  graph [ranksep = 0.2, rankdir=BT]</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="st">  node [shape=plaintext]</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="st">    AC</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="st">    Distrito</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="st">    Edad</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="st">    Hijos</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="st">    Urbano</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="st">  node [shape=ellipse]</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="st">    Familia</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="st">  edge [minlen = 3]</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="st">   Edad -&gt; AC [color="red"]</span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="st">   Hijos -&gt; AC [color="red"]</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="st">   Urbano -&gt; AC</span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="st">   Distrito -&gt; AC</span></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a><span class="st">   Edad -&gt; Hijos </span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a><span class="st">   Urbano -&gt; Hijos</span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a><span class="st">   Distrito -&gt; Urbano</span></span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a><span class="st">   Familia -&gt; Hijos [color="orange"]</span></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a><span class="st">   Familia -&gt; AC [color="orange"]</span></span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a><span class="st">{</span></span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a><span class="st">  rank = same; Urbano; Hijos</span></span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a><span class="st">    rank = min; Urbano; Hijos</span></span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>, <span class="at">width =</span> <span class="dv">350</span>, <span class="at">height =</span> <span class="dv">140</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="htmlwidget-9ba901fb8f3c3e051450" style="width:100%;height:260px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-9ba901fb8f3c3e051450">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir=BT]\n  node [shape=plaintext]\n    AC\n    Distrito\n    Edad\n    Hijos\n    Urbano\n  node [shape=ellipse]\n    Familia\n  edge [minlen = 3]\n   Edad -> AC [color=\"red\"]\n   Hijos -> AC [color=\"red\"]\n   Urbano -> AC\n   Distrito -> AC\n   Edad -> Hijos \n   Urbano -> Hijos\n   Distrito -> Urbano\n   Familia -> Hijos [color=\"orange\"]\n   Familia -> AC [color=\"orange\"]\n\n{\n  rank = same; Urbano; Hijos\n    rank = min; Urbano; Hijos\n\n}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+<section id="primera-parte-de-estructura-jerárquica" class="level2" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="primera-parte-de-estructura-jerárquica"><span class="header-section-number">9.3</span> Primera parte de estructura jerárquica</h2>
+<p>Empecemos primero como en nuestro ejemplo anterior, modelando jerárquicamente el uso de anticonceptivos segun distrito (solo vemos el efecto <span class="math inline">\(D\to AC\)</span>). Esta variable nos puede ayudar a controlar variables asociadas con distrito que mejore la estimación de otras cantidades de interés, y es importante usar una estructura jerárquica pues los tamaños de muestra por distrito son considerablemente distintos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>bangladesh <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../datos/bangladesh.csv"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">district =</span> <span class="fu">factor</span>(district, <span class="at">levels =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">61</span>)) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 1934 Columns: 6
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+dbl (6): woman, district, use.contraception, living.children, age.centered, ...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>bangladesh  <span class="sc">|&gt;</span> <span class="fu">count</span>(district, <span class="at">.drop =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">district_fct =</span> <span class="fu">fct_reorder</span>(district, n)) <span class="sc">|&gt;</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">as.numeric</span>(district), <span class="at">y =</span> n)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Distrito num"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09-modelos-jerarquicos_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Nótese que un distrito no contiene ninguna observación, y que hay distritos con muy pocas observaciones. Este es un caso típico donde un modelo jerárquico puede mejorar nuestras estimaciones de la relación de distrito con la variable respuesta de interés.</p>
+<p>Los datos, por persona, los modelamos como sigue (regresión logística): <span class="math display">\[
+\begin{align}
+C_i &amp;\sim \text{Bernoulli}(p_i)\\
+p_i &amp;= \alpha_{D[i]}  \\
+\alpha_j &amp;\sim N(\bar{\alpha},\sigma) \\
+\bar{\alpha} &amp;\sim N(0, 1) \\
+\sigma &amp;\sim N^+(0, 1) \\
+\end{align}
+\]</span> Que implementado en stan puede quedar como:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>mod_1_bangladesh <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"./src/bangladesh-1.stan"</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mod_1_bangladesh)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>data {
+  int&lt;lower=0&gt; N;
+  int&lt;lower=0&gt; N_d;
+  array[N]  int ac_uso;
+  array[N]  int distrito;
+}
+
+parameters {
+  real alpha_bar;
+  vector[N_d] alpha;
+  real &lt;lower=0&gt; sigma;
+}
+
+transformed parameters {
+
+}
+
+model {
+  // partes no determinísticas
+  ac_uso ~ bernoulli_logit(alpha[distrito]);
+  alpha ~ normal(alpha_bar, sigma);
+  // parámetros poblacionales
+  alpha_bar ~ normal(0, 1);
+  sigma ~ normal(0, 1);
+}
+
+generated quantities {
+  vector[N_d] prob_distrito;
+  for (i in 1:N_d) {
+    prob_distrito[i] = inv_logit(alpha[i]);
+  }
+
+}</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>datos_lst <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">ac_uso =</span> bangladesh<span class="sc">$</span>use.contraception,</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">distrito =</span> <span class="fu">as.integer</span>(bangladesh<span class="sc">$</span>district),</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">N =</span> <span class="fu">nrow</span>(bangladesh),</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">N_d =</span> <span class="dv">61</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>ajuste_1_bangladesh <span class="ot">&lt;-</span> mod_1_bangladesh<span class="sc">$</span><span class="fu">sample</span>(<span class="at">data =</span> datos_lst,</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>                                               <span class="at">refresh =</span> <span class="dv">1000</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 sequential chains...
+
+Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 1 finished in 1.5 seconds.
+Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 2 finished in 1.5 seconds.
+Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 3 finished in 1.4 seconds.
+Chain 4 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 4 finished in 1.5 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 1.5 seconds.
+Total execution time: 6.3 seconds.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>ajuste_1_bangladesh<span class="sc">$</span><span class="fu">cmdstan_diagnose</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Processing csv files: /tmp/RtmpGCr5FN/bangladesh-1-202404170730-1-41caa4.csv, /tmp/RtmpGCr5FN/bangladesh-1-202404170730-2-41caa4.csv, /tmp/RtmpGCr5FN/bangladesh-1-202404170730-3-41caa4.csv, /tmp/RtmpGCr5FN/bangladesh-1-202404170730-4-41caa4.csv
+
+Checking sampler transitions treedepth.
+Treedepth satisfactory for all transitions.
+
+Checking sampler transitions for divergences.
+No divergent transitions found.
+
+Checking E-BFMI - sampler transitions HMC potential energy.
+E-BFMI satisfactory.
+
+Effective sample size satisfactory.
+
+Split R-hat values satisfactory all parameters.
+
+Processing complete, no problems detected.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>ajuste_1_bangladesh<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"alpha_bar"</span>, <span class="st">"sigma"</span>, <span class="st">"alpha"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">variable</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">mean</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">median</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">sd</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">mad</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">q5</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">q95</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">rhat</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">ess_bulk</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">ess_tail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">alpha_bar</td>
+<td style="text-align: right;">-0.54</td>
+<td style="text-align: right;">-0.54</td>
+<td style="text-align: right;">0.09</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: right;">-0.68</td>
+<td style="text-align: right;">-0.40</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">4085.44</td>
+<td style="text-align: right;">3240.28</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sigma</td>
+<td style="text-align: right;">0.52</td>
+<td style="text-align: right;">0.51</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: right;">0.39</td>
+<td style="text-align: right;">0.67</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1466.15</td>
+<td style="text-align: right;">2140.47</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[1]</td>
+<td style="text-align: right;">-1.00</td>
+<td style="text-align: right;">-1.00</td>
+<td style="text-align: right;">0.20</td>
+<td style="text-align: right;">0.20</td>
+<td style="text-align: right;">-1.33</td>
+<td style="text-align: right;">-0.67</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6708.19</td>
+<td style="text-align: right;">2445.02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[2]</td>
+<td style="text-align: right;">-0.59</td>
+<td style="text-align: right;">-0.59</td>
+<td style="text-align: right;">0.36</td>
+<td style="text-align: right;">0.35</td>
+<td style="text-align: right;">-1.19</td>
+<td style="text-align: right;">-0.02</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7627.66</td>
+<td style="text-align: right;">2919.07</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[3]</td>
+<td style="text-align: right;">-0.24</td>
+<td style="text-align: right;">-0.25</td>
+<td style="text-align: right;">0.52</td>
+<td style="text-align: right;">0.51</td>
+<td style="text-align: right;">-1.04</td>
+<td style="text-align: right;">0.61</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6914.02</td>
+<td style="text-align: right;">2660.74</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[4]</td>
+<td style="text-align: right;">-0.18</td>
+<td style="text-align: right;">-0.18</td>
+<td style="text-align: right;">0.29</td>
+<td style="text-align: right;">0.30</td>
+<td style="text-align: right;">-0.65</td>
+<td style="text-align: right;">0.30</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6717.37</td>
+<td style="text-align: right;">3126.67</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[5]</td>
+<td style="text-align: right;">-0.58</td>
+<td style="text-align: right;">-0.57</td>
+<td style="text-align: right;">0.28</td>
+<td style="text-align: right;">0.28</td>
+<td style="text-align: right;">-1.05</td>
+<td style="text-align: right;">-0.11</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7317.02</td>
+<td style="text-align: right;">2743.21</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[6]</td>
+<td style="text-align: right;">-0.81</td>
+<td style="text-align: right;">-0.80</td>
+<td style="text-align: right;">0.24</td>
+<td style="text-align: right;">0.24</td>
+<td style="text-align: right;">-1.21</td>
+<td style="text-align: right;">-0.43</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6410.45</td>
+<td style="text-align: right;">3010.84</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[7]</td>
+<td style="text-align: right;">-0.76</td>
+<td style="text-align: right;">-0.74</td>
+<td style="text-align: right;">0.37</td>
+<td style="text-align: right;">0.35</td>
+<td style="text-align: right;">-1.37</td>
+<td style="text-align: right;">-0.16</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7030.13</td>
+<td style="text-align: right;">2965.32</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[8]</td>
+<td style="text-align: right;">-0.51</td>
+<td style="text-align: right;">-0.51</td>
+<td style="text-align: right;">0.28</td>
+<td style="text-align: right;">0.28</td>
+<td style="text-align: right;">-0.98</td>
+<td style="text-align: right;">-0.06</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">8071.81</td>
+<td style="text-align: right;">3194.77</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[9]</td>
+<td style="text-align: right;">-0.71</td>
+<td style="text-align: right;">-0.71</td>
+<td style="text-align: right;">0.34</td>
+<td style="text-align: right;">0.33</td>
+<td style="text-align: right;">-1.27</td>
+<td style="text-align: right;">-0.16</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7868.70</td>
+<td style="text-align: right;">2515.75</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[10]</td>
+<td style="text-align: right;">-1.14</td>
+<td style="text-align: right;">-1.13</td>
+<td style="text-align: right;">0.42</td>
+<td style="text-align: right;">0.43</td>
+<td style="text-align: right;">-1.85</td>
+<td style="text-align: right;">-0.49</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">4682.64</td>
+<td style="text-align: right;">3203.02</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[11]</td>
+<td style="text-align: right;">-1.55</td>
+<td style="text-align: right;">-1.53</td>
+<td style="text-align: right;">0.43</td>
+<td style="text-align: right;">0.42</td>
+<td style="text-align: right;">-2.31</td>
+<td style="text-align: right;">-0.90</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">3598.80</td>
+<td style="text-align: right;">2719.42</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[12]</td>
+<td style="text-align: right;">-0.61</td>
+<td style="text-align: right;">-0.61</td>
+<td style="text-align: right;">0.30</td>
+<td style="text-align: right;">0.30</td>
+<td style="text-align: right;">-1.11</td>
+<td style="text-align: right;">-0.11</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7084.31</td>
+<td style="text-align: right;">3243.42</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[13]</td>
+<td style="text-align: right;">-0.43</td>
+<td style="text-align: right;">-0.43</td>
+<td style="text-align: right;">0.33</td>
+<td style="text-align: right;">0.33</td>
+<td style="text-align: right;">-0.97</td>
+<td style="text-align: right;">0.11</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7175.59</td>
+<td style="text-align: right;">2941.12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[14]</td>
+<td style="text-align: right;">0.39</td>
+<td style="text-align: right;">0.39</td>
+<td style="text-align: right;">0.18</td>
+<td style="text-align: right;">0.18</td>
+<td style="text-align: right;">0.10</td>
+<td style="text-align: right;">0.69</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6439.59</td>
+<td style="text-align: right;">2988.87</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[15]</td>
+<td style="text-align: right;">-0.56</td>
+<td style="text-align: right;">-0.56</td>
+<td style="text-align: right;">0.34</td>
+<td style="text-align: right;">0.34</td>
+<td style="text-align: right;">-1.13</td>
+<td style="text-align: right;">-0.01</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">8492.92</td>
+<td style="text-align: right;">2772.50</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[16]</td>
+<td style="text-align: right;">-0.12</td>
+<td style="text-align: right;">-0.12</td>
+<td style="text-align: right;">0.35</td>
+<td style="text-align: right;">0.35</td>
+<td style="text-align: right;">-0.68</td>
+<td style="text-align: right;">0.47</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7681.17</td>
+<td style="text-align: right;">2730.42</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[17]</td>
+<td style="text-align: right;">-0.75</td>
+<td style="text-align: right;">-0.74</td>
+<td style="text-align: right;">0.35</td>
+<td style="text-align: right;">0.35</td>
+<td style="text-align: right;">-1.33</td>
+<td style="text-align: right;">-0.19</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7398.34</td>
+<td style="text-align: right;">3177.56</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[18]</td>
+<td style="text-align: right;">-0.63</td>
+<td style="text-align: right;">-0.63</td>
+<td style="text-align: right;">0.26</td>
+<td style="text-align: right;">0.26</td>
+<td style="text-align: right;">-1.07</td>
+<td style="text-align: right;">-0.21</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7939.92</td>
+<td style="text-align: right;">3138.83</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[19]</td>
+<td style="text-align: right;">-0.49</td>
+<td style="text-align: right;">-0.49</td>
+<td style="text-align: right;">0.32</td>
+<td style="text-align: right;">0.31</td>
+<td style="text-align: right;">-1.03</td>
+<td style="text-align: right;">0.02</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7839.24</td>
+<td style="text-align: right;">3075.07</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[20]</td>
+<td style="text-align: right;">-0.48</td>
+<td style="text-align: right;">-0.48</td>
+<td style="text-align: right;">0.39</td>
+<td style="text-align: right;">0.38</td>
+<td style="text-align: right;">-1.11</td>
+<td style="text-align: right;">0.16</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">8125.28</td>
+<td style="text-align: right;">2828.64</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[21]</td>
+<td style="text-align: right;">-0.51</td>
+<td style="text-align: right;">-0.51</td>
+<td style="text-align: right;">0.37</td>
+<td style="text-align: right;">0.36</td>
+<td style="text-align: right;">-1.10</td>
+<td style="text-align: right;">0.10</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7697.11</td>
+<td style="text-align: right;">3023.53</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[22]</td>
+<td style="text-align: right;">-0.96</td>
+<td style="text-align: right;">-0.94</td>
+<td style="text-align: right;">0.37</td>
+<td style="text-align: right;">0.38</td>
+<td style="text-align: right;">-1.58</td>
+<td style="text-align: right;">-0.36</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">5859.65</td>
+<td style="text-align: right;">3134.66</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[23]</td>
+<td style="text-align: right;">-0.76</td>
+<td style="text-align: right;">-0.75</td>
+<td style="text-align: right;">0.38</td>
+<td style="text-align: right;">0.37</td>
+<td style="text-align: right;">-1.39</td>
+<td style="text-align: right;">-0.15</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6525.52</td>
+<td style="text-align: right;">2626.27</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[24]</td>
+<td style="text-align: right;">-1.18</td>
+<td style="text-align: right;">-1.15</td>
+<td style="text-align: right;">0.43</td>
+<td style="text-align: right;">0.42</td>
+<td style="text-align: right;">-1.91</td>
+<td style="text-align: right;">-0.50</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">5731.86</td>
+<td style="text-align: right;">2963.71</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[25]</td>
+<td style="text-align: right;">-0.27</td>
+<td style="text-align: right;">-0.28</td>
+<td style="text-align: right;">0.22</td>
+<td style="text-align: right;">0.23</td>
+<td style="text-align: right;">-0.64</td>
+<td style="text-align: right;">0.09</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7193.19</td>
+<td style="text-align: right;">2720.95</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[26]</td>
+<td style="text-align: right;">-0.50</td>
+<td style="text-align: right;">-0.49</td>
+<td style="text-align: right;">0.40</td>
+<td style="text-align: right;">0.39</td>
+<td style="text-align: right;">-1.16</td>
+<td style="text-align: right;">0.15</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7883.64</td>
+<td style="text-align: right;">3156.22</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[27]</td>
+<td style="text-align: right;">-1.19</td>
+<td style="text-align: right;">-1.17</td>
+<td style="text-align: right;">0.30</td>
+<td style="text-align: right;">0.30</td>
+<td style="text-align: right;">-1.69</td>
+<td style="text-align: right;">-0.70</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6331.04</td>
+<td style="text-align: right;">2802.17</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[28]</td>
+<td style="text-align: right;">-0.96</td>
+<td style="text-align: right;">-0.96</td>
+<td style="text-align: right;">0.28</td>
+<td style="text-align: right;">0.27</td>
+<td style="text-align: right;">-1.43</td>
+<td style="text-align: right;">-0.50</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7081.91</td>
+<td style="text-align: right;">2409.17</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[29]</td>
+<td style="text-align: right;">-0.80</td>
+<td style="text-align: right;">-0.80</td>
+<td style="text-align: right;">0.31</td>
+<td style="text-align: right;">0.31</td>
+<td style="text-align: right;">-1.33</td>
+<td style="text-align: right;">-0.30</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7163.13</td>
+<td style="text-align: right;">2631.89</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[30]</td>
+<td style="text-align: right;">-0.14</td>
+<td style="text-align: right;">-0.14</td>
+<td style="text-align: right;">0.23</td>
+<td style="text-align: right;">0.22</td>
+<td style="text-align: right;">-0.51</td>
+<td style="text-align: right;">0.25</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7345.14</td>
+<td style="text-align: right;">2399.03</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[31]</td>
+<td style="text-align: right;">-0.30</td>
+<td style="text-align: right;">-0.30</td>
+<td style="text-align: right;">0.28</td>
+<td style="text-align: right;">0.28</td>
+<td style="text-align: right;">-0.76</td>
+<td style="text-align: right;">0.16</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6597.27</td>
+<td style="text-align: right;">2535.55</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[32]</td>
+<td style="text-align: right;">-0.98</td>
+<td style="text-align: right;">-0.97</td>
+<td style="text-align: right;">0.36</td>
+<td style="text-align: right;">0.35</td>
+<td style="text-align: right;">-1.58</td>
+<td style="text-align: right;">-0.41</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">5813.85</td>
+<td style="text-align: right;">2675.61</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[33]</td>
+<td style="text-align: right;">-0.43</td>
+<td style="text-align: right;">-0.42</td>
+<td style="text-align: right;">0.38</td>
+<td style="text-align: right;">0.38</td>
+<td style="text-align: right;">-1.05</td>
+<td style="text-align: right;">0.18</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7067.69</td>
+<td style="text-align: right;">2939.45</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[34]</td>
+<td style="text-align: right;">0.27</td>
+<td style="text-align: right;">0.26</td>
+<td style="text-align: right;">0.30</td>
+<td style="text-align: right;">0.30</td>
+<td style="text-align: right;">-0.21</td>
+<td style="text-align: right;">0.78</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">5706.61</td>
+<td style="text-align: right;">2959.05</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[35]</td>
+<td style="text-align: right;">-0.13</td>
+<td style="text-align: right;">-0.13</td>
+<td style="text-align: right;">0.26</td>
+<td style="text-align: right;">0.25</td>
+<td style="text-align: right;">-0.55</td>
+<td style="text-align: right;">0.30</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6863.83</td>
+<td style="text-align: right;">3322.41</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[36]</td>
+<td style="text-align: right;">-0.58</td>
+<td style="text-align: right;">-0.56</td>
+<td style="text-align: right;">0.36</td>
+<td style="text-align: right;">0.36</td>
+<td style="text-align: right;">-1.18</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7167.41</td>
+<td style="text-align: right;">3256.03</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[37]</td>
+<td style="text-align: right;">-0.22</td>
+<td style="text-align: right;">-0.23</td>
+<td style="text-align: right;">0.39</td>
+<td style="text-align: right;">0.39</td>
+<td style="text-align: right;">-0.85</td>
+<td style="text-align: right;">0.42</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7072.38</td>
+<td style="text-align: right;">3072.21</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[38]</td>
+<td style="text-align: right;">-0.72</td>
+<td style="text-align: right;">-0.71</td>
+<td style="text-align: right;">0.40</td>
+<td style="text-align: right;">0.41</td>
+<td style="text-align: right;">-1.41</td>
+<td style="text-align: right;">-0.05</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7256.40</td>
+<td style="text-align: right;">3111.33</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[39]</td>
+<td style="text-align: right;">-0.20</td>
+<td style="text-align: right;">-0.20</td>
+<td style="text-align: right;">0.31</td>
+<td style="text-align: right;">0.31</td>
+<td style="text-align: right;">-0.71</td>
+<td style="text-align: right;">0.31</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7096.85</td>
+<td style="text-align: right;">3273.86</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[40]</td>
+<td style="text-align: right;">-0.26</td>
+<td style="text-align: right;">-0.26</td>
+<td style="text-align: right;">0.27</td>
+<td style="text-align: right;">0.27</td>
+<td style="text-align: right;">-0.70</td>
+<td style="text-align: right;">0.20</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7961.40</td>
+<td style="text-align: right;">3175.23</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[41]</td>
+<td style="text-align: right;">-0.20</td>
+<td style="text-align: right;">-0.20</td>
+<td style="text-align: right;">0.32</td>
+<td style="text-align: right;">0.30</td>
+<td style="text-align: right;">-0.71</td>
+<td style="text-align: right;">0.32</td>
+<td style="text-align: right;">1.01</td>
+<td style="text-align: right;">6772.06</td>
+<td style="text-align: right;">2794.87</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[42]</td>
+<td style="text-align: right;">-0.24</td>
+<td style="text-align: right;">-0.24</td>
+<td style="text-align: right;">0.41</td>
+<td style="text-align: right;">0.41</td>
+<td style="text-align: right;">-0.92</td>
+<td style="text-align: right;">0.42</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7046.38</td>
+<td style="text-align: right;">2770.57</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[43]</td>
+<td style="text-align: right;">-0.04</td>
+<td style="text-align: right;">-0.04</td>
+<td style="text-align: right;">0.26</td>
+<td style="text-align: right;">0.26</td>
+<td style="text-align: right;">-0.46</td>
+<td style="text-align: right;">0.39</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7561.89</td>
+<td style="text-align: right;">2316.58</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[44]</td>
+<td style="text-align: right;">-0.96</td>
+<td style="text-align: right;">-0.95</td>
+<td style="text-align: right;">0.34</td>
+<td style="text-align: right;">0.34</td>
+<td style="text-align: right;">-1.53</td>
+<td style="text-align: right;">-0.42</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6056.58</td>
+<td style="text-align: right;">3031.15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[45]</td>
+<td style="text-align: right;">-0.66</td>
+<td style="text-align: right;">-0.65</td>
+<td style="text-align: right;">0.28</td>
+<td style="text-align: right;">0.28</td>
+<td style="text-align: right;">-1.13</td>
+<td style="text-align: right;">-0.19</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6817.39</td>
+<td style="text-align: right;">2466.31</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[46]</td>
+<td style="text-align: right;">-0.01</td>
+<td style="text-align: right;">-0.01</td>
+<td style="text-align: right;">0.20</td>
+<td style="text-align: right;">0.19</td>
+<td style="text-align: right;">-0.33</td>
+<td style="text-align: right;">0.32</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7247.88</td>
+<td style="text-align: right;">2908.16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[47]</td>
+<td style="text-align: right;">-0.34</td>
+<td style="text-align: right;">-0.34</td>
+<td style="text-align: right;">0.37</td>
+<td style="text-align: right;">0.37</td>
+<td style="text-align: right;">-0.95</td>
+<td style="text-align: right;">0.26</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7726.65</td>
+<td style="text-align: right;">2941.93</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[48]</td>
+<td style="text-align: right;">-0.07</td>
+<td style="text-align: right;">-0.08</td>
+<td style="text-align: right;">0.26</td>
+<td style="text-align: right;">0.26</td>
+<td style="text-align: right;">-0.51</td>
+<td style="text-align: right;">0.36</td>
+<td style="text-align: right;">1.01</td>
+<td style="text-align: right;">7051.22</td>
+<td style="text-align: right;">3035.58</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[49]</td>
+<td style="text-align: right;">-0.86</td>
+<td style="text-align: right;">-0.85</td>
+<td style="text-align: right;">0.48</td>
+<td style="text-align: right;">0.48</td>
+<td style="text-align: right;">-1.66</td>
+<td style="text-align: right;">-0.11</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6613.44</td>
+<td style="text-align: right;">2913.84</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[50]</td>
+<td style="text-align: right;">-0.29</td>
+<td style="text-align: right;">-0.30</td>
+<td style="text-align: right;">0.36</td>
+<td style="text-align: right;">0.35</td>
+<td style="text-align: right;">-0.88</td>
+<td style="text-align: right;">0.30</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">7805.72</td>
+<td style="text-align: right;">3156.53</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[51]</td>
+<td style="text-align: right;">-0.28</td>
+<td style="text-align: right;">-0.27</td>
+<td style="text-align: right;">0.28</td>
+<td style="text-align: right;">0.28</td>
+<td style="text-align: right;">-0.73</td>
+<td style="text-align: right;">0.18</td>
+<td style="text-align: right;">1.01</td>
+<td style="text-align: right;">7001.68</td>
+<td style="text-align: right;">2937.20</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[52]</td>
+<td style="text-align: right;">-0.30</td>
+<td style="text-align: right;">-0.29</td>
+<td style="text-align: right;">0.23</td>
+<td style="text-align: right;">0.24</td>
+<td style="text-align: right;">-0.69</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6897.06</td>
+<td style="text-align: right;">2924.66</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[53]</td>
+<td style="text-align: right;">-0.42</td>
+<td style="text-align: right;">-0.41</td>
+<td style="text-align: right;">0.35</td>
+<td style="text-align: right;">0.35</td>
+<td style="text-align: right;">-1.02</td>
+<td style="text-align: right;">0.15</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">8921.96</td>
+<td style="text-align: right;">2768.60</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[54]</td>
+<td style="text-align: right;">-0.54</td>
+<td style="text-align: right;">-0.53</td>
+<td style="text-align: right;">0.53</td>
+<td style="text-align: right;">0.51</td>
+<td style="text-align: right;">-1.42</td>
+<td style="text-align: right;">0.30</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6146.52</td>
+<td style="text-align: right;">2658.35</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[55]</td>
+<td style="text-align: right;">-0.79</td>
+<td style="text-align: right;">-0.77</td>
+<td style="text-align: right;">0.47</td>
+<td style="text-align: right;">0.45</td>
+<td style="text-align: right;">-1.60</td>
+<td style="text-align: right;">-0.03</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6719.53</td>
+<td style="text-align: right;">2708.30</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[56]</td>
+<td style="text-align: right;">0.09</td>
+<td style="text-align: right;">0.10</td>
+<td style="text-align: right;">0.28</td>
+<td style="text-align: right;">0.28</td>
+<td style="text-align: right;">-0.34</td>
+<td style="text-align: right;">0.55</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6564.85</td>
+<td style="text-align: right;">2834.75</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[57]</td>
+<td style="text-align: right;">-1.07</td>
+<td style="text-align: right;">-1.05</td>
+<td style="text-align: right;">0.35</td>
+<td style="text-align: right;">0.35</td>
+<td style="text-align: right;">-1.65</td>
+<td style="text-align: right;">-0.51</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6170.13</td>
+<td style="text-align: right;">3165.92</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[58]</td>
+<td style="text-align: right;">-0.30</td>
+<td style="text-align: right;">-0.30</td>
+<td style="text-align: right;">0.29</td>
+<td style="text-align: right;">0.29</td>
+<td style="text-align: right;">-0.79</td>
+<td style="text-align: right;">0.18</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6784.27</td>
+<td style="text-align: right;">3517.21</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[59]</td>
+<td style="text-align: right;">-1.00</td>
+<td style="text-align: right;">-0.98</td>
+<td style="text-align: right;">0.45</td>
+<td style="text-align: right;">0.45</td>
+<td style="text-align: right;">-1.78</td>
+<td style="text-align: right;">-0.29</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6168.08</td>
+<td style="text-align: right;">2615.60</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha[60]</td>
+<td style="text-align: right;">-1.00</td>
+<td style="text-align: right;">-0.99</td>
+<td style="text-align: right;">0.32</td>
+<td style="text-align: right;">0.32</td>
+<td style="text-align: right;">-1.55</td>
+<td style="text-align: right;">-0.49</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">5765.81</td>
+<td style="text-align: right;">3026.31</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha[61]</td>
+<td style="text-align: right;">-1.06</td>
+<td style="text-align: right;">-1.05</td>
+<td style="text-align: right;">0.30</td>
+<td style="text-align: right;">0.29</td>
+<td style="text-align: right;">-1.58</td>
+<td style="text-align: right;">-0.58</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6304.21</td>
+<td style="text-align: right;">3056.65</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</div>
+<p>Los diagnósticos no apuntan a ningún problema, y obtenemos estimaciones tanto para los parámetros poblacionales como para los parámetros por distrito.</p>
+<p>Veamos cómo se ven las estimaciones crudas (proporción de uso de anticonceptivos en cada distrito) contra las estimaciones de nuestro modelo jerárquico.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>probs_1 <span class="ot">&lt;-</span> ajuste_1_bangladesh<span class="sc">$</span><span class="fu">draws</span>(<span class="st">"prob_distrito"</span>, <span class="at">format =</span> <span class="st">"df"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"prob"</span>), <span class="at">names_to =</span> <span class="st">"variable"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(variable, <span class="at">sep =</span> <span class="st">"[</span><span class="sc">\\</span><span class="st">[</span><span class="sc">\\</span><span class="st">]]"</span>, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"variable"</span>, <span class="st">"district"</span>), </span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">extra =</span> <span class="st">"drop"</span>, <span class="at">convert =</span> <span class="cn">TRUE</span>)  <span class="sc">|&gt;</span> </span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(district) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">media =</span> <span class="fu">mean</span>(value),</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">q5 =</span> <span class="fu">quantile</span>(value, <span class="fl">0.05</span>),</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">q95 =</span> <span class="fu">quantile</span>(value, <span class="fl">0.95</span>)) </span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>resumen_1 <span class="ot">&lt;-</span> bangladesh <span class="sc">|&gt;</span> <span class="fu">group_by</span>(district) <span class="sc">|&gt;</span> </span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">prop_cruda =</span> <span class="fu">mean</span>(use.contraception), <span class="at">n =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">district =</span> <span class="fu">as.integer</span>(district))</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>probs_1 <span class="sc">|&gt;</span> <span class="fu">left_join</span>(resumen_1) <span class="sc">|&gt;</span> </span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> district)) <span class="sc">+</span></span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> media), <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_linerange</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> q5, <span class="at">ymax =</span> q95), <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> prop_cruda, <span class="at">size =</span> n), <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09-modelos-jerarquicos_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Observaciones</strong>: - Nótese que cuando la muestra de un distrito es chica, la cantidad de encogimiento es grande (el estimador crudo está cercano de nuestro estimador jerárquico si la muestra es grande). El caso extremo es el distrito 53, donde tenemos muestra de 0. En ese caso, usamos la inicial ajustada para producir estimaciones de la posterior - Adicionalmente, cuando la muestra es chica en un distrito, tenemos también más incertidumbre en la estimación de la proporción de uso de anticonceptivos. - Examina por ejemplo el distrito 11: obtuvimos 0 casos de usos de anticonceptivos, y es una mala estimación de esta proporción. El estimador del modelo jerárquico es de los más bajos, pero se encoge hacia la media poblacional.</p>
+</section>
+<section id="agregando-covariables" class="level2" data-number="9.4">
+<h2 data-number="9.4" class="anchored" data-anchor-id="agregando-covariables"><span class="header-section-number">9.4</span> Agregando covariables</h2>
+<p>Consideremos ahora la variable de urbano-rural. Incluiremos esta variable también, considerando que su efecto puede variar por distrito:</p>
+<p><span class="math display">\[
+\begin{align}
+C_i &amp;\sim \text{Bernoulli}(p_i)\\
+p_i &amp;= \alpha_{D[i]} + \beta_{D[i]} U_i \\
+\alpha_j &amp;\sim N(\bar{\alpha},\sigma_{\alpha}) \\
+\beta_j &amp;\sim N(\bar{\beta},\sigma_{ \beta}) \\
+\bar{\alpha}, \bar{\beta}  &amp;\sim N(0, 1)\\
+\sigma_{\alpha}, \sigma_{\beta} &amp;\sim N^+(0, 1) \\
+\end{align}
+\]</span> Que implementado en stan puede quedar como:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>mod_2_bangladesh <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"./src/bangladesh-2.stan"</span>)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mod_2_bangladesh)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>data {
+  int&lt;lower=0&gt; N;
+  int&lt;lower=0&gt; N_d;
+  array[N]  int ac_uso;
+  array[N]  int distrito;
+  vector[N] urbano;
+}
+
+parameters {
+  real alpha_bar;
+  real beta_bar;
+  vector[N_d] alpha;
+  vector[N_d] beta;
+  real &lt;lower=0&gt; sigma_alpha;
+  real &lt;lower=0&gt; sigma_beta;
+}
+
+transformed parameters {
+
+}
+
+model {
+  // partes no determinísticas
+  ac_uso ~ bernoulli_logit(alpha[distrito] + beta[distrito] .* urbano);
+  alpha ~ normal(alpha_bar, sigma_alpha);
+  beta ~ normal(beta_bar, sigma_beta);
+  // parámetros poblacionales
+  alpha_bar ~ normal(0, 1);
+  beta_bar ~ normal(0, 1);
+  sigma_alpha ~ normal(0, 1);
+  sigma_beta ~ normal(0, 1);
+}</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>datos_lst <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">ac_uso =</span> bangladesh<span class="sc">$</span>use.contraception,</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">distrito =</span> <span class="fu">as.integer</span>(bangladesh<span class="sc">$</span>district),</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">urbano =</span> bangladesh<span class="sc">$</span>urban,</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">N =</span> <span class="fu">nrow</span>(bangladesh),</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">N_d =</span> <span class="dv">61</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>ajuste_2_bangladesh <span class="ot">&lt;-</span> mod_2_bangladesh<span class="sc">$</span><span class="fu">sample</span>(<span class="at">data =</span> datos_lst,</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>                                               <span class="at">refresh =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">9394</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 sequential chains...
+
+Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup) </code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Chain 1 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Chain 1 Exception: normal_lpdf: Scale parameter is 0, but must be positive! (in '/tmp/RtmpGCr5FN/model-2ab8303de980.stan', line 26, column 2 to column 38)</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Chain 1 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Chain 1 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Chain 1 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 1 finished in 4.1 seconds.
+Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 2 finished in 4.1 seconds.
+Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) </code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Chain 3 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Chain 3 Exception: normal_lpdf: Scale parameter is 0, but must be positive! (in '/tmp/RtmpGCr5FN/model-2ab8303de980.stan', line 25, column 2 to column 41)</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Chain 3 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Chain 3 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Chain 3 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 3 finished in 4.1 seconds.
+Chain 4 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 4 finished in 3.2 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 3.9 seconds.
+Total execution time: 15.9 seconds.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: 19 of 4000 (0.0%) transitions ended with a divergence.
+See https://mc-stan.org/misc/warnings for details.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: 3 of 4 chains had an E-BFMI less than 0.3.
+See https://mc-stan.org/misc/warnings for details.</code></pre>
+</div>
+</div>
+<p>Y encontramos divergencias en el ajuste. Veamos los tamaños efectivos de muestra y los valores rhat:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>ajuste_2_bangladesh<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"alpha_bar"</span>, <span class="st">"beta_bar"</span>, <span class="st">"sigma_alpha"</span>, <span class="st">"sigma_beta"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">variable</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">mean</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">median</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">sd</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">mad</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">q5</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">q95</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">rhat</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">ess_bulk</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">ess_tail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">alpha_bar</td>
+<td style="text-align: right;">-0.70</td>
+<td style="text-align: right;">-0.70</td>
+<td style="text-align: right;">0.09</td>
+<td style="text-align: right;">0.09</td>
+<td style="text-align: right;">-0.85</td>
+<td style="text-align: right;">-0.55</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2294.96</td>
+<td style="text-align: right;">2911.84</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">beta_bar</td>
+<td style="text-align: right;">0.62</td>
+<td style="text-align: right;">0.62</td>
+<td style="text-align: right;">0.16</td>
+<td style="text-align: right;">0.15</td>
+<td style="text-align: right;">0.36</td>
+<td style="text-align: right;">0.87</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1307.26</td>
+<td style="text-align: right;">2195.23</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sigma_alpha</td>
+<td style="text-align: right;">0.49</td>
+<td style="text-align: right;">0.48</td>
+<td style="text-align: right;">0.09</td>
+<td style="text-align: right;">0.09</td>
+<td style="text-align: right;">0.35</td>
+<td style="text-align: right;">0.64</td>
+<td style="text-align: right;">1.01</td>
+<td style="text-align: right;">575.25</td>
+<td style="text-align: right;">685.91</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sigma_beta</td>
+<td style="text-align: right;">0.57</td>
+<td style="text-align: right;">0.57</td>
+<td style="text-align: right;">0.20</td>
+<td style="text-align: right;">0.20</td>
+<td style="text-align: right;">0.22</td>
+<td style="text-align: right;">0.91</td>
+<td style="text-align: right;">1.02</td>
+<td style="text-align: right;">139.35</td>
+<td style="text-align: right;">143.32</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</div>
+<p>Aunque los valores de rhat no presentan problema, vemos que los tamaños efectivos de muestra para las desviaciones estándar poblacionales son malos (especialmente para el parámetro asociado a <span class="math inline">\(\beta\)</span>). Las trazas indican que quizá el problema no es muy grave, pero las cadenas muestran cierta heterogeneidad y autocorrelación alta:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bayesplot)</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>ajuste_2_bangladesh<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"sigma_beta"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mcmc_trace</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09-modelos-jerarquicos_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Aunque quizá en este ejemplo es posible correr más iteraciones y obtener resultados más confiables, en estos casos es mejor diagnosticar el problema y corregirlo: obtendremos mejores estimaciones de manera más rápida.</p>
+</section>
+<section id="parametrización-no-centrada" class="level2" data-number="9.5">
+<h2 data-number="9.5" class="anchored" data-anchor-id="parametrización-no-centrada"><span class="header-section-number">9.5</span> Parametrización no centrada</h2>
+<p>El problema que ocurre en este modelo es uno que aparece con cierta frecuencia en modelos jerárquicos, y está relacionado con el embudo de Neal que vimos al final de la sección anterior.</p>
+<p>En nuestro ejemplo <span class="math inline">\(\beta_j\)</span> tienen una inicial que depende de parámetros <span class="math inline">\(N(\beta_0,\sigma_{\beta})\)</span>. Cuando <span class="math inline">\(\sigma_{\beta}\)</span> es chica, esperamos que haya poca variación en las <span class="math inline">\(\beta_j\)</span>, y cuando es grande, por el contrario, esperamos que haya mucha variación. Esto produce una especie de embudo de Neal:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>sims_beta <span class="ot">&lt;-</span> ajuste_2_bangladesh<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"beta"</span>, <span class="st">"sigma_beta"</span>), <span class="at">format =</span> <span class="st">"df"</span>)</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>diagnosticos_tbl <span class="ot">&lt;-</span> ajuste_2_bangladesh<span class="sc">$</span><span class="fu">sampler_diagnostics</span>(<span class="at">format =</span> <span class="st">"df"</span>)</span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>sims_beta <span class="ot">&lt;-</span> <span class="fu">left_join</span>(sims_beta, diagnosticos_tbl)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining with `by = join_by(.chain, .iteration, .draw)`</code></pre>
+</div>
+</div>
+<p>Podemos examinar gráficas de pares para ver donde aparece el problema: efectivamente, ocurre para valores chicos de <span class="math inline">\(\sigma\)</span>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>sims_beta <span class="sc">|&gt;</span> </span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">log</span>(sigma_beta), <span class="at">x =</span> <span class="st">`</span><span class="at">beta[1]</span><span class="st">`</span>, <span class="at">size =</span> <span class="fu">factor</span>(divergent__),</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">colour =</span> <span class="fu">factor</span>(divergent__))) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"log sigma_beta"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"beta"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09-modelos-jerarquicos_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Para corregir este problema (en el mejor de los casos ineficiencia), podemos usar el mismo truco que vimos al final de la sección anterior. En lugar de escribir <span class="math display">\[\alpha_j = N(\bar{\alpha}, \sigma_{\alpha})\]</span> Definimos los valores <span class="math inline">\(z_j\)</span> como <span class="math inline">\(z_j\sim N(0,1)\)</span> y escribimos <span class="math display">\[\alpha_j = \bar{\alpha} + \sigma_{\alpha} z_j\]</span> Y lo mismo para el parámetro <span class="math inline">\(\beta\)</span>. <strong>Se trata exactamente del mismo modelo</strong>, pero está parametrizado de manera distinta.</p>
+<p>Nuestro modelo reparametrizado se vería como sigue:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>mod_3_bangladesh <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"./src/bangladesh-3.stan"</span>)</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mod_3_bangladesh)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>data {
+  int&lt;lower=0&gt; N;
+  int&lt;lower=0&gt; N_d;
+  array[N]  int ac_uso;
+  array[N]  int distrito;
+  vector[N] urbano;
+}
+
+parameters {
+  real alpha_bar;
+  real beta_bar;
+  vector[N_d] z_alpha;
+  vector[N_d] z_beta;
+  real &lt;lower=0&gt; sigma_alpha;
+  real &lt;lower=0&gt; sigma_beta;
+}
+
+transformed parameters {
+  vector[N_d] alpha;
+  vector[N_d] beta;
+
+  alpha = alpha_bar + sigma_alpha * z_alpha;
+  beta = beta_bar + sigma_beta * z_beta;
+}
+
+model {
+  // partes no determinísticas
+  ac_uso ~ bernoulli_logit(alpha[distrito] + beta[distrito] .* urbano);
+  z_alpha ~ normal(0, 1);
+  z_beta ~ normal(0, 1);
+  // parámetros poblacionales
+  alpha_bar ~ normal(0, 1);
+  beta_bar ~ normal(0, 1);
+  sigma_alpha ~ normal(0, 1);
+  sigma_beta ~ normal(0, 1);
+}
+
+generated quantities {
+  vector[N_d] prob_distrito_urbano;
+  vector[N_d] prob_distrito_rural;
+
+  for (i in 1:N_d) {
+    prob_distrito_urbano[i] = inv_logit(alpha[i] + beta[i]);
+    prob_distrito_rural[i] = inv_logit(alpha[i]);
+  }
+
+}</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>ajuste_3_bangladesh <span class="ot">&lt;-</span> mod_3_bangladesh<span class="sc">$</span><span class="fu">sample</span>(<span class="at">data =</span> datos_lst,</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>                                               <span class="at">refresh =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">9394</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 sequential chains...
+
+Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 1 finished in 3.7 seconds.
+Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 2 finished in 4.7 seconds.
+Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 3 finished in 3.4 seconds.
+Chain 4 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 4 finished in 3.4 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 3.8 seconds.
+Total execution time: 15.5 seconds.</code></pre>
+</div>
+</div>
+<p>El resultado es mejor y logramos mejorar todos los diagnósticos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>ajuste_3_bangladesh<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"alpha_bar"</span>, <span class="st">"beta_bar"</span>, <span class="st">"sigma_alpha"</span>, <span class="st">"sigma_beta"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">variable</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">mean</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">median</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">sd</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">mad</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">q5</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">q95</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">rhat</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">ess_bulk</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">ess_tail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">alpha_bar</td>
+<td style="text-align: right;">-0.70</td>
+<td style="text-align: right;">-0.70</td>
+<td style="text-align: right;">0.09</td>
+<td style="text-align: right;">0.09</td>
+<td style="text-align: right;">-0.85</td>
+<td style="text-align: right;">-0.56</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2171.35</td>
+<td style="text-align: right;">2785.76</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">beta_bar</td>
+<td style="text-align: right;">0.62</td>
+<td style="text-align: right;">0.62</td>
+<td style="text-align: right;">0.15</td>
+<td style="text-align: right;">0.15</td>
+<td style="text-align: right;">0.37</td>
+<td style="text-align: right;">0.87</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">3228.90</td>
+<td style="text-align: right;">2921.34</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sigma_alpha</td>
+<td style="text-align: right;">0.49</td>
+<td style="text-align: right;">0.48</td>
+<td style="text-align: right;">0.09</td>
+<td style="text-align: right;">0.09</td>
+<td style="text-align: right;">0.35</td>
+<td style="text-align: right;">0.64</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1429.93</td>
+<td style="text-align: right;">2279.99</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sigma_beta</td>
+<td style="text-align: right;">0.57</td>
+<td style="text-align: right;">0.57</td>
+<td style="text-align: right;">0.21</td>
+<td style="text-align: right;">0.21</td>
+<td style="text-align: right;">0.22</td>
+<td style="text-align: right;">0.91</td>
+<td style="text-align: right;">1.01</td>
+<td style="text-align: right;">747.12</td>
+<td style="text-align: right;">463.35</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mcmc_trace</span>(ajuste_3_bangladesh<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"sigma_beta"</span>)))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09-modelos-jerarquicos_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Ahora podemos considerar el efecto de la variable urbano rural por distrito, donde vemos otra vez el efecto de agregación parcial, aunque esta vez el encogimiento es hacia la media de urbano y rural respectivamente:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>probs_1 <span class="ot">&lt;-</span> ajuste_3_bangladesh<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"prob_distrito_urbano"</span>, <span class="st">"prob_distrito_rural"</span>), </span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">format =</span> <span class="st">"df"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"prob"</span>), <span class="at">names_to =</span> <span class="st">"variable"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tipo =</span> <span class="fu">ifelse</span>(<span class="fu">str_detect</span>(variable, <span class="st">"urbano"</span>), <span class="st">"urbano"</span>, <span class="st">"rural"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(variable, <span class="at">sep =</span> <span class="st">"[</span><span class="sc">\\</span><span class="st">[</span><span class="sc">\\</span><span class="st">]]"</span>, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"variable"</span>, <span class="st">"district"</span>), </span>
+<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">extra =</span> <span class="st">"drop"</span>, <span class="at">convert =</span> <span class="cn">TRUE</span>)  <span class="sc">|&gt;</span> </span>
+<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(district, tipo) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">media =</span> <span class="fu">mean</span>(value),</span>
+<span id="cb66-8"><a href="#cb66-8" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">q5 =</span> <span class="fu">quantile</span>(value, <span class="fl">0.05</span>),</span>
+<span id="cb66-9"><a href="#cb66-9" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">q95 =</span> <span class="fu">quantile</span>(value, <span class="fl">0.95</span>)) </span>
+<span id="cb66-10"><a href="#cb66-10" aria-hidden="true" tabindex="-1"></a>resumen_1 <span class="ot">&lt;-</span> bangladesh <span class="sc">|&gt;</span></span>
+<span id="cb66-11"><a href="#cb66-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tipo =</span> <span class="fu">ifelse</span>(urban <span class="sc">==</span> <span class="dv">1</span>, <span class="st">"urbano"</span>, <span class="st">"rural"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb66-12"><a href="#cb66-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tipo =</span> <span class="fu">factor</span>(tipo, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"urbano"</span>, <span class="st">"rural"</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb66-13"><a href="#cb66-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(district, tipo, <span class="at">.drop =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb66-14"><a href="#cb66-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">prop_cruda =</span> <span class="fu">mean</span>(use.contraception), <span class="at">n =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb66-15"><a href="#cb66-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">district =</span> <span class="fu">as.integer</span>(district))</span>
+<span id="cb66-16"><a href="#cb66-16" aria-hidden="true" tabindex="-1"></a>probs_1 <span class="sc">|&gt;</span> <span class="fu">left_join</span>(resumen_1) <span class="sc">|&gt;</span></span>
+<span id="cb66-17"><a href="#cb66-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> district)) <span class="sc">+</span></span>
+<span id="cb66-18"><a href="#cb66-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.5</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb66-19"><a href="#cb66-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> media), <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb66-20"><a href="#cb66-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_linerange</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> q5, <span class="at">ymax =</span> q95), <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb66-21"><a href="#cb66-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> prop_cruda, <span class="at">size =</span> n), <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb66-22"><a href="#cb66-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>tipo, <span class="at">nrow =</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09-modelos-jerarquicos_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Observaciones</strong>: - Nótese que generalmente tenemos muestras más chicos en zonas urbanas, y por eso vemos que hay más incertidumbre en las estimaciones urbanas. - Sin embargo, vemos que en general la variable urbana influye en el uso de anticonceptivos, aunque tenemos incertidumbre considerable en las estimaciones de las zonas urbanas de los distritos (menos muestra).</p>
+<p>Podemos también comparar más directamente cómo cambia la probabilidad de zonas urbanas a rurales dentro de cada distrito:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>probs_1 <span class="sc">|&gt;</span> </span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>q5, <span class="sc">-</span>q95) <span class="sc">|&gt;</span></span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> tipo, <span class="at">values_from =</span> media) <span class="sc">|&gt;</span> </span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> urbano, <span class="at">y =</span> rural)) <span class="sc">+</span></span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">slope =</span> <span class="dv">1</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">colour =</span> <span class="st">"red"</span>) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09-modelos-jerarquicos_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Nótese que vemos aquí también la diferencia dentro de distritos entre zonas urbanas y rurales. Las medias posteriores en general están por debajo de la identidad. Adicionalmente, y como es de esperarse, hay correlación dentro de distritos entre las tasas de uso de anticonceptivos en zonas urbanas y rurales.</p>
+<p>Esta última observación suguiere que todavía podemos mejorar nuestras estimaciones: en este modelo, encogemos la estimación de cada zona hacia la media urbana o rural, independientemente una de otra. Sin embargo, si queremos obtener mejores estimaciones, el “encogimiento” debe estar correlacionado dentro de los distritos: estamos dejando de utilizar información que está en los datos. Si observamos que el uso de anticonceptivos en una zona urbana de el distrito A es relativamente alto, esperamos que el uso en la zona rural de ese mismo distrito sea también relativamente alto.</p>
+</section>
+<section id="variables-correlacionadas" class="level2" data-number="9.6">
+<h2 data-number="9.6" class="anchored" data-anchor-id="variables-correlacionadas"><span class="header-section-number">9.6</span> Variables correlacionadas</h2>
+<p>En nuestro ejemplo anterior, observamos que existe correlación entre las tasas de uso de anticonceptivos en zonas urbanas y rurales a lo largo de los distritos. En términos de nuestro modelo, los coeficientes <span class="math inline">\(\alpha_j +\beta_j\)</span> están correlacionados con los coeficientes <span class="math inline">\(\alpha_j\)</span>. Nótese que la inicial (o hiper-inicial) poblacional no incluye esta correlación, pero efectivamente la posterior captura la correlación. Podemos hacer la estimación más eficiente modelando explícitamente la correlación en la inicial poblacional. Con dos coeficientes podríamos modelar la población con una distribución normal multivariada.</p>
+<p>Cambiamos nuestra notación por conveniencia: ahora <span class="math inline">\(\beta\)</span> es un vector que incluye la ordenada al origen <span class="math inline">\(\beta_1\)</span> y la pendiente <span class="math inline">\(\beta_2\)</span>.</p>
+<p><span class="math display">\[\beta \sim NMV(\bar{\beta}, \Sigma)\]</span> adicionalmente a <span class="math inline">\(\bar{\beta} \sim N(0,I)\)</span> y <span class="math inline">\(\sigma_1, \sigma_2 \sim N^{+}(0,1)\)</span>.</p>
+<p>Podemos pensar en la matriz de covarianzas <span class="math inline">\(\Sigma\)</span> como dada en dos partes: <span class="math inline">\(\Omega\)</span>, una matriz de correlaciones, y dos deviaciones estándar <span class="math inline">\(\sigma\)</span>, de modo que</p>
+<p><span class="math display">\[\Sigma = \textrm{diag}(\sigma)\,\Omega\, \textrm{diag}(\sigma)\]</span></p>
+<p>En nuestro ejemplo anterior teníamos <span class="math inline">\(\Omega = I\)</span>. En general, si <span class="math inline">\(\Omega\)</span> es una matriz de correlaciones, entonces <span class="math inline">\(\Sigma\)</span> se escribe como:</p>
+<p>La pregunta ahora es qué distribución inicial le podemos dar a la matriz <span class="math inline">\(\Omega\)</span> de correlaciones. Aún cuando en este caso bivariado sólo tenemos que dar una inicial a la correlación y es posible definir alguna distribución inicial para <span class="math inline">\(\rho\in(-1,1)\)</span>, en general el problema de poner una distribución sobre matrices de correlación no es simple. Usamos la llamada <a href="https://mc-stan.org/docs/functions-reference/correlation_matrix_distributions.html#lkj-correlation">distribución LKJ</a>, <span class="math display">\[\Omega \sim \textrm{LKJ}(\eta)\]</span> con <span class="math inline">\(\eta&gt;0\)</span>. <span class="math inline">\(\eta\)</span> indica qué tan concentrada está la distribución en correlaciones cercanas a 0, o cuánta dispersión esperamos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>modelo_str <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a><span class="st">data{}</span></span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a><span class="st">parameters {}</span></span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a><span class="st">model {}</span></span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a><span class="st">generated quantities {</span></span>
+<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a><span class="st">  matrix[2,2] Omega_02;</span></span>
+<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a><span class="st">  matrix[2,2] Omega_2;</span></span>
+<span id="cb68-8"><a href="#cb68-8" aria-hidden="true" tabindex="-1"></a><span class="st">  matrix[2,2] Omega_20;</span></span>
+<span id="cb68-9"><a href="#cb68-9" aria-hidden="true" tabindex="-1"></a><span class="st">  Omega_02 = lkj_corr_rng(2, 0.2);</span></span>
+<span id="cb68-10"><a href="#cb68-10" aria-hidden="true" tabindex="-1"></a><span class="st">  Omega_2 = lkj_corr_rng(2, 2);</span></span>
+<span id="cb68-11"><a href="#cb68-11" aria-hidden="true" tabindex="-1"></a><span class="st">  Omega_20 = lkj_corr_rng(2, 20);</span></span>
+<span id="cb68-12"><a href="#cb68-12" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb68-13"><a href="#cb68-13" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
+<span id="cb68-14"><a href="#cb68-14" aria-hidden="true" tabindex="-1"></a>archivo <span class="ot">&lt;-</span><span class="fu">file</span>(<span class="st">"./src/ejemplo_lkj.stan"</span>)</span>
+<span id="cb68-15"><a href="#cb68-15" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(modelo_str, archivo)</span>
+<span id="cb68-16"><a href="#cb68-16" aria-hidden="true" tabindex="-1"></a><span class="fu">close</span>(archivo)</span>
+<span id="cb68-17"><a href="#cb68-17" aria-hidden="true" tabindex="-1"></a>sim_lkj <span class="ot">&lt;-</span> cmdstanr<span class="sc">::</span><span class="fu">cmdstan_model</span>(<span class="st">"./src/ejemplo_lkj.stan"</span>)</span>
+<span id="cb68-18"><a href="#cb68-18" aria-hidden="true" tabindex="-1"></a>salida <span class="ot">&lt;-</span> sim_lkj<span class="sc">$</span><span class="fu">sample</span>(<span class="at">fixed_param =</span> <span class="cn">TRUE</span>, <span class="at">iter_sampling =</span> <span class="dv">1000</span>,</span>
+<span id="cb68-19"><a href="#cb68-19" aria-hidden="true" tabindex="-1"></a>                         <span class="at">show_messages =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb68-20"><a href="#cb68-20" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> salida<span class="sc">$</span><span class="fu">draws</span>(<span class="at">format =</span> <span class="st">"df"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb68-21"><a href="#cb68-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">contains</span>(<span class="st">"[1,2]"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb68-22"><a href="#cb68-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">"variable"</span>, <span class="at">values_to =</span> <span class="st">"valor"</span>) </span>
+<span id="cb68-23"><a href="#cb68-23" aria-hidden="true" tabindex="-1"></a>sims <span class="sc">|&gt;</span> </span>
+<span id="cb68-24"><a href="#cb68-24" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> valor)) <span class="sc">+</span></span>
+<span id="cb68-25"><a href="#cb68-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>() <span class="sc">+</span></span>
+<span id="cb68-26"><a href="#cb68-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>variable)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09-modelos-jerarquicos_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Ahora intentamos ajustar un modelo con esta nueva distribución poblacional inicial:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>mod_4_bangladesh <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"./src/bangladesh-4.stan"</span>)</span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mod_4_bangladesh)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>data {
+  int&lt;lower=0&gt; N;
+  int&lt;lower=0&gt; N_d;
+  array[N]  int ac_uso;
+  array[N]  int distrito;
+  vector[N] urbano;
+}
+
+transformed data {
+  matrix[N, 2] x;
+  for (n in 1:N) {
+    x[n,1] = 1;
+    x[n,2] = urbano[n];
+  }
+}
+
+parameters {
+  vector[2] beta_bar;
+  array[N_d] vector[2] beta;
+  vector&lt;lower=0&gt;[2] sigma;
+  corr_matrix[2] Omega;
+}
+
+transformed parameters {
+  cov_matrix[2] Sigma;
+
+  Sigma = quad_form_diag(Omega, sigma);
+}
+
+model {
+  for(n in 1:N){
+      ac_uso[n] ~ bernoulli_logit(x[n] * beta[distrito[n]]);
+  }
+  beta ~ multi_normal(beta_bar, Sigma);
+  // parámetros poblacionales
+  beta_bar ~ normal(0, 1);
+  sigma ~ normal(0, 1);
+  Omega ~ lkj_corr(4);
+}
+
+generated quantities {
+  vector[N_d] prob_distrito_urbano;
+  vector[N_d] prob_distrito_rural;
+
+  for (i in 1:N_d) {
+    prob_distrito_urbano[i] = inv_logit(beta[i][1] + beta[i][2]);
+    prob_distrito_rural[i] = inv_logit(beta[i][1]);
+  }
+}</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>ajuste_4_bangladesh <span class="ot">&lt;-</span> mod_4_bangladesh<span class="sc">$</span><span class="fu">sample</span>(<span class="at">data =</span> datos_lst,</span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">refresh =</span> <span class="dv">1000</span>, <span class="at">init =</span> <span class="fl">0.1</span>, <span class="at">step_size =</span> <span class="fl">0.1</span>, <span class="at">parallel_chains =</span> <span class="dv">4</span>, <span class="at">seed =</span> <span class="dv">9394</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 parallel chains...
+
+Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 4 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 1 finished in 18.6 seconds.
+Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 3 finished in 20.2 seconds.
+Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 2 finished in 21.7 seconds.
+Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 4 finished in 26.6 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 21.8 seconds.
+Total execution time: 26.9 seconds.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>ajuste_4_bangladesh<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"beta_bar"</span>, <span class="st">"sigma"</span>, <span class="st">"Omega"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">variable</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">mean</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">median</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">sd</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">mad</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">q5</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">q95</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">rhat</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">ess_bulk</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">ess_tail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">beta_bar[1]</td>
+<td style="text-align: right;">-0.70</td>
+<td style="text-align: right;">-0.70</td>
+<td style="text-align: right;">0.10</td>
+<td style="text-align: right;">0.10</td>
+<td style="text-align: right;">-0.87</td>
+<td style="text-align: right;">-0.54</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2900.62</td>
+<td style="text-align: right;">2602.54</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">beta_bar[2]</td>
+<td style="text-align: right;">0.67</td>
+<td style="text-align: right;">0.67</td>
+<td style="text-align: right;">0.17</td>
+<td style="text-align: right;">0.16</td>
+<td style="text-align: right;">0.40</td>
+<td style="text-align: right;">0.96</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2255.70</td>
+<td style="text-align: right;">3108.16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sigma[1]</td>
+<td style="text-align: right;">0.56</td>
+<td style="text-align: right;">0.55</td>
+<td style="text-align: right;">0.09</td>
+<td style="text-align: right;">0.09</td>
+<td style="text-align: right;">0.42</td>
+<td style="text-align: right;">0.71</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1266.21</td>
+<td style="text-align: right;">1996.28</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sigma[2]</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.19</td>
+<td style="text-align: right;">0.18</td>
+<td style="text-align: right;">0.46</td>
+<td style="text-align: right;">1.08</td>
+<td style="text-align: right;">1.01</td>
+<td style="text-align: right;">596.57</td>
+<td style="text-align: right;">806.78</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Omega[1,1]</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Omega[2,1]</td>
+<td style="text-align: right;">-0.56</td>
+<td style="text-align: right;">-0.58</td>
+<td style="text-align: right;">0.18</td>
+<td style="text-align: right;">0.17</td>
+<td style="text-align: right;">-0.81</td>
+<td style="text-align: right;">-0.22</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">900.09</td>
+<td style="text-align: right;">1631.08</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Omega[1,2]</td>
+<td style="text-align: right;">-0.56</td>
+<td style="text-align: right;">-0.58</td>
+<td style="text-align: right;">0.18</td>
+<td style="text-align: right;">0.17</td>
+<td style="text-align: right;">-0.81</td>
+<td style="text-align: right;">-0.22</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">900.09</td>
+<td style="text-align: right;">1631.08</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Omega[2,2]</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</div>
+<p>Aunque no tiene problemas graves de divergencia, el ajuste es lento como vemos en el tamaño efectivo bajo de las correlaciones entre la constante <span class="math inline">\(\beta_1\)</span> y el coeficiente de la variable urbana <span class="math inline">\(\beta_2\)</span>. Nota: observa que los coeficientes <span class="math inline">\(\beta_1\)</span> y <span class="math inline">\(\beta_2\)</span> son negativamente correlacionados. Sin embargo, la correlación entre <span class="math inline">\(\beta_1 + \beta_2\)</span> y <span class="math inline">\(\beta_1\)</span> es positiva como veremos más adelante.</p>
+<p>Podemos usar también una parametrización no centrada para este modelo. Observamos primero que si <span class="math inline">\(\Omega\)</span> es una matriz de correlaciones, entonces siempre podemos escribir su factorización de Cholesky, dada por <span class="math inline">\(\Omega = LL^T\)</span>, donde <span class="math inline">\(L\)</span> es una matriz triangular inferior. De esta forma, podemos escribir</p>
+<p><span class="math display">\[\Sigma = \textrm{diag}(\sigma)\,LL^T\, \textrm{diag}(\sigma)\]</span> De forma que el factor de Cholesky para <span class="math inline">\(\Sigma\)</span> es <span class="math inline">\(\textrm{diag}(\sigma)\,L\)</span>.</p>
+<p>Ahora tomemos <span class="math inline">\(Z\sim NMV(0,I)\)</span> y definamos <span class="math inline">\(X = \textrm{diag}(\sigma)\,L\,Z\)</span>. Entonces se puede demostrar que <span class="math inline">\(X\sim NMV(0,\Sigma)\)</span>. De esta forma, si <span class="math inline">\(\beta \sim NMV(\bar{\beta}, \Sigma)\)</span>, podemos escribir <span class="math display">\[\beta = \bar{\beta} + \textrm{diag}(\sigma)\,L\,Z.\]</span> Nótese que el caso de una dimensión, para centrar multiplicábamos por la desviación estándar. El análogo en el caso multivariado es el factor de Cholesky de la covarianza, que es una especie de “raíz” de la covarianza.</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
 <div id="ref-albert2009bayesian" class="csl-entry" role="listitem">
 Albert, Jim. 2009. <em>Bayesian computation with R</em>. Dordrecht: Springer. <a href="http://www.springerlink.com/content/978-0-387-92298-0#section=15956&amp;page=1">http://www.springerlink.com/content/978-0-387-92298-0#section=15956&amp;page=1</a>.
+</div>
+<div id="ref-rethinking" class="csl-entry" role="listitem">
+McElreath, R. 2020. <em>Statistical Rethinking: A Bayesian Course with Examples in R and Stan</em>. A Chapman &amp; Hall libro. CRC Press. <a href="https://books.google.com.mx/books?id=Ie2vxQEACAAJ">https://books.google.com.mx/books?id=Ie2vxQEACAAJ</a>.
 </div>
 </div>
 </section>
