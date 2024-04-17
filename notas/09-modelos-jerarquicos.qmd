@@ -399,7 +399,7 @@ Los datos, por persona, los modelamos como sigue (regresión logística):
 $$
 \begin{align}
 C_i &\sim \text{Bernoulli}(p_i)\\
-p_i &= \alpha_{D[i]}  \\
+\textrm{logit}(p_i) &= \alpha_{D[i]}  \\
 \alpha_j &\sim N(\bar{\alpha},\sigma) \\
 \bar{\alpha} &\sim N(0, 1) \\
 \sigma &\sim N^+(0, 1) \\
@@ -481,7 +481,7 @@ considerando que su efecto puede variar por distrito:
 $$
 \begin{align}
 C_i &\sim \text{Bernoulli}(p_i)\\
-p_i &= \alpha_{D[i]} + \beta_{D[i]} U_i \\
+\textrm{logit}(p_i) &= \alpha_{D[i]} + \beta_{D[i]} U_i \\
 \alpha_j &\sim N(\bar{\alpha},\sigma_{\alpha}) \\
 \beta_j &\sim N(\bar{\beta},\sigma_{ \beta}) \\
 \bar{\alpha}, \bar{\beta}  &\sim N(0, 1)\\
