@@ -387,7 +387,7 @@ Total execution time: 0.6 seconds.</code></pre>
 <pre><code># A tibble: 1 × 10
   variable  mean median     sd    mad    q5   q95  rhat ess_bulk ess_tail
   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-1 lambda   0.942  0.941 0.0561 0.0557 0.851  1.04  1.00    1671.    2425.</code></pre>
+1 lambda   0.943  0.942 0.0573 0.0571 0.852  1.04  1.00    1548.    2333.</code></pre>
 </div>
 </div>
 <p>Los diagnósticos básicos parecen ser apropiados. Procedemos a hacer un chequeo predictivo posterior:</p>
@@ -1610,7 +1610,7 @@ Total execution time: 6.3 seconds.</code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>ajuste_1_bangladesh<span class="sc">$</span><span class="fu">cmdstan_diagnose</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing csv files: /tmp/RtmpGCr5FN/bangladesh-1-202404170730-1-41caa4.csv, /tmp/RtmpGCr5FN/bangladesh-1-202404170730-2-41caa4.csv, /tmp/RtmpGCr5FN/bangladesh-1-202404170730-3-41caa4.csv, /tmp/RtmpGCr5FN/bangladesh-1-202404170730-4-41caa4.csv
+<pre><code>Processing csv files: /tmp/RtmpXXC530/bangladesh-1-202404170753-1-41cae4.csv, /tmp/RtmpXXC530/bangladesh-1-202404170753-2-41cae4.csv, /tmp/RtmpXXC530/bangladesh-1-202404170753-3-41cae4.csv, /tmp/RtmpXXC530/bangladesh-1-202404170753-4-41cae4.csv
 
 Checking sampler transitions treedepth.
 Treedepth satisfactory for all transitions.
@@ -2510,7 +2510,7 @@ Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup) </code></pre>
 <pre><code>Chain 1 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Chain 1 Exception: normal_lpdf: Scale parameter is 0, but must be positive! (in '/tmp/RtmpGCr5FN/model-2ab8303de980.stan', line 26, column 2 to column 38)</code></pre>
+<pre><code>Chain 1 Exception: normal_lpdf: Scale parameter is 0, but must be positive! (in '/tmp/RtmpXXC530/model-2af86fc84606.stan', line 26, column 2 to column 38)</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Chain 1 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,</code></pre>
@@ -2537,7 +2537,7 @@ Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) </code></pre>
 <pre><code>Chain 3 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Chain 3 Exception: normal_lpdf: Scale parameter is 0, but must be positive! (in '/tmp/RtmpGCr5FN/model-2ab8303de980.stan', line 25, column 2 to column 41)</code></pre>
+<pre><code>Chain 3 Exception: normal_lpdf: Scale parameter is 0, but must be positive! (in '/tmp/RtmpXXC530/model-2af86fc84606.stan', line 25, column 2 to column 41)</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Chain 3 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,</code></pre>
@@ -2561,7 +2561,7 @@ Chain 4 finished in 3.2 seconds.
 
 All 4 chains finished successfully.
 Mean chain execution time: 3.9 seconds.
-Total execution time: 15.9 seconds.</code></pre>
+Total execution time: 15.8 seconds.</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: 19 of 4000 (0.0%) transitions ended with a divergence.
@@ -2760,7 +2760,7 @@ Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup)
 Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 2 finished in 4.7 seconds.
+Chain 2 finished in 4.6 seconds.
 Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
 Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
@@ -2774,7 +2774,7 @@ Chain 4 finished in 3.4 seconds.
 
 All 4 chains finished successfully.
 Mean chain execution time: 3.8 seconds.
-Total execution time: 15.5 seconds.</code></pre>
+Total execution time: 15.4 seconds.</code></pre>
 </div>
 </div>
 <p>El resultado es mejor y logramos mejorar todos los diagnósticos:</p>
@@ -3033,19 +3033,19 @@ Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling)
 Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 1 finished in 18.6 seconds.
+Chain 1 finished in 18.7 seconds.
 Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 3 finished in 20.2 seconds.
+Chain 3 finished in 20.3 seconds.
 Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 2 finished in 21.7 seconds.
+Chain 2 finished in 21.4 seconds.
 Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 4 finished in 26.6 seconds.
+Chain 4 finished in 26.3 seconds.
 
 All 4 chains finished successfully.
-Mean chain execution time: 21.8 seconds.
-Total execution time: 26.9 seconds.</code></pre>
+Mean chain execution time: 21.7 seconds.
+Total execution time: 26.5 seconds.</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -3176,6 +3176,228 @@ Total execution time: 26.9 seconds.</code></pre>
 <p>Podemos usar también una parametrización no centrada para este modelo. Observamos primero que si <span class="math inline">\(\Omega\)</span> es una matriz de correlaciones, entonces siempre podemos escribir su factorización de Cholesky, dada por <span class="math inline">\(\Omega = LL^T\)</span>, donde <span class="math inline">\(L\)</span> es una matriz triangular inferior. De esta forma, podemos escribir</p>
 <p><span class="math display">\[\Sigma = \textrm{diag}(\sigma)\,LL^T\, \textrm{diag}(\sigma)\]</span> De forma que el factor de Cholesky para <span class="math inline">\(\Sigma\)</span> es <span class="math inline">\(\textrm{diag}(\sigma)\,L\)</span>.</p>
 <p>Ahora tomemos <span class="math inline">\(Z\sim NMV(0,I)\)</span> y definamos <span class="math inline">\(X = \textrm{diag}(\sigma)\,L\,Z\)</span>. Entonces se puede demostrar que <span class="math inline">\(X\sim NMV(0,\Sigma)\)</span>. De esta forma, si <span class="math inline">\(\beta \sim NMV(\bar{\beta}, \Sigma)\)</span>, podemos escribir <span class="math display">\[\beta = \bar{\beta} + \textrm{diag}(\sigma)\,L\,Z.\]</span> Nótese que el caso de una dimensión, para centrar multiplicábamos por la desviación estándar. El análogo en el caso multivariado es el factor de Cholesky de la covarianza, que es una especie de “raíz” de la covarianza.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>mod_5_bangladesh <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"./src/bangladesh-5.stan"</span>)</span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mod_5_bangladesh)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>data {
+  int&lt;lower=0&gt; N;
+  int&lt;lower=0&gt; N_d;
+  array[N]  int ac_uso;
+  array[N]  int distrito;
+  vector[N] urbano;
+}
+
+transformed data {
+  matrix[N, 2] x;
+  for (n in 1:N) {
+    x[n,1] = 1;
+    x[n,2] = urbano[n];
+  }
+}
+
+parameters {
+  vector[2] beta_bar;
+  vector&lt;lower=0&gt;[2] sigma;
+  cholesky_factor_corr[2] L_Omega;
+  matrix[2, N_d] z;
+}
+
+transformed parameters {
+  cov_matrix[2] Sigma;
+  corr_matrix[2] Omega;
+  matrix[2, N_d] beta;
+
+  // parametrización no centrada:
+  beta = rep_matrix(beta_bar, N_d) + diag_pre_multiply(sigma, L_Omega) * z;
+
+  // Esto solo para recordar dónde están covarianzas y correlaciones:
+  // no son necesarias
+  Omega = L_Omega * L_Omega';
+  Sigma = quad_form_diag(Omega, sigma);
+
+}
+
+model {
+  for(n in 1:N){
+      ac_uso[n] ~ bernoulli_logit( x[n] * beta[,distrito[n]]);
+  }
+  to_vector(z) ~ std_normal();
+  // parámetros poblacionales
+  beta_bar ~ normal(0, 1);
+  sigma ~ normal(0, 1);
+  // La siguente línea es para tener Omega ~ lkj_corr(4)
+  L_Omega ~ lkj_corr_cholesky(4);
+}
+
+generated quantities {
+  vector[N_d] prob_distrito_urbano;
+  vector[N_d] prob_distrito_rural;
+
+  for (i in 1:N_d) {
+    prob_distrito_urbano[i] = inv_logit(beta[1,i] + beta[2,i]);
+    prob_distrito_rural[i] = inv_logit(beta[1,i]);
+  }
+}</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>ajuste_5_bangladesh <span class="ot">&lt;-</span> mod_5_bangladesh<span class="sc">$</span><span class="fu">sample</span>(<span class="at">data =</span> datos_lst,</span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">refresh =</span> <span class="dv">1000</span>, <span class="at">init =</span> <span class="fl">0.1</span>, <span class="at">step_size =</span> <span class="fl">0.1</span>, <span class="at">parallel_chains =</span> <span class="dv">4</span>, <span class="at">seed =</span> <span class="dv">9394</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 parallel chains...
+
+Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 4 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 1 finished in 13.3 seconds.
+Chain 2 finished in 13.3 seconds.
+Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 4 finished in 13.3 seconds.
+Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 3 finished in 14.1 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 13.5 seconds.
+Total execution time: 14.2 seconds.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>ajuste_5_bangladesh<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"beta_bar"</span>, <span class="st">"sigma"</span>, <span class="st">"Omega"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">variable</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">mean</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">median</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">sd</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">mad</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">q5</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">q95</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">rhat</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">ess_bulk</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">ess_tail</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">beta_bar[1]</td>
+<td style="text-align: right;">-0.71</td>
+<td style="text-align: right;">-0.70</td>
+<td style="text-align: right;">0.10</td>
+<td style="text-align: right;">0.10</td>
+<td style="text-align: right;">-0.86</td>
+<td style="text-align: right;">-0.55</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2087.86</td>
+<td style="text-align: right;">2700.10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">beta_bar[2]</td>
+<td style="text-align: right;">0.68</td>
+<td style="text-align: right;">0.68</td>
+<td style="text-align: right;">0.16</td>
+<td style="text-align: right;">0.16</td>
+<td style="text-align: right;">0.41</td>
+<td style="text-align: right;">0.95</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2560.44</td>
+<td style="text-align: right;">2699.90</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sigma[1]</td>
+<td style="text-align: right;">0.56</td>
+<td style="text-align: right;">0.56</td>
+<td style="text-align: right;">0.09</td>
+<td style="text-align: right;">0.09</td>
+<td style="text-align: right;">0.42</td>
+<td style="text-align: right;">0.72</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2076.00</td>
+<td style="text-align: right;">2819.38</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sigma[2]</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">0.20</td>
+<td style="text-align: right;">0.19</td>
+<td style="text-align: right;">0.45</td>
+<td style="text-align: right;">1.08</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1339.00</td>
+<td style="text-align: right;">1471.26</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Omega[1,1]</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Omega[2,1]</td>
+<td style="text-align: right;">-0.56</td>
+<td style="text-align: right;">-0.58</td>
+<td style="text-align: right;">0.18</td>
+<td style="text-align: right;">0.18</td>
+<td style="text-align: right;">-0.81</td>
+<td style="text-align: right;">-0.23</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1877.68</td>
+<td style="text-align: right;">2531.87</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Omega[1,2]</td>
+<td style="text-align: right;">-0.56</td>
+<td style="text-align: right;">-0.58</td>
+<td style="text-align: right;">0.18</td>
+<td style="text-align: right;">0.18</td>
+<td style="text-align: right;">-0.81</td>
+<td style="text-align: right;">-0.23</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1877.68</td>
+<td style="text-align: right;">2531.87</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Omega[2,2]</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</div>
+<p>Este resultado es superior al anterior.</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
