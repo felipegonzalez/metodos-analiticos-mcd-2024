@@ -1285,16 +1285,21 @@ ajuste_vinos_1$summary(c("Q", "sigma")) |>
 ## Extendiendo el modelo de variable latente
 
 Ahora continuamos con nuestro modelo de calidad de vinos. Incluímos
-el origen del vino (que tiene dos niveles):
+el origen del vino (que tiene dos niveles). La idea es que el origen, si vemos
+en el diagrama original, puede ser una variable de confusión entre calidad y 
+score (pues afecta a calidad y también potencialmente al score). Adicionalmente,
+el origen no tiene puerta trasera, así que podemos examinar su efecto
+total sobre el score de los vinos. Estratificamos de la manera más simple,
+incluyendo origen en nuestra regresión:
 
 
 ```{r}
-wines_2012 <- wines_2012 |> mutate(origen_num = as.numeric(factor(wine.amer)))
+wines_2012 <- wines_2012 |> mutate(origen_num = ifelse(wine.amer == 1, 1, 2))
 wines_2012 |> select(wine.amer, origen_num) |> unique()
 n_jueces <- length(unique(wines_2012$juez_num))
 n_vinos <- length(unique(wines_2012$vino_num))
 n_origen <- length(unique(wines_2012$origen_num))
-c("num_vinos" = n_jueces, "num_jueces" = n_vinos, "num_datos" = nrow(wines_2012))
+c("num_vinos" = n_vinos, "num_jueces" = n_jueces, "num_datos" = nrow(wines_2012))
 ```
 
 ```{r}
@@ -1348,19 +1353,29 @@ poca variabilidad y están traslapadas: aunque podríamos mejor calcular el cont
 si queremos examinar esto con más cuidado).
 
 Todo parece ir bien, así que podemos expandir el modelo para incluir la forma de
-calificar de los jueces. En primer lugar, definimos un nivel general $H$ que indica qué
+calificar de los jueces. Esto no es necesario (los jueces son una causa adicional que 
+afecta el score), pero puede mejorar nuestras estimaciones.
+
+Para estratificar por estas variables, tenemos que separarnos un poco de efectos
+adivitivos. Una razón importante por la que varían las calificaciones es
+que hay jueces que son más duros que otros, o que discriminan más qué otros. Esto 
+es usual también cuando pensamos que los jueces son reactivos que las personas
+contestan: existen reactivos más difíciles que otros, y también discriminan de diferente manera.
+
+
+En primer lugar, definimos un nivel general $H$ que indica qué
 tan alto o bajo califica un juez en general. Adicionalmente, incluímos un parámetro
 de discriminación $D$ de los jueces, que indica qué tanto del rango de la escala usa 
 cada juez  El modelo para el valor esperado del *Score* de un vino $i$ calificado por el juez $j$ es:
 
-$$\mu_{i} = Q_{vino(i)} + U_{origen(i)} - H_{juez(i)}$$
+$$\mu_{i} = Q_{vino(i)} + O_{origen(i)} - H_{juez(i)}$$
 Podemos pensar que el valor $H$ de cada juez es qué tan duro es en sus calificaciones.
 Para cada vino, un juez con valor alto de $H$ tendrá a calificar más bajo un vino de misma
 calidad y origen que otro juez con un valor más bajo de $H$. Podemos
 incluír un parámetro de discriminación $D$ para cada juez, que indica qué tanto del rango de la 
 escala usa cada juez de la siguiente forma:
 
-$$\mu_{i} = (Q_{vino(i)} + U_{origen(i)} - H_{juez(i)})D_{juez(i)}$$
+$$\mu_{i} = (Q_{vino(i)} + O_{origen(i)} - H_{juez(i)})D_{juez(i)}$$
 Un juez con valor alto de $D$ es más extremo en sus calificaciones: un vino por arriba
 de su promedio lo califica más alto en la escala, y un vino por debajo de su promedio
 lo califica más bajo. El extremo es que $D=0$, que quiere decir que el juez tiende a calificar
@@ -1434,6 +1449,12 @@ ajuste_vinos_3$summary(c("dif_origen")) |>
   select(variable, mean, sd, q5, q95, rhat, contains("ess")) |> 
   mutate(across(c(mean, sd, q5, q95, rhat, ess_bulk, ess_tail), ~round(., 3))) 
 ```
+
+```{r}
+mcmc_hist(ajuste_vinos_3$draws("dif_origen"), binwidth = 0.07)
+```
+
+
 
 
 ## Transiciones divergentes
@@ -1544,5 +1565,7 @@ ajuste_embudo$summary() |>
   select(variable, mean, rhat, contains("ess")) |> 
   mutate(across(c(mean, rhat, ess_bulk, ess_tail), ~round(., 3))) 
 ```
+
+
 
 
