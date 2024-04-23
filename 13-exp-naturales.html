@@ -336,8 +336,8 @@ window.Quarto = {
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">100</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-a9777b769ac336542733" style="width:100%;height:325px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-a9777b769ac336542733">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n \n  node [shape = circle]\n    MiasmaPobreza\n  node [shape=plaintext]\n\n  edge [minlen = 3]\n    PurezaAgua -> Colera\n    MiasmaPobreza -> Colera\n    MiasmaPobreza -> PurezaAgua\n  {rank = same; PurezaAgua; Colera}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-6e878cc33ff6623c1324" style="width:100%;height:325px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6e878cc33ff6623c1324">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n \n  node [shape = circle]\n    MiasmaPobreza\n  node [shape=plaintext]\n\n  edge [minlen = 3]\n    PurezaAgua -> Colera\n    MiasmaPobreza -> Colera\n    MiasmaPobreza -> PurezaAgua\n  {rank = same; PurezaAgua; Colera}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Dado este diagrama, como hemos discutido, no podemos identificar el efecto causal de la calidad de suministro de agua en las muertes o infecciones de cólera: podría ser la “miasma” que contamina el agua y enferma a las personas (correlación no causal), por ejemplo, y no hay relación causal entre tomar agua contaminada y cólera.</p>
@@ -368,15 +368,15 @@ window.Quarto = {
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-9854cee82fda4766c6aa" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-9854cee82fda4766c6aa">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n \n  node [shape = circle]\n    Miasma\n  node [shape=plaintext]\n\n  edge [minlen = 3]\n    Comp -> PurezaAgua -> Colera\n    Miasma -> PurezaAgua\n    Miasma -> Colera\n  {rank = same; Comp; PurezaAgua; Colera}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-b215867d5896c89ab49e" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-b215867d5896c89ab49e">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n \n  node [shape = circle]\n    Miasma\n  node [shape=plaintext]\n\n  edge [minlen = 3]\n    Comp -> PurezaAgua -> Colera\n    Miasma -> PurezaAgua\n    Miasma -> Colera\n  {rank = same; Comp; PurezaAgua; Colera}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Tenemos entonces:</p>
 <ul>
 <li>La compañía que suministra a cada casa o zona es causa de la pureza de agua en cada casa.</li>
 <li>No puede haber aristas directas entre compañía y cólera: el único efecto de compañía en cólera puede ser a través del agua que suministra.</li>
-<li>No puede haber una arista de Pobreza a Compañía, por la observación de Snow: la decisión de qué compañía suministraba a qué casa se había tomado mucho antes, y no tenía relación con pobreza, miasma actual ni cólera (que no existía cuando se tomaron esas decisiones)</li>
+<li>No puede haber una arista de Miasma/Pobreza a Compañía, por la observación de Snow: la decisión de qué compañía suministraba a qué casa se había tomado mucho antes, y no tenía relación con pobreza, miasma actual ni cólera (que no existía cuando se tomaron esas decisiones)</li>
 </ul>
 <p>La conclusión de Snow es que desde el punto de vista de cólera y el sistema que nos interesa, la compañía de agua se comporta como si fuera asignada al azar: no hay ninguna variable relevente al problema que incida en qué compañía abastece a cada casa o zona. Como observó asociación entre compañía de agua y Cólera, concluyó correctamente que esto implicaba que la pureza del agua tenía un efecto causal en la propagación del cólera.</p>
 <p>La idea de Snow entonces podemas :</p>
@@ -453,8 +453,8 @@ window.Quarto = {
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width=</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">70</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-a1d5e7ad783e527c9e85" style="width:100%;height:227px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-a1d5e7ad783e527c9e85">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n \n  node [shape = circle]\n    U\n  node [shape=plaintext]\n\n  edge [minlen = 3]\n    Z -> T -> Y\n    U-> T\n    U-> Y\n  {rank = same; Z;T; Y}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-7acfeb8fb5c0559140fb" style="width:100%;height:227px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-7acfeb8fb5c0559140fb">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n \n  node [shape = circle]\n    U\n  node [shape=plaintext]\n\n  edge [minlen = 3]\n    Z -> T -> Y\n    U-> T\n    U-> Y\n  {rank = same; Z;T; Y}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -652,70 +652,70 @@ Chain 1 Iteration:  200 / 1500 [ 13%]  (Warmup)
 Chain 4 Iteration:  200 / 1500 [ 13%]  (Warmup) 
 Chain 2 Iteration:  200 / 1500 [ 13%]  (Warmup) 
 Chain 3 Iteration:  200 / 1500 [ 13%]  (Warmup) 
-Chain 1 Iteration:  300 / 1500 [ 20%]  (Warmup) 
 Chain 4 Iteration:  300 / 1500 [ 20%]  (Warmup) 
+Chain 1 Iteration:  300 / 1500 [ 20%]  (Warmup) 
 Chain 2 Iteration:  300 / 1500 [ 20%]  (Warmup) 
-Chain 3 Iteration:  300 / 1500 [ 20%]  (Warmup) 
 Chain 4 Iteration:  400 / 1500 [ 26%]  (Warmup) 
+Chain 3 Iteration:  300 / 1500 [ 20%]  (Warmup) 
 Chain 1 Iteration:  400 / 1500 [ 26%]  (Warmup) 
 Chain 2 Iteration:  400 / 1500 [ 26%]  (Warmup) 
-Chain 3 Iteration:  400 / 1500 [ 26%]  (Warmup) 
 Chain 4 Iteration:  500 / 1500 [ 33%]  (Warmup) 
 Chain 4 Iteration:  501 / 1500 [ 33%]  (Sampling) 
+Chain 3 Iteration:  400 / 1500 [ 26%]  (Warmup) 
 Chain 1 Iteration:  500 / 1500 [ 33%]  (Warmup) 
 Chain 1 Iteration:  501 / 1500 [ 33%]  (Sampling) 
-Chain 3 Iteration:  500 / 1500 [ 33%]  (Warmup) 
-Chain 3 Iteration:  501 / 1500 [ 33%]  (Sampling) 
 Chain 2 Iteration:  500 / 1500 [ 33%]  (Warmup) 
 Chain 2 Iteration:  501 / 1500 [ 33%]  (Sampling) 
+Chain 3 Iteration:  500 / 1500 [ 33%]  (Warmup) 
+Chain 3 Iteration:  501 / 1500 [ 33%]  (Sampling) 
 Chain 4 Iteration:  600 / 1500 [ 40%]  (Sampling) 
 Chain 1 Iteration:  600 / 1500 [ 40%]  (Sampling) 
-Chain 3 Iteration:  600 / 1500 [ 40%]  (Sampling) 
 Chain 2 Iteration:  600 / 1500 [ 40%]  (Sampling) 
+Chain 3 Iteration:  600 / 1500 [ 40%]  (Sampling) 
 Chain 4 Iteration:  700 / 1500 [ 46%]  (Sampling) 
 Chain 1 Iteration:  700 / 1500 [ 46%]  (Sampling) 
-Chain 3 Iteration:  700 / 1500 [ 46%]  (Sampling) 
 Chain 2 Iteration:  700 / 1500 [ 46%]  (Sampling) 
+Chain 3 Iteration:  700 / 1500 [ 46%]  (Sampling) 
 Chain 4 Iteration:  800 / 1500 [ 53%]  (Sampling) 
 Chain 1 Iteration:  800 / 1500 [ 53%]  (Sampling) 
-Chain 3 Iteration:  800 / 1500 [ 53%]  (Sampling) 
 Chain 2 Iteration:  800 / 1500 [ 53%]  (Sampling) 
+Chain 3 Iteration:  800 / 1500 [ 53%]  (Sampling) 
 Chain 4 Iteration:  900 / 1500 [ 60%]  (Sampling) 
 Chain 1 Iteration:  900 / 1500 [ 60%]  (Sampling) 
-Chain 3 Iteration:  900 / 1500 [ 60%]  (Sampling) 
 Chain 2 Iteration:  900 / 1500 [ 60%]  (Sampling) 
+Chain 3 Iteration:  900 / 1500 [ 60%]  (Sampling) 
 Chain 1 Iteration: 1000 / 1500 [ 66%]  (Sampling) 
 Chain 4 Iteration: 1000 / 1500 [ 66%]  (Sampling) 
-Chain 3 Iteration: 1000 / 1500 [ 66%]  (Sampling) 
 Chain 2 Iteration: 1000 / 1500 [ 66%]  (Sampling) 
+Chain 3 Iteration: 1000 / 1500 [ 66%]  (Sampling) 
 Chain 1 Iteration: 1100 / 1500 [ 73%]  (Sampling) 
 Chain 4 Iteration: 1100 / 1500 [ 73%]  (Sampling) 
-Chain 3 Iteration: 1100 / 1500 [ 73%]  (Sampling) 
 Chain 2 Iteration: 1100 / 1500 [ 73%]  (Sampling) 
+Chain 3 Iteration: 1100 / 1500 [ 73%]  (Sampling) 
 Chain 1 Iteration: 1200 / 1500 [ 80%]  (Sampling) 
 Chain 4 Iteration: 1200 / 1500 [ 80%]  (Sampling) 
-Chain 3 Iteration: 1200 / 1500 [ 80%]  (Sampling) 
 Chain 2 Iteration: 1200 / 1500 [ 80%]  (Sampling) 
+Chain 3 Iteration: 1200 / 1500 [ 80%]  (Sampling) 
 Chain 1 Iteration: 1300 / 1500 [ 86%]  (Sampling) 
 Chain 4 Iteration: 1300 / 1500 [ 86%]  (Sampling) 
 Chain 3 Iteration: 1300 / 1500 [ 86%]  (Sampling) 
 Chain 2 Iteration: 1300 / 1500 [ 86%]  (Sampling) 
 Chain 1 Iteration: 1400 / 1500 [ 93%]  (Sampling) 
 Chain 4 Iteration: 1400 / 1500 [ 93%]  (Sampling) 
-Chain 3 Iteration: 1400 / 1500 [ 93%]  (Sampling) 
 Chain 2 Iteration: 1400 / 1500 [ 93%]  (Sampling) 
+Chain 3 Iteration: 1400 / 1500 [ 93%]  (Sampling) 
 Chain 1 Iteration: 1500 / 1500 [100%]  (Sampling) 
-Chain 1 finished in 56.9 seconds.
-Chain 3 Iteration: 1500 / 1500 [100%]  (Sampling) 
+Chain 1 finished in 57.1 seconds.
 Chain 4 Iteration: 1500 / 1500 [100%]  (Sampling) 
+Chain 4 finished in 58.0 seconds.
+Chain 3 Iteration: 1500 / 1500 [100%]  (Sampling) 
+Chain 3 finished in 58.7 seconds.
 Chain 2 Iteration: 1500 / 1500 [100%]  (Sampling) 
-Chain 2 finished in 58.7 seconds.
-Chain 3 finished in 58.6 seconds.
-Chain 4 finished in 58.6 seconds.
+Chain 2 finished in 59.0 seconds.
 
 All 4 chains finished successfully.
 Mean chain execution time: 58.2 seconds.
-Total execution time: 58.8 seconds.</code></pre>
+Total execution time: 59.2 seconds.</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -780,15 +780,16 @@ Total execution time: 58.8 seconds.</code></pre>
 <span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="st">    Estatura -&gt; T</span></span>
 <span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="st">    T -&gt; Y</span></span>
 <span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="st">    Estatura -&gt; Y</span></span>
-<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="st">{rank = same; U; T}</span></span>
-<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a><span class="st">{rank = min;  Estatura}</span></span>
-<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
-<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">200</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="st">    U -&gt; Estatura</span></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a><span class="st">{rank = same; U; T}</span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a><span class="st">{rank = min;  Estatura}</span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">200</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-65e8c50fd798aeab783f" style="width:100%;height:650px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-65e8c50fd798aeab783f">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir=LR]\n  node [shape = circle]\n    U\n    #V\n  node [shape=plaintext]\n    Estatura\n  edge [minlen = 3]\n     U -> Y\n     #V -> Estatura\n     #V -> Y\n    Estatura -> T\n    T -> Y\n    Estatura -> Y\n{rank = same; U; T}\n{rank = min;  Estatura}\n\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-9f0985e786043e9e0993" style="width:100%;height:650px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-9f0985e786043e9e0993">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir=LR]\n  node [shape = circle]\n    U\n    #V\n  node [shape=plaintext]\n    Estatura\n  edge [minlen = 3]\n     U -> Y\n     #V -> Estatura\n     #V -> Y\n    Estatura -> T\n    T -> Y\n    Estatura -> Y\n    U -> Estatura\n{rank = same; U; T}\n{rank = min;  Estatura}\n\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Como vimos, hay una variable observable (la estatura) que determina la aplicación del tratamiento, y que se asigna de la siguiente forma:</p>
@@ -819,8 +820,8 @@ Total execution time: 58.8 seconds.</code></pre>
 <span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>,<span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">200</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-00c5eec35114e9004855" style="width:100%;height:650px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-00c5eec35114e9004855">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir=LR]\n \n  node [shape = circle]\n    U\n  node [shape=plaintext]\n\n  edge [minlen = 3]\n     U -> Y\n     \n    Estatura120 -> T\n    T -> Y\n{rank = same; U; Y}\n{rank = min; T; Estatura120}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-986b00b63640dfddd4ca" style="width:100%;height:650px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-986b00b63640dfddd4ca">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir=LR]\n \n  node [shape = circle]\n    U\n  node [shape=plaintext]\n\n  edge [minlen = 3]\n     U -> Y\n     \n    Estatura120 -> T\n    T -> Y\n{rank = same; U; Y}\n{rank = min; T; Estatura120}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>En este caso, el grupo Estatura120 son aquellos que miden entre 118 y 122, por ejemplo, y estamos suponiendo que el efecto de la variación de la estatura en este grupo es mínimo.</p>
@@ -893,7 +894,7 @@ Regresión discontinua
 </div>
 <p>Esto quiere decir que si vemos un salto en el punto de corte del tratamiento, este se debe al tratamiento, y no a cómo son <span class="math inline">\(p(Y_i^0|X=x)\)</span> y <span class="math inline">\(p(Y_i^1|X=x)\)</span>.</p>
 <p>En particular, para el efecto promedio:</p>
-<p><span class="math display">\[E[Y^1 - Y^0|X=x_0] = E[Y^1|X=x_0] - E[Y^1|X=x_0]\]</span> es igual a</p>
+<p><span class="math display">\[E[Y^1 - Y^0|X=x_0] = E[Y^1|X=x_0] - E[Y^0|X=x_0]\]</span> es igual a</p>
 <p><span class="math display">\[\lim_{x\to x_0^+} E[Y^1|X=x_0] - \lim_{x\to x_0^-} E[Y^0|X=x_0]\]</span> Después de <span class="math inline">\(x_0\)</span> todas las unidades tienen el tratamiento, y antes ninguna, de modo que esto equivale a</p>
 <p><span class="math display">\[\lim_{x\to x_0^+} E[Y|X=x, T = 1] - \lim_{x\to x_0^-} E[Y|X=x, T = 0]\]</span> y estas dos cantidades están identificadas. Solamente usamos el supuesto de continuidad y del punto de corte para el tratamiento. Nótese que este supuesto se puede violar cuando unidades de un lado del corte son diferentes a las del otro lado, lo cual sucede por ejemplo cuando es un corte genérico que afecta muchas cosas o cuando de alguna manera la variable del corte es manipulable por los individuos:</p>
 <ul>
@@ -966,21 +967,21 @@ Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup)
 Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
 Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
 Chain 4 Iteration:    1 / 2000 [  0%]  (Warmup) 
-Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
-Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
 Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 2 finished in 2.9 seconds.
 Chain 3 finished in 2.8 seconds.
 Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
 Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 1 finished in 2.9 seconds.
-Chain 2 finished in 3.0 seconds.
+Chain 1 finished in 3.0 seconds.
 Chain 4 finished in 2.9 seconds.
 
 All 4 chains finished successfully.

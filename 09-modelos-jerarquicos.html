@@ -385,7 +385,7 @@ Chain 4 finished in 0.1 seconds.
 
 All 4 chains finished successfully.
 Mean chain execution time: 0.1 seconds.
-Total execution time: 0.6 seconds.</code></pre>
+Total execution time: 0.8 seconds.</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -394,7 +394,7 @@ Total execution time: 0.6 seconds.</code></pre>
 <pre><code># A tibble: 1 × 10
   variable  mean median     sd    mad    q5   q95  rhat ess_bulk ess_tail
   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-1 lambda   0.939  0.938 0.0555 0.0544 0.850  1.03  1.00    1633.    1960.</code></pre>
+1 lambda   0.940  0.939 0.0576 0.0565 0.848  1.04  1.00    1416.    1746.</code></pre>
 </div>
 </div>
 <p>Los diagnósticos básicos parecen ser apropiados. Procedemos a hacer un chequeo predictivo posterior:</p>
@@ -1244,7 +1244,7 @@ Chain 1 Iteration: 1001 / 4000 [ 25%]  (Sampling)
 Chain 1 Iteration: 2000 / 4000 [ 50%]  (Sampling) 
 Chain 1 Iteration: 3000 / 4000 [ 75%]  (Sampling) 
 Chain 1 Iteration: 4000 / 4000 [100%]  (Sampling) 
-Chain 1 finished in 0.7 seconds.
+Chain 1 finished in 0.8 seconds.
 Chain 2 Iteration:    1 / 4000 [  0%]  (Warmup) 
 Chain 2 Iteration: 1000 / 4000 [ 25%]  (Warmup) 
 Chain 2 Iteration: 1001 / 4000 [ 25%]  (Sampling) 
@@ -1269,7 +1269,7 @@ Chain 4 finished in 0.7 seconds.
 
 All 4 chains finished successfully.
 Mean chain execution time: 0.7 seconds.
-Total execution time: 3.3 seconds.</code></pre>
+Total execution time: 3.4 seconds.</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>resumen <span class="ot">&lt;-</span> ajuste_jer<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"alpha"</span>, <span class="st">"mu"</span>)) <span class="sc">|&gt;</span> </span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(variable, mean, sd, rhat, ess_bulk)</span>
@@ -1611,13 +1611,13 @@ Chain 4 finished in 1.5 seconds.
 
 All 4 chains finished successfully.
 Mean chain execution time: 1.5 seconds.
-Total execution time: 6.2 seconds.</code></pre>
+Total execution time: 6.3 seconds.</code></pre>
 </div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>ajuste_1_bangladesh<span class="sc">$</span><span class="fu">cmdstan_diagnose</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing csv files: /tmp/Rtmpu7yxKO/bangladesh-1-202404230337-1-41cc84.csv, /tmp/Rtmpu7yxKO/bangladesh-1-202404230337-2-41cc84.csv, /tmp/Rtmpu7yxKO/bangladesh-1-202404230337-3-41cc84.csv, /tmp/Rtmpu7yxKO/bangladesh-1-202404230337-4-41cc84.csv
+<pre><code>Processing csv files: /tmp/RtmpXXytIJ/bangladesh-1-202404231940-1-41ccb1.csv, /tmp/RtmpXXytIJ/bangladesh-1-202404231940-2-41ccb1.csv, /tmp/RtmpXXytIJ/bangladesh-1-202404231940-3-41ccb1.csv, /tmp/RtmpXXytIJ/bangladesh-1-202404231940-4-41ccb1.csv
 
 Checking sampler transitions treedepth.
 Treedepth satisfactory for all transitions.
@@ -2517,7 +2517,7 @@ Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup) </code></pre>
 <pre><code>Chain 1 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Chain 1 Exception: normal_lpdf: Scale parameter is 0, but must be positive! (in '/tmp/Rtmpu7yxKO/model-2c984f6bb0d9.stan', line 26, column 2 to column 38)</code></pre>
+<pre><code>Chain 1 Exception: normal_lpdf: Scale parameter is 0, but must be positive! (in '/tmp/RtmpXXytIJ/model-2cc525fd45a3.stan', line 26, column 2 to column 38)</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Chain 1 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,</code></pre>
@@ -2537,14 +2537,14 @@ Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup)
 Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 2 finished in 4.0 seconds.
+Chain 2 finished in 4.1 seconds.
 Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) </code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Chain 3 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Chain 3 Exception: normal_lpdf: Scale parameter is 0, but must be positive! (in '/tmp/Rtmpu7yxKO/model-2c984f6bb0d9.stan', line 25, column 2 to column 41)</code></pre>
+<pre><code>Chain 3 Exception: normal_lpdf: Scale parameter is 0, but must be positive! (in '/tmp/RtmpXXytIJ/model-2cc525fd45a3.stan', line 25, column 2 to column 41)</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Chain 3 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,</code></pre>
@@ -2568,7 +2568,7 @@ Chain 4 finished in 3.2 seconds.
 
 All 4 chains finished successfully.
 Mean chain execution time: 3.8 seconds.
-Total execution time: 15.8 seconds.</code></pre>
+Total execution time: 15.7 seconds.</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: 19 of 4000 (0.0%) transitions ended with a divergence.
@@ -2748,7 +2748,10 @@ generated quantities {
     prob_distrito_urbano[i] = inv_logit(alpha[i] + beta[i]);
     prob_distrito_rural[i] = inv_logit(alpha[i]);
   }
-
+  // Simular de a priori poblacional
+  vector[2] beta_sim;
+  beta_sim[1] = normal_rng(alpha_bar, sigma_alpha);
+  beta_sim[2] = normal_rng(beta_bar, sigma_beta);
 }</code></pre>
 </div>
 </div>
@@ -2781,7 +2784,7 @@ Chain 4 finished in 3.4 seconds.
 
 All 4 chains finished successfully.
 Mean chain execution time: 3.8 seconds.
-Total execution time: 15.4 seconds.</code></pre>
+Total execution time: 15.5 seconds.</code></pre>
 </div>
 </div>
 <p>El resultado es mejor y logramos mejorar todos los diagnósticos:</p>
@@ -2812,11 +2815,11 @@ Total execution time: 15.4 seconds.</code></pre>
 <td style="text-align: right;">-0.70</td>
 <td style="text-align: right;">0.09</td>
 <td style="text-align: right;">0.09</td>
-<td style="text-align: right;">-0.85</td>
-<td style="text-align: right;">-0.56</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">2171.35</td>
-<td style="text-align: right;">2785.76</td>
+<td style="text-align: right;">-0.86</td>
+<td style="text-align: right;">-0.55</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2294.89</td>
+<td style="text-align: right;">2794.97</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">beta_bar</td>
@@ -2824,35 +2827,35 @@ Total execution time: 15.4 seconds.</code></pre>
 <td style="text-align: right;">0.62</td>
 <td style="text-align: right;">0.15</td>
 <td style="text-align: right;">0.15</td>
-<td style="text-align: right;">0.37</td>
-<td style="text-align: right;">0.87</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">3228.90</td>
-<td style="text-align: right;">2921.34</td>
+<td style="text-align: right;">0.38</td>
+<td style="text-align: right;">0.86</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2898.59</td>
+<td style="text-align: right;">2781.62</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">sigma_alpha</td>
 <td style="text-align: right;">0.49</td>
-<td style="text-align: right;">0.48</td>
+<td style="text-align: right;">0.49</td>
 <td style="text-align: right;">0.09</td>
 <td style="text-align: right;">0.09</td>
-<td style="text-align: right;">0.35</td>
+<td style="text-align: right;">0.36</td>
 <td style="text-align: right;">0.64</td>
-<td style="text-align: right;">1.00</td>
-<td style="text-align: right;">1429.93</td>
-<td style="text-align: right;">2279.99</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1328.25</td>
+<td style="text-align: right;">1940.52</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">sigma_beta</td>
-<td style="text-align: right;">0.57</td>
-<td style="text-align: right;">0.57</td>
+<td style="text-align: right;">0.56</td>
+<td style="text-align: right;">0.56</td>
 <td style="text-align: right;">0.21</td>
-<td style="text-align: right;">0.21</td>
-<td style="text-align: right;">0.22</td>
+<td style="text-align: right;">0.20</td>
+<td style="text-align: right;">0.20</td>
 <td style="text-align: right;">0.91</td>
-<td style="text-align: right;">1.01</td>
-<td style="text-align: right;">747.12</td>
-<td style="text-align: right;">463.35</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">755.45</td>
+<td style="text-align: right;">805.18</td>
 </tr>
 </tbody>
 </table>
@@ -2888,13 +2891,14 @@ Total execution time: 15.4 seconds.</code></pre>
 <span id="cb66-13"><a href="#cb66-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(district, tipo, <span class="at">.drop =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb66-14"><a href="#cb66-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">prop_cruda =</span> <span class="fu">mean</span>(use.contraception), <span class="at">n =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
 <span id="cb66-15"><a href="#cb66-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">district =</span> <span class="fu">as.integer</span>(district))</span>
-<span id="cb66-16"><a href="#cb66-16" aria-hidden="true" tabindex="-1"></a>probs_1 <span class="sc">|&gt;</span> <span class="fu">left_join</span>(resumen_1) <span class="sc">|&gt;</span></span>
+<span id="cb66-16"><a href="#cb66-16" aria-hidden="true" tabindex="-1"></a>graf_1 <span class="ot">&lt;-</span> probs_1 <span class="sc">|&gt;</span> <span class="fu">left_join</span>(resumen_1) <span class="sc">|&gt;</span></span>
 <span id="cb66-17"><a href="#cb66-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> district)) <span class="sc">+</span></span>
 <span id="cb66-18"><a href="#cb66-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.5</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
 <span id="cb66-19"><a href="#cb66-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> media), <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
 <span id="cb66-20"><a href="#cb66-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_linerange</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> q5, <span class="at">ymax =</span> q95), <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
 <span id="cb66-21"><a href="#cb66-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> prop_cruda, <span class="at">size =</span> n), <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb66-22"><a href="#cb66-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>tipo, <span class="at">nrow =</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb66-22"><a href="#cb66-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>tipo, <span class="at">nrow =</span> <span class="dv">2</span>)</span>
+<span id="cb66-23"><a href="#cb66-23" aria-hidden="true" tabindex="-1"></a>graf_1</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -2920,8 +2924,21 @@ Total execution time: 15.4 seconds.</code></pre>
 </div>
 </div>
 </div>
-<p>Nótese que vemos aquí también la diferencia dentro de distritos entre zonas urbanas y rurales. Las medias posteriores en general están por debajo de la identidad. Adicionalmente, y como es de esperarse, hay correlación dentro de distritos entre las tasas de uso de anticonceptivos en zonas urbanas y rurales.</p>
-<p>Esta última observación suguiere que todavía podemos mejorar nuestras estimaciones: en este modelo, encogemos la estimación de cada zona hacia la media urbana o rural, independientemente una de otra. Sin embargo, si queremos obtener mejores estimaciones, el “encogimiento” debe estar correlacionado dentro de los distritos: estamos dejando de utilizar información que está en los datos. Si observamos que el uso de anticonceptivos en una zona urbana de el distrito A es relativamente alto, esperamos que el uso en la zona rural de ese mismo distrito sea también relativamente alto.</p>
+<p>Nótese que vemos aquí también la diferencia dentro de distritos entre zonas urbanas y rurales. Las medias posteriores en general están por debajo de la identidad. Adicionalmente, y como es de esperarse, hay correlación dentro de distritos entre las tasas de uso de anticonceptivos en zonas urbanas y rurales. Esto se debe, desde el punto de vista del modelo, a correlación entre el coeficiente <span class="math inline">\(\beta_{1,i}\)</span> común al efecto de urbano y rural: urbano es <span class="math inline">\(beta_{1,i} + beta_{2,i}\)</span> y rural <span class="math inline">\(\beta_{1,i}\)</span>. Es natural entonces observar una correlación positiva entre los dos siguientes coeficientes:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>ajuste_3_bangladesh<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"beta_sim"</span>), <span class="at">format =</span> <span class="st">"df"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="st">`</span><span class="at">beta_sim[1]</span><span class="st">`</span>, <span class="at">x =</span> <span class="st">`</span><span class="at">beta_sim[1]</span><span class="st">`</span> <span class="sc">+</span> <span class="st">`</span><span class="at">beta_sim[2]</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"coef_urbano"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"coef_rural"</span>) <span class="sc">+</span></span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">slope =</span> <span class="dv">1</span>, <span class="at">linetype =</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09-modelos-jerarquicos_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Esta última observación suguiere que todavía podemos mejorar nuestras estimaciones: el “encogimiento” en las dos dimensiones debe estar correlacionado dentro de los distritos. En este ejemplo, estamos dejando de utilizar información que está en los datos. Si observamos que el uso de anticonceptivos en una zona urbana de el distrito A tiene un valor dado, esto nos da información acerca del uso de anticonceptivos en la zona rural del distrito A. Veremos ahora cómo podemos aprovechar más eficientemente la información para hacer mejor estimaciones.</p>
 </section>
 <section id="variables-correlacionadas" class="level2" data-number="9.6">
 <h2 data-number="9.6" class="anchored" data-anchor-id="variables-correlacionadas"><span class="header-section-number">9.6</span> Variables correlacionadas</h2>
@@ -2933,44 +2950,44 @@ Total execution time: 15.4 seconds.</code></pre>
 <p>En nuestro ejemplo anterior teníamos <span class="math inline">\(\Omega = I\)</span>. En general, si <span class="math inline">\(\Omega\)</span> es una matriz de correlaciones, entonces <span class="math inline">\(\Sigma\)</span> se escribe como:</p>
 <p>La pregunta ahora es qué distribución inicial le podemos dar a la matriz <span class="math inline">\(\Omega\)</span> de correlaciones. Aún cuando en este caso bivariado sólo tenemos que dar una inicial a la correlación y es posible definir alguna distribución inicial para <span class="math inline">\(\rho\in(-1,1)\)</span>, en general el problema de poner una distribución sobre matrices de correlación no es simple. Usamos la llamada <a href="https://mc-stan.org/docs/functions-reference/correlation_matrix_distributions.html#lkj-correlation">distribución LKJ</a>, <span class="math display">\[\Omega \sim \textrm{LKJ}(\eta)\]</span> con <span class="math inline">\(\eta&gt;0\)</span>. <span class="math inline">\(\eta\)</span> indica qué tan concentrada está la distribución en correlaciones cercanas a 0, o cuánta dispersión esperamos:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>modelo_str <span class="ot">&lt;-</span> <span class="st">"</span></span>
-<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a><span class="st">data{}</span></span>
-<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a><span class="st">parameters {}</span></span>
-<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a><span class="st">model {}</span></span>
-<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a><span class="st">generated quantities {</span></span>
-<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a><span class="st">  matrix[2,2] Omega_02;</span></span>
-<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a><span class="st">  matrix[2,2] Omega_2;</span></span>
-<span id="cb68-8"><a href="#cb68-8" aria-hidden="true" tabindex="-1"></a><span class="st">  matrix[2,2] Omega_20;</span></span>
-<span id="cb68-9"><a href="#cb68-9" aria-hidden="true" tabindex="-1"></a><span class="st">  Omega_02 = lkj_corr_rng(2, 0.2);</span></span>
-<span id="cb68-10"><a href="#cb68-10" aria-hidden="true" tabindex="-1"></a><span class="st">  Omega_2 = lkj_corr_rng(2, 2);</span></span>
-<span id="cb68-11"><a href="#cb68-11" aria-hidden="true" tabindex="-1"></a><span class="st">  Omega_20 = lkj_corr_rng(2, 20);</span></span>
-<span id="cb68-12"><a href="#cb68-12" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
-<span id="cb68-13"><a href="#cb68-13" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
-<span id="cb68-14"><a href="#cb68-14" aria-hidden="true" tabindex="-1"></a>archivo <span class="ot">&lt;-</span><span class="fu">file</span>(<span class="st">"./src/ejemplo_lkj.stan"</span>)</span>
-<span id="cb68-15"><a href="#cb68-15" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(modelo_str, archivo)</span>
-<span id="cb68-16"><a href="#cb68-16" aria-hidden="true" tabindex="-1"></a><span class="fu">close</span>(archivo)</span>
-<span id="cb68-17"><a href="#cb68-17" aria-hidden="true" tabindex="-1"></a>sim_lkj <span class="ot">&lt;-</span> cmdstanr<span class="sc">::</span><span class="fu">cmdstan_model</span>(<span class="st">"./src/ejemplo_lkj.stan"</span>)</span>
-<span id="cb68-18"><a href="#cb68-18" aria-hidden="true" tabindex="-1"></a>salida <span class="ot">&lt;-</span> sim_lkj<span class="sc">$</span><span class="fu">sample</span>(<span class="at">fixed_param =</span> <span class="cn">TRUE</span>, <span class="at">iter_sampling =</span> <span class="dv">1000</span>,</span>
-<span id="cb68-19"><a href="#cb68-19" aria-hidden="true" tabindex="-1"></a>                         <span class="at">show_messages =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb68-20"><a href="#cb68-20" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> salida<span class="sc">$</span><span class="fu">draws</span>(<span class="at">format =</span> <span class="st">"df"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb68-21"><a href="#cb68-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">contains</span>(<span class="st">"[1,2]"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb68-22"><a href="#cb68-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">"variable"</span>, <span class="at">values_to =</span> <span class="st">"valor"</span>) </span>
-<span id="cb68-23"><a href="#cb68-23" aria-hidden="true" tabindex="-1"></a>sims <span class="sc">|&gt;</span> </span>
-<span id="cb68-24"><a href="#cb68-24" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> valor)) <span class="sc">+</span></span>
-<span id="cb68-25"><a href="#cb68-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>() <span class="sc">+</span></span>
-<span id="cb68-26"><a href="#cb68-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>variable)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>modelo_str <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a><span class="st">data{}</span></span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a><span class="st">parameters {}</span></span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a><span class="st">model {}</span></span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a><span class="st">generated quantities {</span></span>
+<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a><span class="st">  matrix[2,2] Omega_02;</span></span>
+<span id="cb69-7"><a href="#cb69-7" aria-hidden="true" tabindex="-1"></a><span class="st">  matrix[2,2] Omega_2;</span></span>
+<span id="cb69-8"><a href="#cb69-8" aria-hidden="true" tabindex="-1"></a><span class="st">  matrix[2,2] Omega_20;</span></span>
+<span id="cb69-9"><a href="#cb69-9" aria-hidden="true" tabindex="-1"></a><span class="st">  Omega_02 = lkj_corr_rng(2, 0.2);</span></span>
+<span id="cb69-10"><a href="#cb69-10" aria-hidden="true" tabindex="-1"></a><span class="st">  Omega_2 = lkj_corr_rng(2, 2);</span></span>
+<span id="cb69-11"><a href="#cb69-11" aria-hidden="true" tabindex="-1"></a><span class="st">  Omega_20 = lkj_corr_rng(2, 20);</span></span>
+<span id="cb69-12"><a href="#cb69-12" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb69-13"><a href="#cb69-13" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
+<span id="cb69-14"><a href="#cb69-14" aria-hidden="true" tabindex="-1"></a>archivo <span class="ot">&lt;-</span><span class="fu">file</span>(<span class="st">"./src/ejemplo_lkj.stan"</span>)</span>
+<span id="cb69-15"><a href="#cb69-15" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(modelo_str, archivo)</span>
+<span id="cb69-16"><a href="#cb69-16" aria-hidden="true" tabindex="-1"></a><span class="fu">close</span>(archivo)</span>
+<span id="cb69-17"><a href="#cb69-17" aria-hidden="true" tabindex="-1"></a>sim_lkj <span class="ot">&lt;-</span> cmdstanr<span class="sc">::</span><span class="fu">cmdstan_model</span>(<span class="st">"./src/ejemplo_lkj.stan"</span>)</span>
+<span id="cb69-18"><a href="#cb69-18" aria-hidden="true" tabindex="-1"></a>salida <span class="ot">&lt;-</span> sim_lkj<span class="sc">$</span><span class="fu">sample</span>(<span class="at">fixed_param =</span> <span class="cn">TRUE</span>, <span class="at">iter_sampling =</span> <span class="dv">1000</span>,</span>
+<span id="cb69-19"><a href="#cb69-19" aria-hidden="true" tabindex="-1"></a>                         <span class="at">show_messages =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb69-20"><a href="#cb69-20" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> salida<span class="sc">$</span><span class="fu">draws</span>(<span class="at">format =</span> <span class="st">"df"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb69-21"><a href="#cb69-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">contains</span>(<span class="st">"[1,2]"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb69-22"><a href="#cb69-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">"variable"</span>, <span class="at">values_to =</span> <span class="st">"valor"</span>) </span>
+<span id="cb69-23"><a href="#cb69-23" aria-hidden="true" tabindex="-1"></a>sims <span class="sc">|&gt;</span> </span>
+<span id="cb69-24"><a href="#cb69-24" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> valor)) <span class="sc">+</span></span>
+<span id="cb69-25"><a href="#cb69-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>() <span class="sc">+</span></span>
+<span id="cb69-26"><a href="#cb69-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>variable)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="09-modelos-jerarquicos_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="09-modelos-jerarquicos_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Ahora intentamos ajustar un modelo con esta nueva distribución poblacional inicial:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>mod_4_bangladesh <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"./src/bangladesh-4.stan"</span>)</span>
-<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mod_4_bangladesh)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>mod_4_bangladesh <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"./src/bangladesh-4.stan"</span>)</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mod_4_bangladesh)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>data {
   int&lt;lower=0&gt; N;
@@ -3020,12 +3037,15 @@ generated quantities {
     prob_distrito_urbano[i] = inv_logit(beta[i][1] + beta[i][2]);
     prob_distrito_rural[i] = inv_logit(beta[i][1]);
   }
+    // Simular de a priori poblacional
+  vector[2] beta_sim;
+  beta_sim = multi_normal_rng(beta_bar, Sigma);
 }</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>ajuste_4_bangladesh <span class="ot">&lt;-</span> mod_4_bangladesh<span class="sc">$</span><span class="fu">sample</span>(<span class="at">data =</span> datos_lst,</span>
-<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">refresh =</span> <span class="dv">1000</span>, <span class="at">init =</span> <span class="fl">0.1</span>, <span class="at">step_size =</span> <span class="fl">0.1</span>, <span class="at">parallel_chains =</span> <span class="dv">4</span>, <span class="at">seed =</span> <span class="dv">9394</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>ajuste_4_bangladesh <span class="ot">&lt;-</span> mod_4_bangladesh<span class="sc">$</span><span class="fu">sample</span>(<span class="at">data =</span> datos_lst,</span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">refresh =</span> <span class="dv">1000</span>, <span class="at">init =</span> <span class="fl">0.1</span>, <span class="at">step_size =</span> <span class="fl">0.1</span>, <span class="at">parallel_chains =</span> <span class="dv">4</span>, <span class="at">seed =</span> <span class="dv">9394</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Running MCMC with 4 parallel chains...
 
@@ -3040,24 +3060,24 @@ Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling)
 Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 1 finished in 18.5 seconds.
+Chain 1 finished in 19.0 seconds.
 Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
 Chain 3 finished in 20.9 seconds.
 Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 2 finished in 21.8 seconds.
+Chain 2 finished in 21.3 seconds.
 Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 4 finished in 25.7 seconds.
+Chain 4 finished in 26.9 seconds.
 
 All 4 chains finished successfully.
-Mean chain execution time: 21.7 seconds.
-Total execution time: 25.9 seconds.</code></pre>
+Mean chain execution time: 22.0 seconds.
+Total execution time: 27.1 seconds.</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>ajuste_4_bangladesh<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"beta_bar"</span>, <span class="st">"sigma"</span>, <span class="st">"Omega"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>ajuste_4_bangladesh<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"beta_bar"</span>, <span class="st">"sigma"</span>, <span class="st">"Omega"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <table data-quarto-postprocess="true" class="table table-sm table-striped small">
@@ -3085,32 +3105,32 @@ Total execution time: 25.9 seconds.</code></pre>
 <td style="text-align: right;">-0.87</td>
 <td style="text-align: right;">-0.54</td>
 <td style="text-align: right;">1.00</td>
-<td style="text-align: right;">2900.62</td>
-<td style="text-align: right;">2602.54</td>
+<td style="text-align: right;">3373.15</td>
+<td style="text-align: right;">3227.70</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">beta_bar[2]</td>
-<td style="text-align: right;">0.67</td>
-<td style="text-align: right;">0.67</td>
+<td style="text-align: right;">0.68</td>
+<td style="text-align: right;">0.68</td>
 <td style="text-align: right;">0.17</td>
-<td style="text-align: right;">0.16</td>
-<td style="text-align: right;">0.40</td>
-<td style="text-align: right;">0.96</td>
+<td style="text-align: right;">0.17</td>
+<td style="text-align: right;">0.41</td>
+<td style="text-align: right;">0.97</td>
 <td style="text-align: right;">1.00</td>
-<td style="text-align: right;">2255.70</td>
-<td style="text-align: right;">3108.16</td>
+<td style="text-align: right;">1983.86</td>
+<td style="text-align: right;">2546.75</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">sigma[1]</td>
 <td style="text-align: right;">0.56</td>
 <td style="text-align: right;">0.55</td>
-<td style="text-align: right;">0.09</td>
-<td style="text-align: right;">0.09</td>
-<td style="text-align: right;">0.42</td>
-<td style="text-align: right;">0.71</td>
+<td style="text-align: right;">0.10</td>
+<td style="text-align: right;">0.10</td>
+<td style="text-align: right;">0.40</td>
+<td style="text-align: right;">0.73</td>
 <td style="text-align: right;">1.00</td>
-<td style="text-align: right;">1266.21</td>
-<td style="text-align: right;">1996.28</td>
+<td style="text-align: right;">652.47</td>
+<td style="text-align: right;">980.05</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">sigma[2]</td>
@@ -3119,10 +3139,10 @@ Total execution time: 25.9 seconds.</code></pre>
 <td style="text-align: right;">0.19</td>
 <td style="text-align: right;">0.18</td>
 <td style="text-align: right;">0.46</td>
-<td style="text-align: right;">1.08</td>
+<td style="text-align: right;">1.10</td>
 <td style="text-align: right;">1.01</td>
-<td style="text-align: right;">596.57</td>
-<td style="text-align: right;">806.78</td>
+<td style="text-align: right;">534.12</td>
+<td style="text-align: right;">626.36</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Omega[1,1]</td>
@@ -3138,27 +3158,27 @@ Total execution time: 25.9 seconds.</code></pre>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Omega[2,1]</td>
-<td style="text-align: right;">-0.56</td>
+<td style="text-align: right;">-0.55</td>
 <td style="text-align: right;">-0.58</td>
 <td style="text-align: right;">0.18</td>
-<td style="text-align: right;">0.17</td>
-<td style="text-align: right;">-0.81</td>
+<td style="text-align: right;">0.18</td>
+<td style="text-align: right;">-0.80</td>
 <td style="text-align: right;">-0.22</td>
 <td style="text-align: right;">1.00</td>
-<td style="text-align: right;">900.09</td>
-<td style="text-align: right;">1631.08</td>
+<td style="text-align: right;">898.06</td>
+<td style="text-align: right;">1562.15</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Omega[1,2]</td>
-<td style="text-align: right;">-0.56</td>
+<td style="text-align: right;">-0.55</td>
 <td style="text-align: right;">-0.58</td>
 <td style="text-align: right;">0.18</td>
-<td style="text-align: right;">0.17</td>
-<td style="text-align: right;">-0.81</td>
+<td style="text-align: right;">0.18</td>
+<td style="text-align: right;">-0.80</td>
 <td style="text-align: right;">-0.22</td>
 <td style="text-align: right;">1.00</td>
-<td style="text-align: right;">900.09</td>
-<td style="text-align: right;">1631.08</td>
+<td style="text-align: right;">898.06</td>
+<td style="text-align: right;">1562.15</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Omega[2,2]</td>
@@ -3184,8 +3204,8 @@ Total execution time: 25.9 seconds.</code></pre>
 <p><span class="math display">\[\Sigma = \textrm{diag}(\sigma)\,LL^T\, \textrm{diag}(\sigma)\]</span> De forma que el factor de Cholesky para <span class="math inline">\(\Sigma\)</span> es <span class="math inline">\(\textrm{diag}(\sigma)\,L\)</span>.</p>
 <p>Ahora tomemos <span class="math inline">\(Z\sim NMV(0,I)\)</span> y definamos <span class="math inline">\(X = \textrm{diag}(\sigma)\,L\,Z\)</span>. Entonces se puede demostrar que <span class="math inline">\(X\sim NMV(0,\Sigma)\)</span>. De esta forma, si <span class="math inline">\(\beta \sim NMV(\bar{\beta}, \Sigma)\)</span>, podemos escribir <span class="math display">\[\beta = \bar{\beta} + \textrm{diag}(\sigma)\,L\,Z.\]</span> Nótese que el caso de una dimensión, para centrar multiplicábamos por la desviación estándar. El análogo en el caso multivariado es el factor de Cholesky de la covarianza, que es una especie de “raíz” de la covarianza.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>mod_5_bangladesh <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"./src/bangladesh-5.stan"</span>)</span>
-<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mod_5_bangladesh)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>mod_5_bangladesh <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"./src/bangladesh-5.stan"</span>)</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mod_5_bangladesh)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>data {
   int&lt;lower=0&gt; N;
@@ -3245,12 +3265,17 @@ generated quantities {
     prob_distrito_urbano[i] = inv_logit(beta[1,i] + beta[2,i]);
     prob_distrito_rural[i] = inv_logit(beta[1,i]);
   }
+
+  // Simular de a priori poblacional
+  vector[2] beta_sim;
+  beta_sim = multi_normal_rng(beta_bar, Sigma);
+
 }</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>ajuste_5_bangladesh <span class="ot">&lt;-</span> mod_5_bangladesh<span class="sc">$</span><span class="fu">sample</span>(<span class="at">data =</span> datos_lst,</span>
-<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">refresh =</span> <span class="dv">1000</span>, <span class="at">init =</span> <span class="fl">0.1</span>, <span class="at">step_size =</span> <span class="fl">0.1</span>, <span class="at">parallel_chains =</span> <span class="dv">4</span>, <span class="at">seed =</span> <span class="dv">9394</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>ajuste_5_bangladesh <span class="ot">&lt;-</span> mod_5_bangladesh<span class="sc">$</span><span class="fu">sample</span>(<span class="at">data =</span> datos_lst,</span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">refresh =</span> <span class="dv">1000</span>, <span class="at">init =</span> <span class="fl">0.1</span>, <span class="at">step_size =</span> <span class="fl">0.1</span>, <span class="at">parallel_chains =</span> <span class="dv">4</span>, <span class="at">seed =</span> <span class="dv">9394</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Running MCMC with 4 parallel chains...
 
@@ -3258,31 +3283,31 @@ Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup)
 Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
 Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
 Chain 4 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
-Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 2 finished in 13.0 seconds.
+Chain 2 finished in 13.5 seconds.
 Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 1 finished in 13.1 seconds.
 Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 4 finished in 13.2 seconds.
+Chain 1 finished in 13.5 seconds.
+Chain 4 finished in 13.4 seconds.
 Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 3 finished in 13.9 seconds.
+Chain 3 finished in 14.2 seconds.
 
 All 4 chains finished successfully.
-Mean chain execution time: 13.3 seconds.
-Total execution time: 14.1 seconds.</code></pre>
+Mean chain execution time: 13.6 seconds.
+Total execution time: 14.4 seconds.</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>ajuste_5_bangladesh<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"beta_bar"</span>, <span class="st">"sigma"</span>, <span class="st">"Omega"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>ajuste_5_bangladesh<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"beta_bar"</span>, <span class="st">"sigma"</span>, <span class="st">"Omega"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <table data-quarto-postprocess="true" class="table table-sm table-striped small">
@@ -3303,51 +3328,51 @@ Total execution time: 14.1 seconds.</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">beta_bar[1]</td>
-<td style="text-align: right;">-0.71</td>
+<td style="text-align: right;">-0.70</td>
 <td style="text-align: right;">-0.70</td>
 <td style="text-align: right;">0.10</td>
 <td style="text-align: right;">0.10</td>
-<td style="text-align: right;">-0.86</td>
-<td style="text-align: right;">-0.55</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">2087.86</td>
-<td style="text-align: right;">2700.10</td>
+<td style="text-align: right;">-0.87</td>
+<td style="text-align: right;">-0.54</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1631.27</td>
+<td style="text-align: right;">2042.08</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">beta_bar[2]</td>
 <td style="text-align: right;">0.68</td>
 <td style="text-align: right;">0.68</td>
-<td style="text-align: right;">0.16</td>
-<td style="text-align: right;">0.16</td>
-<td style="text-align: right;">0.41</td>
+<td style="text-align: right;">0.17</td>
+<td style="text-align: right;">0.17</td>
+<td style="text-align: right;">0.40</td>
 <td style="text-align: right;">0.95</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">2560.44</td>
-<td style="text-align: right;">2699.90</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1998.80</td>
+<td style="text-align: right;">2890.16</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">sigma[1]</td>
 <td style="text-align: right;">0.56</td>
-<td style="text-align: right;">0.56</td>
+<td style="text-align: right;">0.55</td>
+<td style="text-align: right;">0.10</td>
 <td style="text-align: right;">0.09</td>
-<td style="text-align: right;">0.09</td>
-<td style="text-align: right;">0.42</td>
-<td style="text-align: right;">0.72</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">2076.00</td>
-<td style="text-align: right;">2819.38</td>
+<td style="text-align: right;">0.41</td>
+<td style="text-align: right;">0.73</td>
+<td style="text-align: right;">1.01</td>
+<td style="text-align: right;">986.61</td>
+<td style="text-align: right;">1820.06</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">sigma[2]</td>
-<td style="text-align: right;">0.76</td>
-<td style="text-align: right;">0.76</td>
-<td style="text-align: right;">0.20</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.21</td>
 <td style="text-align: right;">0.19</td>
-<td style="text-align: right;">0.45</td>
-<td style="text-align: right;">1.08</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1339.00</td>
-<td style="text-align: right;">1471.26</td>
+<td style="text-align: right;">0.41</td>
+<td style="text-align: right;">1.09</td>
+<td style="text-align: right;">1.01</td>
+<td style="text-align: right;">593.66</td>
+<td style="text-align: right;">317.85</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Omega[1,1]</td>
@@ -3363,27 +3388,27 @@ Total execution time: 14.1 seconds.</code></pre>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Omega[2,1]</td>
-<td style="text-align: right;">-0.56</td>
-<td style="text-align: right;">-0.58</td>
-<td style="text-align: right;">0.18</td>
-<td style="text-align: right;">0.18</td>
-<td style="text-align: right;">-0.81</td>
-<td style="text-align: right;">-0.23</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1877.68</td>
-<td style="text-align: right;">2531.87</td>
+<td style="text-align: right;">-0.54</td>
+<td style="text-align: right;">-0.57</td>
+<td style="text-align: right;">0.19</td>
+<td style="text-align: right;">0.17</td>
+<td style="text-align: right;">-0.79</td>
+<td style="text-align: right;">-0.18</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1135.48</td>
+<td style="text-align: right;">1200.95</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Omega[1,2]</td>
-<td style="text-align: right;">-0.56</td>
-<td style="text-align: right;">-0.58</td>
-<td style="text-align: right;">0.18</td>
-<td style="text-align: right;">0.18</td>
-<td style="text-align: right;">-0.81</td>
-<td style="text-align: right;">-0.23</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1877.68</td>
-<td style="text-align: right;">2531.87</td>
+<td style="text-align: right;">-0.54</td>
+<td style="text-align: right;">-0.57</td>
+<td style="text-align: right;">0.19</td>
+<td style="text-align: right;">0.17</td>
+<td style="text-align: right;">-0.79</td>
+<td style="text-align: right;">-0.18</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1135.48</td>
+<td style="text-align: right;">1200.95</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Omega[2,2]</td>
@@ -3404,7 +3429,148 @@ Total execution time: 14.1 seconds.</code></pre>
 </div>
 </div>
 </div>
-<p>Este resultado es superior al anterior.</p>
+<p>Este resultado es superior en convergencia al anterior.</p>
+<p>Ahora podemos comparar nuestra estimaciones del efecto de la variable urbana/rural en cada distrito, considerando el modelo con correlación y sin correlación:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>probs_corr <span class="ot">&lt;-</span> ajuste_5_bangladesh<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"prob_distrito_urbano"</span>, <span class="st">"prob_distrito_rural"</span>), </span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">format =</span> <span class="st">"df"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"prob"</span>), <span class="at">names_to =</span> <span class="st">"variable"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tipo =</span> <span class="fu">ifelse</span>(<span class="fu">str_detect</span>(variable, <span class="st">"urbano"</span>), <span class="st">"urbano"</span>, <span class="st">"rural"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(variable, <span class="at">sep =</span> <span class="st">"[</span><span class="sc">\\</span><span class="st">[</span><span class="sc">\\</span><span class="st">]]"</span>, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"variable"</span>, <span class="st">"district"</span>), </span>
+<span id="cb80-6"><a href="#cb80-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">extra =</span> <span class="st">"drop"</span>, <span class="at">convert =</span> <span class="cn">TRUE</span>)  <span class="sc">|&gt;</span> </span>
+<span id="cb80-7"><a href="#cb80-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(district, tipo) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">media =</span> <span class="fu">mean</span>(value),</span>
+<span id="cb80-8"><a href="#cb80-8" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">q5 =</span> <span class="fu">quantile</span>(value, <span class="fl">0.05</span>),</span>
+<span id="cb80-9"><a href="#cb80-9" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">q95 =</span> <span class="fu">quantile</span>(value, <span class="fl">0.95</span>)) </span>
+<span id="cb80-10"><a href="#cb80-10" aria-hidden="true" tabindex="-1"></a>resumen_corr <span class="ot">&lt;-</span> bangladesh <span class="sc">|&gt;</span></span>
+<span id="cb80-11"><a href="#cb80-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tipo =</span> <span class="fu">ifelse</span>(urban <span class="sc">==</span> <span class="dv">1</span>, <span class="st">"urbano"</span>, <span class="st">"rural"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb80-12"><a href="#cb80-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tipo =</span> <span class="fu">factor</span>(tipo, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"urbano"</span>, <span class="st">"rural"</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb80-13"><a href="#cb80-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(district, tipo, <span class="at">.drop =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb80-14"><a href="#cb80-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">prop_cruda =</span> <span class="fu">mean</span>(use.contraception), <span class="at">n =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb80-15"><a href="#cb80-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">district =</span> <span class="fu">as.integer</span>(district))</span>
+<span id="cb80-16"><a href="#cb80-16" aria-hidden="true" tabindex="-1"></a>graf_corr <span class="ot">&lt;-</span> probs_corr <span class="sc">|&gt;</span> <span class="fu">left_join</span>(resumen_corr) <span class="sc">|&gt;</span></span>
+<span id="cb80-17"><a href="#cb80-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> district)) <span class="sc">+</span></span>
+<span id="cb80-18"><a href="#cb80-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.5</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb80-19"><a href="#cb80-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> media), <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb80-20"><a href="#cb80-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_linerange</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> q5, <span class="at">ymax =</span> q95), <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb80-21"><a href="#cb80-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> prop_cruda, <span class="at">size =</span> n), <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb80-22"><a href="#cb80-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>tipo, <span class="at">nrow =</span> <span class="dv">2</span>)</span>
+<span id="cb80-23"><a href="#cb80-23" aria-hidden="true" tabindex="-1"></a>graf_corr</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09-modelos-jerarquicos_files/figure-html/unnamed-chunk-42-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Las estimaciones son distintas comparando con el modelo sin correlación:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a>probs <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(probs_1 <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">modelo =</span> <span class="st">"Sin correlación"</span>),</span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>                   probs_corr <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">modelo =</span> <span class="st">"Con correlación"</span>)) </span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a>probs <span class="sc">|&gt;</span> </span>
+<span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>q5, <span class="sc">-</span>q95) <span class="sc">|&gt;</span></span>
+<span id="cb81-5"><a href="#cb81-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> tipo, <span class="at">values_from =</span> media) <span class="sc">|&gt;</span></span>
+<span id="cb81-6"><a href="#cb81-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> urbano, <span class="at">y =</span> rural, <span class="at">label =</span> district)) <span class="sc">+</span></span>
+<span id="cb81-7"><a href="#cb81-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">slope =</span> <span class="dv">1</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb81-8"><a href="#cb81-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>() <span class="sc">+</span></span>
+<span id="cb81-9"><a href="#cb81-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>modelo)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09-modelos-jerarquicos_files/figure-html/unnamed-chunk-43-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Y veamos ahora cómo están correlacionados los coeficientes de urbano y rural:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>ajuste_5_bangladesh<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"beta_sim"</span>), <span class="at">format =</span> <span class="st">"df"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="st">`</span><span class="at">beta_sim[1]</span><span class="st">`</span>, <span class="at">x =</span> <span class="st">`</span><span class="at">beta_sim[1]</span><span class="st">`</span> <span class="sc">+</span> <span class="st">`</span><span class="at">beta_sim[2]</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"coef_urbano"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"coef_rural"</span>) <span class="sc">+</span></span>
+<span id="cb82-4"><a href="#cb82-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">slope =</span> <span class="dv">1</span>, <span class="at">linetype =</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09-modelos-jerarquicos_files/figure-html/unnamed-chunk-44-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Y vemos que en realidad los datos no sugieren que existe una correlación alta entre los coeficientes, a pesar de la parametrización que usamos. Por eso observamos un patrón de encogimiento diferente en el modelo con correlaciones. Veamos un ejemplo:</p>
+<ul>
+<li>Notemos por ejemplo el distrito 11, que sólo tiene observaciones de regiones rurales, con un tamaño de muestra relativamente chico:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>resumen_corr <span class="sc">|&gt;</span> <span class="fu">filter</span>(district <span class="sc">==</span> <span class="dv">11</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 4
+# Groups:   district [61]
+  district tipo   prop_cruda     n
+     &lt;int&gt; &lt;fct&gt;       &lt;dbl&gt; &lt;int&gt;
+1       11 urbano        NaN     0
+2       11 rural           0    21</code></pre>
+</div>
+</div>
+<ul>
+<li><p>Su valor observado de uso de anticonceptivos es 0, muy baja, y naturalmente esperamos una estimación por arriba de cero, pero baja en la población de zonas rurales. Sin correlación, la estimación de zonas urbanas es considerablemente baja también.</p></li>
+<li><p>Con correlación, sin embargo, la estimación de urbano es considerablemente más alta, cercana a la media poblacional.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a>probs <span class="sc">|&gt;</span> <span class="fu">filter</span>(district <span class="sc">==</span> <span class="dv">11</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(tipo) <span class="sc">|&gt;</span> <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">district</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">tipo</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">media</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">q5</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">q95</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">modelo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">11</td>
+<td style="text-align: left;">rural</td>
+<td style="text-align: right;">0.178</td>
+<td style="text-align: right;">0.087</td>
+<td style="text-align: right;">0.283</td>
+<td style="text-align: left;">Sin correlación</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">11</td>
+<td style="text-align: left;">rural</td>
+<td style="text-align: right;">0.160</td>
+<td style="text-align: right;">0.074</td>
+<td style="text-align: right;">0.265</td>
+<td style="text-align: left;">Con correlación</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">11</td>
+<td style="text-align: left;">urbano</td>
+<td style="text-align: right;">0.292</td>
+<td style="text-align: right;">0.095</td>
+<td style="text-align: right;">0.556</td>
+<td style="text-align: left;">Sin correlación</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">11</td>
+<td style="text-align: left;">urbano</td>
+<td style="text-align: right;">0.435</td>
+<td style="text-align: right;">0.170</td>
+<td style="text-align: right;">0.726</td>
+<td style="text-align: left;">Con correlación</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</div>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
