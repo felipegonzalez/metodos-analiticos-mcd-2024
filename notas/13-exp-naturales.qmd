@@ -101,7 +101,8 @@ Tenemos entonces:
 agua en cada casa.
 - No puede haber aristas directas entre compañía y cólera: el único efecto de 
 compañía en cólera puede ser a través del agua que suministra.
-- No puede haber una arista de Pobreza a Compañía, por la observación de Snow: la decisión de qué compañía suministraba a qué casa se había tomado mucho antes, y
+- No puede haber una arista de Miasma/Pobreza a Compañía, por la observación de Snow: la decisión
+de qué compañía suministraba a qué casa se había tomado mucho antes, y
 no tenía relación con pobreza, miasma actual ni cólera (que no existía cuando
 se tomaron esas decisiones)
 
@@ -337,6 +338,7 @@ digraph {
     Estatura -> T
     T -> Y
     Estatura -> Y
+    U -> Estatura
 {rank = same; U; T}
 {rank = min;  Estatura}
 
@@ -455,7 +457,7 @@ este se debe al tratamiento, y no a cómo son $p(Y_i^0|X=x)$ y $p(Y_i^1|X=x)$.
 
 En particular, para el efecto promedio:
 
-$$E[Y^1 - Y^0|X=x_0] = E[Y^1|X=x_0] - E[Y^1|X=x_0]$$
+$$E[Y^1 - Y^0|X=x_0] = E[Y^1|X=x_0] - E[Y^0|X=x_0]$$
 es igual a
 
 $$\lim_{x\to x_0^+} E[Y^1|X=x_0] - \lim_{x\to x_0^-} E[Y^0|X=x_0]$$
