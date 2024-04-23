@@ -56,4 +56,9 @@ generated quantities {
     prob_distrito_urbano[i] = inv_logit(beta[1,i] + beta[2,i]);
     prob_distrito_rural[i] = inv_logit(beta[1,i]);
   }
+
+  // Simular de a priori poblacional
+  vector[2] beta_sim;
+  beta_sim = multi_normal_rng(beta_bar, Sigma);
+
 }
