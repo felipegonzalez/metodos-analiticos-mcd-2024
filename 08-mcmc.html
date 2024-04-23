@@ -253,6 +253,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Modelos jerárquicos</span></span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-exp-naturales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Otros métodos para inferencia causal</span></span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -973,7 +979,7 @@ Tip
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.065   0.000   0.064 </code></pre>
+  0.064   0.000   0.063 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(metropolis_1 <span class="ot">&lt;-</span> <span class="fu">metropolis_mc</span>(<span class="dv">1000</span>, <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), log_p, <span class="fl">0.2</span>, <span class="fl">0.2</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -981,7 +987,7 @@ Tip
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.018   0.000   0.018 </code></pre>
+  0.018   0.000   0.017 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(metropolis_2 <span class="ot">&lt;-</span> <span class="fu">metropolis_mc</span>(<span class="dv">1000</span>, <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), log_p, <span class="dv">1</span>, <span class="dv">1</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1195,7 +1201,6 @@ $ judge.amer &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1
 Chain 1 Iteration:    1 / 3000 [  0%]  (Warmup) 
 Chain 1 Iteration: 1000 / 3000 [ 33%]  (Warmup) 
 Chain 1 Iteration: 1001 / 3000 [ 33%]  (Sampling) 
-Chain 1 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
 Chain 2 Iteration:    1 / 3000 [  0%]  (Warmup) 
 Chain 2 Iteration: 1000 / 3000 [ 33%]  (Warmup) 
 Chain 2 Iteration: 1001 / 3000 [ 33%]  (Sampling) 
@@ -1207,19 +1212,20 @@ Chain 3 Iteration: 2000 / 3000 [ 66%]  (Sampling)
 Chain 4 Iteration:    1 / 3000 [  0%]  (Warmup) 
 Chain 4 Iteration: 1000 / 3000 [ 33%]  (Warmup) 
 Chain 4 Iteration: 1001 / 3000 [ 33%]  (Sampling) 
+Chain 4 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
+Chain 1 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
 Chain 1 Iteration: 3000 / 3000 [100%]  (Sampling) 
+Chain 1 finished in 0.3 seconds.
 Chain 2 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 3 Iteration: 3000 / 3000 [100%]  (Sampling) 
-Chain 4 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
-Chain 1 finished in 0.4 seconds.
-Chain 2 finished in 0.4 seconds.
-Chain 3 finished in 0.3 seconds.
 Chain 4 Iteration: 3000 / 3000 [100%]  (Sampling) 
+Chain 2 finished in 0.4 seconds.
+Chain 3 finished in 0.4 seconds.
 Chain 4 finished in 0.4 seconds.
 
 All 4 chains finished successfully.
 Mean chain execution time: 0.4 seconds.
-Total execution time: 0.7 seconds.</code></pre>
+Total execution time: 0.6 seconds.</code></pre>
 </div>
 </div>
 <p>Vemos que hay variabilidad en los vinos:</p>
@@ -1538,7 +1544,7 @@ Chain 3 Iteration: 105 / 105 [100%]  (Sampling) </code></pre>
 <pre><code>Chain 3 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Chain 3 Exception: normal_lpdf: Scale parameter is 0, but must be positive! (in '/tmp/Rtmp112fow/model-27112f177c06.stan', line 25, column 2 to column 33)</code></pre>
+<pre><code>Chain 3 Exception: normal_lpdf: Scale parameter is 0, but must be positive! (in '/tmp/RtmpecaSsk/model-29e611095069.stan', line 25, column 2 to column 33)</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Chain 3 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,</code></pre>
@@ -2716,24 +2722,24 @@ Tamaño efectivo de muestra
 </section>
 <section id="extendiendo-el-modelo-de-variable-latente" class="level2" data-number="8.4">
 <h2 data-number="8.4" class="anchored" data-anchor-id="extendiendo-el-modelo-de-variable-latente"><span class="header-section-number">8.4</span> Extendiendo el modelo de variable latente</h2>
-<p>Ahora continuamos con nuestro modelo de calidad de vinos. Incluímos el origen del vino (que tiene dos niveles):</p>
+<p>Ahora continuamos con nuestro modelo de calidad de vinos. Incluímos el origen del vino (que tiene dos niveles). La idea es que el origen, si vemos en el diagrama original, puede ser una variable de confusión entre calidad y score (pues afecta a calidad y también potencialmente al score). Adicionalmente, el origen no tiene puerta trasera, así que podemos examinar su efecto total sobre el score de los vinos. Estratificamos de la manera más simple, incluyendo origen en nuestra regresión:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a>wines_2012 <span class="ot">&lt;-</span> wines_2012 <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">origen_num =</span> <span class="fu">as.numeric</span>(<span class="fu">factor</span>(wine.amer)))</span>
+<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a>wines_2012 <span class="ot">&lt;-</span> wines_2012 <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">origen_num =</span> <span class="fu">ifelse</span>(wine.amer <span class="sc">==</span> <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>))</span>
 <span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a>wines_2012 <span class="sc">|&gt;</span> <span class="fu">select</span>(wine.amer, origen_num) <span class="sc">|&gt;</span> <span class="fu">unique</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 2
   wine.amer origen_num
       &lt;dbl&gt;      &lt;dbl&gt;
-1         1          2
-2         0          1</code></pre>
+1         1          1
+2         0          2</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a>n_jueces <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">unique</span>(wines_2012<span class="sc">$</span>juez_num))</span>
 <span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a>n_vinos <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">unique</span>(wines_2012<span class="sc">$</span>vino_num))</span>
 <span id="cb90-3"><a href="#cb90-3" aria-hidden="true" tabindex="-1"></a>n_origen <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">unique</span>(wines_2012<span class="sc">$</span>origen_num))</span>
-<span id="cb90-4"><a href="#cb90-4" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="st">"num_vinos"</span> <span class="ot">=</span> n_jueces, <span class="st">"num_jueces"</span> <span class="ot">=</span> n_vinos, <span class="st">"num_datos"</span> <span class="ot">=</span> <span class="fu">nrow</span>(wines_2012))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb90-4"><a href="#cb90-4" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="st">"num_vinos"</span> <span class="ot">=</span> n_vinos, <span class="st">"num_jueces"</span> <span class="ot">=</span> n_jueces, <span class="st">"num_datos"</span> <span class="ot">=</span> <span class="fu">nrow</span>(wines_2012))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> num_vinos num_jueces  num_datos 
-         9         20        180 </code></pre>
+        20          9        180 </code></pre>
 </div>
 </div>
 <div class="cell">
@@ -2819,11 +2825,11 @@ Chain 2 Iteration: 2000 / 3000 [ 66%]  (Sampling)
 Chain 3 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
 Chain 4 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
 Chain 1 Iteration: 3000 / 3000 [100%]  (Sampling) 
-Chain 1 finished in 0.6 seconds.
 Chain 2 Iteration: 3000 / 3000 [100%]  (Sampling) 
+Chain 1 finished in 0.6 seconds.
+Chain 2 finished in 0.6 seconds.
 Chain 3 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 4 Iteration: 3000 / 3000 [100%]  (Sampling) 
-Chain 2 finished in 0.6 seconds.
 Chain 3 finished in 0.6 seconds.
 Chain 4 finished in 0.6 seconds.
 
@@ -2855,233 +2861,233 @@ Total execution time: 0.8 seconds.</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">O[1]</td>
-<td style="text-align: right;">0.099</td>
-<td style="text-align: right;">0.350</td>
-<td style="text-align: right;">-0.476</td>
-<td style="text-align: right;">0.681</td>
+<td style="text-align: right;">-0.066</td>
+<td style="text-align: right;">0.290</td>
+<td style="text-align: right;">-0.543</td>
+<td style="text-align: right;">0.421</td>
 <td style="text-align: right;">1.002</td>
-<td style="text-align: right;">2412.789</td>
-<td style="text-align: right;">4204.645</td>
+<td style="text-align: right;">2287.306</td>
+<td style="text-align: right;">3321.151</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">O[2]</td>
-<td style="text-align: right;">-0.075</td>
-<td style="text-align: right;">0.298</td>
-<td style="text-align: right;">-0.569</td>
-<td style="text-align: right;">0.420</td>
+<td style="text-align: right;">0.106</td>
+<td style="text-align: right;">0.351</td>
+<td style="text-align: right;">-0.465</td>
+<td style="text-align: right;">0.679</td>
 <td style="text-align: right;">1.001</td>
-<td style="text-align: right;">1894.755</td>
-<td style="text-align: right;">3151.806</td>
+<td style="text-align: right;">2484.077</td>
+<td style="text-align: right;">3858.430</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Q[1]</td>
-<td style="text-align: right;">0.206</td>
-<td style="text-align: right;">0.412</td>
-<td style="text-align: right;">-0.468</td>
-<td style="text-align: right;">0.882</td>
-<td style="text-align: right;">1.000</td>
-<td style="text-align: right;">3592.155</td>
-<td style="text-align: right;">5240.623</td>
+<td style="text-align: right;">0.197</td>
+<td style="text-align: right;">0.409</td>
+<td style="text-align: right;">-0.471</td>
+<td style="text-align: right;">0.878</td>
+<td style="text-align: right;">1.001</td>
+<td style="text-align: right;">3942.153</td>
+<td style="text-align: right;">5029.018</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Q[2]</td>
-<td style="text-align: right;">0.009</td>
+<td style="text-align: right;">0.007</td>
 <td style="text-align: right;">0.447</td>
-<td style="text-align: right;">-0.734</td>
-<td style="text-align: right;">0.747</td>
+<td style="text-align: right;">-0.729</td>
+<td style="text-align: right;">0.725</td>
 <td style="text-align: right;">1.001</td>
-<td style="text-align: right;">4003.812</td>
-<td style="text-align: right;">5697.399</td>
+<td style="text-align: right;">3855.171</td>
+<td style="text-align: right;">5170.915</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Q[3]</td>
-<td style="text-align: right;">0.338</td>
-<td style="text-align: right;">0.418</td>
-<td style="text-align: right;">-0.354</td>
-<td style="text-align: right;">1.031</td>
-<td style="text-align: right;">1.000</td>
-<td style="text-align: right;">3308.706</td>
-<td style="text-align: right;">5152.561</td>
+<td style="text-align: right;">0.332</td>
+<td style="text-align: right;">0.415</td>
+<td style="text-align: right;">-0.364</td>
+<td style="text-align: right;">1.006</td>
+<td style="text-align: right;">1.001</td>
+<td style="text-align: right;">4170.358</td>
+<td style="text-align: right;">5201.923</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Q[4]</td>
 <td style="text-align: right;">0.458</td>
-<td style="text-align: right;">0.448</td>
-<td style="text-align: right;">-0.278</td>
-<td style="text-align: right;">1.194</td>
+<td style="text-align: right;">0.447</td>
+<td style="text-align: right;">-0.276</td>
+<td style="text-align: right;">1.180</td>
 <td style="text-align: right;">1.001</td>
-<td style="text-align: right;">4037.965</td>
-<td style="text-align: right;">5292.574</td>
+<td style="text-align: right;">3678.397</td>
+<td style="text-align: right;">5085.397</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Q[5]</td>
-<td style="text-align: right;">-0.212</td>
-<td style="text-align: right;">0.442</td>
-<td style="text-align: right;">-0.935</td>
-<td style="text-align: right;">0.508</td>
+<td style="text-align: right;">-0.223</td>
+<td style="text-align: right;">0.448</td>
+<td style="text-align: right;">-0.952</td>
+<td style="text-align: right;">0.514</td>
 <td style="text-align: right;">1.001</td>
-<td style="text-align: right;">3648.474</td>
-<td style="text-align: right;">4531.175</td>
+<td style="text-align: right;">3854.360</td>
+<td style="text-align: right;">5259.621</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Q[6]</td>
-<td style="text-align: right;">-0.298</td>
-<td style="text-align: right;">0.418</td>
-<td style="text-align: right;">-0.982</td>
-<td style="text-align: right;">0.395</td>
+<td style="text-align: right;">-0.307</td>
+<td style="text-align: right;">0.412</td>
+<td style="text-align: right;">-0.976</td>
+<td style="text-align: right;">0.366</td>
 <td style="text-align: right;">1.001</td>
-<td style="text-align: right;">3439.901</td>
-<td style="text-align: right;">4588.545</td>
+<td style="text-align: right;">4109.770</td>
+<td style="text-align: right;">5083.645</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Q[7]</td>
-<td style="text-align: right;">0.197</td>
-<td style="text-align: right;">0.443</td>
-<td style="text-align: right;">-0.544</td>
-<td style="text-align: right;">0.925</td>
+<td style="text-align: right;">0.198</td>
+<td style="text-align: right;">0.446</td>
+<td style="text-align: right;">-0.534</td>
+<td style="text-align: right;">0.928</td>
 <td style="text-align: right;">1.001</td>
-<td style="text-align: right;">3844.284</td>
-<td style="text-align: right;">5522.440</td>
+<td style="text-align: right;">3981.338</td>
+<td style="text-align: right;">5487.974</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Q[8]</td>
-<td style="text-align: right;">0.337</td>
-<td style="text-align: right;">0.414</td>
-<td style="text-align: right;">-0.347</td>
-<td style="text-align: right;">1.014</td>
-<td style="text-align: right;">1.001</td>
-<td style="text-align: right;">3470.029</td>
-<td style="text-align: right;">4716.944</td>
+<td style="text-align: right;">0.330</td>
+<td style="text-align: right;">0.410</td>
+<td style="text-align: right;">-0.344</td>
+<td style="text-align: right;">1.015</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">4160.583</td>
+<td style="text-align: right;">5196.431</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Q[9]</td>
-<td style="text-align: right;">0.152</td>
-<td style="text-align: right;">0.414</td>
-<td style="text-align: right;">-0.526</td>
-<td style="text-align: right;">0.834</td>
+<td style="text-align: right;">0.140</td>
+<td style="text-align: right;">0.411</td>
+<td style="text-align: right;">-0.536</td>
+<td style="text-align: right;">0.821</td>
 <td style="text-align: right;">1.001</td>
-<td style="text-align: right;">3398.534</td>
-<td style="text-align: right;">5020.712</td>
+<td style="text-align: right;">3925.106</td>
+<td style="text-align: right;">5383.750</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Q[10]</td>
-<td style="text-align: right;">0.185</td>
-<td style="text-align: right;">0.412</td>
-<td style="text-align: right;">-0.496</td>
-<td style="text-align: right;">0.872</td>
-<td style="text-align: right;">1.001</td>
-<td style="text-align: right;">3476.594</td>
-<td style="text-align: right;">4876.944</td>
+<td style="text-align: right;">0.182</td>
+<td style="text-align: right;">0.409</td>
+<td style="text-align: right;">-0.489</td>
+<td style="text-align: right;">0.871</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">4198.558</td>
+<td style="text-align: right;">4953.803</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Q[11]</td>
-<td style="text-align: right;">0.060</td>
-<td style="text-align: right;">0.414</td>
-<td style="text-align: right;">-0.615</td>
-<td style="text-align: right;">0.745</td>
+<td style="text-align: right;">0.051</td>
+<td style="text-align: right;">0.409</td>
+<td style="text-align: right;">-0.626</td>
+<td style="text-align: right;">0.711</td>
 <td style="text-align: right;">1.001</td>
-<td style="text-align: right;">3467.460</td>
-<td style="text-align: right;">4832.557</td>
+<td style="text-align: right;">3835.440</td>
+<td style="text-align: right;">5195.758</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Q[12]</td>
-<td style="text-align: right;">0.038</td>
+<td style="text-align: right;">0.028</td>
 <td style="text-align: right;">0.414</td>
-<td style="text-align: right;">-0.641</td>
-<td style="text-align: right;">0.727</td>
-<td style="text-align: right;">1.000</td>
-<td style="text-align: right;">3244.006</td>
-<td style="text-align: right;">4972.325</td>
+<td style="text-align: right;">-0.648</td>
+<td style="text-align: right;">0.707</td>
+<td style="text-align: right;">1.001</td>
+<td style="text-align: right;">4066.563</td>
+<td style="text-align: right;">4891.343</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Q[13]</td>
-<td style="text-align: right;">-0.039</td>
-<td style="text-align: right;">0.413</td>
-<td style="text-align: right;">-0.721</td>
-<td style="text-align: right;">0.636</td>
-<td style="text-align: right;">1.001</td>
-<td style="text-align: right;">3434.090</td>
-<td style="text-align: right;">5449.640</td>
+<td style="text-align: right;">-0.046</td>
+<td style="text-align: right;">0.414</td>
+<td style="text-align: right;">-0.733</td>
+<td style="text-align: right;">0.619</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">3731.818</td>
+<td style="text-align: right;">4772.284</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Q[14]</td>
-<td style="text-align: right;">-0.081</td>
-<td style="text-align: right;">0.450</td>
-<td style="text-align: right;">-0.818</td>
-<td style="text-align: right;">0.667</td>
+<td style="text-align: right;">-0.083</td>
+<td style="text-align: right;">0.448</td>
+<td style="text-align: right;">-0.814</td>
+<td style="text-align: right;">0.656</td>
 <td style="text-align: right;">1.001</td>
-<td style="text-align: right;">3721.005</td>
-<td style="text-align: right;">4902.528</td>
+<td style="text-align: right;">3660.288</td>
+<td style="text-align: right;">4800.175</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Q[15]</td>
-<td style="text-align: right;">-0.308</td>
-<td style="text-align: right;">0.446</td>
-<td style="text-align: right;">-1.034</td>
-<td style="text-align: right;">0.424</td>
-<td style="text-align: right;">1.001</td>
-<td style="text-align: right;">3871.176</td>
-<td style="text-align: right;">4955.067</td>
+<td style="text-align: right;">-0.315</td>
+<td style="text-align: right;">0.448</td>
+<td style="text-align: right;">-1.052</td>
+<td style="text-align: right;">0.423</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">4042.565</td>
+<td style="text-align: right;">5126.763</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Q[16]</td>
-<td style="text-align: right;">-0.132</td>
+<td style="text-align: right;">-0.139</td>
 <td style="text-align: right;">0.416</td>
-<td style="text-align: right;">-0.822</td>
-<td style="text-align: right;">0.543</td>
+<td style="text-align: right;">-0.818</td>
+<td style="text-align: right;">0.540</td>
 <td style="text-align: right;">1.000</td>
-<td style="text-align: right;">3254.726</td>
-<td style="text-align: right;">5149.031</td>
+<td style="text-align: right;">3953.433</td>
+<td style="text-align: right;">5064.421</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Q[17]</td>
-<td style="text-align: right;">-0.072</td>
-<td style="text-align: right;">0.415</td>
-<td style="text-align: right;">-0.741</td>
-<td style="text-align: right;">0.613</td>
-<td style="text-align: right;">1.001</td>
-<td style="text-align: right;">3582.440</td>
-<td style="text-align: right;">4455.786</td>
+<td style="text-align: right;">-0.083</td>
+<td style="text-align: right;">0.414</td>
+<td style="text-align: right;">-0.770</td>
+<td style="text-align: right;">0.595</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">4124.527</td>
+<td style="text-align: right;">5544.165</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Q[18]</td>
-<td style="text-align: right;">-0.793</td>
-<td style="text-align: right;">0.423</td>
-<td style="text-align: right;">-1.500</td>
-<td style="text-align: right;">-0.095</td>
-<td style="text-align: right;">1.000</td>
-<td style="text-align: right;">3485.233</td>
-<td style="text-align: right;">4641.234</td>
+<td style="text-align: right;">-0.799</td>
+<td style="text-align: right;">0.409</td>
+<td style="text-align: right;">-1.464</td>
+<td style="text-align: right;">-0.126</td>
+<td style="text-align: right;">1.001</td>
+<td style="text-align: right;">4042.865</td>
+<td style="text-align: right;">4892.500</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Q[19]</td>
-<td style="text-align: right;">-0.253</td>
-<td style="text-align: right;">0.448</td>
-<td style="text-align: right;">-1.007</td>
-<td style="text-align: right;">0.474</td>
-<td style="text-align: right;">1.002</td>
-<td style="text-align: right;">3771.965</td>
-<td style="text-align: right;">5226.927</td>
+<td style="text-align: right;">-0.259</td>
+<td style="text-align: right;">0.447</td>
+<td style="text-align: right;">-0.996</td>
+<td style="text-align: right;">0.480</td>
+<td style="text-align: right;">1.001</td>
+<td style="text-align: right;">3741.120</td>
+<td style="text-align: right;">5044.906</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Q[20]</td>
-<td style="text-align: right;">0.297</td>
-<td style="text-align: right;">0.443</td>
-<td style="text-align: right;">-0.436</td>
-<td style="text-align: right;">1.015</td>
+<td style="text-align: right;">0.287</td>
+<td style="text-align: right;">0.445</td>
+<td style="text-align: right;">-0.439</td>
+<td style="text-align: right;">1.027</td>
 <td style="text-align: right;">1.001</td>
-<td style="text-align: right;">3595.291</td>
-<td style="text-align: right;">5448.456</td>
+<td style="text-align: right;">3701.595</td>
+<td style="text-align: right;">5366.897</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">sigma</td>
 <td style="text-align: right;">0.998</td>
-<td style="text-align: right;">0.055</td>
-<td style="text-align: right;">0.912</td>
-<td style="text-align: right;">1.093</td>
+<td style="text-align: right;">0.056</td>
+<td style="text-align: right;">0.911</td>
+<td style="text-align: right;">1.094</td>
 <td style="text-align: right;">1.000</td>
-<td style="text-align: right;">10061.554</td>
-<td style="text-align: right;">5795.223</td>
+<td style="text-align: right;">9688.425</td>
+<td style="text-align: right;">6351.040</td>
 </tr>
 </tbody>
 </table>
@@ -3106,9 +3112,11 @@ Total execution time: 0.8 seconds.</code></pre>
 <ul>
 <li>Parece no haber mucha diferencia en calidad debida origen del vinos (tienen relativamente poca variabilidad y están traslapadas: aunque podríamos mejor calcular el contraste si queremos examinar esto con más cuidado).</li>
 </ul>
-<p>Todo parece ir bien, así que podemos expandir el modelo para incluir la forma de calificar de los jueces. En primer lugar, definimos un nivel general <span class="math inline">\(H\)</span> que indica qué tan alto o bajo califica un juez en general. Adicionalmente, incluímos un parámetro de discriminación <span class="math inline">\(D\)</span> de los jueces, que indica qué tanto del rango de la escala usa cada juez El modelo para el valor esperado del <em>Score</em> de un vino <span class="math inline">\(i\)</span> calificado por el juez <span class="math inline">\(j\)</span> es:</p>
-<p><span class="math display">\[\mu_{i} = Q_{vino(i)} + U_{origen(i)} - H_{juez(i)}\]</span> Podemos pensar que el valor <span class="math inline">\(H\)</span> de cada juez es qué tan duro es en sus calificaciones. Para cada vino, un juez con valor alto de <span class="math inline">\(H\)</span> tendrá a calificar más bajo un vino de misma calidad y origen que otro juez con un valor más bajo de <span class="math inline">\(H\)</span>. Podemos incluír un parámetro de discriminación <span class="math inline">\(D\)</span> para cada juez, que indica qué tanto del rango de la escala usa cada juez de la siguiente forma:</p>
-<p><span class="math display">\[\mu_{i} = (Q_{vino(i)} + U_{origen(i)} - H_{juez(i)})D_{juez(i)}\]</span> Un juez con valor alto de <span class="math inline">\(D\)</span> es más extremo en sus calificaciones: un vino por arriba de su promedio lo califica más alto en la escala, y un vino por debajo de su promedio lo califica más bajo. El extremo es que <span class="math inline">\(D=0\)</span>, que quiere decir que el juez tiende a calificar a todos los vinos con un score.</p>
+<p>Todo parece ir bien, así que podemos expandir el modelo para incluir la forma de calificar de los jueces. Esto no es necesario (los jueces son una causa adicional que afecta el score), pero puede mejorar nuestras estimaciones.</p>
+<p>Para estratificar por estas variables, tenemos que separarnos un poco de efectos adivitivos. Una razón importante por la que varían las calificaciones es que hay jueces que son más duros que otros, o que discriminan más qué otros. Esto es usual también cuando pensamos que los jueces son reactivos que las personas contestan: existen reactivos más difíciles que otros, y también discriminan de diferente manera.</p>
+<p>En primer lugar, definimos un nivel general <span class="math inline">\(H\)</span> que indica qué tan alto o bajo califica un juez en general. Adicionalmente, incluímos un parámetro de discriminación <span class="math inline">\(D\)</span> de los jueces, que indica qué tanto del rango de la escala usa cada juez El modelo para el valor esperado del <em>Score</em> de un vino <span class="math inline">\(i\)</span> calificado por el juez <span class="math inline">\(j\)</span> es:</p>
+<p><span class="math display">\[\mu_{i} = Q_{vino(i)} + O_{origen(i)} - H_{juez(i)}\]</span> Podemos pensar que el valor <span class="math inline">\(H\)</span> de cada juez es qué tan duro es en sus calificaciones. Para cada vino, un juez con valor alto de <span class="math inline">\(H\)</span> tendrá a calificar más bajo un vino de misma calidad y origen que otro juez con un valor más bajo de <span class="math inline">\(H\)</span>. Podemos incluír un parámetro de discriminación <span class="math inline">\(D\)</span> para cada juez, que indica qué tanto del rango de la escala usa cada juez de la siguiente forma:</p>
+<p><span class="math display">\[\mu_{i} = (Q_{vino(i)} + O_{origen(i)} - H_{juez(i)})D_{juez(i)}\]</span> Un juez con valor alto de <span class="math inline">\(D\)</span> es más extremo en sus calificaciones: un vino por arriba de su promedio lo califica más alto en la escala, y un vino por debajo de su promedio lo califica más bajo. El extremo es que <span class="math inline">\(D=0\)</span>, que quiere decir que el juez tiende a calificar a todos los vinos con un score.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a>mod_vinos_3 <span class="ot">&lt;-</span><span class="fu">cmdstan_model</span>(<span class="st">"./src/vinos-3.stan"</span>)</span>
 <span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mod_vinos_3)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -3196,18 +3204,18 @@ Chain 1 Iteration: 2000 / 3000 [ 66%]  (Sampling)
 Chain 2 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
 Chain 3 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
 Chain 4 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
-Chain 1 Iteration: 3000 / 3000 [100%]  (Sampling) 
-Chain 3 Iteration: 3000 / 3000 [100%]  (Sampling) 
-Chain 1 finished in 1.5 seconds.
 Chain 2 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 2 finished in 1.5 seconds.
-Chain 3 finished in 1.5 seconds.
+Chain 1 Iteration: 3000 / 3000 [100%]  (Sampling) 
+Chain 3 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 4 Iteration: 3000 / 3000 [100%]  (Sampling) 
-Chain 4 finished in 1.6 seconds.
+Chain 1 finished in 1.5 seconds.
+Chain 3 finished in 1.5 seconds.
+Chain 4 finished in 1.5 seconds.
 
 All 4 chains finished successfully.
 Mean chain execution time: 1.5 seconds.
-Total execution time: 1.7 seconds.</code></pre>
+Total execution time: 1.6 seconds.</code></pre>
 </div>
 </div>
 <p>Checamos diagnósticos:</p>
@@ -3234,413 +3242,413 @@ Total execution time: 1.7 seconds.</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">O[1]</td>
-<td style="text-align: right;">0.181</td>
-<td style="text-align: right;">0.476</td>
-<td style="text-align: right;">-0.615</td>
-<td style="text-align: right;">0.956</td>
-<td style="text-align: right;">1.001</td>
-<td style="text-align: right;">3765.989</td>
-<td style="text-align: right;">4950.363</td>
+<td style="text-align: right;">-0.115</td>
+<td style="text-align: right;">0.447</td>
+<td style="text-align: right;">-0.859</td>
+<td style="text-align: right;">0.629</td>
+<td style="text-align: right;">1.002</td>
+<td style="text-align: right;">3518.843</td>
+<td style="text-align: right;">4790.784</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">O[2]</td>
-<td style="text-align: right;">-0.127</td>
-<td style="text-align: right;">0.444</td>
-<td style="text-align: right;">-0.851</td>
-<td style="text-align: right;">0.603</td>
+<td style="text-align: right;">0.198</td>
+<td style="text-align: right;">0.476</td>
+<td style="text-align: right;">-0.572</td>
+<td style="text-align: right;">0.986</td>
 <td style="text-align: right;">1.001</td>
-<td style="text-align: right;">3813.505</td>
-<td style="text-align: right;">4494.836</td>
+<td style="text-align: right;">3963.128</td>
+<td style="text-align: right;">5271.349</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Q[1]</td>
-<td style="text-align: right;">0.368</td>
-<td style="text-align: right;">0.556</td>
-<td style="text-align: right;">-0.525</td>
-<td style="text-align: right;">1.304</td>
+<td style="text-align: right;">0.366</td>
+<td style="text-align: right;">0.562</td>
+<td style="text-align: right;">-0.543</td>
+<td style="text-align: right;">1.315</td>
 <td style="text-align: right;">1.000</td>
-<td style="text-align: right;">5727.932</td>
-<td style="text-align: right;">6428.301</td>
+<td style="text-align: right;">5657.887</td>
+<td style="text-align: right;">5719.280</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Q[2]</td>
-<td style="text-align: right;">0.166</td>
-<td style="text-align: right;">0.570</td>
-<td style="text-align: right;">-0.759</td>
-<td style="text-align: right;">1.108</td>
+<td style="text-align: right;">0.168</td>
+<td style="text-align: right;">0.586</td>
+<td style="text-align: right;">-0.779</td>
+<td style="text-align: right;">1.132</td>
 <td style="text-align: right;">1.000</td>
-<td style="text-align: right;">5663.956</td>
-<td style="text-align: right;">5912.333</td>
+<td style="text-align: right;">5514.261</td>
+<td style="text-align: right;">5765.562</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Q[3]</td>
-<td style="text-align: right;">0.515</td>
-<td style="text-align: right;">0.538</td>
-<td style="text-align: right;">-0.365</td>
-<td style="text-align: right;">1.400</td>
-<td style="text-align: right;">1.001</td>
-<td style="text-align: right;">6728.405</td>
-<td style="text-align: right;">6116.070</td>
+<td style="text-align: right;">0.508</td>
+<td style="text-align: right;">0.537</td>
+<td style="text-align: right;">-0.369</td>
+<td style="text-align: right;">1.377</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">6854.468</td>
+<td style="text-align: right;">5604.398</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Q[4]</td>
-<td style="text-align: right;">0.833</td>
-<td style="text-align: right;">0.570</td>
-<td style="text-align: right;">-0.075</td>
-<td style="text-align: right;">1.779</td>
+<td style="text-align: right;">0.825</td>
+<td style="text-align: right;">0.579</td>
+<td style="text-align: right;">-0.111</td>
+<td style="text-align: right;">1.800</td>
 <td style="text-align: right;">1.000</td>
-<td style="text-align: right;">6969.773</td>
-<td style="text-align: right;">5395.361</td>
+<td style="text-align: right;">6452.743</td>
+<td style="text-align: right;">5446.307</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Q[5]</td>
-<td style="text-align: right;">-0.479</td>
-<td style="text-align: right;">0.556</td>
-<td style="text-align: right;">-1.372</td>
-<td style="text-align: right;">0.437</td>
+<td style="text-align: right;">-0.483</td>
+<td style="text-align: right;">0.558</td>
+<td style="text-align: right;">-1.385</td>
+<td style="text-align: right;">0.451</td>
 <td style="text-align: right;">1.001</td>
-<td style="text-align: right;">6477.503</td>
-<td style="text-align: right;">5430.105</td>
+<td style="text-align: right;">6299.704</td>
+<td style="text-align: right;">5695.944</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Q[6]</td>
-<td style="text-align: right;">-0.824</td>
-<td style="text-align: right;">0.594</td>
-<td style="text-align: right;">-1.797</td>
-<td style="text-align: right;">0.165</td>
-<td style="text-align: right;">1.001</td>
-<td style="text-align: right;">3820.716</td>
-<td style="text-align: right;">4280.100</td>
+<td style="text-align: right;">-0.830</td>
+<td style="text-align: right;">0.593</td>
+<td style="text-align: right;">-1.783</td>
+<td style="text-align: right;">0.171</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">4716.862</td>
+<td style="text-align: right;">5114.054</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Q[7]</td>
-<td style="text-align: right;">0.211</td>
-<td style="text-align: right;">0.590</td>
-<td style="text-align: right;">-0.739</td>
-<td style="text-align: right;">1.185</td>
+<td style="text-align: right;">0.229</td>
+<td style="text-align: right;">0.602</td>
+<td style="text-align: right;">-0.753</td>
+<td style="text-align: right;">1.229</td>
 <td style="text-align: right;">1.000</td>
-<td style="text-align: right;">5341.614</td>
-<td style="text-align: right;">5699.260</td>
+<td style="text-align: right;">4749.244</td>
+<td style="text-align: right;">6033.222</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Q[8]</td>
-<td style="text-align: right;">0.623</td>
-<td style="text-align: right;">0.552</td>
+<td style="text-align: right;">0.618</td>
+<td style="text-align: right;">0.553</td>
 <td style="text-align: right;">-0.274</td>
-<td style="text-align: right;">1.525</td>
+<td style="text-align: right;">1.552</td>
 <td style="text-align: right;">1.001</td>
-<td style="text-align: right;">5797.117</td>
-<td style="text-align: right;">5654.560</td>
+<td style="text-align: right;">6631.817</td>
+<td style="text-align: right;">5578.857</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Q[9]</td>
-<td style="text-align: right;">0.292</td>
-<td style="text-align: right;">0.553</td>
-<td style="text-align: right;">-0.631</td>
-<td style="text-align: right;">1.191</td>
+<td style="text-align: right;">0.278</td>
+<td style="text-align: right;">0.556</td>
+<td style="text-align: right;">-0.642</td>
+<td style="text-align: right;">1.179</td>
 <td style="text-align: right;">1.000</td>
-<td style="text-align: right;">6851.184</td>
-<td style="text-align: right;">5645.657</td>
+<td style="text-align: right;">5940.039</td>
+<td style="text-align: right;">5748.859</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Q[10]</td>
-<td style="text-align: right;">0.341</td>
-<td style="text-align: right;">0.534</td>
-<td style="text-align: right;">-0.550</td>
-<td style="text-align: right;">1.196</td>
+<td style="text-align: right;">0.313</td>
+<td style="text-align: right;">0.531</td>
+<td style="text-align: right;">-0.568</td>
+<td style="text-align: right;">1.172</td>
 <td style="text-align: right;">1.000</td>
-<td style="text-align: right;">6961.356</td>
-<td style="text-align: right;">5808.247</td>
+<td style="text-align: right;">6559.060</td>
+<td style="text-align: right;">5848.707</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Q[11]</td>
-<td style="text-align: right;">0.205</td>
-<td style="text-align: right;">0.541</td>
-<td style="text-align: right;">-0.711</td>
-<td style="text-align: right;">1.082</td>
-<td style="text-align: right;">1.001</td>
-<td style="text-align: right;">6051.072</td>
-<td style="text-align: right;">5165.780</td>
+<td style="text-align: right;">0.183</td>
+<td style="text-align: right;">0.535</td>
+<td style="text-align: right;">-0.708</td>
+<td style="text-align: right;">1.054</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">6569.389</td>
+<td style="text-align: right;">6443.012</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Q[12]</td>
-<td style="text-align: right;">-0.091</td>
-<td style="text-align: right;">0.545</td>
-<td style="text-align: right;">-0.961</td>
-<td style="text-align: right;">0.821</td>
-<td style="text-align: right;">1.001</td>
-<td style="text-align: right;">5718.268</td>
-<td style="text-align: right;">5309.599</td>
+<td style="text-align: right;">-0.079</td>
+<td style="text-align: right;">0.537</td>
+<td style="text-align: right;">-0.941</td>
+<td style="text-align: right;">0.807</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">6281.310</td>
+<td style="text-align: right;">5903.469</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Q[13]</td>
-<td style="text-align: right;">0.072</td>
-<td style="text-align: right;">0.551</td>
-<td style="text-align: right;">-0.849</td>
-<td style="text-align: right;">0.955</td>
+<td style="text-align: right;">0.052</td>
+<td style="text-align: right;">0.549</td>
+<td style="text-align: right;">-0.860</td>
+<td style="text-align: right;">0.940</td>
 <td style="text-align: right;">1.001</td>
-<td style="text-align: right;">6459.464</td>
-<td style="text-align: right;">5836.498</td>
+<td style="text-align: right;">6563.927</td>
+<td style="text-align: right;">5507.827</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Q[14]</td>
-<td style="text-align: right;">-0.148</td>
-<td style="text-align: right;">0.541</td>
-<td style="text-align: right;">-1.030</td>
-<td style="text-align: right;">0.728</td>
-<td style="text-align: right;">1.000</td>
-<td style="text-align: right;">7359.575</td>
-<td style="text-align: right;">5321.920</td>
+<td style="text-align: right;">-0.158</td>
+<td style="text-align: right;">0.558</td>
+<td style="text-align: right;">-1.077</td>
+<td style="text-align: right;">0.753</td>
+<td style="text-align: right;">1.001</td>
+<td style="text-align: right;">6874.838</td>
+<td style="text-align: right;">5893.450</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Q[15]</td>
-<td style="text-align: right;">-0.510</td>
-<td style="text-align: right;">0.563</td>
-<td style="text-align: right;">-1.446</td>
-<td style="text-align: right;">0.401</td>
-<td style="text-align: right;">1.000</td>
-<td style="text-align: right;">5951.653</td>
-<td style="text-align: right;">5523.262</td>
+<td style="text-align: right;">-0.521</td>
+<td style="text-align: right;">0.584</td>
+<td style="text-align: right;">-1.498</td>
+<td style="text-align: right;">0.422</td>
+<td style="text-align: right;">1.001</td>
+<td style="text-align: right;">5853.924</td>
+<td style="text-align: right;">5734.059</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Q[16]</td>
-<td style="text-align: right;">-0.128</td>
-<td style="text-align: right;">0.559</td>
-<td style="text-align: right;">-1.046</td>
-<td style="text-align: right;">0.800</td>
+<td style="text-align: right;">-0.121</td>
+<td style="text-align: right;">0.565</td>
+<td style="text-align: right;">-1.036</td>
+<td style="text-align: right;">0.815</td>
 <td style="text-align: right;">1.001</td>
-<td style="text-align: right;">4795.742</td>
-<td style="text-align: right;">5328.219</td>
+<td style="text-align: right;">5233.317</td>
+<td style="text-align: right;">5555.469</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Q[17]</td>
-<td style="text-align: right;">0.105</td>
+<td style="text-align: right;">0.103</td>
 <td style="text-align: right;">0.562</td>
-<td style="text-align: right;">-0.836</td>
-<td style="text-align: right;">0.992</td>
-<td style="text-align: right;">1.000</td>
-<td style="text-align: right;">5704.539</td>
-<td style="text-align: right;">5511.541</td>
+<td style="text-align: right;">-0.845</td>
+<td style="text-align: right;">1.007</td>
+<td style="text-align: right;">1.001</td>
+<td style="text-align: right;">5025.607</td>
+<td style="text-align: right;">5096.996</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Q[18]</td>
-<td style="text-align: right;">-1.504</td>
-<td style="text-align: right;">0.559</td>
-<td style="text-align: right;">-2.440</td>
-<td style="text-align: right;">-0.606</td>
+<td style="text-align: right;">-1.507</td>
+<td style="text-align: right;">0.552</td>
+<td style="text-align: right;">-2.424</td>
+<td style="text-align: right;">-0.608</td>
 <td style="text-align: right;">1.000</td>
-<td style="text-align: right;">6210.482</td>
-<td style="text-align: right;">5604.212</td>
+<td style="text-align: right;">5907.052</td>
+<td style="text-align: right;">5459.271</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Q[19]</td>
-<td style="text-align: right;">-0.359</td>
-<td style="text-align: right;">0.535</td>
-<td style="text-align: right;">-1.245</td>
-<td style="text-align: right;">0.521</td>
-<td style="text-align: right;">1.000</td>
-<td style="text-align: right;">6851.111</td>
-<td style="text-align: right;">6289.493</td>
+<td style="text-align: right;">-0.367</td>
+<td style="text-align: right;">0.561</td>
+<td style="text-align: right;">-1.292</td>
+<td style="text-align: right;">0.545</td>
+<td style="text-align: right;">1.001</td>
+<td style="text-align: right;">6738.238</td>
+<td style="text-align: right;">6061.758</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Q[20]</td>
-<td style="text-align: right;">0.496</td>
-<td style="text-align: right;">0.568</td>
-<td style="text-align: right;">-0.440</td>
-<td style="text-align: right;">1.435</td>
-<td style="text-align: right;">1.000</td>
-<td style="text-align: right;">6488.383</td>
-<td style="text-align: right;">6042.595</td>
+<td style="text-align: right;">0.482</td>
+<td style="text-align: right;">0.569</td>
+<td style="text-align: right;">-0.445</td>
+<td style="text-align: right;">1.408</td>
+<td style="text-align: right;">1.001</td>
+<td style="text-align: right;">5687.180</td>
+<td style="text-align: right;">5521.888</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">H[1]</td>
-<td style="text-align: right;">0.595</td>
-<td style="text-align: right;">0.590</td>
-<td style="text-align: right;">-0.297</td>
-<td style="text-align: right;">1.600</td>
-<td style="text-align: right;">1.001</td>
-<td style="text-align: right;">4890.795</td>
-<td style="text-align: right;">5083.860</td>
+<td style="text-align: right;">0.619</td>
+<td style="text-align: right;">0.586</td>
+<td style="text-align: right;">-0.269</td>
+<td style="text-align: right;">1.601</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">6123.319</td>
+<td style="text-align: right;">4979.950</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">H[2]</td>
-<td style="text-align: right;">-0.277</td>
-<td style="text-align: right;">0.430</td>
-<td style="text-align: right;">-0.987</td>
-<td style="text-align: right;">0.412</td>
+<td style="text-align: right;">-0.274</td>
+<td style="text-align: right;">0.437</td>
+<td style="text-align: right;">-0.998</td>
+<td style="text-align: right;">0.424</td>
 <td style="text-align: right;">1.001</td>
-<td style="text-align: right;">4067.421</td>
-<td style="text-align: right;">4471.063</td>
+<td style="text-align: right;">4060.809</td>
+<td style="text-align: right;">4583.991</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">H[3]</td>
-<td style="text-align: right;">-0.487</td>
-<td style="text-align: right;">0.752</td>
-<td style="text-align: right;">-1.690</td>
-<td style="text-align: right;">0.755</td>
-<td style="text-align: right;">1.001</td>
-<td style="text-align: right;">6634.445</td>
-<td style="text-align: right;">5038.125</td>
+<td style="text-align: right;">-0.469</td>
+<td style="text-align: right;">0.734</td>
+<td style="text-align: right;">-1.656</td>
+<td style="text-align: right;">0.745</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">6648.205</td>
+<td style="text-align: right;">5243.692</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">H[4]</td>
-<td style="text-align: right;">1.230</td>
-<td style="text-align: right;">0.604</td>
-<td style="text-align: right;">0.334</td>
-<td style="text-align: right;">2.282</td>
+<td style="text-align: right;">1.233</td>
+<td style="text-align: right;">0.601</td>
+<td style="text-align: right;">0.322</td>
+<td style="text-align: right;">2.271</td>
 <td style="text-align: right;">1.000</td>
-<td style="text-align: right;">5810.318</td>
-<td style="text-align: right;">5565.047</td>
+<td style="text-align: right;">5632.281</td>
+<td style="text-align: right;">5695.773</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">H[5]</td>
-<td style="text-align: right;">-1.789</td>
-<td style="text-align: right;">0.614</td>
-<td style="text-align: right;">-2.861</td>
-<td style="text-align: right;">-0.845</td>
-<td style="text-align: right;">1.001</td>
-<td style="text-align: right;">5710.315</td>
-<td style="text-align: right;">5603.079</td>
+<td style="text-align: right;">-1.779</td>
+<td style="text-align: right;">0.618</td>
+<td style="text-align: right;">-2.853</td>
+<td style="text-align: right;">-0.815</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">6082.938</td>
+<td style="text-align: right;">5816.825</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">H[6]</td>
-<td style="text-align: right;">-1.176</td>
-<td style="text-align: right;">0.658</td>
-<td style="text-align: right;">-2.289</td>
-<td style="text-align: right;">-0.172</td>
-<td style="text-align: right;">1.001</td>
-<td style="text-align: right;">5852.321</td>
-<td style="text-align: right;">4696.880</td>
+<td style="text-align: right;">-1.169</td>
+<td style="text-align: right;">0.649</td>
+<td style="text-align: right;">-2.268</td>
+<td style="text-align: right;">-0.170</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">6714.764</td>
+<td style="text-align: right;">5139.543</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">H[7]</td>
-<td style="text-align: right;">-0.237</td>
-<td style="text-align: right;">0.570</td>
-<td style="text-align: right;">-1.187</td>
-<td style="text-align: right;">0.624</td>
-<td style="text-align: right;">1.000</td>
-<td style="text-align: right;">4864.331</td>
-<td style="text-align: right;">4506.914</td>
+<td style="text-align: right;">-0.234</td>
+<td style="text-align: right;">0.588</td>
+<td style="text-align: right;">-1.195</td>
+<td style="text-align: right;">0.672</td>
+<td style="text-align: right;">1.002</td>
+<td style="text-align: right;">5076.004</td>
+<td style="text-align: right;">5060.476</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">H[8]</td>
-<td style="text-align: right;">1.220</td>
-<td style="text-align: right;">0.565</td>
-<td style="text-align: right;">0.358</td>
-<td style="text-align: right;">2.210</td>
-<td style="text-align: right;">1.000</td>
-<td style="text-align: right;">4741.553</td>
-<td style="text-align: right;">5182.626</td>
+<td style="text-align: right;">1.213</td>
+<td style="text-align: right;">0.570</td>
+<td style="text-align: right;">0.355</td>
+<td style="text-align: right;">2.218</td>
+<td style="text-align: right;">1.001</td>
+<td style="text-align: right;">4389.700</td>
+<td style="text-align: right;">5537.353</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">H[9]</td>
-<td style="text-align: right;">0.849</td>
-<td style="text-align: right;">0.802</td>
-<td style="text-align: right;">-0.532</td>
-<td style="text-align: right;">2.101</td>
-<td style="text-align: right;">1.000</td>
-<td style="text-align: right;">7080.074</td>
-<td style="text-align: right;">4764.104</td>
+<td style="text-align: right;">0.823</td>
+<td style="text-align: right;">0.824</td>
+<td style="text-align: right;">-0.577</td>
+<td style="text-align: right;">2.108</td>
+<td style="text-align: right;">1.001</td>
+<td style="text-align: right;">5338.110</td>
+<td style="text-align: right;">4003.320</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">D[1]</td>
-<td style="text-align: right;">0.470</td>
+<td style="text-align: right;">0.461</td>
 <td style="text-align: right;">0.253</td>
-<td style="text-align: right;">0.104</td>
-<td style="text-align: right;">0.922</td>
-<td style="text-align: right;">1.001</td>
-<td style="text-align: right;">3175.320</td>
-<td style="text-align: right;">3157.776</td>
+<td style="text-align: right;">0.097</td>
+<td style="text-align: right;">0.932</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">2983.543</td>
+<td style="text-align: right;">2565.263</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">D[2]</td>
-<td style="text-align: right;">0.935</td>
-<td style="text-align: right;">0.355</td>
+<td style="text-align: right;">0.925</td>
+<td style="text-align: right;">0.350</td>
 <td style="text-align: right;">0.359</td>
-<td style="text-align: right;">1.537</td>
+<td style="text-align: right;">1.529</td>
 <td style="text-align: right;">1.001</td>
-<td style="text-align: right;">2500.634</td>
-<td style="text-align: right;">2606.835</td>
+<td style="text-align: right;">2810.568</td>
+<td style="text-align: right;">3022.820</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">D[3]</td>
-<td style="text-align: right;">0.248</td>
-<td style="text-align: right;">0.184</td>
-<td style="text-align: right;">0.023</td>
-<td style="text-align: right;">0.605</td>
+<td style="text-align: right;">0.251</td>
+<td style="text-align: right;">0.186</td>
+<td style="text-align: right;">0.022</td>
+<td style="text-align: right;">0.613</td>
 <td style="text-align: right;">1.001</td>
-<td style="text-align: right;">3663.955</td>
-<td style="text-align: right;">3477.833</td>
+<td style="text-align: right;">3483.762</td>
+<td style="text-align: right;">2882.873</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">D[4]</td>
-<td style="text-align: right;">0.445</td>
-<td style="text-align: right;">0.194</td>
-<td style="text-align: right;">0.176</td>
-<td style="text-align: right;">0.805</td>
-<td style="text-align: right;">1.001</td>
-<td style="text-align: right;">4330.755</td>
-<td style="text-align: right;">3565.457</td>
+<td style="text-align: right;">0.446</td>
+<td style="text-align: right;">0.198</td>
+<td style="text-align: right;">0.169</td>
+<td style="text-align: right;">0.804</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">3765.231</td>
+<td style="text-align: right;">3179.683</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">D[5]</td>
 <td style="text-align: right;">0.450</td>
 <td style="text-align: right;">0.151</td>
-<td style="text-align: right;">0.240</td>
-<td style="text-align: right;">0.728</td>
+<td style="text-align: right;">0.243</td>
+<td style="text-align: right;">0.725</td>
 <td style="text-align: right;">1.000</td>
-<td style="text-align: right;">5467.003</td>
-<td style="text-align: right;">4588.211</td>
+<td style="text-align: right;">5896.061</td>
+<td style="text-align: right;">5536.056</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">D[6]</td>
-<td style="text-align: right;">0.341</td>
-<td style="text-align: right;">0.171</td>
-<td style="text-align: right;">0.094</td>
-<td style="text-align: right;">0.648</td>
-<td style="text-align: right;">1.002</td>
-<td style="text-align: right;">3379.508</td>
-<td style="text-align: right;">2023.933</td>
+<td style="text-align: right;">0.342</td>
+<td style="text-align: right;">0.167</td>
+<td style="text-align: right;">0.104</td>
+<td style="text-align: right;">0.641</td>
+<td style="text-align: right;">1.001</td>
+<td style="text-align: right;">3743.613</td>
+<td style="text-align: right;">2423.599</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">D[7]</td>
-<td style="text-align: right;">0.595</td>
-<td style="text-align: right;">0.409</td>
-<td style="text-align: right;">0.052</td>
-<td style="text-align: right;">1.339</td>
-<td style="text-align: right;">1.002</td>
-<td style="text-align: right;">1855.105</td>
-<td style="text-align: right;">2665.182</td>
+<td style="text-align: right;">0.573</td>
+<td style="text-align: right;">0.411</td>
+<td style="text-align: right;">0.044</td>
+<td style="text-align: right;">1.324</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">1909.202</td>
+<td style="text-align: right;">3066.287</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">D[8]</td>
-<td style="text-align: right;">0.620</td>
-<td style="text-align: right;">0.248</td>
-<td style="text-align: right;">0.283</td>
-<td style="text-align: right;">1.084</td>
-<td style="text-align: right;">1.000</td>
-<td style="text-align: right;">3914.767</td>
-<td style="text-align: right;">4854.722</td>
+<td style="text-align: right;">0.621</td>
+<td style="text-align: right;">0.245</td>
+<td style="text-align: right;">0.285</td>
+<td style="text-align: right;">1.069</td>
+<td style="text-align: right;">1.001</td>
+<td style="text-align: right;">3828.092</td>
+<td style="text-align: right;">4701.569</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">D[9]</td>
-<td style="text-align: right;">0.198</td>
-<td style="text-align: right;">0.142</td>
-<td style="text-align: right;">0.017</td>
-<td style="text-align: right;">0.464</td>
-<td style="text-align: right;">1.001</td>
-<td style="text-align: right;">4130.257</td>
-<td style="text-align: right;">3929.585</td>
+<td style="text-align: right;">0.196</td>
+<td style="text-align: right;">0.143</td>
+<td style="text-align: right;">0.016</td>
+<td style="text-align: right;">0.463</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">3181.170</td>
+<td style="text-align: right;">2733.067</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">sigma</td>
-<td style="text-align: right;">0.822</td>
+<td style="text-align: right;">0.824</td>
 <td style="text-align: right;">0.050</td>
-<td style="text-align: right;">0.744</td>
+<td style="text-align: right;">0.745</td>
 <td style="text-align: right;">0.909</td>
-<td style="text-align: right;">1.000</td>
-<td style="text-align: right;">4920.030</td>
-<td style="text-align: right;">5690.416</td>
+<td style="text-align: right;">1.001</td>
+<td style="text-align: right;">5443.715</td>
+<td style="text-align: right;">5411.834</td>
 </tr>
 </tbody>
 </table>
@@ -3685,9 +3693,19 @@ Total execution time: 1.7 seconds.</code></pre>
 <span id="cb106-3"><a href="#cb106-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(mean, sd, q5, q95, rhat, ess_bulk, ess_tail), <span class="sc">~</span><span class="fu">round</span>(., <span class="dv">3</span>))) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 8
-  variable    mean    sd     q5   q95  rhat ess_bulk ess_tail
-  &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-1 dif_origen 0.308 0.499 -0.521  1.12     1    4346.    5291.</code></pre>
+  variable     mean    sd    q5   q95  rhat ess_bulk ess_tail
+  &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+1 dif_origen -0.312 0.497 -1.12 0.495  1.00    4087.    4952.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb108"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mcmc_hist</span>(ajuste_vinos_3<span class="sc">$</span><span class="fu">draws</span>(<span class="st">"dif_origen"</span>), <span class="at">binwidth =</span> <span class="fl">0.07</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="08-mcmc_files/figure-html/unnamed-chunk-54-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -3712,12 +3730,12 @@ Transiciones divergentes
 <h3 data-number="8.5.1" class="anchored" data-anchor-id="el-embudo-de-neal"><span class="header-section-number">8.5.1</span> El embudo de Neal</h3>
 <p>Para ver un ejemplo, consideremos un ejemplo de una distribución cuya forma aparecerá más tarde en modelos jerárquicos. Primero, la marginal de <span class="math inline">\(y\)</span> es normal con media 0 y desviación estándar 3. La distribución condicional <span class="math inline">\(p(x|y)\)</span> de <span class="math inline">\(x = c(x_1,\ldots, x_9)\)</span> dado <span class="math inline">\(y\)</span> es normal multivariada, todas con media cero y desviación estándar <span class="math inline">\(e^{y/2}\)</span>. Veamos qué pasa si intentamos simular de esta distribución en Stan:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb108"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a>mod_embudo <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"./src/embudo-neal.stan"</span>)</span>
-<span id="cb108-2"><a href="#cb108-2" aria-hidden="true" tabindex="-1"></a>ajuste_embudo <span class="ot">&lt;-</span> mod_embudo<span class="sc">$</span><span class="fu">sample</span>(</span>
-<span id="cb108-3"><a href="#cb108-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">1</span>,</span>
-<span id="cb108-4"><a href="#cb108-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter_warmup =</span> <span class="dv">1000</span>,</span>
-<span id="cb108-5"><a href="#cb108-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter_sampling =</span> <span class="dv">3000</span>,</span>
-<span id="cb108-6"><a href="#cb108-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">refresh =</span> <span class="dv">1000</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb109"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb109-1"><a href="#cb109-1" aria-hidden="true" tabindex="-1"></a>mod_embudo <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"./src/embudo-neal.stan"</span>)</span>
+<span id="cb109-2"><a href="#cb109-2" aria-hidden="true" tabindex="-1"></a>ajuste_embudo <span class="ot">&lt;-</span> mod_embudo<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb109-3"><a href="#cb109-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">1</span>,</span>
+<span id="cb109-4"><a href="#cb109-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter_warmup =</span> <span class="dv">1000</span>,</span>
+<span id="cb109-5"><a href="#cb109-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter_sampling =</span> <span class="dv">3000</span>,</span>
+<span id="cb109-6"><a href="#cb109-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">refresh =</span> <span class="dv">1000</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Running MCMC with 1 chain...
 
@@ -3740,11 +3758,11 @@ See https://mc-stan.org/misc/warnings for details.</code></pre>
 </div>
 <p>Y vemos que aparecen algunos problemas.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb112"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a>simulaciones <span class="ot">&lt;-</span> ajuste_embudo<span class="sc">$</span><span class="fu">draws</span>(<span class="at">format =</span> <span class="st">"df"</span>)</span>
-<span id="cb112-2"><a href="#cb112-2" aria-hidden="true" tabindex="-1"></a>diagnosticos <span class="ot">&lt;-</span> ajuste_embudo<span class="sc">$</span><span class="fu">sampler_diagnostics</span>(<span class="at">format =</span> <span class="st">"df"</span>)</span>
-<span id="cb112-3"><a href="#cb112-3" aria-hidden="true" tabindex="-1"></a>sims_diag <span class="ot">&lt;-</span> simulaciones <span class="sc">|&gt;</span> <span class="fu">inner_join</span>(diagnosticos, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">".draw"</span>, <span class="st">".iteration"</span>, <span class="st">".chain"</span>))</span>
-<span id="cb112-4"><a href="#cb112-4" aria-hidden="true" tabindex="-1"></a>ajuste_embudo<span class="sc">$</span><span class="fu">summary</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb112-5"><a href="#cb112-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(variable, mean, rhat, <span class="fu">contains</span>(<span class="st">"ess"</span>)) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb113"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a>simulaciones <span class="ot">&lt;-</span> ajuste_embudo<span class="sc">$</span><span class="fu">draws</span>(<span class="at">format =</span> <span class="st">"df"</span>)</span>
+<span id="cb113-2"><a href="#cb113-2" aria-hidden="true" tabindex="-1"></a>diagnosticos <span class="ot">&lt;-</span> ajuste_embudo<span class="sc">$</span><span class="fu">sampler_diagnostics</span>(<span class="at">format =</span> <span class="st">"df"</span>)</span>
+<span id="cb113-3"><a href="#cb113-3" aria-hidden="true" tabindex="-1"></a>sims_diag <span class="ot">&lt;-</span> simulaciones <span class="sc">|&gt;</span> <span class="fu">inner_join</span>(diagnosticos, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">".draw"</span>, <span class="st">".iteration"</span>, <span class="st">".chain"</span>))</span>
+<span id="cb113-4"><a href="#cb113-4" aria-hidden="true" tabindex="-1"></a>ajuste_embudo<span class="sc">$</span><span class="fu">summary</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb113-5"><a href="#cb113-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(variable, mean, rhat, <span class="fu">contains</span>(<span class="st">"ess"</span>)) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 11 × 5
    variable    mean  rhat ess_bulk ess_tail
@@ -3761,22 +3779,22 @@ See https://mc-stan.org/misc/warnings for details.</code></pre>
 10 x[8]     -0.0301  1.30  2469.     313.  
 11 x[9]      0.0600  1.23  1814.     348.  </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb114"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb114-1"><a href="#cb114-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sims_diag, <span class="fu">aes</span>(<span class="at">y =</span> y, <span class="at">x =</span> <span class="st">`</span><span class="at">x[1]</span><span class="st">`</span>)) <span class="sc">+</span></span>
-<span id="cb114-2"><a href="#cb114-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb114-3"><a href="#cb114-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> sims_diag <span class="sc">|&gt;</span> <span class="fu">filter</span>(divergent__ <span class="sc">==</span> <span class="dv">1</span>), <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb114-4"><a href="#cb114-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="sc">-</span><span class="fl">2.5</span>, <span class="at">linetype =</span> <span class="dv">2</span>) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb115"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sims_diag, <span class="fu">aes</span>(<span class="at">y =</span> y, <span class="at">x =</span> <span class="st">`</span><span class="at">x[1]</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb115-2"><a href="#cb115-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb115-3"><a href="#cb115-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> sims_diag <span class="sc">|&gt;</span> <span class="fu">filter</span>(divergent__ <span class="sc">==</span> <span class="dv">1</span>), <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb115-4"><a href="#cb115-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="sc">-</span><span class="fl">2.5</span>, <span class="at">linetype =</span> <span class="dv">2</span>) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="08-mcmc_files/figure-html/unnamed-chunk-55-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="08-mcmc_files/figure-html/unnamed-chunk-56-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Y vemos que hay transiciones divergentes. Cuando el muestreador entra en el cuello del embudo, es muy fácil que se “despeñe” en probabilidad y que no pueda explorar correctamente la forma del cuello. Esto lo podemos ver, por ejemplo, si hacemos más simulaciones:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb115"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a>mod_embudo <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"./src/embudo-neal.stan"</span>)</span>
-<span id="cb115-2"><a href="#cb115-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mod_embudo)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb116"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb116-1"><a href="#cb116-1" aria-hidden="true" tabindex="-1"></a>mod_embudo <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"./src/embudo-neal.stan"</span>)</span>
+<span id="cb116-2"><a href="#cb116-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mod_embudo)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>parameters {
   real y;
@@ -3787,11 +3805,11 @@ model {
   x ~ normal(0, exp(y/2));
 }</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb117"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a>ajuste_embudo <span class="ot">&lt;-</span> mod_embudo<span class="sc">$</span><span class="fu">sample</span>(</span>
-<span id="cb117-2"><a href="#cb117-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">1</span>,</span>
-<span id="cb117-3"><a href="#cb117-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter_warmup =</span> <span class="dv">1000</span>,</span>
-<span id="cb117-4"><a href="#cb117-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter_sampling =</span> <span class="dv">30000</span>,</span>
-<span id="cb117-5"><a href="#cb117-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">refresh =</span> <span class="dv">10000</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb118"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb118-1"><a href="#cb118-1" aria-hidden="true" tabindex="-1"></a>ajuste_embudo <span class="ot">&lt;-</span> mod_embudo<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb118-2"><a href="#cb118-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">1</span>,</span>
+<span id="cb118-3"><a href="#cb118-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter_warmup =</span> <span class="dv">1000</span>,</span>
+<span id="cb118-4"><a href="#cb118-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter_sampling =</span> <span class="dv">30000</span>,</span>
+<span id="cb118-5"><a href="#cb118-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">refresh =</span> <span class="dv">10000</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Running MCMC with 1 chain...
 
@@ -3814,8 +3832,8 @@ See https://mc-stan.org/misc/warnings for details.</code></pre>
 <pre><code>Warning: 1 of 1 chains had an E-BFMI less than 0.3.
 See https://mc-stan.org/misc/warnings for details.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb122"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb122-1"><a href="#cb122-1" aria-hidden="true" tabindex="-1"></a>ajuste_embudo<span class="sc">$</span><span class="fu">summary</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb122-2"><a href="#cb122-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(variable, mean, rhat, <span class="fu">contains</span>(<span class="st">"ess"</span>)) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb123"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb123-1"><a href="#cb123-1" aria-hidden="true" tabindex="-1"></a>ajuste_embudo<span class="sc">$</span><span class="fu">summary</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb123-2"><a href="#cb123-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(variable, mean, rhat, <span class="fu">contains</span>(<span class="st">"ess"</span>)) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 11 × 5
    variable      mean  rhat ess_bulk ess_tail
@@ -3832,17 +3850,17 @@ See https://mc-stan.org/misc/warnings for details.</code></pre>
 10 x[8]      -0.107    1.00   7124.    2443. 
 11 x[9]       0.00905  1.00   2954.    2351. </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb124"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb124-1"><a href="#cb124-1" aria-hidden="true" tabindex="-1"></a>simulaciones <span class="ot">&lt;-</span> ajuste_embudo<span class="sc">$</span><span class="fu">draws</span>(<span class="at">format =</span> <span class="st">"df"</span>)</span>
-<span id="cb124-2"><a href="#cb124-2" aria-hidden="true" tabindex="-1"></a>diagnosticos <span class="ot">&lt;-</span> ajuste_embudo<span class="sc">$</span><span class="fu">sampler_diagnostics</span>(<span class="at">format =</span> <span class="st">"df"</span>)</span>
-<span id="cb124-3"><a href="#cb124-3" aria-hidden="true" tabindex="-1"></a>sims_diag <span class="ot">&lt;-</span> simulaciones <span class="sc">|&gt;</span> <span class="fu">inner_join</span>(diagnosticos, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">".draw"</span>, <span class="st">".iteration"</span>, <span class="st">".chain"</span>))</span>
-<span id="cb124-4"><a href="#cb124-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sims_diag, <span class="fu">aes</span>(<span class="at">y =</span> y, <span class="at">x =</span> <span class="st">`</span><span class="at">x[1]</span><span class="st">`</span>)) <span class="sc">+</span></span>
-<span id="cb124-5"><a href="#cb124-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb124-6"><a href="#cb124-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> sims_diag <span class="sc">|&gt;</span> <span class="fu">filter</span>(divergent__ <span class="sc">==</span> <span class="dv">1</span>), <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb124-7"><a href="#cb124-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="sc">-</span><span class="fl">2.5</span>, <span class="at">linetype =</span> <span class="dv">2</span>) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb125"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb125-1"><a href="#cb125-1" aria-hidden="true" tabindex="-1"></a>simulaciones <span class="ot">&lt;-</span> ajuste_embudo<span class="sc">$</span><span class="fu">draws</span>(<span class="at">format =</span> <span class="st">"df"</span>)</span>
+<span id="cb125-2"><a href="#cb125-2" aria-hidden="true" tabindex="-1"></a>diagnosticos <span class="ot">&lt;-</span> ajuste_embudo<span class="sc">$</span><span class="fu">sampler_diagnostics</span>(<span class="at">format =</span> <span class="st">"df"</span>)</span>
+<span id="cb125-3"><a href="#cb125-3" aria-hidden="true" tabindex="-1"></a>sims_diag <span class="ot">&lt;-</span> simulaciones <span class="sc">|&gt;</span> <span class="fu">inner_join</span>(diagnosticos, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">".draw"</span>, <span class="st">".iteration"</span>, <span class="st">".chain"</span>))</span>
+<span id="cb125-4"><a href="#cb125-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sims_diag, <span class="fu">aes</span>(<span class="at">y =</span> y, <span class="at">x =</span> <span class="st">`</span><span class="at">x[1]</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb125-5"><a href="#cb125-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb125-6"><a href="#cb125-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> sims_diag <span class="sc">|&gt;</span> <span class="fu">filter</span>(divergent__ <span class="sc">==</span> <span class="dv">1</span>), <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb125-7"><a href="#cb125-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="sc">-</span><span class="fl">2.5</span>, <span class="at">linetype =</span> <span class="dv">2</span>) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="08-mcmc_files/figure-html/unnamed-chunk-56-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="08-mcmc_files/figure-html/unnamed-chunk-57-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -3850,8 +3868,8 @@ See https://mc-stan.org/misc/warnings for details.</code></pre>
 <p>Y vemos que ahora que en el primer ejemplo estábamos probablemente sobreestimando la media de <span class="math inline">\(y\)</span>. Las divergencias indican que esto puede estar ocurriendo. En este ejemplo particular, también vemos que las R-hat y los tamaños efectivos de muestra son bajos.</p>
 <p>Este es un ejemplo extremo. Sin embargo, podemos <em>reparametrizar</em> para hacer las cosas más fáciles para el muestreador. Podemos simular <span class="math inline">\(y\)</span>, y después, simular <span class="math inline">\(x\)</span> como <span class="math inline">\(x \sim e^{y/2} z\)</span> donde <span class="math inline">\(z\)</span> es normal estándar.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb125"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb125-1"><a href="#cb125-1" aria-hidden="true" tabindex="-1"></a>mod_embudo_reparam <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"./src/embudo-neal-reparam.stan"</span>)</span>
-<span id="cb125-2"><a href="#cb125-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mod_embudo_reparam)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb126"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb126-1"><a href="#cb126-1" aria-hidden="true" tabindex="-1"></a>mod_embudo_reparam <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"./src/embudo-neal-reparam.stan"</span>)</span>
+<span id="cb126-2"><a href="#cb126-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mod_embudo_reparam)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>parameters {
   real y;
@@ -3870,11 +3888,11 @@ model {
   z ~ std_normal();
 }</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb127"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb127-1"><a href="#cb127-1" aria-hidden="true" tabindex="-1"></a>ajuste_embudo <span class="ot">&lt;-</span> mod_embudo_reparam<span class="sc">$</span><span class="fu">sample</span>(</span>
-<span id="cb127-2"><a href="#cb127-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>,</span>
-<span id="cb127-3"><a href="#cb127-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter_warmup =</span> <span class="dv">1000</span>,</span>
-<span id="cb127-4"><a href="#cb127-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter_sampling =</span> <span class="dv">10000</span>,</span>
-<span id="cb127-5"><a href="#cb127-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">refresh =</span> <span class="dv">1000</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb128"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb128-1"><a href="#cb128-1" aria-hidden="true" tabindex="-1"></a>ajuste_embudo <span class="ot">&lt;-</span> mod_embudo_reparam<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb128-2"><a href="#cb128-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>,</span>
+<span id="cb128-3"><a href="#cb128-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter_warmup =</span> <span class="dv">1000</span>,</span>
+<span id="cb128-4"><a href="#cb128-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter_sampling =</span> <span class="dv">10000</span>,</span>
+<span id="cb128-5"><a href="#cb128-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">refresh =</span> <span class="dv">1000</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Running MCMC with 4 sequential chains...
 
@@ -3937,14 +3955,14 @@ Chain 4 finished in 0.2 seconds.
 
 All 4 chains finished successfully.
 Mean chain execution time: 0.2 seconds.
-Total execution time: 1.0 seconds.</code></pre>
+Total execution time: 0.9 seconds.</code></pre>
 </div>
 </div>
 <p>Y con este truco de reparametrización el muestreador funciona correctamente (observa que la media de <span class="math inline">\(y\)</span> está estimada correctamente, y no hay divergencias).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb129"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb129-1"><a href="#cb129-1" aria-hidden="true" tabindex="-1"></a>ajuste_embudo<span class="sc">$</span><span class="fu">summary</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb129-2"><a href="#cb129-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(variable, mean, rhat, <span class="fu">contains</span>(<span class="st">"ess"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb129-3"><a href="#cb129-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(mean, rhat, ess_bulk, ess_tail), <span class="sc">~</span><span class="fu">round</span>(., <span class="dv">3</span>))) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb130"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb130-1"><a href="#cb130-1" aria-hidden="true" tabindex="-1"></a>ajuste_embudo<span class="sc">$</span><span class="fu">summary</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb130-2"><a href="#cb130-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(variable, mean, rhat, <span class="fu">contains</span>(<span class="st">"ess"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb130-3"><a href="#cb130-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(mean, rhat, ess_bulk, ess_tail), <span class="sc">~</span><span class="fu">round</span>(., <span class="dv">3</span>))) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 20 × 5
    variable   mean  rhat ess_bulk ess_tail
