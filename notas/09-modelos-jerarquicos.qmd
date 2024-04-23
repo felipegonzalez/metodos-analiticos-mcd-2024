@@ -615,13 +615,14 @@ resumen_1 <- bangladesh |>
   group_by(district, tipo, .drop = FALSE) |> 
   summarise(prop_cruda = mean(use.contraception), n = n()) |> 
   mutate(district = as.integer(district))
-probs_1 |> left_join(resumen_1) |>
+graf_1 <- probs_1 |> left_join(resumen_1) |>
   ggplot(aes(x = district)) +
   geom_hline(yintercept = 0.5, linetype = 2) +
   geom_point(aes(y = media), color = "red") +
   geom_linerange(aes(ymin = q5, ymax = q95), color = "red") +
     geom_point(aes(y = prop_cruda, size = n), color = "black", alpha = 0.2) +
   facet_wrap(~tipo, nrow = 2)
+graf_1
 ```
 
 **Observaciones**:
@@ -646,16 +647,27 @@ Nótese que vemos aquí también la diferencia dentro de distritos entre
 zonas urbanas y rurales. Las medias posteriores en general están por debajo
 de la identidad. Adicionalmente, y como es de esperarse, hay correlación
 dentro de distritos entre las tasas de uso de anticonceptivos en zonas urbanas
-y rurales. 
+y rurales. Esto se debe, desde el punto de vista del modelo, 
+a correlación entre el coeficiente $\beta_{1,i}$ común al efecto de urbano y rural:
+urbano es $beta_{1,i} + beta_{2,i}$ y rural $\beta_{1,i}$. Es natural
+entonces observar una correlación positiva entre los dos siguientes coeficientes:
+
+```{r}
+ajuste_3_bangladesh$draws(c("beta_sim"), format = "df") |> 
+  ggplot(aes(y = `beta_sim[1]`, x = `beta_sim[1]` + `beta_sim[2]`)) +
+  geom_point(alpha = 0.2) + xlab("coef_urbano") + ylab("coef_rural") +
+  geom_abline(intercept = 0, slope = 1, linetype = 2)
+```
+
 
 Esta última observación suguiere que todavía podemos mejorar nuestras estimaciones:
-en este modelo, encogemos la estimación de cada zona hacia la media urbana o rural,
-independientemente una de otra. Sin embargo, si queremos obtener mejores estimaciones, 
-el "encogimiento" debe estar correlacionado dentro de los distritos: estamos
+el "encogimiento" en las dos dimensiones debe estar correlacionado dentro de los distritos.
+En este ejemplo, estamos
 dejando de utilizar información que está en los datos. Si observamos que el uso
-de anticonceptivos en una zona urbana de el distrito A es relativamente alto, 
-esperamos que el uso en la zona rural de ese mismo distrito sea también relativamente
-alto.
+de anticonceptivos en una zona urbana de el distrito A tiene un valor dado, esto
+nos da información acerca del uso de anticonceptivos en la zona rural del distrito A. 
+Veremos ahora cómo podemos aprovechar más eficientemente la información para hacer
+mejor estimaciones.
 
 
 ## Variables correlacionadas
@@ -788,5 +800,87 @@ ajuste_5_bangladesh <- mod_5_bangladesh$sample(data = datos_lst,
 ajuste_5_bangladesh$summary(c("beta_bar", "sigma", "Omega")) |> 
   knitr::kable(digits = 2)
 ```
-Este resultado es superior al anterior. 
+Este resultado es superior en convergencia al anterior. 
+
+
+Ahora podemos comparar nuestra estimaciones del efecto de la variable urbana/rural
+en cada distrito, considerando el modelo con correlación y sin correlación:
+
+```{r}
+#| warning: false
+#| message: false
+probs_corr <- ajuste_5_bangladesh$draws(c("prob_distrito_urbano", "prob_distrito_rural"), 
+                                     format = "df") |> 
+  as_tibble() |> pivot_longer(cols = starts_with("prob"), names_to = "variable") |>
+  mutate(tipo = ifelse(str_detect(variable, "urbano"), "urbano", "rural")) |> 
+  separate(variable, sep = "[\\[\\]]", into = c("variable", "district"), 
+           extra = "drop", convert = TRUE)  |> 
+  group_by(district, tipo) |> summarise(media = mean(value),
+                                  q5 = quantile(value, 0.05),
+                                  q95 = quantile(value, 0.95)) 
+resumen_corr <- bangladesh |>
+  mutate(tipo = ifelse(urban == 1, "urbano", "rural")) |> 
+  mutate(tipo = factor(tipo, levels = c("urbano", "rural"))) |> 
+  group_by(district, tipo, .drop = FALSE) |> 
+  summarise(prop_cruda = mean(use.contraception), n = n()) |> 
+  mutate(district = as.integer(district))
+graf_corr <- probs_corr |> left_join(resumen_corr) |>
+  ggplot(aes(x = district)) +
+  geom_hline(yintercept = 0.5, linetype = 2) +
+  geom_point(aes(y = media), color = "red") +
+  geom_linerange(aes(ymin = q5, ymax = q95), color = "red") +
+    geom_point(aes(y = prop_cruda, size = n), color = "black", alpha = 0.2) +
+  facet_wrap(~tipo, nrow = 2)
+graf_corr
+```
+
+Las estimaciones son distintas comparando con el modelo sin correlación:
+
+
+
+
+```{r}
+probs <- bind_rows(probs_1 |> mutate(modelo = "Sin correlación"),
+                   probs_corr |> mutate(modelo = "Con correlación")) 
+probs |> 
+  select(-q5, -q95) |>
+  pivot_wider(names_from = tipo, values_from = media) |>
+  ggplot(aes(x = urbano, y = rural, label = district)) +
+  geom_abline(intercept = 0, slope = 1, linetype = 2) +
+  geom_text() +
+  facet_wrap(~modelo)
+```
+
+Y veamos ahora cómo están correlacionados los coeficientes de urbano y rural:
+
+```{r}
+ajuste_5_bangladesh$draws(c("beta_sim"), format = "df") |> 
+  ggplot(aes(y = `beta_sim[1]`, x = `beta_sim[1]` + `beta_sim[2]`)) +
+  geom_point(alpha = 0.2) + xlab("coef_urbano") + ylab("coef_rural") +
+  geom_abline(intercept = 0, slope = 1, linetype = 2)
+```
+
+Y vemos que en realidad los datos no sugieren que existe una correlación alta entre los
+coeficientes, a pesar de la parametrización que usamos. Por eso observamos un patrón
+de encogimiento diferente en el modelo con correlaciones. Veamos un ejemplo:
+
+- Notemos por ejemplo el distrito 11, que sólo tiene observaciones de regiones
+rurales, con un tamaño de muestra relativamente chico:
+
+```{r}
+resumen_corr |> filter(district == 11)
+```
+
+- Su valor observado de uso de anticonceptivos es 0, muy baja, y naturalmente esperamos
+una estimación por arriba de cero, pero baja en la población de zonas rurales. Sin correlación,
+la estimación de zonas urbanas es considerablemente baja también. 
+
+- Con correlación, sin embargo, la estimación de urbano es considerablemente más alta, cercana
+a la media poblacional.
+
+```{r}
+probs |> filter(district == 11) |> 
+  arrange(tipo) |> kable(digits = 3)
+```
+
 
