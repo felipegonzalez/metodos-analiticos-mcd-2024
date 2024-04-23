@@ -1,0 +1,605 @@
+# Otros métodos para inferencia causal
+
+```{r}
+#| warning: false
+#| message: false
+library(tidyverse)
+library(DiagrammeR)
+library(kableExtra)
+```
+
+En esta última parte veremos dos métodos que se basan
+en características particulares del supuesto proceso generador de datos o diagrama
+causal, que los hacen en algunos aspectos similares a conducir un
+experimento aleatorizado. 
+
+Estos métodos requieren supuestos fuertes, no son de aplicabilidad general, 
+pero es menos crítico construir un diagrama causal apropiado. 
+
+## Intro: Variables instrumentales
+
+
+En el siglo XIX John Snow tenía la teoría de que
+algo en la calidad del suministro de agua estaba relacionado con la 
+aparición de casos de cólera en Londres (que entonces era una epidemia).
+
+Reconoció que tenía el problema de variables no observadas
+que abren puertas traseras: la calidad de agua que toman
+las personas (o por ejemplo en zonas de la ciudad) es diferente: 
+en zonas más pobres en general la calidad del
+agua es mala, y también hay más muertes de cólera en lugares pobres. 
+
+Otra variable de confusión podía ser el entonces llamado "miasma": cosas malas 
+en el aire que contaminan el agua y a las personas.
+
+
+```{r}
+#| code-fold: true
+grViz("
+digraph {
+  graph [ranksep = 0.2]
+ 
+  node [shape = circle]
+    MiasmaPobreza
+  node [shape=plaintext]
+
+  edge [minlen = 3]
+    PurezaAgua -> Colera
+    MiasmaPobreza -> Colera
+    MiasmaPobreza -> PurezaAgua
+  {rank = same; PurezaAgua; Colera}
+}
+", width = 200, height = 100)
+
+```
+
+Dado este diagrama, como hemos discutido, no podemos identificar el 
+efecto causal de la calidad de suministro de agua
+en las muertes o infecciones de cólera: podría ser la "miasma" que
+contamina el agua y enferma a las personas (correlación no causal), 
+por ejemplo, y no hay
+relación causal entre tomar agua contaminada y cólera.
+
+John Snow, sin embargo, que no creía en la teoría del 
+miasma, investigó con detalle de dónde provenía el agua
+que tomaban en varias casas a lo largo de toda la ciudad.
+Lo que descubrió, en sus palabras es que:
+
+- En grandes partes de Londres, los suministros de agua de distintas compañías están organizados de forma compleja. Los tubos
+de cada compañía van por todas las calles de todas las zonas. 
+- La decisión de qué compañía suministraba a cada casa generalmente
+se había tomado hace mucho, y los habitantes generalmente no 
+lo decidían ni sabían que compañía de agua les correspondía.
+- Había casas muy cercanas, unas con una compañía y otras con otra.
+
+Si las distintas compañías de agua tiene distintos niveles de calidad
+de agua, podriamos expandir nuestro DAG a:
+
+```{r}
+#| code-fold: true
+grViz("
+digraph {
+  graph [ranksep = 0.2]
+ 
+  node [shape = circle]
+    Miasma
+  node [shape=plaintext]
+
+  edge [minlen = 3]
+    Comp -> PurezaAgua -> Colera
+    Miasma -> PurezaAgua
+    Miasma -> Colera
+  {rank = same; Comp; PurezaAgua; Colera}
+}
+")
+
+```
+
+Tenemos entonces:
+
+- La compañía que suministra a cada casa o zona es causa de la pureza de
+agua en cada casa.
+- No puede haber aristas directas entre compañía y cólera: el único efecto de 
+compañía en cólera puede ser a través del agua que suministra.
+- No puede haber una arista de Pobreza a Compañía, por la observación de Snow: la decisión de qué compañía suministraba a qué casa se había tomado mucho antes, y
+no tenía relación con pobreza, miasma actual ni cólera (que no existía cuando
+se tomaron esas decisiones)
+
+La conclusión de Snow es que desde el punto de vista de cólera y el sistema que nos interesa, la compañía de agua se comporta como si fuera asignada al azar: no hay ninguna variable relevente al problema que incida en qué compañía abastece a cada casa o zona. Como observó asociación
+entre compañía de agua y Cólera, concluyó correctamente que esto implicaba
+que la pureza del agua tenía un efecto causal en la propagación del cólera.
+
+La idea de Snow entonces podemas :
+
+- Por la gráfica, la asociación entre Compañía y Cólera es causal (no hay confusoras para Compañía y Cólera).
+- Si esta relación existe, entonces por los supuestos, la Pureza de Agua tiene un efecto causal sobre Cólera.
+
+La tabla de Snow, tomada de @freedmanshoe: 
+
+```{r}
+tibble(comp = c("Southwark+Vauxhall", "Lambeth", "Resto"),
+       casas = c(40046, 26107, 256423),
+       muertes_colera = c(1263, 98, 1422),
+       tasa_muertes_10milcasas = c(315, 37, 59)) |> 
+knitr::kable() |> kable_paper()
+```
+
+Esta diferencia grande muestra que la razón de la aparición de cólera tenía
+que ver con el agua que consumían las personas, considerando los supuestos de arriba.
+Para llegar a la conclusión de Snow, es necesario
+que se cumpla la estructura causal del diagrama de arriba.
+
+## Variables instrumentales
+
+El diagrama básico que define una variable instrumental con el propósito
+de identificar el efecto causal de $T$ sobre $Y$ es el siguiente:
+
+```{r}
+#| code-fold: true
+grViz("
+digraph {
+  graph [ranksep = 0.2]
+ 
+  node [shape = circle]
+    U
+  node [shape=plaintext]
+
+  edge [minlen = 3]
+    Z -> T -> Y
+    U-> T
+    U-> Y
+  {rank = same; Z;T; Y}
+}
+", width= 200, height = 70)
+
+```
+
+::: callout-note
+# Variables instrumentales
+
+Decimos que $Z$ es una variable instrumental para estimar el efecto 
+causal de $T$ sobre $Y$ cuando:
+
+- $Z$ es una variable que influye en la asignación del tratamiento. 
+- $Z$ está $d$-separada de $U$.
+- $Z$ sólo influye en $Y$ a través de $T$ (restricción de exclusión)
+:::
+
+- Generalmente las últimas dos de estas hipótesis tienen que postularse
+basadas en conocimiento experto, ya que no es posible checarlas con datos.
+- Con estrategias de condicionamiento es posible encontrar instrumentos potenciales en gráficas más complejas.
+- Esta estrategia funciona con modelos lineales. Más generalmente, pero
+bajo ciertos supuestos, los estimadores de variables instrumentales son más propiamente
+estimadores de un cierto tipo de efecto causal (por ejemplo, para tratamientos 
+binarios, el efecto causal sobre los *compliers*, ver @morgan2015).
+
+
+
+## Estimación con variables instrumentales 
+
+La estimación de efectos causales con variables instrumentales
+depende de supuestos adicionales a los del cálculo-do, y su utilidad depende de
+qué tan fuerte es el instrumento (qué tan correlacionado está con el
+tratamiento).
+
+Primero, hacemos una discusión para ver cómo esto puede funcionar. Lo más importante
+es notar que
+el efecto de $Z$ sobre $Y$ y el de $Z$ sobre $T$ son identificables y podemos calcularlos.
+El que nos interesa el efecto de $T$ sobre $Y$. Supongamos que todos los modelos son 
+lineales:
+
+- Supongamos que cuando $Z$ aumenta una unidad,
+$T$ aumenta en $a$ unidades, 
+- Supongamos que cuando $T$ aumenta 1 unidad  $Y$ aumenta $b$ unidades (este es el efecto causal que queremos calcular).
+- Esto quiere decir que cuando $Z$ aumenta una unidad, $Y$ aumenta $c = ab$ unidades.
+- El efecto causal de $T$ sobre $Y$ se puede calcular dividiendo $c/a$ (que es igual a $b$), y estas dos cantidades están identificadas
+
+Nótese que si $a=0$, o es muy chico, este argumento no funciona ($Z$ es un instrumento débil). 
+
+
+Veremos un ejemplo simulado, y cómo construir un estimador
+estadístico en el caso lineal para estimar el efecto causal. 
+
+```{r}
+sim_colera <- function(n){
+  # se selecciona al azar la compañía
+  comp <- sample(1:5, n, replace = TRUE)
+  contaminacion_comp <- c(5, 5, 0.3, 0.2, 0)
+  # confusor
+  u <- rnorm(n, 0, 1)
+  # confusor afecta a pureza y muertes
+  pureza <- rnorm(n, contaminacion_comp[comp] +  2 * u, 1)
+  colera <- rnorm(n, 3 * pureza +  2 * u, 1)
+  tibble(comp, pureza, colera) 
+}
+set.seed(800)
+datos_tbl <- sim_colera(1000)
+```
+
+
+
+```{r}
+datos_tbl |> head()
+```
+
+Podríamos construir un modelo generativo modelando una variable latente
+$U$. Si embargo, es más simple definir un modelo estadístico como 
+sigue:
+
+- Las variables pureza son normales bivariadas con alguna correlación (producida por el confusor U).
+- La media de Pureza depende la compañía (modelo de primera etapa)
+- La media de Cólera depende de la pureza (modelo de segunda etapa)
+
+Con un modelo así podemos resolver el problema de estimar el efecto
+causal la variable instrumental.
+
+Sin embargo, modelos de regresión simples no nos dan la respuesta correcta. Por
+ejemplo, sabemos que esta regresión es incorrecta (por el confusor):
+
+
+```{r}
+lm(colera~ pureza, datos_tbl) |> broom::tidy()
+```
+```{r}
+lm(colera ~ pureza + factor(comp), datos_tbl) |> broom::tidy()
+```
+
+Y agregar la variable compañía empeora la situación. La razón es que al
+condicionar a pureza, abrimos un nuevo camino no causal entre compañía y
+la respuesta, y esta es capturada por esos coeficientes.
+
+```{r}
+library(cmdstanr)
+mod_colera <- cmdstan_model("./src/iv-ejemplo.stan")
+print(mod_colera)
+```
+
+```{r}
+#| message: false
+#| warning: false
+ajuste <- mod_colera$sample(
+  data = list(N = nrow(datos_tbl), 
+                compania = datos_tbl$comp,
+                colera = datos_tbl$colera,
+                pureza = datos_tbl$pureza),
+  init = 0.01, step_size = 0.01,
+  parallel_chains = 4, iter_warmup = 500, iter_sampling = 1000
+)
+```
+
+```{r}
+ajuste$summary(c("alpha", "beta_0", "beta_1", "sigma", "Omega")) |> select(variable, mean, q5, q95)
+```
+
+Nótese que recuperamos el coeficiente correcto ($\beta_1$).
+
+**Notas**:
+
+- En estos modelos, muchas veces es crucial la información a priori. Iniciales
+no informativas pueden dar resultados malos 
+(dificultades numéricas, poca precisión y sesgo).
+- Fuera del ámbito bayesiano se utilizan métodos como mínimos cuadrados en 2 etapas.
+- Sin supuestos lineales, hay más supuestos que se tienen que cumplir para
+que este enfoque funcione (ver @morgan2015), por ejemplo, ¿qué se identifica
+en el caso de efecto heterogéneo sobre los individuos?
+- El enfoque de contrafactuales esclarece cómo funciona este método.
+
+Ejemplos clásicos de potenciales instrumentos son:
+
+- Temporada en la que nace una persona (construye por ejemplo un diagrama para
+educación, salario en el futuro y mes en el que nació una persona), y por qué
+variables instrumentales podrían ayudar a identificar el efecto causal de educación
+en salario futuro.
+- Distancia a algún servicio: el uso de un servicio varía con la distancia
+para accederlo (por ejemplo, ¿cómo saber si un centro comunitario en una población
+mejora el bienestar del que lo usan?)
+- Loterías reales para determinar cuál es el efecto de recibir una cantidad
+grande de dinero sobre bienestar o ahorros futuros, etc.
+
+
+
+Puedes encontrar más ejemplos en @morgan2015 y [aquí](https://mixtape.scunning.com/07-instrumental_variables).
+
+
+## Regresión discontinua
+
+Muchas veces, la decisión de aplicar un tratamiento o no depende de un
+límite administrativo en una variable dada. Por ejemplo, supongamos que 
+quisiéramos saber si una atracción particular de feria produce malestar
+en niños al salir del parque.  
+
+Todos los niños de una escuela se forman para subirse a la atracción.
+Si al director de la escuela le interesara hacer un experimento, podría
+seleccionar al azar a algunos niños para subirse y otros no. Sin embargo,
+el director de la escuela nota que hay un límite de estatura que hay que pasar
+para poder subirse al juego.
+
+Tienen la idea entonces de que esto presenta un experimento natural: entre
+todos los niños que están cerca de 1.20 de estatura, quién se sube o no
+prácticamente depende del azar.
+
+Nuestro diagrama es como sigue:
+
+```{r}
+#| code-fold: true
+grViz("
+digraph {
+  graph [ranksep = 0.2, rankdir=LR]
+  node [shape = circle]
+    U
+    #V
+  node [shape=plaintext]
+    Estatura
+  edge [minlen = 3]
+     U -> Y
+     #V -> Estatura
+     #V -> Y
+    Estatura -> T
+    T -> Y
+    Estatura -> Y
+{rank = same; U; T}
+{rank = min;  Estatura}
+
+}
+", width = 200, height = 200)
+
+```
+
+Como vimos, hay una variable observable (la estatura)
+que determina la aplicación del tratamiento, y que se asigna de la siguiente forma:
+
+- Si $Estatura >= 1.20$ entonces $T=1$
+- Si $Estatura < 1.20$ entonces $T=0$,
+
+entonces es posible restringir el análisis a un intervalo muy chico alrededor del
+punto de corte 1.20, y para fines prácticos el diagrama se convierte en:
+
+
+```{r}
+#| code-fold: true
+grViz("
+digraph {
+  graph [ranksep = 0.2, rankdir=LR]
+ 
+  node [shape = circle]
+    U
+  node [shape=plaintext]
+
+  edge [minlen = 3]
+     U -> Y
+     
+    Estatura120 -> T
+    T -> Y
+{rank = same; U; Y}
+{rank = min; T; Estatura120}
+}
+",width = 200, height = 200)
+
+```
+
+En este caso, el grupo Estatura120 son aquellos que miden entre
+118 y 122, por ejemplo, y estamos suponiendo que el efecto de la variación
+de la estatura en este grupo es mínimo.
+
+La idea es comparar en el grupo Estatura120 aquellos que recibieron el tratamiento
+con los que no lo recibieron, y la razón es:
+
+- Caminos no causales a través de Estatura están
+prácticamente bloqueados, pues prácticamente estamos condicionando a un valor de Estatura fijo.
+- Por la regla administrativa, no existen otras variables no observadas que
+influyan en la asignación de tratamiento 
+$T$ (no hay puertas traseras).
+
+
+En la práctica, usualmente un grupo suficientemente angosto produciría un tamaño de muestra
+chico y sería difícil estimar el efecto del tratamiento (no tendríamos precisión).
+Así que recurrimos a modelos simples de la forma
+
+$$p(y|x)$$
+que tienen la particularidad de que permiten un cambio discontinuo en la
+distribución en el punto de corte $x = x_0$. Se puede tratar de dos modelos:
+uno del lado izquierdo y otro del lado derecho, aunque es posible que compartir
+parámetros.
+
+### Ejemplo simulado {-}
+
+Supongamos existe un programa de becas para permanecer en la escuela
+que se les da a niños de 9 o más años cumplidos. Nos interesa ver cuál es
+la asistencia escolar en el año siguiente al programa. Veamos un ejemplo
+simulado:
+
+```{r}
+inv_logit <- function(x) 1/(1+exp(-x))
+simular_des <- function(n = 100){
+  edad <- runif(n, 5, 12)
+  t <- ifelse(edad >= 9, 1, 0)
+  u <- rnorm(n, 0, 0.6)
+  asistencia_dias <- 200 * inv_logit(3 - 0.6* (edad - 5) + 1 * t + u)
+  tibble(edad, t, asistencia_dias)
+}
+set.seed(8)
+datos_tbl <- simular_des(500)
+ggplot(datos_tbl, aes(x = edad, y = asistencia_dias)) +
+  geom_point() +
+  geom_vline(xintercept = 9, colour = "red")
+```
+Podríamos ajustar dos modelos:
+
+```{r}
+ggplot(datos_tbl, aes(x = edad, y = asistencia_dias)) +
+  geom_point() +
+  geom_vline(xintercept = 9, colour = "red") +
+  geom_smooth(aes(group = t))
+```
+
+Si nuestros modelos son apropiados, podemos estimar el efecto causal a los 9 años:
+el programa incrementa la asistencia en un promedio de larededor de 25 días
+de 200 posibles. Para hacer inferencia apropiadamente, podemos ajustar modelos
+como veremos más adelante.
+
+::: callout-note 
+# Regresión discontinua
+
+El supuesto básico de identificación para 
+regresión discontinua se puede expresar con contrafactuales:
+
+- Tanto $p(Y_i^1|X=x)$ como $p(Y_i^0|X=x)$ varían continuamente en el punto
+de corte $x=x_0$ 
+- El único criterio de aplicación del tratamiento es estar en $X$ por arriba
+o abajo de $x_0$.
+
+:::
+
+Esto quiere decir que si vemos un salto en el punto de corte del tratamiento,
+este se debe al tratamiento, y no a cómo son $p(Y_i^0|X=x)$ y $p(Y_i^1|X=x)$.
+
+En particular, para el efecto promedio:
+
+$$E[Y^1 - Y^0|X=x_0] = E[Y^1|X=x_0] - E[Y^1|X=x_0]$$
+es igual a
+
+$$\lim_{x\to x_0^+} E[Y^1|X=x_0] - \lim_{x\to x_0^-} E[Y^0|X=x_0]$$
+Después de $x_0$ todas las unidades tienen el tratamiento, y antes
+ninguna, de modo que esto equivale a
+
+$$\lim_{x\to x_0^+} E[Y|X=x, T = 1] - \lim_{x\to x_0^-} E[Y|X=x, T = 0]$$
+y estas dos cantidades están identificadas. Solamente usamos el supuesto
+de continuidad y del punto de corte para el tratamiento. Nótese
+que este supuesto se puede violar cuando unidades de un lado
+del corte son diferentes a las del otro lado, lo cual sucede por ejemplo
+cuando es un corte genérico que afecta muchas cosas o cuando de alguna
+manera la variable del corte es manipulable por los individuos:
+
+
+- Hay otras cosas que suceden el
+punto de corte, por ejemplo: es difícil usar mayoria de edad como punto 
+de corte, porque varias cosas suceden cuando alguien cumple 18 años (puede votar, puede ser que
+tome decisiones alrededor de esos momentos, puede comprar alcohol, etc).
+- Hay maneras de manipular la variable con la que se hace el punto de corte (por
+ejemplo, si mi hijo nace en septiembre reporto en el acta que nació en agosto por
+fines escolares).
+
+Una manera usual de checar estos supuestos es considerar otras variables
+(que varían continuamente con la variable que usa para el corte), y
+que no deberían ser afectadas por el tratamiento, y verificar que no hay
+discontinuidades en el punto de corte de interés. 
+
+Puedes ver más [aquí](https://mixtape.scunning.com/06-regression_discontinuity#challenges-to-identification)
+
+
+### Ejemplo: parte 2 {-}
+
+Arriba hicimos un ajuste con curvas *loess*. Lo más apropiado es construir
+modelos y así facilitar la inferencia del tamaño del efecto.
+
+```{r}
+#| message: false
+#| warning: false
+library(cmdstanr)
+library(splines)
+
+modelo_disc <- cmdstan_model("./src/reg-discontinua.stan")
+print(modelo_disc)
+```
+```{r}
+#| message: false
+#| warning: false
+x <- datos_tbl$edad 
+B <- t(ns(x, knots = 6, intercept = TRUE)) 
+y <- datos_tbl$asistencia_dias
+trata <- datos_tbl$t
+datos_lista <- list(N = length(x), n_base = nrow(B), B = B,
+                    y = y, x = x, trata = trata)
+ajuste <- modelo_disc$sample(data = datos_lista, parallel_chains = 4, 
+                             refresh = 1000)
+```
+
+
+Nuestro resumen del efecto local en 9 años es el siguiente:
+
+```{r}
+ajuste$summary("delta") |> select(variable, mean, q5, q95)
+```
+
+Finalmente, vemos cómo ajusta el modelo:
+
+```{r}
+y_media_tbl <- ajuste$draws("y_media", format = "df") |> 
+  pivot_longer(cols = contains("y_media"), names_to = "variable") |> 
+  separate(variable, into = c("a", "indice"), sep = "[\\[\\]]", 
+           extra = "drop", convert = TRUE) 
+y_media_tbl <- y_media_tbl |> 
+  left_join(tibble(indice = 1:length(x), edad= x))
+```
+
+```{r}
+res_y_media_tbl <- y_media_tbl |> group_by(indice, edad) |> 
+  summarise(media = mean(value), q5 = quantile(value, 0.05),
+            q95 = quantile(value, 0.95))
+ggplot(res_y_media_tbl, aes(x = edad)) + 
+  geom_line(aes(y = media), colour = "red", size = 2) +
+  geom_line(aes(y = q5), colour = "red") +
+  geom_line(aes(y = q95), colour = "red") + 
+  geom_point(data = datos_tbl, aes(y = asistencia_dias), alpha = 0.2)
+```
+
+
+
+**Notas**:
+
+1. Igual que en experimentos, puede tener sentido controlar por otras
+variables("buenos controles") para mejorar la precisión del análisis.
+2. Esto es especialmente cierto cuando la variable $x$ en la regresión discontinua
+no determina de manera muy fuerte la respuesta $y$ (datos ruidosos)
+3. Es necesario tener cuidado con la forma funcional que se utiliza en 
+los modelos (ver [esta liga](https://statmodeling.stat.columbia.edu/2019/06/25/another-regression-discontinuity-disaster-and/), donde muestran por ejemplo este análisis 
+que es incorrecto:
+
+
+![](figuras/gelman-rdd.png)
+
+En general, usar polinomios de orden alto es mala idea, pues la forma general
+de los datos lejos de la discontinuidad puede influir fuertemente la diferencia
+que observamos cerca de la discontinuidad.
+
+
+### Ejemplo: edad mínima de consumo de alcohol {-}
+
+Consideramos datos de  [The Effect of Alcohol Consumption on Mortality: Regression Discontinuity Evidence from the Minimum Drinking Age](https://www.aeaweb.org/articles?id=10.1257/app.1.1.164)
+
+En este caso, queremos ver el efecto causal de permitir legalmente 
+tomar alcohol sobre la mortalidad de jóvenes. La regla administrativa en este caso
+es que a partir de los 21 años es legal que consuman alcohol. 
+
+En este ejemplo particular, los datos se agruparon en cubetas por rangos de edad 
+de 2 meses de edad. Esto no es necesario (podríamos utilizar los datos desagregados
+y un modelo logístico, por ejemplo).
+
+Veamos
+dos ejemplos particulares, muertes en vehículos, suicidios y homicidios:
+
+```{r}
+#| message: false
+#| warning: false
+mlda_tbl <- read_csv("../datos/mlda.csv") |> 
+  select(agecell,  over21, all, homicide, suicide, 
+         `vehicle accidents` = mva, drugs, external, externalother) |> 
+  pivot_longer(cols=c(all:externalother), names_to = "tipo", values_to = "mortalidad") |> 
+  filter(tipo %in% c("vehicle accidents", "suicide", "homicide"))
+head(mlda_tbl)
+ggplot(mlda_tbl, aes(x = agecell, y = mortalidad, group = over21)) + geom_point() +
+  geom_smooth(method = "loess", span = 1, formula = "y ~ x") + facet_wrap(~tipo)
+```
+
+*Ejercicio*: construye modelos de stan para estos datos, 
+como en el ejemplo anterior.
+
+
+
+
+
+
+
+
+
+

@@ -221,7 +221,8 @@ ajuste_jer$draws("y_sim", format = "df") |>
 ```
 
 ::: callout-note
-#Modelos jerárquicos y estimación
+# Modelos jerárquicos y estimación
+
 Los modelos jerárquicos nos permiten ajustar modelos con *agregación parcial*: es
 decir, estimamos parámetros a nivel de grupo con mejor precisión que
 si ajustamos modelos individuales (varianza muy alta) 
