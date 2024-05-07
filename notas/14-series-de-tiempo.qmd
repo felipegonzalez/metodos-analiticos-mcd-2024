@@ -1,0 +1,1191 @@
+# Modelos de espacio de estados
+
+```{r}
+#| code-fold: true
+#| warning: false
+library(tidyverse)
+library(kableExtra)
+library(DiagrammeR)
+locale <- Sys.setlocale("LC_TIME", "es_ES.UTF-8")
+library(lubridate)
+#library(fpp3)
+ggplot2::theme_set(ggplot2::theme_light())
+```
+
+
+
+En esta parte veremos una introducción a los modelos bayesianos dinámicos de espacio
+de estados. Estos modelos engloban otros enfoques (ARIMA, suavizamiento exponencial)
+como casos particulares, y nos permite: 
+
+- Modelar la estructura de una serie de tiempo de forma modular.
+- Mayor flexibilidad en cuanto a las estructuras que podemos usar, y cómo usar
+información acerca de la dinámica de la serie de tiempo (incluyendo aspectos de modelos ARIMA).
+- Una forma estándar de tratar con valores faltantes, series irregulares, o varias observaciones contemporáneas.
+- Una forma estándar de producir pronósticos puntuales, en intervalos, o por distribuciones.
+- Una forma estándar de permitir que el modelo se adapte en el tiempo a cambios
+estructurales (por ejemplo, cambios de patrones de estacionalidad, efectos diferentes
+de covariables, etc.)
+
+Aunque en muchos procesos tiene sentido considerar que la observación $y_t$ es
+una función causal de observaciones pasadas, más generalmente podemos pensar
+que existen *estados* que determinan el proceso generador de la serie. El estado
+en el que se encuentra una proceso en un determinado momento puede tener varias
+componentes, algunas estándar como nivel actual o periodo de estacionalidad,
+pero también otras menos estándar, como niveles de otras variables.
+
+## Modelo de nivel local
+
+En primer lugar, consideraremos modelar la tendencia-ciclo de series con
+el enfoque de espacio de estados. En primer lugar, tenemos una **ecuación
+de observación**, que está dada por
+
+$$y_t = \textrm{nivel}_t + \epsilon_t,$$
+donde las $\epsilon_t \sim N(0,\sigma_\epsilon)$ independientes. Es decir, dado el nivel, las
+observaciones $y_t$ son independientes. Adicionalmente tenemos una **ecuación de
+transición de estados**, que en este caso es simplemente:
+
+$$\textrm{nivel}_t = \textrm{nivel}_{t-1} + \eta_t$$
+donde $\eta_t \sim N(0,\sigma_\eta)$ independientes.
+
+Podemos hacer un diagrama como sigue para esta situación:
+
+```{r}
+#| code-fold: true
+grViz('
+digraph {
+  graph [ranksep = 0.2]
+  node [shape=circle]
+    nt
+    nt1
+    nt2
+    ntm1
+    etm1
+    et
+    et1
+    et2
+  node [shape=plaintext]
+    #    Y1 [label = <Y<SUB>1</SUB>>]
+    dots [label = "..."]
+    Ytm1 [label = <Y<SUB>t-1</SUB>>]
+    Yt [label = <Y<SUB>t</SUB>>]
+    Yt1 [label = <Y<SUB>t+1</SUB>>]
+    Yt2 [label = <Y<SUB>t+2</SUB>>]
+    etm1 [label = <e<SUB>t-1</SUB>>]
+    et [label = <  e<SUB>t. </SUB>>]
+    et1 [label = <e<SUB>t+1</SUB>>]
+    et2 [label = <e<SUB>t+2</SUB>>]
+        ntm1 [label = <n<SUB>t-1</SUB>>]
+    nt [label = <  n<SUB>t  </SUB>>]
+    nt1 [label = <n<SUB>t+1</SUB>>]
+    nt2 [label = <n<SUB>t+2</SUB>>]
+  edge [minlen = 3]
+   #Y1 -> dots
+   #dots -> Ytm1
+   #Ytm1 -> Yt
+   #Yt -> Yt1
+   #Yt1 -> Yt2
+   ntm1 -> Ytm1
+   ntm1 -> nt
+   nt1 -> Yt1
+   nt -> Yt
+   nt2 -> Yt2
+   nt -> nt1
+   nt1 -> nt2
+   #e1 -> Y1
+   etm1 -> Ytm1
+   et -> Yt
+   et1 -> Yt1
+   et2 -> Yt2
+{rank=same;  Ytm1; Yt; Yt1; Yt2}
+{rank=max; ntm1; nt; nt1; nt2}
+{rank=min; etm1; et; et1; et2}
+
+
+}
+', width = 300, height = 150)
+```
+
+Nótese que en esta gráfica, las $y_t$ no son independientes: están correlacionadas
+a través de caminos abiertos que pasan por el estado, que en este caso
+es el nivel de la serie.
+
+::: callout-note
+# Modelos de espacio de estados
+
+Los modelos de espacio de estados para serie de tiempo consisten en
+dos ecuaciones. Si $y_t$ son los datos observados y $\theta_t$ son
+los parámetros que describen el estado, tenemos la ecuación de observación
+$$y_{t} = f(\theta_{t}, \epsilon_t)$$
+Es decir, cómo se relaciona el estado con las observaciones, y una
+ecuación de evolución del estado:
+$$\theta_{t} = g(\theta_{t-1}, \eta_t)$$
+En los modelos dinámicos lineales (DLM), $f$ y $g$ son funciones lineales,
+es decir
+$$y_t = F_t\theta_t + \epsilon_t,$$
+y
+
+$$\theta_t = G_t\theta_{t-1} + R_t\eta_t,$$
+donde suponemos, en general, que $\eta_t \sim N(0,\Sigma_t)$ y 
+$\epsilon_t \sim N(0,S_t)$ son normales multivariadas independientes.
+:::
+
+**Nota**: más adelante veremos detalles de este planteamiento, en particular
+para los DLMs, y por qué
+aún cuando haya dependencias de más largo plazo en estado siempre es
+posible escribir nuestros modelos de esta forma.
+
+En el modelo de nivel local lo reescribimos por conveniencia como:
+
+$$y_t = \alpha_t + \epsilon_t,$$
+donde las $\epsilon_t \sim N(0,\sigma_\epsilon)$ independientes, y
+
+$$\alpha_t = \alpha_{t-1} + \eta_t$$
+donde $\eta_t \sim N(0,\sigma_\eta)$ independientes. En este caso, $F_t=1$ , $G_t=1$,
+ y $R_t =1$ según la notación de arriba.
+ 
+
+Para completar este modelo, es necesario:
+
+1. Poner distribuciones previas al tamaño del ruido de la medición $p(\sigma_\epsilon)$ y a la evolución del nivel $p(\sigma_\eta)$.
+2. Poner una distribución previa al estado inicial $p(\alpha_1)$
+
+
+Usualmente consideramos que el nivel debe tener movimientos relativamente suaves,
+de manera que $p(\sigma_\eta)$ debe estar adecuadamente concentrada cerca de 0.
+
+## Análisis retrospectivo
+
+Existen dos tipos de análisis que podemos hacer de una serie de
+tiempo: análisis retrospectivo o análisis en línea. El primero es más
+útil para entender el comportamiento de la serie del tipo dada toda
+la información que tenemos, y el segundo es más útil cuando buscamos 
+hacer pronósticos.
+
+Comenzaremos estudiando los modelos de espacio de estados desde un punto
+de vista retrospectivo.
+
+::: callout-note
+# Análisis retrospectivo
+
+Una vez que tenemos todos los datos de la serie, ¿qué podemos
+decir de su evolución en el tiempo?
+
+Este análisis busca examinar las distribuciones $p(\theta_t|y_1,y_2,\ldots, y_T),$
+es decir, examinar la posterior de los estados dado el conocimiento completo de la serie. 
+
+:::
+
+
+
+## Ejemplo: nivel del río Nilo
+
+Empezamos con un ejemplo clásico y simple, que consiste en medidas anuales del
+nivel del río Nilo. 
+
+Usaremos *Stan* para ver los detalles de la implementación del modelo
+de nivel local:
+
+```{r}
+#| message: false
+library(cmdstanr)
+source("../R/limpiar_draws.R")
+mod_archivo <- "./src/series-de-tiempo/modelo-nivel-local.stan"
+modelo_nivel <- cmdstan_model(mod_archivo)
+read_lines(mod_archivo, skip = 0, n_max = 100) |> 
+  cat(sep = "\n")
+```
+
+
+```{r}
+#| message: false
+sims <- modelo_nivel$sample(
+  data = list(y = Nile, N = length(Nile),  s_obs = 200, q = 0.5, n_h = 4,
+              ii_obs = 1:length(Nile), N_obs = length(Nile)),
+  parallel_chains = 4, refresh = 1000, init = 0.1, step_size = 0.1,
+  adapt_delta = 0.99)
+```
+
+Mostramos primero nuestra estimación de las desviaciones estándar
+para el nivel y para la observación:
+
+```{r}
+sims$summary(c("sigma_obs", "sigma_nivel")) |> 
+  select(variable, mean, q5, q95, rhat)
+```
+
+Y ahora resumimos y mostramos cómo se ve el nivel inferido bajo nuestro modelo.
+
+```{r}
+#| message: false
+#| warning: false
+sims_nivel_tbl <- sims$draws(c("mu"), format = "df") |> 
+  limpiar_draws(c("mu")) 
+media_tbl <- sims_nivel_tbl |>  
+  group_by(variable, t, .groups = "drop") |> 
+  summarise(media = mean(valores), q5 = quantile(valores, 0.05),
+            q95 = quantile(valores, 0.95))
+```
+
+
+```{r}
+ggplot(sims_nivel_tbl |> filter(variable == "mu")) + 
+  geom_line(aes(x = t, y = valores, group = .draw), 
+            alpha = 0.01, size = 0.1, colour = "red") +
+  geom_line(data = media_tbl, aes(x = t, y = media), colour = "red") +
+  geom_point(data = tibble(y = Nile), aes(x = 1:length(Nile), y = Nile))
+```
+
+En esta gráfica:
+
+- La línea roja es el valor esperado del nivel (que originalmente no es observado).
+- La nube roja muestra varias simulaciones del nivel. Con esto entendemos cuánta incertidumbre tenemos acerca de la verdadera posición del nivel en cada momento.
+- Nótese que la nube roja no tiene por qué cubrir los valores observados de la
+serie, pues la ecuación de observación tiene incertidumbre adicional.
+- Extendimos la estimación del estado para cuatro años adicionales. Nota cómo
+conforme avanza el tiempo perdemos certidumbre acerca de dónde se encontrará el nivel.
+- Nuestro modelo tiene 100 observaciones y 100 + 2 parámetros: 
+las dos desviaciones estándar de modelos de observación y de
+estado, y los 100 niveles no observados.
+
+::: callout-tip
+# Residuales y análisis retrospectivo
+
+En el análisis retrospectivo, los residuales entre observaciones y
+ajustados *no* se pueden interpretar como errores de predicción a un paso:
+estos residuales incluyen información de toda la serie (valores pasados
+y futuros del tiempo $t$ que estamos considerando).
+
+:::
+
+
+Podemos hacer chequeos predictivos posteriores simulando distintas
+series a partir de los parámetros ajustados, y viendo si la estructura 
+difiere (y cómo difiere) de los datos observados. En las siguientes gráficas,
+sólo una de ellas tiene los datos reales, y el resto son simuladas del modelo:
+
+```{r}
+#| message: false
+#| warning: false
+obs_rep_tbl <- sims$draws(c("y_rep"), format = "df") |> 
+  limpiar_draws(c("y_rep")) 
+resumen_tbl <- obs_rep_tbl |> 
+  filter(.draw <= 10) 
+```
+```{r}
+resumen_tbl <- resumen_tbl |> 
+  bind_rows(tibble(t = 1:length(Nile), valores = Nile, .draw = 11))
+ggplot(resumen_tbl, aes(x = t, y = valores)) + geom_line() +
+  facet_wrap(~ .draw)
+```
+
+Como es usual, cualquier resumen relevante puede usarse para hacer
+chequeos predictivos posteriores, por ejemplo, las gráficas de acutocorrelación
+de datos simulados (una caja tiene los verdaderos datos observados):
+
+```{r}
+library(tsibble)
+library(feasts)
+resumen_tbl |> as_tsibble(index = t, key = .draw) |> 
+  filter(.draw > 5, t <= 100) |> 
+  ACF(valores) |> autoplot()
+```
+
+::: callout-note
+# Diagnósticos usuales
+
+- Es posible hacer chequeos posteriores predictivos como con cualquier modelo
+bayesiano generativo.
+- Veremos más adelante un diagnóstico importante que por ahora excluímos: la 
+verificación de que las predicciones un paso hacia adelante cumplen ciertas
+propiedades. Una de las más importantes es que no tengan autocorrelación.
+
+:::
+
+Finalmente, podemos ver cómo se ven **pronósticos** bajo este modelo. En este
+caso, en la parte de cantidades generadas incluímos el código relevante. Nuestro
+pronóstico podríamos graficarlo como sigue (con intervalos de 90%, por ejemplo):
+
+```{r}
+#| message: false
+#| warning: false
+pronosticos_tbl <- sims$draws(c("y_f"), format = "df") |> 
+  limpiar_draws(c("y_f")) |> 
+  group_by(variable, t) |> 
+  summarise(media = mean(valores), q5 = quantile(valores, 0.05),
+            q95 = quantile(valores, 0.95)) |> 
+  mutate(t = t + length(Nile))
+ggplot(sims_nivel_tbl |> filter(variable == "mu")) + 
+  geom_line(aes(x = t, y = valores, group = .draw), 
+            alpha = 0.01, size = 0.1, colour = "red") +
+  geom_line(data = media_tbl, aes(x = t, y = media), colour = "red") +
+  geom_point(data = tibble(y = Nile), aes(x = 1:length(Nile), y = Nile)) +
+  geom_ribbon(data = pronosticos_tbl, aes(x = t, y = media, ymin = q5,
+                                         ymax = q95), alpha = 0.1) +
+  geom_point(data = pronosticos_tbl, aes(x = t, y = media))
+```
+
+### Ejemplo de desajuste {-}
+
+Supongamos que en nuestro ejemplo no utilizáramos nivel dinámico,
+sino constante.
+
+```{r}
+sims_desajuste <- modelo_nivel$sample(
+  data = list(y = Nile, N = length(Nile),  s_obs = 200, q = 0.00001, 
+              n_h = 4, ii_obs = 1:length(Nile), N_obs = length(Nile)),
+  parallel_chains = 4, refresh = 1000, init = 0.1, step_size = 0.1,
+  adapt_delta = 0.99)
+```
+
+Repetimos nuestros chequeos posteriores predictivos:
+
+```{r}
+obs_rep_tbl <- sims_desajuste$draws(c("y_rep"), format = "df") |> 
+  limpiar_draws(c("y_rep")) 
+resumen_tbl <- obs_rep_tbl |> 
+  filter(.draw <= 10) #|> 
+  #group_by(variable, t, indice, .draw) |> 
+  #summarise(media = mean(valores), q5 = quantile(valores, 0.05),
+  #          q95 = quantile(valores, 0.95))
+```
+```{r}
+resumen_tbl <- resumen_tbl |> 
+  bind_rows(tibble(t = 1:length(Nile), valores = Nile, .draw = 11))
+ggplot(resumen_tbl, aes(x = t, y = valores)) + geom_line() +
+  facet_wrap(~ .draw)
+```
+
+```{r}
+resumen_tbl |> as_tsibble(index = t, key = .draw) |> 
+  filter(.draw > 7, t <= 100) |> 
+  ACF(valores) |> autoplot()
+```
+
+En todas estas gráficas podemos identificar claramente donde están los
+datos. Nuestro modelo de nivel constante (no dinámico) no ajusta a estos datos simples.
+
+## Valores faltantes
+
+Existe una manera estándar de lidiar con valores faltantes en la serie
+de tiempo cuando usamos modelos de espacio de estados:
+
+- La ecuación de evolución del estado no cambia, la aplicamos aún cuando
+no tengamos observaciones en esos tiempos.
+- No incluimos términos en la posterior que involucran valores faltantes.
+
+Por ejemplo, vamos a producir algunas mediciones faltantes en la serie del Río
+Nilo:
+
+```{r}
+Nile_f <- Nile
+Nile_f[50:58] <- NA
+Nile_f[5:6] <- NA
+ii_obs <- which(!is.na(Nile_f))
+y_f <- ifelse(is.na(Nile_f), -1, Nile_f)
+```
+
+Y ajustamos el mismo modelo:
+
+```{r}
+#| message: false
+sims <- modelo_nivel$sample(
+  data = list(y = y_f, N = length(Nile_f),  s_obs = 200, q = 0.5, n_h = 4,
+              N_obs = length(ii_obs),
+              ii_obs = ii_obs),
+  parallel_chains = 4, refresh = 1000, init = 0.1, step_size = 0.1,
+  adapt_delta = 0.99)
+```
+
+
+```{r}
+#| message: false
+#| warning: false
+sims_nivel_tbl <- sims$draws(c("mu"), format = "df") |> 
+  limpiar_draws(c("mu")) 
+media_tbl <- sims_nivel_tbl |>  
+  group_by(variable, t) |> 
+  summarise(media = mean(valores), q5 = quantile(valores, 0.05),
+            q95 = quantile(valores, 0.95))
+```
+
+
+```{r}
+ggplot(sims_nivel_tbl |> filter(variable == "mu")) + 
+  geom_line(aes(x = t, y = valores, group = .draw), 
+            alpha = 0.02, size = 0.1, colour = "red") +
+  geom_line(data = media_tbl, aes(x = t, y = media), colour = "red") +
+  geom_point(data = tibble(y = Nile_f), aes(x = 1:length(Nile), y = y))
+```
+
+- En este caso, vemos que el la posterior del nivel en los valores
+desconocidos se amplía, lo cual refleja el hecho de que no tenemos
+observaciones que informen de su localización.
+
+
+## Intervenciones
+
+Cuando consideramos análisis secuencial (veremos más adelante) y 
+detectamos desajustes o cambios
+grandes en la serie, es posible agregar incertidumbre en esos momentos,
+lo cual permite al modelo hacer evaluar reajustes de los parámetros que
+son más consistentes con datos y modelo. En este ejemplo, en el tiempo
+29 es posible diagnosticar un cambio de nivel que es incosistente con lo
+observado anteriormente. Podemos hacer una intervención en ese tiempo
+ampliando la varianza en la evolución del nivel:
+
+- En este caso, el modelo de observación no es modificado.
+- Ampliamos la varianza en momentos donde esperamos cambios de estado grandes (en este caso el nivel).
+
+```{r}
+mod_archivo_int <- "./src/series-de-tiempo/modelo-nivel-local-int.stan"
+modelo_nivel <- cmdstan_model(mod_archivo_int)
+read_lines(mod_archivo_int, skip = 20, n_max = 25) |> 
+  cat(sep = "\n")
+```
+
+
+```{r}
+#| message: false
+sims <- modelo_nivel$sample(
+  data = list(y = Nile, N = length(Nile),  s_obs = 200, q = 0.5, n_h = 4,
+              ii_obs = 1:length(Nile), N_obs = length(Nile),
+              t_intervencion = 29),
+  parallel_chains = 4, refresh = 1000, init = 0.1, step_size = 0.1,
+  adapt_delta = 0.995)
+```
+
+Mostramos primero nuestra estimación de las desviaciones estándar
+para el nivel y para la observación:
+
+```{r}
+#| message: false
+#| warning: false
+sims$summary(c("sigma_obs", "sigma_nivel")) |> 
+  select(variable, mean, q5, q95)
+```
+
+Y ahora resumimos y mostramos cómo se ve el nivel inferido bajo nuestro modelo.
+
+```{r}
+#| message: false
+#| warning: false
+sims_nivel_tbl <- sims$draws(c("mu"), format = "df") |> 
+  limpiar_draws(c("mu")) 
+media_tbl <- sims_nivel_tbl |>  
+  group_by(variable, t) |> 
+  summarise(media = mean(valores), q5 = quantile(valores, 0.05),
+            q95 = quantile(valores, 0.95))
+```
+
+
+```{r}
+#| fig-width: 7
+#| fig-height: 3
+ggplot(sims_nivel_tbl |> filter(variable == "mu")) + 
+  geom_line(aes(x = t, y = valores, group = .draw), 
+            alpha = 0.01, size = 0.1, colour = "red") +
+  geom_line(data = media_tbl, aes(x = t, y = media), colour = "red") +
+  geom_point(data = tibble(y = Nile), aes(x = 1:length(Nile), y = Nile))
+```
+
+- En este modelo, la evolución general del nivel es más suave, pues
+ahora estamos absorbiendo el cambio de nivel con una intervención en 
+la varianza al tiempo 29.
+- Nótese que la única modificación al modelo es ampliar la incertidumbre 
+acerca del estado al tiempo 29. 
+- Compara la estimación de los parámetros $\sigma_\eta, \sigma_epsilon$ en
+los dos modelos: como es de esperarse, en este segundo modelo con un punto
+de cambio la evolución del nivel es más suave.
+
+
+## Modelo de nivel local con tendencia
+
+El siguiente modelo que consideramos aplica a series que tienen tendencia
+y ciclos más definidos. En este caso, la ecuación de observación es la misma:
+
+$$y_t = \mu_t + \epsilon_t,$$
+pero las ecuaciones de evolución de estado son ahora
+
+$$\mu_t = \mu_{t-1} + \nu_{t-1} + \eta_{1,t}$$
+$$\nu_t = \nu_{t-1} + \eta_{2, t}$$
+Nótese que en este caso buscamos aprender tendencias además de nivel local. Las
+tendencias son localmente lineales, pero pueden adaptarse en el tiempo
+con la estructura de la serie.
+
+En este caso veremos un ejemplo de @commandeur2007introduction, donde
+se examinan muertes por accidentes automovilísticos en Finlandia.
+
+```{r}
+#| fig-width: 7
+#| fig-height: 3
+#| message: false
+finnish_tbl <- read_table("../datos/NorwayFinland.txt") |> 
+  as_tsibble(index = year)
+head(finnish_tbl)
+autoplot(finnish_tbl, Finnish_fatalities)
+```
+```{r}
+modelo_tend <- "./src/series-de-tiempo/modelo-nivel-local-tend.stan"
+mod_1 <- cmdstan_model(modelo_tend)
+read_lines(modelo_tend, skip = 13, n_max = 43) |> 
+  cat(sep = "\n")
+```
+
+
+```{r}
+N <- nrow(finnish_tbl)
+sims <- mod_1$sample(
+  data = list(y = finnish_tbl$Finnish_fatalities,  
+              N = N,  s_obs = 200, 
+              q_nivel = 0.05,
+              q_tend = 0.05,
+              n_h = 3,
+              ii_obs = 1:N, N_obs = N),
+  iter_sampling = 3000, iter_warmup = 3000,
+  parallel_chains = 4, refresh = 1000,
+  adapt_delta = 0.9995)
+```
+
+```{r}
+sims$summary(c("sigma_obs", "sigma_nivel", "sigma_tend")) |> 
+  select(variable, mean, q5, q95, rhat) |> 
+  mutate(across(where(is_double), ~ round(.x, 3)))
+```
+
+
+
+```{r}
+#| message: false
+#| warning: false
+tiempo_tbl <- select(finnish_tbl, year) |> 
+  mutate(t = row_number()) |> 
+  bind_rows(tibble(t = 35:37, year = 2004:2006))
+sims_nivel_tbl <- sims$draws(c("mu"), format = "df") |> 
+  limpiar_draws(c("mu")) |> 
+  left_join(tiempo_tbl)
+media_tbl <- sims_nivel_tbl |>  
+  group_by(variable, t, year) |> 
+  summarise(media = mean(valores), q5 = quantile(valores, 0.05),
+            q95 = quantile(valores, 0.95))
+```
+
+Notamos ahora que nuestro pronóstico tiene una tendencia creciente,
+pues la incluimos en el modelo:
+
+```{r}
+#| fig-width: 7
+#| fig-height: 3
+ggplot(sims_nivel_tbl |> filter(variable == "mu")) + 
+  geom_line(aes(x = year, y = valores, group = .draw), 
+            alpha = 0.01, size = 0.1, colour = "red") +
+  geom_line(data = media_tbl, aes(x = year, y = media), colour = "white") +
+  geom_point(data = finnish_tbl, aes(x = year, y = Finnish_fatalities))
+```
+Podemos ver los cambios de tendencia en el modelo como componente separada,
+donde vemos que en general la tendencia es a la baja, aunque entre 1980
+y 1990 tuvo periodos de incremento:
+
+```{r}
+#| message: false
+#| warning: false
+sims_nivel_tbl <- sims$draws(c("nu"), format = "df") |> 
+  limpiar_draws(c("nu")) |> 
+  left_join(tiempo_tbl)
+ggplot(sims_nivel_tbl |> filter(variable == "nu", year < 2004)) + 
+  geom_line(aes(x = year, y = valores, group = .draw), 
+            alpha = 0.01, size = 0.05, colour = "red") +
+  geom_hline(yintercept = 0) + ylab("Tendencia") 
+```
+
+::: callout-note
+# Nivel local con tendencia
+
+Para escribir el modelo de nivel local con tendencia, el estado
+se puede definir como el vector
+
+$$
+\theta_t  = 
+\begin{pmatrix}
+\mu_t \\
+\nu_t
+\end{pmatrix}
+$$
+y podemos
+utilizar nuestra notación de arriba con:
+
+$$
+F_t = F = 
+\begin{pmatrix}
+1 \\
+0
+\end{pmatrix},\, G_t = G = 
+\begin{pmatrix}
+1 & 1\\
+0 & 1
+\end{pmatrix}
+$$
+:::
+
+La ecuación de observación es entonces
+
+$$
+y_t = \begin{pmatrix}
+1 & 0
+\end{pmatrix}
+\begin{pmatrix}
+\mu_t \\
+\nu_t
+\end{pmatrix} + \epsilon_t
+$$
+y la ecuación de evolución del estado es
+
+$$
+\begin{pmatrix}
+\mu_{t+1}  \\
+\nu_{t+1}
+\end{pmatrix} = 
+\begin{pmatrix}
+1 & 1\\
+0 & 1
+\end{pmatrix}
+\begin{pmatrix}
+\mu_{t}  \\
+\nu_{t}
+\end{pmatrix}
++
+\begin{pmatrix}
+\eta_{1,t} \\
+\eta_{2,t}
+\end{pmatrix} 
+$$
+
+
+
+## Modelos con estacionalidad fija
+
+Antes de mostrar estacionalidad dinámica, mostramos cómo construiríamos
+el espacio de estados para un modelo con nivel local, sin tendencia y con
+estacionalidad *fija*. El modelo de observación
+será ahora:
+
+$$y_t = \mu_t + \gamma_{1,t} + \epsilon_t$$
+donde $\gamma_{1,t}$ es el coeficiente de estacionalidad. 
+
+Para simplificar por el momento, 
+consideramos datos en trimestres. Como la estacionalidad es fija,
+ hay cuatro parámetros $\beta_1,\beta_2,\beta_3,\beta_4$, que deben
+ ser parte del espacio de estados, tales
+que (suponiendo que la serie comienza en el primer trimestre):
+
+Para $t=1$, los estados los pondremos como
+
+$$
+\gamma_{1,1} = \beta_1,\gamma_{2,1} =\beta_2,\gamma_{3,1} = \beta_3,\gamma_{4,1} = \beta_4
+$$
+así que para $t=2$ podemos poner:
+
+$$
+\gamma_{1,2} = \beta_2,\gamma_{2,2} =\beta_3,\gamma_{3,2} = \beta_4,\gamma_{4,2} = \beta_1
+$$
+$$
+\gamma_{1,3} = \beta_3,\gamma_{2,3} =\beta_4,\gamma_{3,3} = \beta_1,\gamma_{4,3} = \beta_2
+$$
+y así sucesivamente, los coeficientes del estado para la estacionalidad
+$\gamma_{1,t},\gamma_{2,t},\gamma_{3,t},\gamma_{4,t}$ son una rotación
+de $\beta_1,\beta_2,\beta_3,\beta_4$.
+
+
+Podemos escribir entonces el estado (suponiendo nivel local sin tendencia) como sigue:
+
+$$\theta_1^* = (\mu_1, \beta_1, \beta_2, \beta_3, \beta_4)^t = (\mu_1, \gamma_{1,1}, \gamma_{2,1}, \gamma_{3,1}, \gamma_{4,1})^t,$$
+$$\theta_2^* = (\mu_2, \beta_2, \beta_3, \beta_4, \beta_1)^t = (\mu_2, \gamma_{1,2}, \gamma_{2,2}, \gamma_{3,2}, \gamma_{4,2})^t,$$
+$$\theta_3^* = (\mu_3, \beta_3, \beta_4, \beta_1, \beta_2)^t = (\mu_3, \gamma_{1,3}, \gamma_{2,3}, \gamma_{3,3}, \gamma_{4,3})^t,$$
+Observando estas ecuaciones,  la matriz de evolución del
+sistema es una matriz que rota las componentes correspondientes a la estacionalidad:
+
+$$
+\theta_{t+1}^* = 
+G_t \theta_t^* + 
+\begin{pmatrix}
+\eta_t \\
+0 \\
+0 \\
+0 \\
+0 \\
+\end{pmatrix}
+=
+\begin{pmatrix}
+1 & 0 & 0 & 0 & 0\\
+0 & 0 & 1 & 0 & 0\\
+0 & 0 & 0 & 1 & 0\\
+0 & 0 & 0 & 0 & 1\\
+0 & 1 & 0 & 0 & 0\\
+\end{pmatrix}
+\theta_t^* +
+\begin{pmatrix}
+\eta_t \\
+0 \\
+0 \\
+0 \\
+0 \\
+\end{pmatrix}
+$$
+Puedes verificar qué pasa con los vectores $\theta_2^*,\theta_3^*$ mostrados arriba. La matriz $F_t$ tiene que sacar el primer valor de estacionalidad $\gamma_{1,t}$ para concordar con el modelo de observaciones:
+
+$$
+y_t = \mu_t + \gamma_{1,t} + \epsilon_t = F_t\theta_t^* + \epsilon_t=
+\begin{pmatrix}
+1 & 1 & 0 & 0 & 0
+\end{pmatrix}
+\theta_t^* + \epsilon_t
+$$
+El único problema con este modelo de estacionalidad fija es 
+que está sobreparametrizado. Por razones de ajuste y de interpretación,
+es más conveniente que se cumpla alguna restricción, por ejemplo:
+
+$$\beta_1 + \beta_2 + \beta_3 + \beta_4 =0,$$
+
+de modo que para cualquier $t$, tenemos que:
+
+$$\gamma_{1,t} + \gamma_{2,t} + \gamma_{3,t} + \gamma_{4,t}=0.$$
+Podemos reducir entonces nuestro espacio de estados en una dimensión,
+pues siempre uno de los coeficientes en cada periodo es el negativo de la suma
+del resto. Por ejemplo, si nuestro nuevo espacio de estado lo definimos como
+
+$$
+\theta_1 = (\mu_1, \gamma_{1,1}, \gamma_{4,1}, \gamma_{3,1})^t
+$$
+entonces (haz el cálculo sustiyendo las $\beta$ fijas si este argumento te confunde):
+
+$$
+\theta_{2} = (\mu_{2}, \gamma_{1,2}, \gamma_{4,2}, \gamma_{3,2})^t = (\mu_2, 
+-(\gamma_{1,1} + \gamma_{4,1} + \gamma_{3,1}),
+\gamma_{1,1}, \gamma_{4,1})^t
+$$
+Y en términos matriciales
+
+$$
+\theta_{t+1} = G_t\theta_t +
+\begin{pmatrix}
+\eta_t \\
+0 \\
+0 \\
+0 \\
+\end{pmatrix}
+=
+\begin{pmatrix}
+1 & 0 & 0 & 0 \\
+0 & -1 & -1 & -1 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+\end{pmatrix}
+\theta_t
++
+\begin{pmatrix}
+\eta_t \\
+0 \\
+0 \\
+0 \\
+\end{pmatrix},
+$$
+y así sucesivamente para $t=1,2,\ldots$.
+
+## Modelos con estacionalidad dinámica
+
+Para hacer la estacionalidad dinámica, podemos agregar simplemente
+
+$$
+\theta_{t+1} = G_t\theta_t +
+\begin{pmatrix}
+\eta_t \\
+\omega_t \\
+0 \\
+0 \\
+\end{pmatrix}
+=
+\begin{pmatrix}
+1 & 0 & 0 & 0 \\
+0 & -1 & -1 & -1 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+\end{pmatrix}
+\theta_t
++
+\begin{pmatrix}
+\eta_t \\
+\omega_t \\
+0 \\
+0 \\
+\end{pmatrix},
+$$
+
+es decir, le agregamos $\gamma_{1,t+1} = - (\gamma_{1,t} +\gamma_{2,t}+\gamma_{3,t})$ una perturbación $\omega_t \sim N(0, \sigma_\omega)$. Simplificando la notación,
+si la ecuación de observación es
+
+$$y_t = \mu_t + \gamma_t + \epsilon_t.$$
+la ecuación de transición para el término $\gamma_t$ de estacionalidad es
+
+$$\gamma_t = - (\gamma_{t-3} + \gamma_{t-2} + \gamma_{t-1}) + \omega_t$$
+
+
+Abajo podemos ver una implementación en Stan:
+
+```{r}
+modelo_est <- "./src/series-de-tiempo/modelo-nivel-local-tend-est.stan"
+mod_est_1 <- cmdstan_model(modelo_est)
+read_lines(modelo_est, skip = 28, n_max = 42) |> 
+  cat(sep = "\n")
+```
+
+### Ejemplo: cinturones de seguridad
+
+En este ejemplo también clásico examinamos la serie de tiempo
+muertes de conductores en UK (que viajan en asientos traseros del automóvil):
+
+```{r}
+uk_drivers <- Seatbelts |> as_tsibble()
+head(uk_drivers)
+uk_rear <- uk_drivers |> filter(key == "rear")
+```
+```{r}
+#| message: false
+#|
+sims <- mod_est_1$sample(
+  data = list(y = uk_rear$value,  
+              N = nrow(uk_rear),  s_obs = 50, 
+              q_nivel = 0.5,
+              q_tend = 1e-6, # sin tendencia
+              n_h = 6,
+              ii_obs = 1:nrow(uk_rear), N_obs = nrow(uk_rear),
+              periodo = 12),
+  iter_sampling = 1000, iter_warmup = 1000,
+  parallel_chains = 4, refresh = 1000,
+  adapt_delta = 0.99)
+```
+
+
+
+```{r}
+sims$summary(c("sigma_obs", "sigma_nivel", "sigma_tend", "sigma_est")) |> 
+  select(variable, mean, q5, q95, rhat)  |> 
+  mutate(across(where(is_double), ~ round(.x, 5)))
+```
+
+
+```{r}
+#| message: false
+#| warning: false
+sims_nivel_tbl <- sims$draws(c("alpha"), format = "df") |> 
+  limpiar_draws(c("alpha"))
+sims_ajuste_tbl <- sims$draws(c("mu"), format = "df") |> 
+  limpiar_draws(c("mu"))
+media_tbl <- sims_ajuste_tbl |>  
+  group_by(variable, t) |> 
+  summarise(media = mean(valores), q5 = quantile(valores, 0.05),
+            q95 = quantile(valores, 0.95))
+```
+
+Veamos nuestro ajuste y pronóstico:
+
+```{r}
+ggplot(sims_ajuste_tbl |> filter(variable == "mu")) + 
+  geom_line(aes(x = t, y = valores, group = .draw), 
+            alpha = 0.01, size = 0.1, colour = "red") +
+  geom_line(data = media_tbl, aes(x = t, y = media), colour = "orange") +
+  geom_point(data = Seatbelts |> as_tibble() |> mutate(t = row_number()), 
+             aes(x = t, y = rear))
+```
+Podemos también graficar la componente de estacionalidad, que vemos
+que es considerablemente estable:
+
+```{r}
+#| message: false
+#| warning: false
+sims_est_tbl <- sims$draws(c("gamma"), format = "df") |> 
+  limpiar_draws(c("gamma"))
+media_tbl <- sims_est_tbl |>  
+  group_by(variable, t) |> 
+  summarise(media = mean(valores), q5 = quantile(valores, 0.05),
+            q95 = quantile(valores, 0.95))
+ggplot(sims_est_tbl |> filter(variable == "gamma")) + 
+  geom_line(aes(x = t, y = valores, group = .draw), 
+            alpha = 0.01, size = 0.05, colour = "red") + 
+  geom_line(data = media_tbl, aes(x = t, y = media), colour = "black") 
+```
+
+
+
+## Construcción modular de modelos
+
+
+Agregando este nuevo módulo de estacionalidad a nuestro modelo de nivel 
+local con tendencia, obtenemos
+que la ecuación de observación es ahora (para periodo $s=4$):
+
+$$
+y_t = \begin{pmatrix}
+1 & 0 & 1 & 0 & 0 & 0
+\end{pmatrix}
+\theta_t + \epsilon_t
+$$
+donde 
+
+$$
+\theta_{t+1} = 
+\begin{pmatrix}
+\mu_{t+1} \\
+\nu_{t+1} \\ 
+\gamma_{t+1} \\
+\gamma_{t}\\
+\gamma_{t-1}\\
+\end{pmatrix}
+= G \theta_t +R\eta_t = 
+G
+\begin{pmatrix}
+\mu_t \\
+\nu_t \\ 
+\gamma_{t} \\
+\gamma_{t-1}\\
+\gamma_{t-2}\\
+\end{pmatrix} +
+R
+\begin{pmatrix}
+\eta_{1,t} \\
+\eta_{2,t} \\
+\omega_{t} \\
+\end{pmatrix}
+$$
+donde
+
+$$
+G=
+\begin{pmatrix}
+1 & 1 & & & \\
+0 & 1 &\\ 
+ & & &  -1 & -1 & -1\\
+ & & &  1 & 0 & 0\\
+ & & & 0 & 1 & 0 \\
+\end{pmatrix}
+$$
+y 
+
+$$
+R=
+\begin{pmatrix}
+1 & 0 & & & \\
+0 & 1 &\\ 
+ & & & 1 \\ 
+ & & & 0\\ & & & 0 \\ & & & 0\\
+\end{pmatrix}
+$$
+
+Como vemos, las matrices $G_t$ y $F_t$ están organizadas en bloques,
+una para cada componente del modelo. 
+
+De esta manera, podemos agregar distintas componentes a nuestros modelos
+de manera modular. La matriz $G$ está organizada en bloques a lo a largo
+de su diagonal, un bloque para cada componente del modelo. Igualmente,
+la matriz $F$ está separada por bloques que corresponden a las componentes.
+
+### Ejemplo {-}
+
+En las aplicaciones originales de seguimiento de objetos basado en sensores
+ruidosos, el estado que nos interesa es la posición y velocidad de un objeto:
+
+$$\theta_t = (x_{i,t}, y_{i, t}, \dot x_{i,t}, \dot y_{i,t})$$
+Con matriz de transición:
+
+$$
+G = 
+\begin{pmatrix}
+1 & 0 & \delta_t & 0 \\
+0 & 1 &   0 & \delta_t\\
+0 & 0 &   1 & 0\\
+0 & 0 &   0 & 1\\
+\end{pmatrix}
+$$
+donde $\delta_t$ es el tiempo transcurrido entre mediciones. Cada una
+de estos tiene una perturbación aleatoria. Para la
+ecuación de observación, si las posiciones
+medidas por el sensor son pares de coordenadas $y_{1,t},y_{2,t}$, y la matriz
+$F$ es entonces
+
+$$
+F = 
+\begin{pmatrix}
+1 & 0 & 0 & 0 \\
+0 & 1 &   0 & 0\\
+\end{pmatrix}
+$$
+y en este ejemplo podemos usar errores normales con varianza conocida (precisión
+del sensor).
+
+Si recordamos nuestros programas de Stan, nota que nada impide que podamos
+utilizar lecturas de varios sensores. Simplemente es necesario ponerlos
+como datos que informan los mismos parámetros. La estructura del error puede
+ser independiente o correlacionada, dependiendo de la naturaleza de los 
+distintos sensores.
+
+
+
+## Componentes de regresión dinámica
+
+Finalmente, veremos cómo agregar variables explicativas a modelos, lo
+cual puede ser especialmente útil para análisis retrospectivo, o cuando
+tales variables están disponibles antes que las que queremos 
+pronosticar (como en *nowcasting*).
+
+En nuestro primer ejemplo, pretendemos medir el efecto de la ley
+de cinturones de seguridad en UK. Utilizaremos la variable de muertes
+y heridos de gravedad de pasajeros en la parte frontal del automóvil:
+
+```{r}
+autoplot(uk_drivers |> filter(key %in% c("front", "rear")))
+uk_front <- filter(uk_drivers, key == "front")
+law <- filter(uk_drivers, key == "law")
+```
+
+
+
+```{r}
+modelo_est <- "./src/series-de-tiempo/modelo-seatbelts-reg-estatica.stan"
+mod_est_1 <- cmdstan_model(modelo_est)
+read_lines(modelo_est, skip = 28, n_max = 42) |> 
+  cat(sep = "\n")
+```
+
+
+```{r}
+#| message: false
+sims <- mod_est_1$sample(
+  data = list(y = log(uk_front$value),  
+              N = nrow(uk_front),  s_obs = 1, 
+              q_nivel = 0.5,
+              q_tend = 0.1,
+              q_reg = 0.5,
+              n_h = 0,
+              ii_obs = 1:nrow(uk_front), N_obs = nrow(uk_front),
+              periodo = 12,
+              x = law$value),
+  iter_sampling = 2000, iter_warmup = 2000,
+  parallel_chains = 4, refresh = 1000, init = 0.01,
+  step_size = 0.01,
+  adapt_delta = 0.995)
+```
+
+
+```{r}
+sims$summary(
+  c("sigma_obs", "sigma_nivel", "sigma_tend", "sigma_est", 
+    "beta")) |> 
+  select(variable, mean, q5, q95, rhat) |> 
+  mutate(across(where(is.double), ~ round(.x, 6)))
+```
+
+El coeficiente de la variable dummy que indica
+la presencia de la ley de usar cinturón de seguridad redujo en alrededor de 35%
+el número de muertes o heridos graves en accidentes de pasajeros viajando
+en los asientos delanteros,
+controlando por cambios posibles de nivel de la serie y estacionalidad. Bajo el supuesto
+de que no hay puertas traseras (lo cual no es necesariamente cierto en general) esta sería una estimación causal.
+
+```{r}
+sims_est_tbl <- sims$draws(c("mu_sin_est", "alpha"), format = "df") |> 
+  limpiar_draws(c("mu_sin_est", "alpha"))
+media_tbl <- sims_est_tbl |>  
+  group_by(variable, t) |> 
+  summarise(media = mean(valores), q5 = quantile(valores, 0.05),
+            q95 = quantile(valores, 0.95))
+
+ggplot(sims_est_tbl |> filter(variable == "mu_sin_est")) + 
+  geom_line(aes(x = t, y = valores, group = .draw), 
+            alpha = 0.01, size = 0.05, colour = "red") +
+  geom_line(data = media_tbl, aes(x = t, y = media, colour = variable)) +
+  geom_vline(xintercept = which(law$value==1)[1], colour = "gray") +
+   geom_point(data = Seatbelts |> as_tibble() |> mutate(t = row_number()), 
+             aes(x = t, y = log(front)))
+```
+
+En este ejemplo usamos el modelo de observaciones dado por
+
+$$y_t = \mu_t + \gamma_t + \beta x_t + \epsilon_t$$
+dond $x_t$ es la variable dummy que indica la aplicación de la ley de
+cinturones de seguridad. En general, podemos usar más covariables
+apropiadas y coeficientes dinámicos:
+
+$$y_t = \mu_t + \gamma_t + \beta_t x_t + \epsilon_t$$
+En este caso, podemos definir el estado como:
+
+$$\theta_t = (\mu_t, \nu_t, \gamma_{1,t},\ldots,\gamma_{s,t}, \beta_{1,t},\beta_{2,t},
+\ldots,\beta_{p,t})^t,$$
+
+La ecuación de observación es:
+
+$$y_t = F_t\theta_t + \epsilon_t,$$
+
+donde 
+$$
+F_t = 
+(1, 0, 1, 0,\ldots, 0, x_{1,t}, x_{2,t},\ldots , x_{p,t}).
+$$
+
+La ecuación de transición de estados (suponiendo datos trimestrales
+($s=4$) y dos covariables $x_t$ ($p=2$) está dada por 
+
+$$
+G_t =
+\begin{pmatrix}
+1 & 1 & & & & &\\
+0 & 1 & & &\\ 
+ & & &  -1 & -1 & -1 & &\\
+ & & &  1 & 0 & 0 & &\\
+ & & & 0 & 1 & 0 & &\\
+  & & &  &  &  & 1& 0\\
+ & & &  &  &  & 0 & 1\\
+
+\end{pmatrix}
+$$
+
+Para términos $\beta$ estáticos de regresión, podemos tomar
+
+$$
+\theta_{t} = G_t \theta_{t-1} + 
+\begin{pmatrix}
+\eta_{1,t} \\
+\eta_{2,t} \\
+\omega_t \\
+0 \\
+\vdots \\
+0
+
+\end{pmatrix}
+$$
+
+y para regresión dinámica:
+
+$$
+\theta_{t} = G_t \theta_{t-1} + 
+\begin{pmatrix}
+\eta_{1,t} \\
+\eta_{2,t} \\
+\omega_t \\
+0 \\
+\vdots \\
+0\\
+e_{1,t} \\
+e_{2,t} \\
+\end{pmatrix}
+$$
+
+con $e_{i,t} \sim N(0, \sigma_{i,\beta})$. Es decir, ponemos una transición
+de caminata aleatoria para cada coerficiente. Generalmente:
+
+- Conviene que las variables $x_i$ estén centradas y escaladas (estandarizadas) para que tengan variación similar
+- Al centrarlas, evitamos problemas en el ajuste por correlaciones con el nivel
+y tendencia.
+- Al escalarlas, es más simple poner iniciales apropiadas para $\sigma_{i,\beta}$.
+
+
+
+
