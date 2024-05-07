@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.553">
+<meta name="generator" content="quarto-1.4.554">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -261,6 +261,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Otros métodos para inferencia causal</span></span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-series-de-tiempo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Modelos de espacio de estados</span></span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -368,32 +374,22 @@ Causas y mecanismos
 <tr class="odd">
 <td style="text-align: left;">A</td>
 <td style="text-align: left;">grandes</td>
-<td style="text-align: left;">mejora</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">B</td>
-<td style="text-align: left;">chicos</td>
-<td style="text-align: left;">mejora</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">A</td>
-<td style="text-align: left;">chicos</td>
 <td style="text-align: left;">sin_mejora</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">B</td>
 <td style="text-align: left;">chicos</td>
-<td style="text-align: left;">mejora</td>
+<td style="text-align: left;">sin_mejora</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">B</td>
+<td style="text-align: left;">A</td>
 <td style="text-align: left;">chicos</td>
 <td style="text-align: left;">mejora</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">A</td>
 <td style="text-align: left;">grandes</td>
-<td style="text-align: left;">mejora</td>
+<td style="text-align: left;">sin_mejora</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">B</td>
@@ -401,18 +397,28 @@ Causas y mecanismos
 <td style="text-align: left;">mejora</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">chicos</td>
+<td style="text-align: left;">mejora</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">A</td>
-<td style="text-align: left;">grandes</td>
-<td style="text-align: left;">mejora</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">B</td>
-<td style="text-align: left;">grandes</td>
+<td style="text-align: left;">chicos</td>
 <td style="text-align: left;">mejora</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">B</td>
 <td style="text-align: left;">chicos</td>
+<td style="text-align: left;">mejora</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">chicos</td>
+<td style="text-align: left;">mejora</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">grandes</td>
 <td style="text-align: left;">mejora</td>
 </tr>
 </tbody>
@@ -666,8 +672,8 @@ Nota
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-6bb8a7ea24157099d6b6" style="width:100%;height:162px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-6bb8a7ea24157099d6b6">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    T \n    M \n    C\n  edge [minlen = 3]\n    T -> M\n    C -> T\n    C -> M\n{ rank = same; M; T }\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-7f073367221f2bf8c1e4" style="width:100%;height:162px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-7f073367221f2bf8c1e4">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    T \n    M \n    C\n  edge [minlen = 3]\n    T -> M\n    C -> T\n    C -> M\n{ rank = same; M; T }\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Es decir, el tamaño de los cálculos es una causa común de tratamiento (T) y resultado (M). Veremos más adelante que la decisión de condicionar a el tipo de cálculos proviene de un análisis relativamente simple de este diagrama causal, independientemente de los métodos que usemos para estimar las proporciones de interés (en este ejemplo, examinar las tablas cruzadas es equivalente a hacer estimaciones de máxima verosimlitud).</p>
@@ -788,8 +794,8 @@ Nota
 <span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-ab60fd1033b6d76cfadd" style="width:100%;height:162px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-ab60fd1033b6d76cfadd">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    P\n    T \n    M \n  edge [minlen = 3]\n    T -> P\n    P -> M\n    T -> M\n{ rank = same; M; T}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-3facecf75f4b394663d6" style="width:100%;height:162px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3facecf75f4b394663d6">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    P\n    T \n    M \n  edge [minlen = 3]\n    T -> P\n    P -> M\n    T -> M\n{ rank = same; M; T}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Nótese que el análisis más apropiado no está en los datos: en ambos casos la tabla de datos es exactamente la misma. Los supuestos acerca del proceso que genera los datos sin embargo nos lleva a respuestas opuestas.</p>

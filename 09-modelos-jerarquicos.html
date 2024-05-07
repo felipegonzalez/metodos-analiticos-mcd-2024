@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.553">
+<meta name="generator" content="quarto-1.4.554">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -259,6 +259,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Otros métodos para inferencia causal</span></span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-series-de-tiempo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Modelos de espacio de estados</span></span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -385,7 +391,7 @@ Chain 4 finished in 0.1 seconds.
 
 All 4 chains finished successfully.
 Mean chain execution time: 0.1 seconds.
-Total execution time: 0.8 seconds.</code></pre>
+Total execution time: 0.7 seconds.</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -394,7 +400,7 @@ Total execution time: 0.8 seconds.</code></pre>
 <pre><code># A tibble: 1 × 10
   variable  mean median     sd    mad    q5   q95  rhat ess_bulk ess_tail
   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-1 lambda   0.940  0.939 0.0576 0.0565 0.848  1.04  1.00    1416.    1746.</code></pre>
+1 lambda   0.941  0.939 0.0564 0.0573 0.853  1.03  1.01    1435.    1807.</code></pre>
 </div>
 </div>
 <p>Los diagnósticos básicos parecen ser apropiados. Procedemos a hacer un chequeo predictivo posterior:</p>
@@ -1269,7 +1275,7 @@ Chain 4 finished in 0.7 seconds.
 
 All 4 chains finished successfully.
 Mean chain execution time: 0.7 seconds.
-Total execution time: 3.4 seconds.</code></pre>
+Total execution time: 3.3 seconds.</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>resumen <span class="ot">&lt;-</span> ajuste_jer<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"alpha"</span>, <span class="st">"mu"</span>)) <span class="sc">|&gt;</span> </span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(variable, mean, sd, rhat, ess_bulk)</span>
@@ -1611,13 +1617,13 @@ Chain 4 finished in 1.5 seconds.
 
 All 4 chains finished successfully.
 Mean chain execution time: 1.5 seconds.
-Total execution time: 6.3 seconds.</code></pre>
+Total execution time: 6.2 seconds.</code></pre>
 </div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>ajuste_1_bangladesh<span class="sc">$</span><span class="fu">cmdstan_diagnose</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing csv files: /tmp/RtmpXXytIJ/bangladesh-1-202404231940-1-41ccb1.csv, /tmp/RtmpXXytIJ/bangladesh-1-202404231940-2-41ccb1.csv, /tmp/RtmpXXytIJ/bangladesh-1-202404231940-3-41ccb1.csv, /tmp/RtmpXXytIJ/bangladesh-1-202404231940-4-41ccb1.csv
+<pre><code>Processing csv files: /tmp/Rtmpi0jzfW/bangladesh-1-202405071835-1-41f22e.csv, /tmp/Rtmpi0jzfW/bangladesh-1-202405071835-2-41f22e.csv, /tmp/Rtmpi0jzfW/bangladesh-1-202405071835-3-41f22e.csv, /tmp/Rtmpi0jzfW/bangladesh-1-202405071835-4-41f22e.csv
 
 Checking sampler transitions treedepth.
 Treedepth satisfactory for all transitions.
@@ -2517,7 +2523,7 @@ Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup) </code></pre>
 <pre><code>Chain 1 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Chain 1 Exception: normal_lpdf: Scale parameter is 0, but must be positive! (in '/tmp/RtmpXXytIJ/model-2cc525fd45a3.stan', line 26, column 2 to column 38)</code></pre>
+<pre><code>Chain 1 Exception: normal_lpdf: Scale parameter is 0, but must be positive! (in '/tmp/Rtmpi0jzfW/model-52427f087bf4.stan', line 26, column 2 to column 38)</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Chain 1 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,</code></pre>
@@ -2544,7 +2550,7 @@ Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) </code></pre>
 <pre><code>Chain 3 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Chain 3 Exception: normal_lpdf: Scale parameter is 0, but must be positive! (in '/tmp/RtmpXXytIJ/model-2cc525fd45a3.stan', line 25, column 2 to column 41)</code></pre>
+<pre><code>Chain 3 Exception: normal_lpdf: Scale parameter is 0, but must be positive! (in '/tmp/Rtmpi0jzfW/model-52427f087bf4.stan', line 25, column 2 to column 41)</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Chain 3 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,</code></pre>
@@ -2567,7 +2573,7 @@ Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 4 finished in 3.2 seconds.
 
 All 4 chains finished successfully.
-Mean chain execution time: 3.8 seconds.
+Mean chain execution time: 3.9 seconds.
 Total execution time: 15.7 seconds.</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
@@ -2765,12 +2771,12 @@ Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup)
 Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 1 finished in 3.7 seconds.
+Chain 1 finished in 3.8 seconds.
 Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
 Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 2 finished in 4.6 seconds.
+Chain 2 finished in 4.7 seconds.
 Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
 Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
@@ -2780,11 +2786,11 @@ Chain 4 Iteration:    1 / 2000 [  0%]  (Warmup)
 Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 4 finished in 3.4 seconds.
+Chain 4 finished in 3.5 seconds.
 
 All 4 chains finished successfully.
 Mean chain execution time: 3.8 seconds.
-Total execution time: 15.5 seconds.</code></pre>
+Total execution time: 15.7 seconds.</code></pre>
 </div>
 </div>
 <p>El resultado es mejor y logramos mejorar todos los diagnósticos:</p>
@@ -3060,18 +3066,18 @@ Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling)
 Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 1 finished in 19.0 seconds.
+Chain 1 finished in 18.8 seconds.
 Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
-Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 3 finished in 20.9 seconds.
 Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 2 finished in 21.3 seconds.
+Chain 2 finished in 21.0 seconds.
+Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 3 finished in 21.1 seconds.
 Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
 Chain 4 finished in 26.9 seconds.
 
 All 4 chains finished successfully.
-Mean chain execution time: 22.0 seconds.
+Mean chain execution time: 21.9 seconds.
 Total execution time: 27.1 seconds.</code></pre>
 </div>
 </div>
@@ -3284,25 +3290,25 @@ Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup)
 Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
 Chain 4 Iteration:    1 / 2000 [  0%]  (Warmup) 
 Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
-Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
-Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 2 finished in 13.5 seconds.
 Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
 Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 1 finished in 13.5 seconds.
+Chain 1 finished in 13.6 seconds.
+Chain 2 finished in 13.5 seconds.
 Chain 4 finished in 13.4 seconds.
 Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 3 finished in 14.2 seconds.
+Chain 3 finished in 14.3 seconds.
 
 All 4 chains finished successfully.
-Mean chain execution time: 13.6 seconds.
-Total execution time: 14.4 seconds.</code></pre>
+Mean chain execution time: 13.7 seconds.
+Total execution time: 14.5 seconds.</code></pre>
 </div>
 </div>
 <div class="cell">

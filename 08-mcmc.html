@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.553">
+<meta name="generator" content="quarto-1.4.554">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -257,6 +257,12 @@ window.Quarto = {
   <div class="sidebar-item-container"> 
   <a href="./13-exp-naturales.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Otros métodos para inferencia causal</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-series-de-tiempo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Modelos de espacio de estados</span></span></a>
   </div>
 </li>
     </ul>
@@ -979,7 +985,7 @@ Tip
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.065   0.000   0.065 </code></pre>
+  0.063   0.000   0.063 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(metropolis_1 <span class="ot">&lt;-</span> <span class="fu">metropolis_mc</span>(<span class="dv">1000</span>, <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), log_p, <span class="fl">0.2</span>, <span class="fl">0.2</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -987,7 +993,7 @@ Tip
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.018   0.000   0.018 </code></pre>
+  0.017   0.000   0.018 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(metropolis_2 <span class="ot">&lt;-</span> <span class="fu">metropolis_mc</span>(<span class="dv">1000</span>, <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), log_p, <span class="dv">1</span>, <span class="dv">1</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1216,11 +1222,11 @@ Chain 4 Iteration: 1001 / 3000 [ 33%]  (Sampling)
 Chain 4 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
 Chain 1 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 1 finished in 0.3 seconds.
-Chain 2 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 3 Iteration: 3000 / 3000 [100%]  (Sampling) 
+Chain 3 finished in 0.4 seconds.
+Chain 2 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 4 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 2 finished in 0.4 seconds.
-Chain 3 finished in 0.3 seconds.
 Chain 4 finished in 0.4 seconds.
 
 All 4 chains finished successfully.
@@ -1544,7 +1550,7 @@ Chain 3 Iteration: 105 / 105 [100%]  (Sampling) </code></pre>
 <pre><code>Chain 3 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Chain 3 Exception: normal_lpdf: Scale parameter is 0, but must be positive! (in '/tmp/RtmpznYcqM/model-2a1a752cf43a.stan', line 25, column 2 to column 33)</code></pre>
+<pre><code>Chain 3 Exception: normal_lpdf: Scale parameter is 0, but must be positive! (in '/tmp/Rtmp3xJGaj/model-4f9b132aaddd.stan', line 25, column 2 to column 33)</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Chain 3 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,</code></pre>
@@ -3202,16 +3208,16 @@ Chain 4 Iteration: 1000 / 3000 [ 33%]  (Warmup)
 Chain 4 Iteration: 1001 / 3000 [ 33%]  (Sampling) 
 Chain 1 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
 Chain 2 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
-Chain 3 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
 Chain 4 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
+Chain 3 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
 Chain 1 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 2 Iteration: 3000 / 3000 [100%]  (Sampling) 
+Chain 4 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 1 finished in 1.5 seconds.
 Chain 2 finished in 1.5 seconds.
+Chain 4 finished in 1.4 seconds.
 Chain 3 Iteration: 3000 / 3000 [100%]  (Sampling) 
-Chain 4 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 3 finished in 1.5 seconds.
-Chain 4 finished in 1.5 seconds.
 
 All 4 chains finished successfully.
 Mean chain execution time: 1.5 seconds.

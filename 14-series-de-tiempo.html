@@ -1,0 +1,2275 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.554">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Métodos analíticos - 11&nbsp; Modelos de espacio de estados</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./13-exp-naturales.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+<script src="site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="site_libs/viz-1.8.2/viz.js"></script>
+<link href="site_libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
+<script src="site_libs/grViz-binding-1.0.10/grViz.js"></script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./14-series-de-tiempo.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Modelos de espacio de estados</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Métodos analíticos</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Temario y referencias</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-introduccion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-flujo-basico.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Flujo de trabajo básico: motivación</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-flujo-basico-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Flujo de trabajo básico: refinando el modelo</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-modelos-genericos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Componentes de modelación 1</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-dags.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Modelos gráficos y causalidad</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-calculo-do.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Identificación y cálculo-do</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-buenos-malos-controles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Buenos y malos controles</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-mcmc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Markov Chain Monte Carlo</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-modelos-jerarquicos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Modelos jerárquicos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-exp-naturales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Otros métodos para inferencia causal</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-series-de-tiempo.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Modelos de espacio de estados</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#modelo-de-nivel-local" id="toc-modelo-de-nivel-local" class="nav-link active" data-scroll-target="#modelo-de-nivel-local"><span class="header-section-number">11.1</span> Modelo de nivel local</a></li>
+  <li><a href="#análisis-retrospectivo" id="toc-análisis-retrospectivo" class="nav-link" data-scroll-target="#análisis-retrospectivo"><span class="header-section-number">11.2</span> Análisis retrospectivo</a></li>
+  <li><a href="#ejemplo-nivel-del-río-nilo" id="toc-ejemplo-nivel-del-río-nilo" class="nav-link" data-scroll-target="#ejemplo-nivel-del-río-nilo"><span class="header-section-number">11.3</span> Ejemplo: nivel del río Nilo</a>
+  <ul class="collapse">
+  <li><a href="#ejemplo-de-desajuste" id="toc-ejemplo-de-desajuste" class="nav-link" data-scroll-target="#ejemplo-de-desajuste">Ejemplo de desajuste</a></li>
+  </ul></li>
+  <li><a href="#valores-faltantes" id="toc-valores-faltantes" class="nav-link" data-scroll-target="#valores-faltantes"><span class="header-section-number">11.4</span> Valores faltantes</a></li>
+  <li><a href="#intervenciones" id="toc-intervenciones" class="nav-link" data-scroll-target="#intervenciones"><span class="header-section-number">11.5</span> Intervenciones</a></li>
+  <li><a href="#modelo-de-nivel-local-con-tendencia" id="toc-modelo-de-nivel-local-con-tendencia" class="nav-link" data-scroll-target="#modelo-de-nivel-local-con-tendencia"><span class="header-section-number">11.6</span> Modelo de nivel local con tendencia</a></li>
+  <li><a href="#modelos-con-estacionalidad-fija" id="toc-modelos-con-estacionalidad-fija" class="nav-link" data-scroll-target="#modelos-con-estacionalidad-fija"><span class="header-section-number">11.7</span> Modelos con estacionalidad fija</a></li>
+  <li><a href="#modelos-con-estacionalidad-dinámica" id="toc-modelos-con-estacionalidad-dinámica" class="nav-link" data-scroll-target="#modelos-con-estacionalidad-dinámica"><span class="header-section-number">11.8</span> Modelos con estacionalidad dinámica</a>
+  <ul class="collapse">
+  <li><a href="#ejemplo-cinturones-de-seguridad" id="toc-ejemplo-cinturones-de-seguridad" class="nav-link" data-scroll-target="#ejemplo-cinturones-de-seguridad"><span class="header-section-number">11.8.1</span> Ejemplo: cinturones de seguridad</a></li>
+  </ul></li>
+  <li><a href="#construcción-modular-de-modelos" id="toc-construcción-modular-de-modelos" class="nav-link" data-scroll-target="#construcción-modular-de-modelos"><span class="header-section-number">11.9</span> Construcción modular de modelos</a>
+  <ul class="collapse">
+  <li><a href="#ejemplo" id="toc-ejemplo" class="nav-link" data-scroll-target="#ejemplo">Ejemplo</a></li>
+  </ul></li>
+  <li><a href="#componentes-de-regresión-dinámica" id="toc-componentes-de-regresión-dinámica" class="nav-link" data-scroll-target="#componentes-de-regresión-dinámica"><span class="header-section-number">11.10</span> Componentes de regresión dinámica</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Modelos de espacio de estados</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="cell">
+<details class="code-fold">
+<summary>Código</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DiagrammeR)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>locale <span class="ot">&lt;-</span> <span class="fu">Sys.setlocale</span>(<span class="st">"LC_TIME"</span>, <span class="st">"es_ES.UTF-8"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#library(fpp3)</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">theme_set</span>(ggplot2<span class="sc">::</span><span class="fu">theme_light</span>())</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>En esta parte veremos una introducción a los modelos bayesianos dinámicos de espacio de estados. Estos modelos engloban otros enfoques (ARIMA, suavizamiento exponencial) como casos particulares, y nos permite:</p>
+<ul>
+<li>Modelar la estructura de una serie de tiempo de forma modular.</li>
+<li>Mayor flexibilidad en cuanto a las estructuras que podemos usar, y cómo usar información acerca de la dinámica de la serie de tiempo (incluyendo aspectos de modelos ARIMA).</li>
+<li>Una forma estándar de tratar con valores faltantes, series irregulares, o varias observaciones contemporáneas.</li>
+<li>Una forma estándar de producir pronósticos puntuales, en intervalos, o por distribuciones.</li>
+<li>Una forma estándar de permitir que el modelo se adapte en el tiempo a cambios estructurales (por ejemplo, cambios de patrones de estacionalidad, efectos diferentes de covariables, etc.)</li>
+</ul>
+<p>Aunque en muchos procesos tiene sentido considerar que la observación <span class="math inline">\(y_t\)</span> es una función causal de observaciones pasadas, más generalmente podemos pensar que existen <em>estados</em> que determinan el proceso generador de la serie. El estado en el que se encuentra una proceso en un determinado momento puede tener varias componentes, algunas estándar como nivel actual o periodo de estacionalidad, pero también otras menos estándar, como niveles de otras variables.</p>
+<section id="modelo-de-nivel-local" class="level2" data-number="11.1">
+<h2 data-number="11.1" class="anchored" data-anchor-id="modelo-de-nivel-local"><span class="header-section-number">11.1</span> Modelo de nivel local</h2>
+<p>En primer lugar, consideraremos modelar la tendencia-ciclo de series con el enfoque de espacio de estados. En primer lugar, tenemos una <strong>ecuación de observación</strong>, que está dada por</p>
+<p><span class="math display">\[y_t = \textrm{nivel}_t + \epsilon_t,\]</span> donde las <span class="math inline">\(\epsilon_t \sim N(0,\sigma_\epsilon)\)</span> independientes. Es decir, dado el nivel, las observaciones <span class="math inline">\(y_t\)</span> son independientes. Adicionalmente tenemos una <strong>ecuación de transición de estados</strong>, que en este caso es simplemente:</p>
+<p><span class="math display">\[\textrm{nivel}_t = \textrm{nivel}_{t-1} + \eta_t\]</span> donde <span class="math inline">\(\eta_t \sim N(0,\sigma_\eta)\)</span> independientes.</p>
+<p>Podemos hacer un diagrama como sigue para esta situación:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Código</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grViz</span>(<span class="st">'</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="st">digraph {</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="st">  graph [ranksep = 0.2]</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="st">  node [shape=circle]</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="st">    nt</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="st">    nt1</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="st">    nt2</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="st">    ntm1</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="st">    etm1</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="st">    et</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="st">    et1</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="st">    et2</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="st">  node [shape=plaintext]</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="st">    #    Y1 [label = &lt;Y&lt;SUB&gt;1&lt;/SUB&gt;&gt;]</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="st">    dots [label = "..."]</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="st">    Ytm1 [label = &lt;Y&lt;SUB&gt;t-1&lt;/SUB&gt;&gt;]</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="st">    Yt [label = &lt;Y&lt;SUB&gt;t&lt;/SUB&gt;&gt;]</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="st">    Yt1 [label = &lt;Y&lt;SUB&gt;t+1&lt;/SUB&gt;&gt;]</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="st">    Yt2 [label = &lt;Y&lt;SUB&gt;t+2&lt;/SUB&gt;&gt;]</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="st">    etm1 [label = &lt;e&lt;SUB&gt;t-1&lt;/SUB&gt;&gt;]</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="st">    et [label = &lt;  e&lt;SUB&gt;t. &lt;/SUB&gt;&gt;]</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="st">    et1 [label = &lt;e&lt;SUB&gt;t+1&lt;/SUB&gt;&gt;]</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="st">    et2 [label = &lt;e&lt;SUB&gt;t+2&lt;/SUB&gt;&gt;]</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="st">        ntm1 [label = &lt;n&lt;SUB&gt;t-1&lt;/SUB&gt;&gt;]</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="st">    nt [label = &lt;  n&lt;SUB&gt;t  &lt;/SUB&gt;&gt;]</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="st">    nt1 [label = &lt;n&lt;SUB&gt;t+1&lt;/SUB&gt;&gt;]</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="st">    nt2 [label = &lt;n&lt;SUB&gt;t+2&lt;/SUB&gt;&gt;]</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="st">  edge [minlen = 3]</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="st">   #Y1 -&gt; dots</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="st">   #dots -&gt; Ytm1</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="st">   #Ytm1 -&gt; Yt</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="st">   #Yt -&gt; Yt1</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="st">   #Yt1 -&gt; Yt2</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="st">   ntm1 -&gt; Ytm1</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="st">   ntm1 -&gt; nt</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="st">   nt1 -&gt; Yt1</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="st">   nt -&gt; Yt</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="st">   nt2 -&gt; Yt2</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="st">   nt -&gt; nt1</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="st">   nt1 -&gt; nt2</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="st">   #e1 -&gt; Y1</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="st">   etm1 -&gt; Ytm1</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="st">   et -&gt; Yt</span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="st">   et1 -&gt; Yt1</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="st">   et2 -&gt; Yt2</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="st">{rank=same;  Ytm1; Yt; Yt1; Yt2}</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="st">{rank=max; ntm1; nt; nt1; nt2}</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a><span class="st">{rank=min; etm1; et; et1; et2}</span></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>, <span class="at">width =</span> <span class="dv">300</span>, <span class="at">height =</span> <span class="dv">150</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="htmlwidget-b6b67113b8307bd7124c" style="width:100%;height:325px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-b6b67113b8307bd7124c">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=circle]\n    nt\n    nt1\n    nt2\n    ntm1\n    etm1\n    et\n    et1\n    et2\n  node [shape=plaintext]\n    #    Y1 [label = <Y<SUB>1<\/SUB>>]\n    dots [label = \"...\"]\n    Ytm1 [label = <Y<SUB>t-1<\/SUB>>]\n    Yt [label = <Y<SUB>t<\/SUB>>]\n    Yt1 [label = <Y<SUB>t+1<\/SUB>>]\n    Yt2 [label = <Y<SUB>t+2<\/SUB>>]\n    etm1 [label = <e<SUB>t-1<\/SUB>>]\n    et [label = <  e<SUB>t. <\/SUB>>]\n    et1 [label = <e<SUB>t+1<\/SUB>>]\n    et2 [label = <e<SUB>t+2<\/SUB>>]\n        ntm1 [label = <n<SUB>t-1<\/SUB>>]\n    nt [label = <  n<SUB>t  <\/SUB>>]\n    nt1 [label = <n<SUB>t+1<\/SUB>>]\n    nt2 [label = <n<SUB>t+2<\/SUB>>]\n  edge [minlen = 3]\n   #Y1 -> dots\n   #dots -> Ytm1\n   #Ytm1 -> Yt\n   #Yt -> Yt1\n   #Yt1 -> Yt2\n   ntm1 -> Ytm1\n   ntm1 -> nt\n   nt1 -> Yt1\n   nt -> Yt\n   nt2 -> Yt2\n   nt -> nt1\n   nt1 -> nt2\n   #e1 -> Y1\n   etm1 -> Ytm1\n   et -> Yt\n   et1 -> Yt1\n   et2 -> Yt2\n{rank=same;  Ytm1; Yt; Yt1; Yt2}\n{rank=max; ntm1; nt; nt1; nt2}\n{rank=min; etm1; et; et1; et2}\n\n\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>Nótese que en esta gráfica, las <span class="math inline">\(y_t\)</span> no son independientes: están correlacionadas a través de caminos abiertos que pasan por el estado, que en este caso es el nivel de la serie.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Modelos de espacio de estados
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Los modelos de espacio de estados para serie de tiempo consisten en dos ecuaciones. Si <span class="math inline">\(y_t\)</span> son los datos observados y <span class="math inline">\(\theta_t\)</span> son los parámetros que describen el estado, tenemos la ecuación de observación <span class="math display">\[y_{t} = f(\theta_{t}, \epsilon_t)\]</span> Es decir, cómo se relaciona el estado con las observaciones, y una ecuación de evolución del estado: <span class="math display">\[\theta_{t} = g(\theta_{t-1}, \eta_t)\]</span> En los modelos dinámicos lineales (DLM), <span class="math inline">\(f\)</span> y <span class="math inline">\(g\)</span> son funciones lineales, es decir <span class="math display">\[y_t = F_t\theta_t + \epsilon_t,\]</span> y</p>
+<p><span class="math display">\[\theta_t = G_t\theta_{t-1} + R_t\eta_t,\]</span> donde suponemos, en general, que <span class="math inline">\(\eta_t \sim N(0,\Sigma_t)\)</span> y <span class="math inline">\(\epsilon_t \sim N(0,S_t)\)</span> son normales multivariadas independientes.</p>
+</div>
+</div>
+<p><strong>Nota</strong>: más adelante veremos detalles de este planteamiento, en particular para los DLMs, y por qué aún cuando haya dependencias de más largo plazo en estado siempre es posible escribir nuestros modelos de esta forma.</p>
+<p>En el modelo de nivel local lo reescribimos por conveniencia como:</p>
+<p><span class="math display">\[y_t = \alpha_t + \epsilon_t,\]</span> donde las <span class="math inline">\(\epsilon_t \sim N(0,\sigma_\epsilon)\)</span> independientes, y</p>
+<p><span class="math display">\[\alpha_t = \alpha_{t-1} + \eta_t\]</span> donde <span class="math inline">\(\eta_t \sim N(0,\sigma_\eta)\)</span> independientes. En este caso, <span class="math inline">\(F_t=1\)</span> , <span class="math inline">\(G_t=1\)</span>, y <span class="math inline">\(R_t =1\)</span> según la notación de arriba.</p>
+<p>Para completar este modelo, es necesario:</p>
+<ol type="1">
+<li>Poner distribuciones previas al tamaño del ruido de la medición <span class="math inline">\(p(\sigma_\epsilon)\)</span> y a la evolución del nivel <span class="math inline">\(p(\sigma_\eta)\)</span>.</li>
+<li>Poner una distribución previa al estado inicial <span class="math inline">\(p(\alpha_1)\)</span></li>
+</ol>
+<p>Usualmente consideramos que el nivel debe tener movimientos relativamente suaves, de manera que <span class="math inline">\(p(\sigma_\eta)\)</span> debe estar adecuadamente concentrada cerca de 0.</p>
+</section>
+<section id="análisis-retrospectivo" class="level2" data-number="11.2">
+<h2 data-number="11.2" class="anchored" data-anchor-id="análisis-retrospectivo"><span class="header-section-number">11.2</span> Análisis retrospectivo</h2>
+<p>Existen dos tipos de análisis que podemos hacer de una serie de tiempo: análisis retrospectivo o análisis en línea. El primero es más útil para entender el comportamiento de la serie del tipo dada toda la información que tenemos, y el segundo es más útil cuando buscamos hacer pronósticos.</p>
+<p>Comenzaremos estudiando los modelos de espacio de estados desde un punto de vista retrospectivo.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Análisis retrospectivo
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Una vez que tenemos todos los datos de la serie, ¿qué podemos decir de su evolución en el tiempo?</p>
+<p>Este análisis busca examinar las distribuciones <span class="math inline">\(p(\theta_t|y_1,y_2,\ldots, y_T),\)</span> es decir, examinar la posterior de los estados dado el conocimiento completo de la serie.</p>
+</div>
+</div>
+</section>
+<section id="ejemplo-nivel-del-río-nilo" class="level2" data-number="11.3">
+<h2 data-number="11.3" class="anchored" data-anchor-id="ejemplo-nivel-del-río-nilo"><span class="header-section-number">11.3</span> Ejemplo: nivel del río Nilo</h2>
+<p>Empezamos con un ejemplo clásico y simple, que consiste en medidas anuales del nivel del río Nilo.</p>
+<p>Usaremos <em>Stan</em> para ver los detalles de la implementación del modelo de nivel local:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cmdstanr)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../R/limpiar_draws.R"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>mod_archivo <span class="ot">&lt;-</span> <span class="st">"./src/series-de-tiempo/modelo-nivel-local.stan"</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>modelo_nivel <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(mod_archivo)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">read_lines</span>(mod_archivo, <span class="at">skip =</span> <span class="dv">0</span>, <span class="at">n_max =</span> <span class="dv">100</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="at">sep =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>data {
+  int&lt;lower=0&gt; N;
+  int&lt;lower=0&gt; N_obs;
+  vector[N] y;
+  real s_obs;
+  int&lt;lower=0&gt; n_h; //numero de periodos de pronóstico
+  array[N_obs] int ii_obs;
+  real q;
+}
+
+
+parameters {
+
+  real alpha_1;
+  real&lt;lower=0&gt; sigma_nivel;
+  real&lt;lower=0&gt; sigma_obs;
+  vector[N + n_h] z_nivel;
+
+}
+
+transformed parameters {
+  vector[N + n_h] mu;
+  vector[N + n_h] alpha;
+
+
+  alpha[1] = alpha_1;
+  mu[1] = alpha[1];
+  // evolucion estado
+  for(t in 2:(N + n_h)){
+    alpha[t] = alpha[t-1] + z_nivel[t] * sigma_nivel;
+    mu[t] = alpha[t];
+  }
+}
+
+model {
+  // modelo de observaciones
+  y[ii_obs] ~ normal(mu[ii_obs], sigma_obs);
+  // iniciales
+  alpha_1 ~ normal(y[1], s_obs);
+  z_nivel ~ normal(0, 1);
+  sigma_nivel ~ normal(0, q * s_obs);
+  sigma_obs ~ normal(0, s_obs);
+
+}
+
+generated quantities{
+  vector[N] y_rep;
+  vector[n_h] y_f;
+
+
+  for(t in 1:N){
+    y_rep[t] = normal_rng(mu[t], sigma_obs);
+  }
+  for(h in 1:n_h){
+    y_f[h] = normal_rng(mu[N + h], sigma_obs);
+  }
+}</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> modelo_nivel<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">list</span>(<span class="at">y =</span> Nile, <span class="at">N =</span> <span class="fu">length</span>(Nile),  <span class="at">s_obs =</span> <span class="dv">200</span>, <span class="at">q =</span> <span class="fl">0.5</span>, <span class="at">n_h =</span> <span class="dv">4</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">ii_obs =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(Nile), <span class="at">N_obs =</span> <span class="fu">length</span>(Nile)),</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>, <span class="at">refresh =</span> <span class="dv">1000</span>, <span class="at">init =</span> <span class="fl">0.1</span>, <span class="at">step_size =</span> <span class="fl">0.1</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">adapt_delta =</span> <span class="fl">0.99</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 parallel chains...
+
+Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 4 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 4 finished in 5.7 seconds.
+Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 2 finished in 5.9 seconds.
+Chain 3 finished in 5.8 seconds.
+Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 1 finished in 7.3 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 6.2 seconds.
+Total execution time: 7.4 seconds.</code></pre>
+</div>
+</div>
+<p>Mostramos primero nuestra estimación de las desviaciones estándar para el nivel y para la observación:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>sims<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"sigma_obs"</span>, <span class="st">"sigma_nivel"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(variable, mean, q5, q95, rhat)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 5
+  variable     mean    q5   q95  rhat
+  &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 sigma_obs   122.  101.  143.   1.01
+2 sigma_nivel  44.2  20.7  73.3  1.01</code></pre>
+</div>
+</div>
+<p>Y ahora resumimos y mostramos cómo se ve el nivel inferido bajo nuestro modelo.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>sims_nivel_tbl <span class="ot">&lt;-</span> sims<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"mu"</span>), <span class="at">format =</span> <span class="st">"df"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">limpiar_draws</span>(<span class="fu">c</span>(<span class="st">"mu"</span>)) </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>media_tbl <span class="ot">&lt;-</span> sims_nivel_tbl <span class="sc">|&gt;</span>  </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(variable, t, <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">media =</span> <span class="fu">mean</span>(valores), <span class="at">q5 =</span> <span class="fu">quantile</span>(valores, <span class="fl">0.05</span>),</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">q95 =</span> <span class="fu">quantile</span>(valores, <span class="fl">0.95</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sims_nivel_tbl <span class="sc">|&gt;</span> <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">"mu"</span>)) <span class="sc">+</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> valores, <span class="at">group =</span> .draw), </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">alpha =</span> <span class="fl">0.01</span>, <span class="at">size =</span> <span class="fl">0.1</span>, <span class="at">colour =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> media_tbl, <span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> media), <span class="at">colour =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> <span class="fu">tibble</span>(<span class="at">y =</span> Nile), <span class="fu">aes</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(Nile), <span class="at">y =</span> Nile))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="14-series-de-tiempo_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>En esta gráfica:</p>
+<ul>
+<li>La línea roja es el valor esperado del nivel (que originalmente no es observado).</li>
+<li>La nube roja muestra varias simulaciones del nivel. Con esto entendemos cuánta incertidumbre tenemos acerca de la verdadera posición del nivel en cada momento.</li>
+<li>Nótese que la nube roja no tiene por qué cubrir los valores observados de la serie, pues la ecuación de observación tiene incertidumbre adicional.</li>
+<li>Extendimos la estimación del estado para cuatro años adicionales. Nota cómo conforme avanza el tiempo perdemos certidumbre acerca de dónde se encontrará el nivel.</li>
+<li>Nuestro modelo tiene 100 observaciones y 100 + 2 parámetros: las dos desviaciones estándar de modelos de observación y de estado, y los 100 niveles no observados.</li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Residuales y análisis retrospectivo
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>En el análisis retrospectivo, los residuales entre observaciones y ajustados <em>no</em> se pueden interpretar como errores de predicción a un paso: estos residuales incluyen información de toda la serie (valores pasados y futuros del tiempo <span class="math inline">\(t\)</span> que estamos considerando).</p>
+</div>
+</div>
+<p>Podemos hacer chequeos predictivos posteriores simulando distintas series a partir de los parámetros ajustados, y viendo si la estructura difiere (y cómo difiere) de los datos observados. En las siguientes gráficas, sólo una de ellas tiene los datos reales, y el resto son simuladas del modelo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>obs_rep_tbl <span class="ot">&lt;-</span> sims<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"y_rep"</span>), <span class="at">format =</span> <span class="st">"df"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">limpiar_draws</span>(<span class="fu">c</span>(<span class="st">"y_rep"</span>)) </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>resumen_tbl <span class="ot">&lt;-</span> obs_rep_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.draw <span class="sc">&lt;=</span> <span class="dv">10</span>) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>resumen_tbl <span class="ot">&lt;-</span> resumen_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">tibble</span>(<span class="at">t =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(Nile), <span class="at">valores =</span> Nile, <span class="at">.draw =</span> <span class="dv">11</span>))</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(resumen_tbl, <span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> valores)) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> .draw)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="14-series-de-tiempo_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Como es usual, cualquier resumen relevante puede usarse para hacer chequeos predictivos posteriores, por ejemplo, las gráficas de acutocorrelación de datos simulados (una caja tiene los verdaderos datos observados):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tsibble)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'tsibble'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:lubridate':
+
+    interval</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(feasts)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: fabletools</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>resumen_tbl <span class="sc">|&gt;</span> <span class="fu">as_tsibble</span>(<span class="at">index =</span> t, <span class="at">key =</span> .draw) <span class="sc">|&gt;</span> </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.draw <span class="sc">&gt;</span> <span class="dv">5</span>, t <span class="sc">&lt;=</span> <span class="dv">100</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ACF</span>(valores) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="14-series-de-tiempo_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Diagnósticos usuales
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Es posible hacer chequeos posteriores predictivos como con cualquier modelo bayesiano generativo.</li>
+<li>Veremos más adelante un diagnóstico importante que por ahora excluímos: la verificación de que las predicciones un paso hacia adelante cumplen ciertas propiedades. Una de las más importantes es que no tengan autocorrelación.</li>
+</ul>
+</div>
+</div>
+<p>Finalmente, podemos ver cómo se ven <strong>pronósticos</strong> bajo este modelo. En este caso, en la parte de cantidades generadas incluímos el código relevante. Nuestro pronóstico podríamos graficarlo como sigue (con intervalos de 90%, por ejemplo):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>pronosticos_tbl <span class="ot">&lt;-</span> sims<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"y_f"</span>), <span class="at">format =</span> <span class="st">"df"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">limpiar_draws</span>(<span class="fu">c</span>(<span class="st">"y_f"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(variable, t) <span class="sc">|&gt;</span> </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">media =</span> <span class="fu">mean</span>(valores), <span class="at">q5 =</span> <span class="fu">quantile</span>(valores, <span class="fl">0.05</span>),</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">q95 =</span> <span class="fu">quantile</span>(valores, <span class="fl">0.95</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">t =</span> t <span class="sc">+</span> <span class="fu">length</span>(Nile))</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sims_nivel_tbl <span class="sc">|&gt;</span> <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">"mu"</span>)) <span class="sc">+</span> </span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> valores, <span class="at">group =</span> .draw), </span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">alpha =</span> <span class="fl">0.01</span>, <span class="at">size =</span> <span class="fl">0.1</span>, <span class="at">colour =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> media_tbl, <span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> media), <span class="at">colour =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> <span class="fu">tibble</span>(<span class="at">y =</span> Nile), <span class="fu">aes</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(Nile), <span class="at">y =</span> Nile)) <span class="sc">+</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="at">data =</span> pronosticos_tbl, <span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> media, <span class="at">ymin =</span> q5,</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">ymax =</span> q95), <span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> pronosticos_tbl, <span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> media))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="14-series-de-tiempo_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="ejemplo-de-desajuste" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="ejemplo-de-desajuste">Ejemplo de desajuste</h3>
+<p>Supongamos que en nuestro ejemplo no utilizáramos nivel dinámico, sino constante.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>sims_desajuste <span class="ot">&lt;-</span> modelo_nivel<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">list</span>(<span class="at">y =</span> Nile, <span class="at">N =</span> <span class="fu">length</span>(Nile),  <span class="at">s_obs =</span> <span class="dv">200</span>, <span class="at">q =</span> <span class="fl">0.00001</span>, </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">n_h =</span> <span class="dv">4</span>, <span class="at">ii_obs =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(Nile), <span class="at">N_obs =</span> <span class="fu">length</span>(Nile)),</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>, <span class="at">refresh =</span> <span class="dv">1000</span>, <span class="at">init =</span> <span class="fl">0.1</span>, <span class="at">step_size =</span> <span class="fl">0.1</span>,</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">adapt_delta =</span> <span class="fl">0.99</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 parallel chains...
+
+Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 4 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 1 finished in 1.4 seconds.
+Chain 3 finished in 1.3 seconds.
+Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 2 finished in 1.5 seconds.
+Chain 4 finished in 1.5 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 1.4 seconds.
+Total execution time: 1.6 seconds.</code></pre>
+</div>
+</div>
+<p>Repetimos nuestros chequeos posteriores predictivos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>obs_rep_tbl <span class="ot">&lt;-</span> sims_desajuste<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"y_rep"</span>), <span class="at">format =</span> <span class="st">"df"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">limpiar_draws</span>(<span class="fu">c</span>(<span class="st">"y_rep"</span>)) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Dropping 'draws_df' class as required metadata was removed.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>resumen_tbl <span class="ot">&lt;-</span> obs_rep_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.draw <span class="sc">&lt;=</span> <span class="dv">10</span>) <span class="co">#|&gt; </span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">#group_by(variable, t, indice, .draw) |&gt; </span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">#summarise(media = mean(valores), q5 = quantile(valores, 0.05),</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#          q95 = quantile(valores, 0.95))</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>resumen_tbl <span class="ot">&lt;-</span> resumen_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">tibble</span>(<span class="at">t =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(Nile), <span class="at">valores =</span> Nile, <span class="at">.draw =</span> <span class="dv">11</span>))</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(resumen_tbl, <span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> valores)) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> .draw)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="14-series-de-tiempo_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>resumen_tbl <span class="sc">|&gt;</span> <span class="fu">as_tsibble</span>(<span class="at">index =</span> t, <span class="at">key =</span> .draw) <span class="sc">|&gt;</span> </span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.draw <span class="sc">&gt;</span> <span class="dv">7</span>, t <span class="sc">&lt;=</span> <span class="dv">100</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ACF</span>(valores) <span class="sc">|&gt;</span> <span class="fu">autoplot</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="14-series-de-tiempo_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>En todas estas gráficas podemos identificar claramente donde están los datos. Nuestro modelo de nivel constante (no dinámico) no ajusta a estos datos simples.</p>
+</section>
+</section>
+<section id="valores-faltantes" class="level2" data-number="11.4">
+<h2 data-number="11.4" class="anchored" data-anchor-id="valores-faltantes"><span class="header-section-number">11.4</span> Valores faltantes</h2>
+<p>Existe una manera estándar de lidiar con valores faltantes en la serie de tiempo cuando usamos modelos de espacio de estados:</p>
+<ul>
+<li>La ecuación de evolución del estado no cambia, la aplicamos aún cuando no tengamos observaciones en esos tiempos.</li>
+<li>No incluimos términos en la posterior que involucran valores faltantes.</li>
+</ul>
+<p>Por ejemplo, vamos a producir algunas mediciones faltantes en la serie del Río Nilo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>Nile_f <span class="ot">&lt;-</span> Nile</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>Nile_f[<span class="dv">50</span><span class="sc">:</span><span class="dv">58</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>Nile_f[<span class="dv">5</span><span class="sc">:</span><span class="dv">6</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>ii_obs <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="sc">!</span><span class="fu">is.na</span>(Nile_f))</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>y_f <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(Nile_f), <span class="sc">-</span><span class="dv">1</span>, Nile_f)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Y ajustamos el mismo modelo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> modelo_nivel<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">list</span>(<span class="at">y =</span> y_f, <span class="at">N =</span> <span class="fu">length</span>(Nile_f),  <span class="at">s_obs =</span> <span class="dv">200</span>, <span class="at">q =</span> <span class="fl">0.5</span>, <span class="at">n_h =</span> <span class="dv">4</span>,</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">N_obs =</span> <span class="fu">length</span>(ii_obs),</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">ii_obs =</span> ii_obs),</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>, <span class="at">refresh =</span> <span class="dv">1000</span>, <span class="at">init =</span> <span class="fl">0.1</span>, <span class="at">step_size =</span> <span class="fl">0.1</span>,</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">adapt_delta =</span> <span class="fl">0.99</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 parallel chains...
+
+Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 4 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 1 finished in 5.4 seconds.
+Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 2 finished in 5.4 seconds.
+Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 3 finished in 6.9 seconds.
+Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 4 finished in 7.1 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 6.2 seconds.
+Total execution time: 7.3 seconds.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>sims_nivel_tbl <span class="ot">&lt;-</span> sims<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"mu"</span>), <span class="at">format =</span> <span class="st">"df"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">limpiar_draws</span>(<span class="fu">c</span>(<span class="st">"mu"</span>)) </span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>media_tbl <span class="ot">&lt;-</span> sims_nivel_tbl <span class="sc">|&gt;</span>  </span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(variable, t) <span class="sc">|&gt;</span> </span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">media =</span> <span class="fu">mean</span>(valores), <span class="at">q5 =</span> <span class="fu">quantile</span>(valores, <span class="fl">0.05</span>),</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">q95 =</span> <span class="fu">quantile</span>(valores, <span class="fl">0.95</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sims_nivel_tbl <span class="sc">|&gt;</span> <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">"mu"</span>)) <span class="sc">+</span> </span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> valores, <span class="at">group =</span> .draw), </span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">alpha =</span> <span class="fl">0.02</span>, <span class="at">size =</span> <span class="fl">0.1</span>, <span class="at">colour =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> media_tbl, <span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> media), <span class="at">colour =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> <span class="fu">tibble</span>(<span class="at">y =</span> Nile_f), <span class="fu">aes</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(Nile), <span class="at">y =</span> y))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 11 rows containing missing values or values outside the scale range
+(`geom_point()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="14-series-de-tiempo_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>En este caso, vemos que el la posterior del nivel en los valores desconocidos se amplía, lo cual refleja el hecho de que no tenemos observaciones que informen de su localización.</li>
+</ul>
+</section>
+<section id="intervenciones" class="level2" data-number="11.5">
+<h2 data-number="11.5" class="anchored" data-anchor-id="intervenciones"><span class="header-section-number">11.5</span> Intervenciones</h2>
+<p>Cuando consideramos análisis secuencial (veremos más adelante) y detectamos desajustes o cambios grandes en la serie, es posible agregar incertidumbre en esos momentos, lo cual permite al modelo hacer evaluar reajustes de los parámetros que son más consistentes con datos y modelo. En este ejemplo, en el tiempo 29 es posible diagnosticar un cambio de nivel que es incosistente con lo observado anteriormente. Podemos hacer una intervención en ese tiempo ampliando la varianza en la evolución del nivel:</p>
+<ul>
+<li>En este caso, el modelo de observación no es modificado.</li>
+<li>Ampliamos la varianza en momentos donde esperamos cambios de estado grandes (en este caso el nivel).</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>mod_archivo_int <span class="ot">&lt;-</span> <span class="st">"./src/series-de-tiempo/modelo-nivel-local-int.stan"</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>modelo_nivel <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(mod_archivo_int)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="fu">read_lines</span>(mod_archivo_int, <span class="at">skip =</span> <span class="dv">20</span>, <span class="at">n_max =</span> <span class="dv">25</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="at">sep =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+transformed parameters {
+  vector[N + n_h] mu;
+  vector[N + n_h] alpha;
+
+  alpha[1] = alpha_1;
+  mu[1] = alpha[1];
+  for(t in 2:(N + n_h)){
+    if(t != t_intervencion){
+      alpha[t] = alpha[t-1] + z_nivel[t] * sigma_nivel;
+    } else {
+      // s_obs un valor grande que refleja nuestra incertidumbre
+      // del cambio en el nivel:
+      alpha[t] = alpha[t-1] + z_nivel[t] * (10 * sigma_nivel);
+    }
+    mu[t] = alpha[t];
+  }
+}
+
+model {
+  y[ii_obs] ~ normal(mu[ii_obs], sigma_obs);
+  alpha_1 ~ normal(y[1], s_obs);
+  z_nivel ~ normal(0, 1);
+  sigma_nivel ~ normal(0, q * s_obs);
+  sigma_obs ~ normal(0, s_obs);</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> modelo_nivel<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">list</span>(<span class="at">y =</span> Nile, <span class="at">N =</span> <span class="fu">length</span>(Nile),  <span class="at">s_obs =</span> <span class="dv">200</span>, <span class="at">q =</span> <span class="fl">0.5</span>, <span class="at">n_h =</span> <span class="dv">4</span>,</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">ii_obs =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(Nile), <span class="at">N_obs =</span> <span class="fu">length</span>(Nile),</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">t_intervencion =</span> <span class="dv">29</span>),</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>, <span class="at">refresh =</span> <span class="dv">1000</span>, <span class="at">init =</span> <span class="fl">0.1</span>, <span class="at">step_size =</span> <span class="fl">0.1</span>,</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">adapt_delta =</span> <span class="fl">0.995</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 parallel chains...
+
+Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 4 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 4 finished in 5.4 seconds.
+Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 1 finished in 5.7 seconds.
+Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 3 finished in 5.7 seconds.
+Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 2 finished in 7.0 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 6.0 seconds.
+Total execution time: 7.2 seconds.</code></pre>
+</div>
+</div>
+<p>Mostramos primero nuestra estimación de las desviaciones estándar para el nivel y para la observación:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>sims<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"sigma_obs"</span>, <span class="st">"sigma_nivel"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(variable, mean, q5, q95)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 4
+  variable     mean     q5   q95
+  &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+1 sigma_obs   125.  110.   143. 
+2 sigma_nivel  21.3   9.66  41.0</code></pre>
+</div>
+</div>
+<p>Y ahora resumimos y mostramos cómo se ve el nivel inferido bajo nuestro modelo.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>sims_nivel_tbl <span class="ot">&lt;-</span> sims<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"mu"</span>), <span class="at">format =</span> <span class="st">"df"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">limpiar_draws</span>(<span class="fu">c</span>(<span class="st">"mu"</span>)) </span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>media_tbl <span class="ot">&lt;-</span> sims_nivel_tbl <span class="sc">|&gt;</span>  </span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(variable, t) <span class="sc">|&gt;</span> </span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">media =</span> <span class="fu">mean</span>(valores), <span class="at">q5 =</span> <span class="fu">quantile</span>(valores, <span class="fl">0.05</span>),</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">q95 =</span> <span class="fu">quantile</span>(valores, <span class="fl">0.95</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sims_nivel_tbl <span class="sc">|&gt;</span> <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">"mu"</span>)) <span class="sc">+</span> </span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> valores, <span class="at">group =</span> .draw), </span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">alpha =</span> <span class="fl">0.01</span>, <span class="at">size =</span> <span class="fl">0.1</span>, <span class="at">colour =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> media_tbl, <span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> media), <span class="at">colour =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> <span class="fu">tibble</span>(<span class="at">y =</span> Nile), <span class="fu">aes</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(Nile), <span class="at">y =</span> Nile))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="14-series-de-tiempo_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>En este modelo, la evolución general del nivel es más suave, pues ahora estamos absorbiendo el cambio de nivel con una intervención en la varianza al tiempo 29.</li>
+<li>Nótese que la única modificación al modelo es ampliar la incertidumbre acerca del estado al tiempo 29.</li>
+<li>Compara la estimación de los parámetros <span class="math inline">\(\sigma_\eta, \sigma_epsilon\)</span> en los dos modelos: como es de esperarse, en este segundo modelo con un punto de cambio la evolución del nivel es más suave.</li>
+</ul>
+</section>
+<section id="modelo-de-nivel-local-con-tendencia" class="level2" data-number="11.6">
+<h2 data-number="11.6" class="anchored" data-anchor-id="modelo-de-nivel-local-con-tendencia"><span class="header-section-number">11.6</span> Modelo de nivel local con tendencia</h2>
+<p>El siguiente modelo que consideramos aplica a series que tienen tendencia y ciclos más definidos. En este caso, la ecuación de observación es la misma:</p>
+<p><span class="math display">\[y_t = \mu_t + \epsilon_t,\]</span> pero las ecuaciones de evolución de estado son ahora</p>
+<p><span class="math display">\[\mu_t = \mu_{t-1} + \nu_{t-1} + \eta_{1,t}\]</span> <span class="math display">\[\nu_t = \nu_{t-1} + \eta_{2, t}\]</span> Nótese que en este caso buscamos aprender tendencias además de nivel local. Las tendencias son localmente lineales, pero pueden adaptarse en el tiempo con la estructura de la serie.</p>
+<p>En este caso veremos un ejemplo de <span class="citation" data-cites="commandeur2007introduction">Commandeur y Koopman (<a href="#ref-commandeur2007introduction" role="doc-biblioref">2007</a>)</span>, donde se examinan muertes por accidentes automovilísticos en Finlandia.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>finnish_tbl <span class="ot">&lt;-</span> <span class="fu">read_table</span>(<span class="st">"../datos/NorwayFinland.txt"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tsibble</span>(<span class="at">index =</span> year)</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(finnish_tbl)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tsibble: 6 x 3 [1Y]
+   year Norwegian_fatalities Finnish_fatalities
+  &lt;dbl&gt;                &lt;dbl&gt;              &lt;dbl&gt;
+1  1970                  560               1055
+2  1971                  533               1143
+3  1972                  490               1156
+4  1973                  511               1086
+5  1974                  509                865
+6  1975                  539                910</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(finnish_tbl, Finnish_fatalities)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="14-series-de-tiempo_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>modelo_tend <span class="ot">&lt;-</span> <span class="st">"./src/series-de-tiempo/modelo-nivel-local-tend.stan"</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>mod_1 <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(modelo_tend)</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="fu">read_lines</span>(modelo_tend, <span class="at">skip =</span> <span class="dv">13</span>, <span class="at">n_max =</span> <span class="dv">43</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="at">sep =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>parameters {
+
+  real alpha_1;
+  real nu_1;
+  real&lt;lower=0, upper= s_obs&gt; sigma_nivel;
+  real&lt;lower=0, upper=s_obs&gt; sigma_tend;
+  real&lt;lower=0, upper=s_obs&gt; sigma_obs;
+  vector[N + n_h] z_nivel;
+  vector[N + n_h] z_tend;
+
+}
+
+transformed parameters {
+  vector[N + n_h] mu;
+  vector[N + n_h] alpha;
+  vector[N + n_h] nu;
+
+
+  alpha[1] = alpha_1;
+  nu[1] = nu_1;
+  mu[1] = alpha[1];
+  // evolucion estado
+  for(t in 2:(N + n_h)){
+    alpha[t] = alpha[t-1] + nu[t-1] + z_nivel[t] * sigma_nivel;
+    nu[t] = nu[t-1] + z_tend[t] * sigma_tend;
+    mu[t] = alpha[t];
+  }
+}
+
+model {
+  // modelo de observaciones
+  y[ii_obs] ~ normal(mu[ii_obs], sigma_obs);
+  // iniciales
+  alpha_1 ~ normal(y[1], s_obs);
+  nu_1 ~ normal(0, s_obs);
+  z_nivel ~ normal(0, 1);
+  z_tend ~ normal(0, 1);
+  sigma_nivel ~ normal(0, q_nivel * s_obs);
+  sigma_tend ~ normal(0, q_tend * s_obs);
+  sigma_obs ~ normal(0, s_obs);
+
+}</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="fu">nrow</span>(finnish_tbl)</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> mod_1<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">list</span>(<span class="at">y =</span> finnish_tbl<span class="sc">$</span>Finnish_fatalities,  </span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">N =</span> N,  <span class="at">s_obs =</span> <span class="dv">200</span>, </span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">q_nivel =</span> <span class="fl">0.05</span>,</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">q_tend =</span> <span class="fl">0.05</span>,</span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">n_h =</span> <span class="dv">3</span>,</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">ii_obs =</span> <span class="dv">1</span><span class="sc">:</span>N, <span class="at">N_obs =</span> N),</span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter_sampling =</span> <span class="dv">3000</span>, <span class="at">iter_warmup =</span> <span class="dv">3000</span>,</span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>, <span class="at">refresh =</span> <span class="dv">1000</span>,</span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">adapt_delta =</span> <span class="fl">0.9995</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 parallel chains...
+
+Chain 1 Iteration:    1 / 6000 [  0%]  (Warmup) 
+Chain 2 Iteration:    1 / 6000 [  0%]  (Warmup) 
+Chain 3 Iteration:    1 / 6000 [  0%]  (Warmup) 
+Chain 4 Iteration:    1 / 6000 [  0%]  (Warmup) 
+Chain 2 Iteration: 1000 / 6000 [ 16%]  (Warmup) 
+Chain 3 Iteration: 1000 / 6000 [ 16%]  (Warmup) 
+Chain 1 Iteration: 1000 / 6000 [ 16%]  (Warmup) 
+Chain 4 Iteration: 1000 / 6000 [ 16%]  (Warmup) 
+Chain 3 Iteration: 2000 / 6000 [ 33%]  (Warmup) 
+Chain 1 Iteration: 2000 / 6000 [ 33%]  (Warmup) 
+Chain 2 Iteration: 2000 / 6000 [ 33%]  (Warmup) 
+Chain 4 Iteration: 2000 / 6000 [ 33%]  (Warmup) 
+Chain 3 Iteration: 3000 / 6000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 3001 / 6000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 3000 / 6000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 3001 / 6000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 3000 / 6000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 3001 / 6000 [ 50%]  (Sampling) 
+Chain 4 Iteration: 3000 / 6000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 3001 / 6000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 4000 / 6000 [ 66%]  (Sampling) 
+Chain 1 Iteration: 4000 / 6000 [ 66%]  (Sampling) 
+Chain 2 Iteration: 4000 / 6000 [ 66%]  (Sampling) 
+Chain 4 Iteration: 4000 / 6000 [ 66%]  (Sampling) 
+Chain 1 Iteration: 5000 / 6000 [ 83%]  (Sampling) 
+Chain 3 Iteration: 5000 / 6000 [ 83%]  (Sampling) 
+Chain 4 Iteration: 5000 / 6000 [ 83%]  (Sampling) 
+Chain 2 Iteration: 5000 / 6000 [ 83%]  (Sampling) 
+Chain 1 Iteration: 6000 / 6000 [100%]  (Sampling) 
+Chain 3 Iteration: 6000 / 6000 [100%]  (Sampling) 
+Chain 1 finished in 50.3 seconds.
+Chain 3 finished in 50.3 seconds.
+Chain 4 Iteration: 6000 / 6000 [100%]  (Sampling) 
+Chain 4 finished in 50.6 seconds.
+Chain 2 Iteration: 6000 / 6000 [100%]  (Sampling) 
+Chain 2 finished in 50.7 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 50.5 seconds.
+Total execution time: 50.9 seconds.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: 12000 of 12000 (100.0%) transitions hit the maximum treedepth limit of 10.
+See https://mc-stan.org/misc/warnings for details.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>sims<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"sigma_obs"</span>, <span class="st">"sigma_nivel"</span>, <span class="st">"sigma_tend"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(variable, mean, q5, q95, rhat) <span class="sc">|&gt;</span> </span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is_double), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">3</span>)))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 5
+  variable     mean     q5   q95  rhat
+  &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 sigma_obs   45.1  33.0    60.4  1   
+2 sigma_nivel  9.50  0.816  23.3  1.00
+3 sigma_tend  19.4  11.7    28.1  1.00</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>tiempo_tbl <span class="ot">&lt;-</span> <span class="fu">select</span>(finnish_tbl, year) <span class="sc">|&gt;</span> </span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">t =</span> <span class="fu">row_number</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">tibble</span>(<span class="at">t =</span> <span class="dv">35</span><span class="sc">:</span><span class="dv">37</span>, <span class="at">year =</span> <span class="dv">2004</span><span class="sc">:</span><span class="dv">2006</span>))</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>sims_nivel_tbl <span class="ot">&lt;-</span> sims<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"mu"</span>), <span class="at">format =</span> <span class="st">"df"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">limpiar_draws</span>(<span class="fu">c</span>(<span class="st">"mu"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(tiempo_tbl)</span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>media_tbl <span class="ot">&lt;-</span> sims_nivel_tbl <span class="sc">|&gt;</span>  </span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(variable, t, year) <span class="sc">|&gt;</span> </span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">media =</span> <span class="fu">mean</span>(valores), <span class="at">q5 =</span> <span class="fu">quantile</span>(valores, <span class="fl">0.05</span>),</span>
+<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">q95 =</span> <span class="fu">quantile</span>(valores, <span class="fl">0.95</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Notamos ahora que nuestro pronóstico tiene una tendencia creciente, pues la incluimos en el modelo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sims_nivel_tbl <span class="sc">|&gt;</span> <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">"mu"</span>)) <span class="sc">+</span> </span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> valores, <span class="at">group =</span> .draw), </span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">alpha =</span> <span class="fl">0.01</span>, <span class="at">size =</span> <span class="fl">0.1</span>, <span class="at">colour =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> media_tbl, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> media), <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> finnish_tbl, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> Finnish_fatalities))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="14-series-de-tiempo_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Podemos ver los cambios de tendencia en el modelo como componente separada, donde vemos que en general la tendencia es a la baja, aunque entre 1980 y 1990 tuvo periodos de incremento:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>sims_nivel_tbl <span class="ot">&lt;-</span> sims<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"nu"</span>), <span class="at">format =</span> <span class="st">"df"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">limpiar_draws</span>(<span class="fu">c</span>(<span class="st">"nu"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(tiempo_tbl)</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sims_nivel_tbl <span class="sc">|&gt;</span> <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">"nu"</span>, year <span class="sc">&lt;</span> <span class="dv">2004</span>)) <span class="sc">+</span> </span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> valores, <span class="at">group =</span> .draw), </span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">alpha =</span> <span class="fl">0.01</span>, <span class="at">size =</span> <span class="fl">0.05</span>, <span class="at">colour =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Tendencia"</span>) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="14-series-de-tiempo_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Nivel local con tendencia
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Para escribir el modelo de nivel local con tendencia, el estado se puede definir como el vector</p>
+<p><span class="math display">\[
+\theta_t  =
+\begin{pmatrix}
+\mu_t \\
+\nu_t
+\end{pmatrix}
+\]</span> y podemos utilizar nuestra notación de arriba con:</p>
+<p><span class="math display">\[
+F_t = F =
+\begin{pmatrix}
+1 \\
+0
+\end{pmatrix},\, G_t = G =
+\begin{pmatrix}
+1 &amp; 1\\
+0 &amp; 1
+\end{pmatrix}
+\]</span></p>
+</div>
+</div>
+<p>La ecuación de observación es entonces</p>
+<p><span class="math display">\[
+y_t = \begin{pmatrix}
+1 &amp; 0
+\end{pmatrix}
+\begin{pmatrix}
+\mu_t \\
+\nu_t
+\end{pmatrix} + \epsilon_t
+\]</span> y la ecuación de evolución del estado es</p>
+<p><span class="math display">\[
+\begin{pmatrix}
+\mu_{t+1}  \\
+\nu_{t+1}
+\end{pmatrix} =
+\begin{pmatrix}
+1 &amp; 1\\
+0 &amp; 1
+\end{pmatrix}
+\begin{pmatrix}
+\mu_{t}  \\
+\nu_{t}
+\end{pmatrix}
++
+\begin{pmatrix}
+\eta_{1,t} \\
+\eta_{2,t}
+\end{pmatrix}
+\]</span></p>
+</section>
+<section id="modelos-con-estacionalidad-fija" class="level2" data-number="11.7">
+<h2 data-number="11.7" class="anchored" data-anchor-id="modelos-con-estacionalidad-fija"><span class="header-section-number">11.7</span> Modelos con estacionalidad fija</h2>
+<p>Antes de mostrar estacionalidad dinámica, mostramos cómo construiríamos el espacio de estados para un modelo con nivel local, sin tendencia y con estacionalidad <em>fija</em>. El modelo de observación será ahora:</p>
+<p><span class="math display">\[y_t = \mu_t + \gamma_{1,t} + \epsilon_t\]</span> donde <span class="math inline">\(\gamma_{1,t}\)</span> es el coeficiente de estacionalidad.</p>
+<p>Para simplificar por el momento, consideramos datos en trimestres. Como la estacionalidad es fija, hay cuatro parámetros <span class="math inline">\(\beta_1,\beta_2,\beta_3,\beta_4\)</span>, que deben ser parte del espacio de estados, tales que (suponiendo que la serie comienza en el primer trimestre):</p>
+<p>Para <span class="math inline">\(t=1\)</span>, los estados los pondremos como</p>
+<p><span class="math display">\[
+\gamma_{1,1} = \beta_1,\gamma_{2,1} =\beta_2,\gamma_{3,1} = \beta_3,\gamma_{4,1} = \beta_4
+\]</span> así que para <span class="math inline">\(t=2\)</span> podemos poner:</p>
+<p><span class="math display">\[
+\gamma_{1,2} = \beta_2,\gamma_{2,2} =\beta_3,\gamma_{3,2} = \beta_4,\gamma_{4,2} = \beta_1
+\]</span> <span class="math display">\[
+\gamma_{1,3} = \beta_3,\gamma_{2,3} =\beta_4,\gamma_{3,3} = \beta_1,\gamma_{4,3} = \beta_2
+\]</span> y así sucesivamente, los coeficientes del estado para la estacionalidad <span class="math inline">\(\gamma_{1,t},\gamma_{2,t},\gamma_{3,t},\gamma_{4,t}\)</span> son una rotación de <span class="math inline">\(\beta_1,\beta_2,\beta_3,\beta_4\)</span>.</p>
+<p>Podemos escribir entonces el estado (suponiendo nivel local sin tendencia) como sigue:</p>
+<p><span class="math display">\[\theta_1^* = (\mu_1, \beta_1, \beta_2, \beta_3, \beta_4)^t = (\mu_1, \gamma_{1,1}, \gamma_{2,1}, \gamma_{3,1}, \gamma_{4,1})^t,\]</span> <span class="math display">\[\theta_2^* = (\mu_2, \beta_2, \beta_3, \beta_4, \beta_1)^t = (\mu_2, \gamma_{1,2}, \gamma_{2,2}, \gamma_{3,2}, \gamma_{4,2})^t,\]</span> <span class="math display">\[\theta_3^* = (\mu_3, \beta_3, \beta_4, \beta_1, \beta_2)^t = (\mu_3, \gamma_{1,3}, \gamma_{2,3}, \gamma_{3,3}, \gamma_{4,3})^t,\]</span> Observando estas ecuaciones, la matriz de evolución del sistema es una matriz que rota las componentes correspondientes a la estacionalidad:</p>
+<p><span class="math display">\[
+\theta_{t+1}^* =
+G_t \theta_t^* +
+\begin{pmatrix}
+\eta_t \\
+0 \\
+0 \\
+0 \\
+0 \\
+\end{pmatrix}
+=
+\begin{pmatrix}
+1 &amp; 0 &amp; 0 &amp; 0 &amp; 0\\
+0 &amp; 0 &amp; 1 &amp; 0 &amp; 0\\
+0 &amp; 0 &amp; 0 &amp; 1 &amp; 0\\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 1\\
+0 &amp; 1 &amp; 0 &amp; 0 &amp; 0\\
+\end{pmatrix}
+\theta_t^* +
+\begin{pmatrix}
+\eta_t \\
+0 \\
+0 \\
+0 \\
+0 \\
+\end{pmatrix}
+\]</span> Puedes verificar qué pasa con los vectores <span class="math inline">\(\theta_2^*,\theta_3^*\)</span> mostrados arriba. La matriz <span class="math inline">\(F_t\)</span> tiene que sacar el primer valor de estacionalidad <span class="math inline">\(\gamma_{1,t}\)</span> para concordar con el modelo de observaciones:</p>
+<p><span class="math display">\[
+y_t = \mu_t + \gamma_{1,t} + \epsilon_t = F_t\theta_t^* + \epsilon_t=
+\begin{pmatrix}
+1 &amp; 1 &amp; 0 &amp; 0 &amp; 0
+\end{pmatrix}
+\theta_t^* + \epsilon_t
+\]</span> El único problema con este modelo de estacionalidad fija es que está sobreparametrizado. Por razones de ajuste y de interpretación, es más conveniente que se cumpla alguna restricción, por ejemplo:</p>
+<p><span class="math display">\[\beta_1 + \beta_2 + \beta_3 + \beta_4 =0,\]</span></p>
+<p>de modo que para cualquier <span class="math inline">\(t\)</span>, tenemos que:</p>
+<p><span class="math display">\[\gamma_{1,t} + \gamma_{2,t} + \gamma_{3,t} + \gamma_{4,t}=0.\]</span> Podemos reducir entonces nuestro espacio de estados en una dimensión, pues siempre uno de los coeficientes en cada periodo es el negativo de la suma del resto. Por ejemplo, si nuestro nuevo espacio de estado lo definimos como</p>
+<p><span class="math display">\[
+\theta_1 = (\mu_1, \gamma_{1,1}, \gamma_{4,1}, \gamma_{3,1})^t
+\]</span> entonces (haz el cálculo sustiyendo las <span class="math inline">\(\beta\)</span> fijas si este argumento te confunde):</p>
+<p><span class="math display">\[
+\theta_{2} = (\mu_{2}, \gamma_{1,2}, \gamma_{4,2}, \gamma_{3,2})^t = (\mu_2,
+-(\gamma_{1,1} + \gamma_{4,1} + \gamma_{3,1}),
+\gamma_{1,1}, \gamma_{4,1})^t
+\]</span> Y en términos matriciales</p>
+<p><span class="math display">\[
+\theta_{t+1} = G_t\theta_t +
+\begin{pmatrix}
+\eta_t \\
+0 \\
+0 \\
+0 \\
+\end{pmatrix}
+=
+\begin{pmatrix}
+1 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; -1 &amp; -1 &amp; -1 \\
+0 &amp; 1 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 1 &amp; 0 \\
+\end{pmatrix}
+\theta_t
++
+\begin{pmatrix}
+\eta_t \\
+0 \\
+0 \\
+0 \\
+\end{pmatrix},
+\]</span> y así sucesivamente para <span class="math inline">\(t=1,2,\ldots\)</span>.</p>
+</section>
+<section id="modelos-con-estacionalidad-dinámica" class="level2" data-number="11.8">
+<h2 data-number="11.8" class="anchored" data-anchor-id="modelos-con-estacionalidad-dinámica"><span class="header-section-number">11.8</span> Modelos con estacionalidad dinámica</h2>
+<p>Para hacer la estacionalidad dinámica, podemos agregar simplemente</p>
+<p><span class="math display">\[
+\theta_{t+1} = G_t\theta_t +
+\begin{pmatrix}
+\eta_t \\
+\omega_t \\
+0 \\
+0 \\
+\end{pmatrix}
+=
+\begin{pmatrix}
+1 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; -1 &amp; -1 &amp; -1 \\
+0 &amp; 1 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 1 &amp; 0 \\
+\end{pmatrix}
+\theta_t
++
+\begin{pmatrix}
+\eta_t \\
+\omega_t \\
+0 \\
+0 \\
+\end{pmatrix},
+\]</span></p>
+<p>es decir, le agregamos <span class="math inline">\(\gamma_{1,t+1} = - (\gamma_{1,t} +\gamma_{2,t}+\gamma_{3,t})\)</span> una perturbación <span class="math inline">\(\omega_t \sim N(0, \sigma_\omega)\)</span>. Simplificando la notación, si la ecuación de observación es</p>
+<p><span class="math display">\[y_t = \mu_t + \gamma_t + \epsilon_t.\]</span> la ecuación de transición para el término <span class="math inline">\(\gamma_t\)</span> de estacionalidad es</p>
+<p><span class="math display">\[\gamma_t = - (\gamma_{t-3} + \gamma_{t-2} + \gamma_{t-1}) + \omega_t\]</span></p>
+<p>Abajo podemos ver una implementación en Stan:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>modelo_est <span class="ot">&lt;-</span> <span class="st">"./src/series-de-tiempo/modelo-nivel-local-tend-est.stan"</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>mod_est_1 <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(modelo_est)</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="fu">read_lines</span>(modelo_est, <span class="at">skip =</span> <span class="dv">28</span>, <span class="at">n_max =</span> <span class="dv">42</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="at">sep =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+transformed parameters {
+  vector[N + n_h] mu;
+  vector[N + n_h] alpha;
+  vector[N + n_h] nu;
+  vector[N + n_h] gamma;
+
+
+  alpha[1] = alpha_1;
+  nu[1] = nu_1;
+  gamma[1:(periodo-1)] = gamma_inicial;
+  // evolucion estado
+  for(t in 2:(N + n_h)){
+    // nivel y tendencia
+    alpha[t] = alpha[t-1] + nu[t-1] + z_nivel[t] * sigma_nivel;
+    nu[t] = nu[t-1] + z_tend[t] * sigma_tend;
+  }
+  //estacionalidad
+  for(t in periodo:(N+n_h)){
+    gamma[t] = - sum(gamma[(t - periodo + 1):(t - 1)]) + z_est[t] * sigma_est;
+  }
+  for(t in 1:(N+n_h)){
+    mu[t] = alpha[t] + gamma[t];
+  }
+}
+
+model {
+  // modelo de observaciones
+  y[ii_obs] ~ normal(mu[ii_obs], sigma_obs);
+  // iniciales
+  alpha_1 ~ normal(y[1], s_obs);
+  nu_1 ~ normal(0, s_obs);
+  gamma_inicial ~ normal(0, s_obs);
+  z_nivel ~ normal(0, 1);
+  z_tend ~ normal(0, 1);
+  z_est ~ normal(0, 1);
+  sigma_nivel ~ normal(0, q_nivel * s_obs);
+  sigma_tend ~ normal(0, q_tend * s_obs);
+  sigma_est ~ normal(0, s_obs);
+  sigma_obs ~ normal(0, s_obs);
+
+}</code></pre>
+</div>
+</div>
+<section id="ejemplo-cinturones-de-seguridad" class="level3" data-number="11.8.1">
+<h3 data-number="11.8.1" class="anchored" data-anchor-id="ejemplo-cinturones-de-seguridad"><span class="header-section-number">11.8.1</span> Ejemplo: cinturones de seguridad</h3>
+<p>En este ejemplo también clásico examinamos la serie de tiempo muertes de conductores en UK (que viajan en asientos traseros del automóvil):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>uk_drivers <span class="ot">&lt;-</span> Seatbelts <span class="sc">|&gt;</span> <span class="fu">as_tsibble</span>()</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(uk_drivers)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tsibble: 6 x 3 [1M]
+# Key:       key [1]
+     index key           value
+     &lt;mth&gt; &lt;chr&gt;         &lt;dbl&gt;
+1 1969 ene DriversKilled   107
+2 1969 feb DriversKilled    97
+3 1969 mar DriversKilled   102
+4 1969 abr DriversKilled    87
+5 1969 may DriversKilled   119
+6 1969 jun DriversKilled   106</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>uk_rear <span class="ot">&lt;-</span> uk_drivers <span class="sc">|&gt;</span> <span class="fu">filter</span>(key <span class="sc">==</span> <span class="st">"rear"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="co">#|</span></span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> mod_est_1<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">list</span>(<span class="at">y =</span> uk_rear<span class="sc">$</span>value,  </span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">N =</span> <span class="fu">nrow</span>(uk_rear),  <span class="at">s_obs =</span> <span class="dv">50</span>, </span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">q_nivel =</span> <span class="fl">0.5</span>,</span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">q_tend =</span> <span class="fl">1e-6</span>, <span class="co"># sin tendencia</span></span>
+<span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">n_h =</span> <span class="dv">6</span>,</span>
+<span id="cb61-8"><a href="#cb61-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">ii_obs =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(uk_rear), <span class="at">N_obs =</span> <span class="fu">nrow</span>(uk_rear),</span>
+<span id="cb61-9"><a href="#cb61-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">periodo =</span> <span class="dv">12</span>),</span>
+<span id="cb61-10"><a href="#cb61-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter_sampling =</span> <span class="dv">1000</span>, <span class="at">iter_warmup =</span> <span class="dv">1000</span>,</span>
+<span id="cb61-11"><a href="#cb61-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>, <span class="at">refresh =</span> <span class="dv">1000</span>,</span>
+<span id="cb61-12"><a href="#cb61-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">adapt_delta =</span> <span class="fl">0.99</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 parallel chains...
+
+Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 4 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 2 finished in 52.8 seconds.
+Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 3 finished in 56.0 seconds.
+Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 1 finished in 63.3 seconds.
+Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 4 finished in 64.1 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 59.0 seconds.
+Total execution time: 64.3 seconds.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>sims<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"sigma_obs"</span>, <span class="st">"sigma_nivel"</span>, <span class="st">"sigma_tend"</span>, <span class="st">"sigma_est"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(variable, mean, q5, q95, rhat)  <span class="sc">|&gt;</span> </span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is_double), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">5</span>)))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 5
+  variable        mean     q5     q95  rhat
+  &lt;chr&gt;          &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
+1 sigma_obs   37.6     33.7   41.8     1.00
+2 sigma_nivel  9.13     5.53  14.2     1.00
+3 sigma_tend   0.00004  0      0.0001  1.00
+4 sigma_est    2.01     0.156  5.03    1.00</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>sims_nivel_tbl <span class="ot">&lt;-</span> sims<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"alpha"</span>), <span class="at">format =</span> <span class="st">"df"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">limpiar_draws</span>(<span class="fu">c</span>(<span class="st">"alpha"</span>))</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>sims_ajuste_tbl <span class="ot">&lt;-</span> sims<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"mu"</span>), <span class="at">format =</span> <span class="st">"df"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">limpiar_draws</span>(<span class="fu">c</span>(<span class="st">"mu"</span>))</span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>media_tbl <span class="ot">&lt;-</span> sims_ajuste_tbl <span class="sc">|&gt;</span>  </span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(variable, t) <span class="sc">|&gt;</span> </span>
+<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">media =</span> <span class="fu">mean</span>(valores), <span class="at">q5 =</span> <span class="fu">quantile</span>(valores, <span class="fl">0.05</span>),</span>
+<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">q95 =</span> <span class="fu">quantile</span>(valores, <span class="fl">0.95</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Veamos nuestro ajuste y pronóstico:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sims_ajuste_tbl <span class="sc">|&gt;</span> <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">"mu"</span>)) <span class="sc">+</span> </span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> valores, <span class="at">group =</span> .draw), </span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">alpha =</span> <span class="fl">0.01</span>, <span class="at">size =</span> <span class="fl">0.1</span>, <span class="at">colour =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> media_tbl, <span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> media), <span class="at">colour =</span> <span class="st">"orange"</span>) <span class="sc">+</span></span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> Seatbelts <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">t =</span> <span class="fu">row_number</span>()), </span>
+<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> rear))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="14-series-de-tiempo_files/figure-html/unnamed-chunk-37-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Podemos también graficar la componente de estacionalidad, que vemos que es considerablemente estable:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>sims_est_tbl <span class="ot">&lt;-</span> sims<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"gamma"</span>), <span class="at">format =</span> <span class="st">"df"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">limpiar_draws</span>(<span class="fu">c</span>(<span class="st">"gamma"</span>))</span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>media_tbl <span class="ot">&lt;-</span> sims_est_tbl <span class="sc">|&gt;</span>  </span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(variable, t) <span class="sc">|&gt;</span> </span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">media =</span> <span class="fu">mean</span>(valores), <span class="at">q5 =</span> <span class="fu">quantile</span>(valores, <span class="fl">0.05</span>),</span>
+<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">q95 =</span> <span class="fu">quantile</span>(valores, <span class="fl">0.95</span>))</span>
+<span id="cb67-7"><a href="#cb67-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sims_est_tbl <span class="sc">|&gt;</span> <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">"gamma"</span>)) <span class="sc">+</span> </span>
+<span id="cb67-8"><a href="#cb67-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> valores, <span class="at">group =</span> .draw), </span>
+<span id="cb67-9"><a href="#cb67-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">alpha =</span> <span class="fl">0.01</span>, <span class="at">size =</span> <span class="fl">0.05</span>, <span class="at">colour =</span> <span class="st">"red"</span>) <span class="sc">+</span> </span>
+<span id="cb67-10"><a href="#cb67-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> media_tbl, <span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> media), <span class="at">colour =</span> <span class="st">"black"</span>) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="14-series-de-tiempo_files/figure-html/unnamed-chunk-38-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="construcción-modular-de-modelos" class="level2" data-number="11.9">
+<h2 data-number="11.9" class="anchored" data-anchor-id="construcción-modular-de-modelos"><span class="header-section-number">11.9</span> Construcción modular de modelos</h2>
+<p>Agregando este nuevo módulo de estacionalidad a nuestro modelo de nivel local con tendencia, obtenemos que la ecuación de observación es ahora (para periodo <span class="math inline">\(s=4\)</span>):</p>
+<p><span class="math display">\[
+y_t = \begin{pmatrix}
+1 &amp; 0 &amp; 1 &amp; 0 &amp; 0 &amp; 0
+\end{pmatrix}
+\theta_t + \epsilon_t
+\]</span> donde</p>
+<p><span class="math display">\[
+\theta_{t+1} =
+\begin{pmatrix}
+\mu_{t+1} \\
+\nu_{t+1} \\
+\gamma_{t+1} \\
+\gamma_{t}\\
+\gamma_{t-1}\\
+\end{pmatrix}
+= G \theta_t +R\eta_t =
+G
+\begin{pmatrix}
+\mu_t \\
+\nu_t \\
+\gamma_{t} \\
+\gamma_{t-1}\\
+\gamma_{t-2}\\
+\end{pmatrix} +
+R
+\begin{pmatrix}
+\eta_{1,t} \\
+\eta_{2,t} \\
+\omega_{t} \\
+\end{pmatrix}
+\]</span> donde</p>
+<p><span class="math display">\[
+G=
+\begin{pmatrix}
+1 &amp; 1 &amp; &amp; &amp; \\
+0 &amp; 1 &amp;\\
+&amp; &amp; &amp;  -1 &amp; -1 &amp; -1\\
+&amp; &amp; &amp;  1 &amp; 0 &amp; 0\\
+&amp; &amp; &amp; 0 &amp; 1 &amp; 0 \\
+\end{pmatrix}
+\]</span> y</p>
+<p><span class="math display">\[
+R=
+\begin{pmatrix}
+1 &amp; 0 &amp; &amp; &amp; \\
+0 &amp; 1 &amp;\\
+&amp; &amp; &amp; 1 \\
+&amp; &amp; &amp; 0\\ &amp; &amp; &amp; 0 \\ &amp; &amp; &amp; 0\\
+\end{pmatrix}
+\]</span></p>
+<p>Como vemos, las matrices <span class="math inline">\(G_t\)</span> y <span class="math inline">\(F_t\)</span> están organizadas en bloques, una para cada componente del modelo.</p>
+<p>De esta manera, podemos agregar distintas componentes a nuestros modelos de manera modular. La matriz <span class="math inline">\(G\)</span> está organizada en bloques a lo a largo de su diagonal, un bloque para cada componente del modelo. Igualmente, la matriz <span class="math inline">\(F\)</span> está separada por bloques que corresponden a las componentes.</p>
+<section id="ejemplo" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="ejemplo">Ejemplo</h3>
+<p>En las aplicaciones originales de seguimiento de objetos basado en sensores ruidosos, el estado que nos interesa es la posición y velocidad de un objeto:</p>
+<p><span class="math display">\[\theta_t = (x_{i,t}, y_{i, t}, \dot x_{i,t}, \dot y_{i,t})\]</span> Con matriz de transición:</p>
+<p><span class="math display">\[
+G =
+\begin{pmatrix}
+1 &amp; 0 &amp; \delta_t &amp; 0 \\
+0 &amp; 1 &amp;   0 &amp; \delta_t\\
+0 &amp; 0 &amp;   1 &amp; 0\\
+0 &amp; 0 &amp;   0 &amp; 1\\
+\end{pmatrix}
+\]</span> donde <span class="math inline">\(\delta_t\)</span> es el tiempo transcurrido entre mediciones. Cada una de estos tiene una perturbación aleatoria. Para la ecuación de observación, si las posiciones medidas por el sensor son pares de coordenadas <span class="math inline">\(y_{1,t},y_{2,t}\)</span>, y la matriz <span class="math inline">\(F\)</span> es entonces</p>
+<p><span class="math display">\[
+F =
+\begin{pmatrix}
+1 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 1 &amp;   0 &amp; 0\\
+\end{pmatrix}
+\]</span> y en este ejemplo podemos usar errores normales con varianza conocida (precisión del sensor).</p>
+<p>Si recordamos nuestros programas de Stan, nota que nada impide que podamos utilizar lecturas de varios sensores. Simplemente es necesario ponerlos como datos que informan los mismos parámetros. La estructura del error puede ser independiente o correlacionada, dependiendo de la naturaleza de los distintos sensores.</p>
+</section>
+</section>
+<section id="componentes-de-regresión-dinámica" class="level2" data-number="11.10">
+<h2 data-number="11.10" class="anchored" data-anchor-id="componentes-de-regresión-dinámica"><span class="header-section-number">11.10</span> Componentes de regresión dinámica</h2>
+<p>Finalmente, veremos cómo agregar variables explicativas a modelos, lo cual puede ser especialmente útil para análisis retrospectivo, o cuando tales variables están disponibles antes que las que queremos pronosticar (como en <em>nowcasting</em>).</p>
+<p>En nuestro primer ejemplo, pretendemos medir el efecto de la ley de cinturones de seguridad en UK. Utilizaremos la variable de muertes y heridos de gravedad de pasajeros en la parte frontal del automóvil:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(uk_drivers <span class="sc">|&gt;</span> <span class="fu">filter</span>(key <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"front"</span>, <span class="st">"rear"</span>)))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Plot variable not specified, automatically selected `.vars = value`</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="14-series-de-tiempo_files/figure-html/unnamed-chunk-39-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>uk_front <span class="ot">&lt;-</span> <span class="fu">filter</span>(uk_drivers, key <span class="sc">==</span> <span class="st">"front"</span>)</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>law <span class="ot">&lt;-</span> <span class="fu">filter</span>(uk_drivers, key <span class="sc">==</span> <span class="st">"law"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>modelo_est <span class="ot">&lt;-</span> <span class="st">"./src/series-de-tiempo/modelo-seatbelts-reg-estatica.stan"</span></span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>mod_est_1 <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(modelo_est)</span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a><span class="fu">read_lines</span>(modelo_est, <span class="at">skip =</span> <span class="dv">28</span>, <span class="at">n_max =</span> <span class="dv">42</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="at">sep =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  real beta;
+
+}
+
+transformed parameters {
+  vector[N + n_h] mu;
+  vector[N + n_h] alpha;
+  vector[N + n_h] nu;
+  vector[N + n_h] gamma;
+  vector[N + n_h] mu_sin_est;
+
+
+  alpha[1] = alpha_1;
+  nu[1] = nu_1;
+  gamma[1:(periodo-1)] = gamma_inicial;
+  // evolucion estado
+  for(t in 2:(N + n_h)){
+    // nivel y tendencia
+    alpha[t] = alpha[t-1] + nu[t-1] + z_nivel[t] * sigma_nivel;
+    nu[t] = nu[t-1] + z_tend[t] * sigma_tend;
+  }
+  //estacionalidad
+  for(t in periodo:(N+n_h)){
+    gamma[t] = - sum(gamma[(t - periodo + 1):(t - 1)]) + z_est[t] * sigma_est;
+  }
+  for(t in 1:(N+n_h)){
+    mu[t] = alpha[t] + gamma[t] + beta * x[t];
+    mu_sin_est[t] = alpha[t] + beta * x[t];
+  }
+}
+
+model {
+  // modelo de observaciones
+  y[ii_obs] ~ normal(mu[ii_obs], sigma_obs);
+  // iniciales
+  alpha_1 ~ normal(y[1], s_obs);
+  beta ~ normal(0, s_obs);
+  nu_1 ~ normal(0, s_obs);
+  gamma_inicial ~ normal(0, s_obs);
+  z_nivel ~ normal(0, 1);
+  z_tend ~ normal(0, 1);
+  z_est ~ normal(0, 1);</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> mod_est_1<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">list</span>(<span class="at">y =</span> <span class="fu">log</span>(uk_front<span class="sc">$</span>value),  </span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">N =</span> <span class="fu">nrow</span>(uk_front),  <span class="at">s_obs =</span> <span class="dv">1</span>, </span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">q_nivel =</span> <span class="fl">0.5</span>,</span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">q_tend =</span> <span class="fl">0.1</span>,</span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">q_reg =</span> <span class="fl">0.5</span>,</span>
+<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">n_h =</span> <span class="dv">0</span>,</span>
+<span id="cb73-8"><a href="#cb73-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">ii_obs =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(uk_front), <span class="at">N_obs =</span> <span class="fu">nrow</span>(uk_front),</span>
+<span id="cb73-9"><a href="#cb73-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">periodo =</span> <span class="dv">12</span>,</span>
+<span id="cb73-10"><a href="#cb73-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">x =</span> law<span class="sc">$</span>value),</span>
+<span id="cb73-11"><a href="#cb73-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter_sampling =</span> <span class="dv">2000</span>, <span class="at">iter_warmup =</span> <span class="dv">2000</span>,</span>
+<span id="cb73-12"><a href="#cb73-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>, <span class="at">refresh =</span> <span class="dv">1000</span>, <span class="at">init =</span> <span class="fl">0.01</span>,</span>
+<span id="cb73-13"><a href="#cb73-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">step_size =</span> <span class="fl">0.01</span>,</span>
+<span id="cb73-14"><a href="#cb73-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">adapt_delta =</span> <span class="fl">0.995</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 parallel chains...
+
+Chain 1 Iteration:    1 / 4000 [  0%]  (Warmup) 
+Chain 2 Iteration:    1 / 4000 [  0%]  (Warmup) 
+Chain 3 Iteration:    1 / 4000 [  0%]  (Warmup) 
+Chain 4 Iteration:    1 / 4000 [  0%]  (Warmup) 
+Chain 1 Iteration: 1000 / 4000 [ 25%]  (Warmup) 
+Chain 3 Iteration: 1000 / 4000 [ 25%]  (Warmup) 
+Chain 4 Iteration: 1000 / 4000 [ 25%]  (Warmup) 
+Chain 2 Iteration: 1000 / 4000 [ 25%]  (Warmup) 
+Chain 1 Iteration: 2000 / 4000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 2001 / 4000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 2000 / 4000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 2001 / 4000 [ 50%]  (Sampling) 
+Chain 4 Iteration: 2000 / 4000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 2001 / 4000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 2000 / 4000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 2001 / 4000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 3000 / 4000 [ 75%]  (Sampling) 
+Chain 3 Iteration: 3000 / 4000 [ 75%]  (Sampling) 
+Chain 4 Iteration: 3000 / 4000 [ 75%]  (Sampling) 
+Chain 2 Iteration: 3000 / 4000 [ 75%]  (Sampling) 
+Chain 1 Iteration: 4000 / 4000 [100%]  (Sampling) 
+Chain 1 finished in 310.4 seconds.
+Chain 3 Iteration: 4000 / 4000 [100%]  (Sampling) 
+Chain 3 finished in 311.7 seconds.
+Chain 4 Iteration: 4000 / 4000 [100%]  (Sampling) 
+Chain 4 finished in 313.1 seconds.
+Chain 2 Iteration: 4000 / 4000 [100%]  (Sampling) 
+Chain 2 finished in 315.7 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 312.7 seconds.
+Total execution time: 315.8 seconds.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>sims<span class="sc">$</span><span class="fu">summary</span>(</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">"sigma_obs"</span>, <span class="st">"sigma_nivel"</span>, <span class="st">"sigma_tend"</span>, <span class="st">"sigma_est"</span>, </span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"beta"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(variable, mean, q5, q95, rhat) <span class="sc">|&gt;</span> </span>
+<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.double), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">6</span>)))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 5
+  variable        mean        q5      q95  rhat
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
+1 sigma_obs    0.0714   0.0627    0.0800   1.04
+2 sigma_nivel  0.0212   0.0101    0.0328   1.06
+3 sigma_tend   0.00109  0.000116  0.00252  1.10
+4 sigma_est    0.00515  0.00051   0.0123   1.05
+5 beta        -0.343   -0.445    -0.235    1.03</code></pre>
+</div>
+</div>
+<p>El coeficiente de la variable dummy que indica la presencia de la ley de usar cinturón de seguridad redujo en alrededor de 35% el número de muertes o heridos graves en accidentes de pasajeros viajando en los asientos delanteros, controlando por cambios posibles de nivel de la serie y estacionalidad. Bajo el supuesto de que no hay puertas traseras (lo cual no es necesariamente cierto en general) esta sería una estimación causal.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>sims_est_tbl <span class="ot">&lt;-</span> sims<span class="sc">$</span><span class="fu">draws</span>(<span class="fu">c</span>(<span class="st">"mu_sin_est"</span>, <span class="st">"alpha"</span>), <span class="at">format =</span> <span class="st">"df"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">limpiar_draws</span>(<span class="fu">c</span>(<span class="st">"mu_sin_est"</span>, <span class="st">"alpha"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Dropping 'draws_df' class as required metadata was removed.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>media_tbl <span class="ot">&lt;-</span> sims_est_tbl <span class="sc">|&gt;</span>  </span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(variable, t) <span class="sc">|&gt;</span> </span>
+<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">media =</span> <span class="fu">mean</span>(valores), <span class="at">q5 =</span> <span class="fu">quantile</span>(valores, <span class="fl">0.05</span>),</span>
+<span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">q95 =</span> <span class="fu">quantile</span>(valores, <span class="fl">0.95</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'variable'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sims_est_tbl <span class="sc">|&gt;</span> <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">"mu_sin_est"</span>)) <span class="sc">+</span> </span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> valores, <span class="at">group =</span> .draw), </span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">alpha =</span> <span class="fl">0.01</span>, <span class="at">size =</span> <span class="fl">0.05</span>, <span class="at">colour =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> media_tbl, <span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> media, <span class="at">colour =</span> variable)) <span class="sc">+</span></span>
+<span id="cb81-5"><a href="#cb81-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">which</span>(law<span class="sc">$</span>value<span class="sc">==</span><span class="dv">1</span>)[<span class="dv">1</span>], <span class="at">colour =</span> <span class="st">"gray"</span>) <span class="sc">+</span></span>
+<span id="cb81-6"><a href="#cb81-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_point</span>(<span class="at">data =</span> Seatbelts <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">t =</span> <span class="fu">row_number</span>()), </span>
+<span id="cb81-7"><a href="#cb81-7" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> <span class="fu">log</span>(front)))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="14-series-de-tiempo_files/figure-html/unnamed-chunk-43-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>En este ejemplo usamos el modelo de observaciones dado por</p>
+<p><span class="math display">\[y_t = \mu_t + \gamma_t + \beta x_t + \epsilon_t\]</span> dond <span class="math inline">\(x_t\)</span> es la variable dummy que indica la aplicación de la ley de cinturones de seguridad. En general, podemos usar más covariables apropiadas y coeficientes dinámicos:</p>
+<p><span class="math display">\[y_t = \mu_t + \gamma_t + \beta_t x_t + \epsilon_t\]</span> En este caso, podemos definir el estado como:</p>
+<p><span class="math display">\[\theta_t = (\mu_t, \nu_t, \gamma_{1,t},\ldots,\gamma_{s,t}, \beta_{1,t},\beta_{2,t},
+\ldots,\beta_{p,t})^t,\]</span></p>
+<p>La ecuación de observación es:</p>
+<p><span class="math display">\[y_t = F_t\theta_t + \epsilon_t,\]</span></p>
+<p>donde <span class="math display">\[
+F_t =
+(1, 0, 1, 0,\ldots, 0, x_{1,t}, x_{2,t},\ldots , x_{p,t}).
+\]</span></p>
+<p>La ecuación de transición de estados (suponiendo datos trimestrales (<span class="math inline">\(s=4\)</span>) y dos covariables <span class="math inline">\(x_t\)</span> (<span class="math inline">\(p=2\)</span>) está dada por</p>
+$$ G_t =
+<span class="math display">\[\begin{pmatrix}
+1 &amp; 1 &amp; &amp; &amp; &amp; &amp;\\
+0 &amp; 1 &amp; &amp; &amp;\\
+&amp; &amp; &amp;  -1 &amp; -1 &amp; -1 &amp; &amp;\\
+&amp; &amp; &amp;  1 &amp; 0 &amp; 0 &amp; &amp;\\
+&amp; &amp; &amp; 0 &amp; 1 &amp; 0 &amp; &amp;\\
+  &amp; &amp; &amp;  &amp;  &amp;  &amp; 1&amp; 0\\
+&amp; &amp; &amp;  &amp;  &amp;  &amp; 0 &amp; 1\\
+
+\end{pmatrix}\]</span>
+<p>$$</p>
+<p>Para términos <span class="math inline">\(\beta\)</span> estáticos de regresión, podemos tomar</p>
+$$ <em>{t} = G_t </em>{t-1} +
+<span class="math display">\[\begin{pmatrix}
+\eta_{1,t} \\
+\eta_{2,t} \\
+\omega_t \\
+0 \\
+\vdots \\
+0
+
+\end{pmatrix}\]</span>
+<p>$$</p>
+<p>y para regresión dinámica:</p>
+<p><span class="math display">\[
+\theta_{t} = G_t \theta_{t-1} +
+\begin{pmatrix}
+\eta_{1,t} \\
+\eta_{2,t} \\
+\omega_t \\
+0 \\
+\vdots \\
+0\\
+e_{1,t} \\
+e_{2,t} \\
+\end{pmatrix}
+\]</span></p>
+<p>con <span class="math inline">\(e_{i,t} \sim N(0, \sigma_{i,\beta})\)</span>. Es decir, ponemos una transición de caminata aleatoria para cada coerficiente. Generalmente:</p>
+<ul>
+<li>Conviene que las variables <span class="math inline">\(x_i\)</span> estén centradas y escaladas (estandarizadas) para que tengan variación similar</li>
+<li>Al centrarlas, evitamos problemas en el ajuste por correlaciones con el nivel y tendencia.</li>
+<li>Al escalarlas, es más simple poner iniciales apropiadas para <span class="math inline">\(\sigma_{i,\beta}\)</span>.</li>
+</ul>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-commandeur2007introduction" class="csl-entry" role="listitem">
+Commandeur, J. J. F., y S. J. Koopman. 2007. <em>An Introduction to State Space Time Series Analysis</em>. Practical Econometrics. OUP Oxford. <a href="https://books.google.com.mx/books?id=OCmljPYfgkUC">https://books.google.com.mx/books?id=OCmljPYfgkUC</a>.
+</div>
+</div>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./13-exp-naturales.html" class="pagination-link" aria-label="Otros métodos para inferencia causal">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Otros métodos para inferencia causal</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
