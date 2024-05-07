@@ -17,6 +17,7 @@ book:
     - 09-modelos-jerarquicos.qmd
     - 13-exp-naturales.qmd
     - 14-series-de-tiempo.qmd
+    - 15-aplicaciones-series.qmd
 bibliography: referencias/book.bib
 
 format:
