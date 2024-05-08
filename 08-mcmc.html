@@ -265,6 +265,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Modelos de espacio de estados</span></span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-aplicaciones-series.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Aplicaciones de modelos de espacio de estados</span></span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -985,7 +991,7 @@ Tip
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.063   0.000   0.063 </code></pre>
+  0.065   0.000   0.066 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(metropolis_1 <span class="ot">&lt;-</span> <span class="fu">metropolis_mc</span>(<span class="dv">1000</span>, <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), log_p, <span class="fl">0.2</span>, <span class="fl">0.2</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -993,7 +999,7 @@ Tip
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.017   0.000   0.018 </code></pre>
+  0.018   0.000   0.018 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(metropolis_2 <span class="ot">&lt;-</span> <span class="fu">metropolis_mc</span>(<span class="dv">1000</span>, <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), log_p, <span class="dv">1</span>, <span class="dv">1</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1207,7 +1213,6 @@ $ judge.amer &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1
 Chain 1 Iteration:    1 / 3000 [  0%]  (Warmup) 
 Chain 1 Iteration: 1000 / 3000 [ 33%]  (Warmup) 
 Chain 1 Iteration: 1001 / 3000 [ 33%]  (Sampling) 
-Chain 1 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
 Chain 2 Iteration:    1 / 3000 [  0%]  (Warmup) 
 Chain 2 Iteration: 1000 / 3000 [ 33%]  (Warmup) 
 Chain 2 Iteration: 1001 / 3000 [ 33%]  (Sampling) 
@@ -1220,13 +1225,14 @@ Chain 4 Iteration:    1 / 3000 [  0%]  (Warmup)
 Chain 4 Iteration: 1000 / 3000 [ 33%]  (Warmup) 
 Chain 4 Iteration: 1001 / 3000 [ 33%]  (Sampling) 
 Chain 4 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
+Chain 1 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
 Chain 1 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 1 finished in 0.3 seconds.
-Chain 3 Iteration: 3000 / 3000 [100%]  (Sampling) 
-Chain 3 finished in 0.4 seconds.
 Chain 2 Iteration: 3000 / 3000 [100%]  (Sampling) 
+Chain 3 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 4 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 2 finished in 0.4 seconds.
+Chain 3 finished in 0.3 seconds.
 Chain 4 finished in 0.4 seconds.
 
 All 4 chains finished successfully.
@@ -1550,7 +1556,7 @@ Chain 3 Iteration: 105 / 105 [100%]  (Sampling) </code></pre>
 <pre><code>Chain 3 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Chain 3 Exception: normal_lpdf: Scale parameter is 0, but must be positive! (in '/tmp/Rtmp3xJGaj/model-4f9b132aaddd.stan', line 25, column 2 to column 33)</code></pre>
+<pre><code>Chain 3 Exception: normal_lpdf: Scale parameter is 0, but must be positive! (in '/tmp/Rtmp8Opfqr/model-63d25d9b1151.stan', line 25, column 2 to column 33)</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Chain 3 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,</code></pre>
@@ -2831,11 +2837,11 @@ Chain 2 Iteration: 2000 / 3000 [ 66%]  (Sampling)
 Chain 3 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
 Chain 4 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
 Chain 1 Iteration: 3000 / 3000 [100%]  (Sampling) 
-Chain 2 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 1 finished in 0.6 seconds.
-Chain 2 finished in 0.6 seconds.
+Chain 2 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 3 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 4 Iteration: 3000 / 3000 [100%]  (Sampling) 
+Chain 2 finished in 0.6 seconds.
 Chain 3 finished in 0.6 seconds.
 Chain 4 finished in 0.6 seconds.
 
@@ -3208,14 +3214,14 @@ Chain 4 Iteration: 1000 / 3000 [ 33%]  (Warmup)
 Chain 4 Iteration: 1001 / 3000 [ 33%]  (Sampling) 
 Chain 1 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
 Chain 2 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
-Chain 4 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
 Chain 3 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
+Chain 4 Iteration: 2000 / 3000 [ 66%]  (Sampling) 
 Chain 1 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 2 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 4 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 1 finished in 1.5 seconds.
 Chain 2 finished in 1.5 seconds.
-Chain 4 finished in 1.4 seconds.
+Chain 4 finished in 1.5 seconds.
 Chain 3 Iteration: 3000 / 3000 [100%]  (Sampling) 
 Chain 3 finished in 1.5 seconds.
 
