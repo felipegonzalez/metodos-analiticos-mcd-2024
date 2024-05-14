@@ -858,8 +858,8 @@ agregamos una componente de nivel local:
 set.seed(886)
 mod_esp_1 <- AddLocalLevel(list(), y_mod)
 mod_esp_2 <- AddLocalLinearTrend(list(), y_mod)
-ajuste_pre_1 <- bsts(y_mod ~ x, mod_esp_1, niter = 5000, ping = 5000)
-ajuste_pre_2 <- bsts(y_mod ~ x, mod_esp_2, niter = 5000, ping = 5000)
+ajuste_pre_1 <- bsts(y_mod ~ x, mod_esp_1, niter = 25000, ping = 5000)
+ajuste_pre_2 <- bsts(y_mod ~ x, mod_esp_2, niter = 25000, ping = 5000)
 CompareBstsModels(list(ajuste_pre_1, ajuste_pre_2))
 ```
 
