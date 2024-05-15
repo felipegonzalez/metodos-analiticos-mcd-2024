@@ -10,7 +10,7 @@ ggplot2::theme_set(ggplot2::theme_light())
 
 
 En esta parte veremos más detalles del flujo Bayesiano de trabajo, partiendo del
-plantwamiento de [M. Betancourt](https://betanalpha.github.io/assets/case_studies/principled_bayesian_workflow)
+planteamiento de [M. Betancourt](https://betanalpha.github.io/assets/case_studies/principled_bayesian_workflow)
 
 Veamos el diagrama que se propone en este artículo:
 
