@@ -18,6 +18,7 @@ book:
     - 13-exp-naturales.qmd
     - 14-series-de-tiempo.qmd
     - 15-aplicaciones-series.qmd
+    - 16-mas-flujo-bayesiano.qmd
 bibliography: referencias/book.bib
 
 format:

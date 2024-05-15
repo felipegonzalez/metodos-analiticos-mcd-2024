@@ -991,7 +991,7 @@ ajuste_ent <- bsts(drivers ~ kms + rear + PetrolPrice,
 ```{r}
 plot(ajuste_ent)
 ```
-Checamos predicciones validando un periodo de validación hasta
+Checamos predicciones con un periodo de validación hasta
 antes de la intervención:
 
 ```{r}
