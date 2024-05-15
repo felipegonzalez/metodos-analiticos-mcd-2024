@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.554">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Métodos analíticos - 13&nbsp; Más de flujo bayesiano</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./15-aplicaciones-series.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+<script src="site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="site_libs/viz-1.8.2/viz.js"></script>
+<link href="site_libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
+<script src="site_libs/grViz-binding-1.0.10/grViz.js"></script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./16-mas-flujo-bayesiano.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Más de flujo bayesiano</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Métodos analíticos</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Temario y referencias</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-introduccion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-flujo-basico.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Flujo de trabajo básico: motivación</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-flujo-basico-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Flujo de trabajo básico: refinando el modelo</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-modelos-genericos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Componentes de modelación 1</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-dags.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Modelos gráficos y causalidad</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-calculo-do.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Identificación y cálculo-do</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-buenos-malos-controles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Buenos y malos controles</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-mcmc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Markov Chain Monte Carlo</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-modelos-jerarquicos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Modelos jerárquicos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-exp-naturales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Otros métodos para inferencia causal</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-series-de-tiempo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Modelos de espacio de estados</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-aplicaciones-series.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Aplicaciones de modelos de espacio de estados</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./16-mas-flujo-bayesiano.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Más de flujo bayesiano</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#calibración-algorítmica" id="toc-calibración-algorítmica" class="nav-link active" data-scroll-target="#calibración-algorítmica"><span class="header-section-number">13.1</span> Calibración algorítmica</a></li>
+  <li><a href="#calibración-inferencial" id="toc-calibración-inferencial" class="nav-link" data-scroll-target="#calibración-inferencial"><span class="header-section-number">13.2</span> Calibración inferencial</a></li>
+  <li><a href="#diagnóstico-de-ajuste" id="toc-diagnóstico-de-ajuste" class="nav-link" data-scroll-target="#diagnóstico-de-ajuste"><span class="header-section-number">13.3</span> Diagnóstico de ajuste</a></li>
+  <li><a href="#chequeos-predictivos-posteriores" id="toc-chequeos-predictivos-posteriores" class="nav-link" data-scroll-target="#chequeos-predictivos-posteriores"><span class="header-section-number">13.4</span> Chequeos predictivos posteriores</a></li>
+  <li><a href="#un-segundo-intento" id="toc-un-segundo-intento" class="nav-link" data-scroll-target="#un-segundo-intento"><span class="header-section-number">13.5</span> Un segundo intento</a></li>
+  <li><a href="#calibración-algorítmica-1" id="toc-calibración-algorítmica-1" class="nav-link" data-scroll-target="#calibración-algorítmica-1"><span class="header-section-number">13.6</span> Calibración algorítmica</a></li>
+  <li><a href="#tercer-intento" id="toc-tercer-intento" class="nav-link" data-scroll-target="#tercer-intento"><span class="header-section-number">13.7</span> Tercer intento</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Más de flujo bayesiano</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>En esta parte veremos más detalles del flujo Bayesiano de trabajo, partiendo del plantwamiento de <a href="https://betanalpha.github.io/assets/case_studies/principled_bayesian_workflow">M. Betancourt</a></p>
+<p>Veamos el diagrama que se propone en este artículo:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./figuras/betancourt-flujo.png" class="img-fluid figure-img"></p>
+<figcaption>Flujo bayesiano, Betancourt</figcaption>
+</figure>
+</div>
+<p>Este flujo está dividido en tres partres: una pre-modelo y pre-datos, una pre-datos, y uno cuando ya tenemos modelo y datos. Este enfoque es robusto desde el punto de vista estadístico y computacional, aunque está escrito de una forma un poco diferente a como lo planteamos en secciones anteriores.</p>
+<ol type="1">
+<li><p>Pre-modelo y pre-datos: el análisis conceptual, definición de espacio de observaciones y construcción de estadísticas resumen todos son basados en conocimiento de dominio y deben tener una orientación causal. En esta parte es donde planteamos diagramas causales, modelos generativos, y qué cantidades (con interpretación causal) que nos interesa estimar.</p></li>
+<li><p>En la segunda parte, construimos modelos y definimos estimadores en función de estos modelos. Aquí es donde hacemos simulaciones para entender nuestra información a priori o inicial, y las consecuencias que tienen nuestras primeras decisiones de modelación.</p></li>
+</ol>
+<ul>
+<li>(Supuestos de modelación) Podemos calcular qué tipo de valores obtenemos para las cantidades que queremos estimar, y si son consistentes con el conocimiento de dominio (chequeos a priori, que incluye también simular las posibles observaciones resultantes que implica el modelo)</li>
+<li>Podemos usar estas simulaciones para verificar que el algoritmo de ajuste que usamos está bien calibrado (suponiendo que el modelo es correcto)</li>
+<li>Podemos también usar estas simulaciones para hacer calibración inferencial: ¿el modelo recupera los valores que usamos para simular? ¿Existe evidencia de posible sobre ajuste o información a priori incorrecta?</li>
+</ul>
+<ol start="3" type="1">
+<li>En la tercera parte, ajustamos el modelo a los datos. Diagnosticamos el algoritmo (diagnósticos de MCMC que vimos anterioremente), y podemos hacer también chequeos predictivos posteriores para entender cómo se comporta el modelo con los datos reales.</li>
+</ol>
+<p>Para introducir algunos análisis que consideraremos planteamos una situación simple, donde estamos midiendo los resultados de 100 detectores de partículas en un experimento, todos intentando medir la misma fuente. En este caso, todos los detectores están midiendo la misma cantidad, pero hay cierto error en la medición, y podemos escribir el diagrama simple, que supone que dada la fuente las observaciones son observaciones independientes.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Código</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grViz</span>(<span class="st">"</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="st">digraph {</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="st">  graph [ranksep = 0.3, rankdir = LR]</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="st">  node [shape=circle]</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="st">    L</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="st">  node [shape=plaintext]</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="st">    y_1</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="st">    y_2</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="st">    y_3</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="st">  edge [minlen = 3]</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="st">    L -&gt; y_1</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="st">    L -&gt; y_2</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="st">    L -&gt; y_3    </span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)<span class="co">#, width = 200, height = 50)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="grViz html-widget html-fill-item" id="htmlwidget-6327cce35bbb566161b5" style="width:100%;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-6327cce35bbb566161b5">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=circle]\n    L\n  node [shape=plaintext]\n    y_1\n    y_2\n    y_3\n  edge [minlen = 3]\n    L -> y_1\n    L -> y_2\n    L -> y_3    \n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>Como las observaciones son enteros, supondremos que las observaciones son Poisson con media <span class="math inline">\(\lambda_F\)</span>. Nos interesa entonces estimar <span class="math inline">\(\lambda_F\)</span> que nos da la intensidad de la fuente.</p>
+<p>Para poner una inicial necesitamos concocimiento de dominio. Supongamos que sabemos que para este tipo de fuentes, detectores, y tiempo de detección es extremo obtener conteos mayores a 25 partículas: los pondremos en el 1% de la cola superior, por ejemplo. Podemos experimentar con valores para <span class="math inline">\(\sigma\)</span> en una normal truncada en cero.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># valores de la inincial</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>lambda <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">3</span>, <span class="dv">20</span>, <span class="dv">2</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># simular observaciones</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>q_poisson <span class="ot">&lt;-</span> lambda <span class="sc">|&gt;</span> <span class="fu">map_df</span>(<span class="sc">~</span> <span class="fu">tibble</span>(<span class="at">lambda =</span> .x, <span class="at">q_99 =</span> <span class="fu">quantile</span>(<span class="fu">rpois</span>(<span class="dv">10000</span>, .x), <span class="at">probs =</span> <span class="fl">0.99</span>)))</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>q_poisson</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 2
+  lambda  q_99
+   &lt;dbl&gt; &lt;dbl&gt;
+1      3     8
+2      5    11
+3      7    14
+4      9    17
+5     11    19
+6     13    22
+7     15    24
+8     17    28
+9     19    30</code></pre>
+</div>
+</div>
+<p>Y podemos ver que requerimos aproximadamente <span class="math inline">\(\lambda\leq 99\)</span> con alta probabilidad. Experimentando, podemos ver que si <span class="math inline">\(\sigma=6\)</span> es un valor razonable para la normal truncada:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(<span class="fu">abs</span>(<span class="fu">rnorm</span>(<span class="dv">10000</span>, <span class="dv">0</span>, <span class="dv">6</span>)), <span class="at">probs =</span> <span class="fl">0.99</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     99% 
+15.54335 </code></pre>
+</div>
+</div>
+<p>Ahora construimos nuestro modelo generativo y examinamos sus consecuencias. Simularemos 150 repeticiones de las 100 observaciones que esperamos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cmdstanr)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>This is cmdstanr version 0.7.1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>- CmdStanR documentation and vignettes: mc-stan.org/cmdstanr</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>- CmdStan path: /home/runner/.cmdstan/cmdstan-2.34.0</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>- CmdStan version: 2.34.0</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+A newer version of CmdStan is available. See ?install_cmdstan() to install it.
+To disable this check set option or environment variable CMDSTANR_NO_VER_CHECK=TRUE.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>R <span class="ot">&lt;-</span> <span class="dv">1500</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>sim_datos <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">N =</span> N)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>mod_ensemble <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"src/flujo-mb/1-simular-ensemble.stan"</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mod_ensemble)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>data {
+  int N;
+}
+
+generated quantities {
+  real&lt;lower=0&gt; lambda;
+  array[N] int y;
+
+  // Simular configuracion del modelo a partir de inicial
+  lambda = abs(normal_rng(0, 6));
+  // Simular datos del modelo observacional
+  for (n in 1:N){
+      y[n] = poisson_rng(lambda);
+  }
+}</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>sims_priori <span class="ot">&lt;-</span> mod_ensemble<span class="sc">$</span><span class="fu">sample</span>(<span class="at">data =</span> sim_datos, </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter_sampling =</span> R, <span class="at">chains =</span> <span class="dv">1</span>, <span class="at">refresh =</span> R, <span class="at">seed =</span> <span class="dv">4838282</span>,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">fixed_param =</span> <span class="cn">TRUE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 1 chain...
+
+Chain 1 Iteration:    1 / 1500 [  0%]  (Sampling) 
+Chain 1 Iteration: 1500 / 1500 [100%]  (Sampling) 
+Chain 1 finished in 0.0 seconds.</code></pre>
+</div>
+</div>
+<p>Ahora podemos examinar algunas posibles configuraciones del modelo junto con las observaciones que esperaríamos ver:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>sims_tbl <span class="ot">&lt;-</span>  sims_priori<span class="sc">$</span><span class="fu">draws</span>(<span class="at">format =</span> <span class="st">"df"</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>obs_priori_tbl <span class="ot">&lt;-</span>  sims_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"y"</span>), <span class="at">names_to =</span> <span class="st">"y"</span>, <span class="at">values_to =</span> <span class="st">"valor"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(y, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"y"</span>, <span class="st">"n"</span>), <span class="at">sep =</span> <span class="st">"[</span><span class="sc">\\</span><span class="st">[</span><span class="sc">\\</span><span class="st">]]"</span>) <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span>y)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(obs_priori_tbl <span class="sc">|&gt;</span> <span class="fu">filter</span>(.draw <span class="sc">&lt;</span> <span class="dv">5</span>), <span class="fu">aes</span>(<span class="at">x =</span> valor)) <span class="sc">+</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>) <span class="sc">+</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>lambda) <span class="sc">+</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">"Simulaciones de observaciones a priori"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="16-mas-flujo-bayesiano_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Y podemos resumir estas simulaciones como</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(obs_priori_tbl <span class="sc">|&gt;</span> <span class="fu">group_by</span>(.draw, valor) <span class="sc">|&gt;</span> <span class="fu">count</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>         <span class="fu">group_by</span>(valor) <span class="sc">|&gt;</span> </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>         <span class="fu">summarise</span>(<span class="at">mediana =</span> <span class="fu">median</span>(n), <span class="at">q_10 =</span> <span class="fu">quantile</span>(n, <span class="fl">0.1</span>), <span class="at">q90 =</span> <span class="fu">quantile</span>(n, <span class="fl">0.9</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>         <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(mediana, q_10, q90), <span class="at">names_to =</span> <span class="st">"tipo"</span>, <span class="at">values_to =</span> <span class="st">"resumen"</span>),</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> valor)) <span class="sc">+</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> resumen, <span class="at">group =</span> tipo)) <span class="sc">+</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">"Simulaciones de observaciones a priori"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="16-mas-flujo-bayesiano_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Y vemos que es muy poco probable observar cantidades medidas por arriba de 25:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>obs_priori_tbl <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">mayor_25 =</span> valor <span class="sc">&gt;</span> <span class="dv">25</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mayor_25 =</span> <span class="fu">mean</span>(mayor_25)) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  mayor_25
+     &lt;dbl&gt;
+1 0.000587</code></pre>
+</div>
+</div>
+<section id="calibración-algorítmica" class="level2" data-number="13.1">
+<h2 data-number="13.1" class="anchored" data-anchor-id="calibración-algorítmica"><span class="header-section-number">13.1</span> Calibración algorítmica</h2>
+<p>Bajo los supuestos del modelo, ahora podemos proponer nuestro algoritmo de estimación, y checar en primer lugar que funciona apropiadamente. En este ejemplo, tomaremos solamente 40 simulaciones y ajustaremos en cada caso el siguiente consecuencia de nuestros supuestos. Usualmente podemos usar 100 o más.</p>
+<p>En este paso podemos ajustar nuestro muestreador, número de cadenas y su longitud, etc.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>mod_2 <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"src/flujo-mb/2-modelo-poisson.stan"</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mod_2)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>data {
+  int N;
+  array[N] int y;
+}
+
+parameters {
+  real&lt;lower=0&gt; lambda;
+}
+
+model {
+  lambda ~ normal(0, 6);
+  y ~ poisson(lambda);
+}
+
+generated quantities {
+  array[N] int y_sim;
+
+  for (n in 1:N) {
+    y_sim[n] = poisson_rng(lambda);
+  }
+}</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>ajustes_apriori <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">40</span>, <span class="cf">function</span>(rep){</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> obs_priori_tbl <span class="sc">|&gt;</span> <span class="fu">filter</span>(.draw <span class="sc">==</span> rep) <span class="sc">|&gt;</span> <span class="fu">pull</span>(valor)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  datos_sim_lst <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">y =</span> y, <span class="at">N =</span> <span class="fu">length</span>(y))</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  ajuste <span class="ot">&lt;-</span> mod_2<span class="sc">$</span><span class="fu">sample</span>(<span class="at">data =</span> datos_sim_lst, </span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter_sampling =</span> <span class="dv">1000</span>, <span class="at">chains =</span> <span class="dv">3</span>, <span class="at">parallel_chains =</span> <span class="dv">3</span>, <span class="at">seed =</span> <span class="dv">4838282</span>, </span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">refresh =</span> <span class="dv">0</span>, <span class="at">show_messages =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">ajuste =</span> ajuste, <span class="at">lambda_sim =</span> sims_tbl<span class="sc">$</span>lambda[rep])</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Podemos checar por ejemplo tamaño efectivo de muestra, rhat o divergencias:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>ajustes_apriori <span class="sc">|&gt;</span> <span class="fu">map_df</span>(<span class="sc">~</span> .x<span class="sc">$</span>ajuste<span class="sc">$</span><span class="fu">summary</span>(<span class="st">"lambda"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> ess_bulk)) <span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="16-mas-flujo-bayesiano_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>ajustes_apriori <span class="sc">|&gt;</span> <span class="fu">map_dbl</span>(</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span> .x<span class="sc">$</span>ajuste<span class="sc">$</span><span class="fu">diagnostic_summary</span>(<span class="st">"divergences"</span>)<span class="sc">$</span>num_divergent <span class="sc">|&gt;</span> <span class="fu">sum</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sum</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<p>Adicionalmente, podemos ver si recuperamos o no los parámetros de la simulación. En primer lugar, calculamos el cuantil del valor verdadero para la posterior de la simulación:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>resumen_cuantiles_tbl <span class="ot">&lt;-</span> ajustes_apriori <span class="sc">|&gt;</span> <span class="fu">map_df</span>(<span class="cf">function</span>(ajuste_lst){</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  lambda_sim <span class="ot">&lt;-</span> ajuste_lst<span class="sc">$</span>lambda_sim</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  cuantiles_tbl <span class="ot">&lt;-</span> ajuste_lst<span class="sc">$</span>ajuste<span class="sc">$</span><span class="fu">draws</span>(<span class="st">"lambda"</span>, <span class="at">format =</span> <span class="st">"df"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">menor =</span> lambda_sim <span class="sc">&lt;</span> lambda) <span class="sc">|&gt;</span> </span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">q_menor =</span> <span class="fu">mean</span>(menor))</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  cuantiles_tbl <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">lambda_sim =</span> lambda_sim)</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ahora podemos hacer una gráfica de cuantiles: si estamos recuperando correctamente los parámetros, la distribución de los cuantiles de los valores verdaderos en la posterior debe ser cercana a uniforme (pues si <span class="math inline">\(y\sim F\)</span>, entonces <span class="math inline">\(P(F(y)&lt;t)) = t\)</span> para cualquier <span class="math inline">\(t\)</span>):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>resumen_cuantiles_tbl</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 40 × 2
+   q_menor lambda_sim
+     &lt;dbl&gt;      &lt;dbl&gt;
+ 1   0.661       1.83
+ 2   0.7         5.38
+ 3   0.827       4.15
+ 4   0.489       9.94
+ 5   0.866       1.54
+ 6   0.783       7.33
+ 7   0.293       8.82
+ 8   0.604       5.14
+ 9   0.08        1.28
+10   0.312       7.34
+# ℹ 30 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(resumen_cuantiles_tbl, <span class="fu">aes</span>(<span class="at">sample =</span> q_menor)) <span class="sc">+</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_qq</span>(<span class="at">distribution =</span> stats<span class="sc">::</span>qunif) <span class="sc">+</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">slope =</span> <span class="dv">1</span>, <span class="at">intercept =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">"Recuperación de valores en la posterior"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="16-mas-flujo-bayesiano_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>En este caso, vemos que estamos recuperando adecuadamente los valores que pusimos en la simualción. Además de esta gráfica de cuantiles, hay otras alternativas que puedes ver <a href="https://hyunjimoon.github.io/SBC/articles/rank_visualizations.html">aquí</a>.</p>
+</section>
+<section id="calibración-inferencial" class="level2" data-number="13.2">
+<h2 data-number="13.2" class="anchored" data-anchor-id="calibración-inferencial"><span class="header-section-number">13.2</span> Calibración inferencial</h2>
+<p>Finalmente veremos si las posteriores obtenidas dan inferencias que sean suficientes para nuestros propósitos. Queremos determinar, con el modelo planteado, tamaño de datos e iniciales:</p>
+<ul>
+<li>¿Nuestro modelo tiene problemas de identificación? ¿Podemos aprender?</li>
+<li>¿Nuestro modelo a priori es adecuado para los valores de las cantidades de interés que queremos estimar?</li>
+<li>Nuestro ajuste tiende a sobreajustar los datos y darnos malas inferencias?</li>
+</ul>
+<p>Abajo presentamos una demostración de <a href="https://betanalpha.github.io/assets/case_studies/principled_bayesian_workflow#132_A_Bayesian_Eye_Chart">M. Betancourt</a> de cómo pueden verse estos problemas:</p>
+<p><img src="figuras/inf-cal-betancourt.png" class="img-fluid" alt="Inferencia y calibración"> Y podemos calcular, para un parámetro particular, dos valores útiles. Primero, el valor z posterior de cada parámetro, que está dado por:</p>
+<p><span class="math display">\[ z(\theta^*, y) = \frac{\theta^* - \mu_{post}({\theta}|y)}{\sigma_{post}(\theta|y)}\]</span><br>
+donde <span class="math inline">\(\theta^*\)</span> es el valor verdadero. Esta es también una medida de qué tanto está el valor verdadero en el centro de la distribución o en una cola de la posterior, y mide, en cada simulación, con qué precisión recuperamos con la posterior el valor verdadero. Valores chicos indican que la posterior está altamente concentrada en el valor verdero.</p>
+<p>Igualmente necesitamos la <em>contracción posterior</em>, que podemos definir como</p>
+<p><span class="math display">\[c(y) = 1 - \frac{Var_{post}(\theta|y)}{Var_{previa}(\theta)}\]</span></p>
+<p>y esta cantidad mide qué tanto los datos informan sobre el parámetro con respecto a la información previa. Contracciones cercanas a cero indican que no aprendimos mucho por encima de lo que sabíamos con la inicial.</p>
+<p>Usualmente queremos que la contracción sea cercana a 1, y qué los valores <span class="math inline">\(z\)</span> estén cercanos a cero. Sin embargo, podemos encontrar:</p>
+<ol type="1">
+<li>Sobreajuste: la contracción es cercana a 1, pero observamos valores <span class="math inline">\(z\)</span> grandes en valor absoluto.</li>
+<li>Información previa incorrecta: la contracción es cercana a 0, y observamos valores de <span class="math inline">\(z\)</span> grandes.</li>
+<li>Indentificación pobre: aunque los valores de <span class="math inline">\(z\)</span> no son muy lejanos a 0, la contracción es cercana a 0 (no aprendemos mucho de los datos).</li>
+</ol>
+<p>Podemos hacer esta gráfica para nuestro ejemplo de arriba:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>contraccion_z_tbl <span class="ot">&lt;-</span> ajustes_apriori <span class="sc">|&gt;</span> <span class="fu">map_df</span>(<span class="cf">function</span>(ajuste_lst){</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  lambda_sim <span class="ot">&lt;-</span> ajuste_lst<span class="sc">$</span>lambda_sim</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  sd_previa <span class="ot">&lt;-</span> <span class="fl">3.69</span> <span class="co"># ver inicial de lambda</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  post_media_sd_tbl <span class="ot">&lt;-</span> ajuste_lst<span class="sc">$</span>ajuste<span class="sc">$</span><span class="fu">draws</span>(<span class="st">"lambda"</span>, <span class="at">format =</span> <span class="st">"df"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">media_post =</span> <span class="fu">mean</span>(lambda), <span class="at">sd_post =</span> <span class="fu">sd</span>(lambda))</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">contraccion =</span> <span class="dv">1</span> <span class="sc">-</span> post_media_sd_tbl<span class="sc">$</span>sd_post<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>sd_previa<span class="sc">^</span><span class="dv">2</span>,</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">z =</span> (lambda_sim <span class="sc">-</span> post_media_sd_tbl<span class="sc">$</span>media_post)<span class="sc">/</span>post_media_sd_tbl<span class="sc">$</span>sd_post)</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(contraccion_z_tbl, <span class="fu">aes</span>(<span class="at">x =</span> contraccion, <span class="at">y =</span> z)) <span class="sc">+</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Contracción"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Valor z"</span>) <span class="sc">+</span> </span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="dv">0</span>, <span class="dv">1</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="16-mas-flujo-bayesiano_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Y en este caso, obtenemos resultados informativos (alta contracción), que según los valores <span class="math inline">\(z\)</span> capturan adecuadamente los valores verdaderos.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Sobreajuste
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Nótese que esta forma de ver el sobreajuste está más relacionada con la inferencia acerca de parámetros de interés que al sobreajuste en modelos predictivos.</p>
+<p>Aunque también con modelos bayesianos podemos hacer validación cruzada para predicciones (ya sea tradicional o con métodos computacionalmente más eficientes que aproximan el desempeño predictivo), nuestro objetivo principal <em>no</em> es obtener buenas predicciones, sino tener inferencia correcta e informativa acerca de las cantidades de interés.</p>
+</div>
+</div>
+<p>El punto de vista predictivo también es importante, y puedes ver el texto de McElreath para más detalles.</p>
+<p>Finalmente, vamos al ajuste de datos reales y diagnósticos asociados</p>
+</section>
+<section id="diagnóstico-de-ajuste" class="level2" data-number="13.3">
+<h2 data-number="13.3" class="anchored" data-anchor-id="diagnóstico-de-ajuste"><span class="header-section-number">13.3</span> Diagnóstico de ajuste</h2>
+<p>Ya hemos visto antes cómo hacer diagnósticos del ajuste (checar MCMC, divergencias, etc.):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>datos_obs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../datos/ejemplo-flujo.csv"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 100 Columns: 1
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+dbl (1): y
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>datos_lst <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">y =</span> datos_obs<span class="sc">$</span>y, <span class="at">N =</span> <span class="fu">nrow</span>(datos_obs))</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  ajuste <span class="ot">&lt;-</span> mod_2<span class="sc">$</span><span class="fu">sample</span>(<span class="at">data =</span> datos_lst, </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter_sampling =</span> <span class="dv">1000</span>, <span class="at">refresh =</span> <span class="dv">1000</span>, <span class="at">chains =</span> <span class="dv">3</span>, <span class="at">parallel_chains =</span> <span class="dv">3</span>, <span class="at">seed =</span> <span class="dv">282</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 3 parallel chains...
+
+Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 1 finished in 0.1 seconds.
+Chain 2 finished in 0.0 seconds.
+Chain 3 finished in 0.1 seconds.
+
+All 3 chains finished successfully.
+Mean chain execution time: 0.1 seconds.
+Total execution time: 0.2 seconds.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>ajuste<span class="sc">$</span><span class="fu">summary</span>(<span class="st">"lambda"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(mean, sd, q5, q95, rhat, ess_bulk, ess_tail)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 7
+   mean    sd    q5   q95  rhat ess_bulk ess_tail
+  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+1  5.95 0.244  5.56  6.36  1.00    1366.    1555.</code></pre>
+</div>
+</div>
+<p>Los diagnósticos no muestran problemas.</p>
+</section>
+<section id="chequeos-predictivos-posteriores" class="level2" data-number="13.4">
+<h2 data-number="13.4" class="anchored" data-anchor-id="chequeos-predictivos-posteriores"><span class="header-section-number">13.4</span> Chequeos predictivos posteriores</h2>
+<p>Ahora simulamos datos observados de la predictiva posterior ajustada, y comparamos con los datos observados.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>sims_post_pred_tbl <span class="ot">&lt;-</span> ajuste<span class="sc">$</span><span class="fu">draws</span>(<span class="st">"y_sim"</span>, <span class="at">format =</span> <span class="st">"df"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"y_sim"</span>), <span class="at">names_to =</span> <span class="st">"y"</span>, <span class="at">values_to =</span> <span class="st">"valor"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(y, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"y_sim"</span>, <span class="st">"n"</span>), <span class="at">sep =</span> <span class="st">"[</span><span class="sc">\\</span><span class="st">[</span><span class="sc">\\</span><span class="st">]]"</span>, <span class="at">extra =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span>y_sim)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sims_post_pred_tbl <span class="sc">|&gt;</span> <span class="fu">filter</span>(.draw <span class="sc">&lt;=</span><span class="dv">10</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(datos_obs <span class="sc">|&gt;</span> <span class="fu">rename</span>(<span class="at">valor =</span> y) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">.draw =</span> <span class="dv">11</span>)), </span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> valor)) <span class="sc">+</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>) <span class="sc">+</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>.draw) <span class="sc">+</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">"Chequeo predictivo posterior"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="16-mas-flujo-bayesiano_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Y vemos un desajuste claro en el modelo: los datos tienen exceso de ceros, y los datos que nos son cero tienden a ser mayores que los simulados. En este punto, es necesario regresar al análisis conceptual, pues hay algo fundamental en el proceso generador de datos que no estamos considerando</p>
+</section>
+<section id="un-segundo-intento" class="level2" data-number="13.5">
+<h2 data-number="13.5" class="anchored" data-anchor-id="un-segundo-intento"><span class="header-section-number">13.5</span> Un segundo intento</h2>
+<p>Supongamos que después de investigar, nos enteramos que es común que algunos detectores fallen o estén defectuosos. En ese caso, marcan cero. Nótese que la situación sería diferente, por ejemplo, si los detectores que se desbordan marcan cero, etc. Es necesario regresar entonces al <em>análisis conceptual</em>, y repetir todo el proceso.</p>
+<p>Nuestros siguientes pasos dependen de que podamos entender cuál es la razón del exceso de ceros con respecto a nuestro modelo inicial. En este caso, tenemos que considerar que hay cierta probabilidad de que los detectores fallen.</p>
+<p>Proponemos entonces un modelo como sigue: <span class="math inline">\(y_n = 0\)</span> con probabilidad <span class="math inline">\(\pi\)</span>, y <span class="math inline">\(y_n\sim \text{Poisson}(\lambda)\)</span> con probabilidad <span class="math inline">\(1-\pi\)</span>. El modelo de datos se puede escribir como sigue:</p>
+<p><span class="math display">\[p(y|\lambda, \pi) = (1-\pi) W + \pi I(y=0)\]</span> que es una Poisson reescalada con una masa <span class="math inline">\(\pi\)</span> en cero.</p>
+<p>Recorremos los pasos con nuestro nuevo modelo, y consideraremos qué es lo que sucede en la calibración algorítmica:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>R <span class="ot">&lt;-</span> <span class="dv">1500</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>sim_datos <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">N =</span> N)</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>mod_ensemble <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"src/flujo-mb/2-simular-ensemble.stan"</span>)</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mod_ensemble)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>data {
+  int N;
+}
+
+generated quantities {
+  real&lt;lower=0&gt; lambda;
+  real&lt;lower=0, upper=1&gt; p;
+  array[N] int y;
+
+  // Simular configuracion del modelo a partir de inicial
+  lambda = abs(normal_rng(0, 6));
+  p = beta_rng(1, 1);
+  // Simular datos del modelo observacional
+  for (n in 1:N){
+    y[n] = 0;
+    if(!bernoulli_rng(p)){
+      y[n] = poisson_rng(lambda);
+    }
+  }
+}</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>sims_priori <span class="ot">&lt;-</span> mod_ensemble<span class="sc">$</span><span class="fu">sample</span>(<span class="at">data =</span> sim_datos, </span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter_sampling =</span> R, <span class="at">chains =</span> <span class="dv">1</span>, <span class="at">refresh =</span> R, <span class="at">seed =</span> <span class="dv">4838282</span>,</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">fixed_param =</span> <span class="cn">TRUE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 1 chain...
+
+Chain 1 Iteration:    1 / 1500 [  0%]  (Sampling) 
+Chain 1 Iteration: 1500 / 1500 [100%]  (Sampling) 
+Chain 1 finished in 0.0 seconds.</code></pre>
+</div>
+</div>
+<p>Ahora podemos examinar algunas posibles configuraciones del modelo junto con las observaciones que esperaríamos ver:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>sims_tbl <span class="ot">&lt;-</span>  sims_priori<span class="sc">$</span><span class="fu">draws</span>(<span class="at">format =</span> <span class="st">"df"</span>)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>obs_priori_tbl <span class="ot">&lt;-</span>  sims_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"y"</span>), <span class="at">names_to =</span> <span class="st">"y"</span>, <span class="at">values_to =</span> <span class="st">"valor"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(y, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"y"</span>, <span class="st">"n"</span>), <span class="at">sep =</span> <span class="st">"[</span><span class="sc">\\</span><span class="st">[</span><span class="sc">\\</span><span class="st">]]"</span>) <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span>y)</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(obs_priori_tbl <span class="sc">|&gt;</span> <span class="fu">filter</span>(.draw <span class="sc">&lt;</span> <span class="dv">5</span>), <span class="fu">aes</span>(<span class="at">x =</span> valor)) <span class="sc">+</span></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>) <span class="sc">+</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>lambda) <span class="sc">+</span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">"Simulaciones de observaciones a priori"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="16-mas-flujo-bayesiano_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Y podemos resumir estas simulaciones como</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(obs_priori_tbl <span class="sc">|&gt;</span> <span class="fu">group_by</span>(.draw, valor) <span class="sc">|&gt;</span> <span class="fu">count</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>         <span class="fu">group_by</span>(valor) <span class="sc">|&gt;</span> </span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>         <span class="fu">summarise</span>(<span class="at">mediana =</span> <span class="fu">median</span>(n), <span class="at">q_10 =</span> <span class="fu">quantile</span>(n, <span class="fl">0.1</span>), <span class="at">q90 =</span> <span class="fu">quantile</span>(n, <span class="fl">0.9</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>         <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(mediana, q_10, q90), <span class="at">names_to =</span> <span class="st">"tipo"</span>, <span class="at">values_to =</span> <span class="st">"resumen"</span>),</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> valor)) <span class="sc">+</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> resumen, <span class="at">group =</span> tipo)) <span class="sc">+</span></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">"Simulaciones de observaciones a priori"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="16-mas-flujo-bayesiano_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Y vemos que es muy poco probable observar cantidades medidas por arriba de 25:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>obs_priori_tbl <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">mayor_25 =</span> valor <span class="sc">&gt;</span> <span class="dv">25</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mayor_25 =</span> <span class="fu">mean</span>(mayor_25)) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  mayor_25
+     &lt;dbl&gt;
+1  0.00036</code></pre>
+</div>
+</div>
+</section>
+<section id="calibración-algorítmica-1" class="level2" data-number="13.6">
+<h2 data-number="13.6" class="anchored" data-anchor-id="calibración-algorítmica-1"><span class="header-section-number">13.6</span> Calibración algorítmica</h2>
+<p>Bajo los supuestos del modelo, ahora podemos proponer nuestro algoritmo de estimación, y checar en primer lugar que funciona apropiadamente. En este ejemplo, tomaremos solamente 40 simulaciones y ajustaremos en cada caso el siguiente consecuencia de nuestros supuestos. Usualmente podemos usar 100 o más.</p>
+<p>En este paso podemos ajustar nuestro muestreador, número de cadenas y su longitud, etc.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>mod_2 <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"src/flujo-mb/2-modelo-poisson-cero-inflado.stan"</span>)</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mod_2)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>data {
+  int N;
+  array[N] int y;
+}
+
+parameters {
+  real&lt;lower=0&gt; lambda;
+  real&lt;lower=0, upper=1&gt; p;
+}
+
+model {
+  lambda ~ normal(0, 6);
+  p ~ beta(1, 1);
+  for(n in 1:N){
+    real lpdf = poisson_lpmf(y[n] | lambda);
+    if(y[n] == 0){
+      target += log_mix(p, 0, lpdf);
+    } else {
+      target += log(1-p) + lpdf;
+    }
+  }
+}
+
+generated quantities {
+  array[N] int y_sim;
+
+  for (n in 1:N) {
+    real zero = bernoulli_rng(p);
+    if (zero == 1) {
+      y_sim[n] = 0;
+    } else {
+      y_sim[n] = poisson_rng(lambda);
+    }
+  }
+}</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>ajustes_apriori <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">40</span>, <span class="cf">function</span>(rep){</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> obs_priori_tbl <span class="sc">|&gt;</span> <span class="fu">filter</span>(.draw <span class="sc">==</span> rep) <span class="sc">|&gt;</span> <span class="fu">pull</span>(valor)</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>  datos_sim_lst <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">y =</span> y, <span class="at">N =</span> <span class="fu">length</span>(y))</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>  ajuste <span class="ot">&lt;-</span> mod_2<span class="sc">$</span><span class="fu">sample</span>(<span class="at">data =</span> datos_sim_lst, </span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter_sampling =</span> <span class="dv">1000</span>, <span class="at">chains =</span> <span class="dv">3</span>, <span class="at">parallel_chains =</span> <span class="dv">3</span>, <span class="at">seed =</span> <span class="dv">4838282</span>, </span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">refresh =</span> <span class="dv">0</span>, <span class="at">show_messages =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">ajuste =</span> ajuste, <span class="at">lambda_sim =</span> sims_tbl<span class="sc">$</span>lambda[rep], <span class="at">p_sim =</span> sims_tbl<span class="sc">$</span>p[rep])</span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Y vemos que nos encontramos con problemas. Examinamos los ajustes que producen divergencias:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>divergencias_lst <span class="ot">&lt;-</span> ajustes_apriori <span class="sc">|&gt;</span> <span class="fu">map_dbl</span>(</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span> .x<span class="sc">$</span>ajuste<span class="sc">$</span><span class="fu">diagnostic_summary</span>(<span class="st">"divergences"</span>)<span class="sc">$</span>num_divergent <span class="sc">|&gt;</span> <span class="fu">sum</span>()) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: 4 of 3000 (0.0%) transitions ended with a divergence.
+See https://mc-stan.org/misc/warnings for details.
+
+Warning: 4 of 3000 (0.0%) transitions ended with a divergence.
+See https://mc-stan.org/misc/warnings for details.
+
+Warning: 4 of 3000 (0.0%) transitions ended with a divergence.
+See https://mc-stan.org/misc/warnings for details.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>div_sim <span class="ot">&lt;-</span> <span class="fu">which</span>(divergencias_lst <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>div_sim</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 17 22 35</code></pre>
+</div>
+</div>
+<p>Veamos entonces que valores de <span class="math inline">\(p\)</span> y <span class="math inline">\(lambda\)</span> corresponden:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>diag_tbl <span class="ot">&lt;-</span> obs_priori_tbl <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> <span class="fu">select</span>(lambda, p, .draw) <span class="sc">|&gt;</span> <span class="fu">unique</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.draw <span class="sc">&lt;=</span> <span class="dv">40</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">problemas =</span> .draw <span class="sc">%in%</span> div_sim) </span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diag_tbl, <span class="fu">aes</span>(<span class="at">x =</span> lambda, <span class="at">y =</span> p, <span class="at">color =</span> problemas, <span class="at">size =</span> problemas)) <span class="sc">+</span></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">"Problemas de divergencia"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Using size for a discrete variable is not advised.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="16-mas-flujo-bayesiano_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Y el problema aparece con valores extremos de <span class="math inline">\(p\)</span> y valores chicos de <span class="math inline">\(\lambda\)</span> (prueba haciendo más ajustes). Cuando estos valores se presentan, tenemos observaciones <strong>que son principalmente ceros</strong>, y es difícil distinguir entre ceros que se deben a fallas en los detectores y ceros que se deben a una tasa baja de Poisson.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(obs_priori_tbl <span class="sc">|&gt;</span> <span class="fu">filter</span>(.draw <span class="sc">==</span> <span class="dv">17</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(valor) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">num_ceros =</span> <span class="fu">sum</span>(valor <span class="sc">==</span> <span class="dv">0</span>), <span class="at">num_no_ceros =</span> <span class="fu">sum</span>(valor <span class="sc">&gt;</span> <span class="dv">0</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 2
+  num_ceros num_no_ceros
+      &lt;int&gt;        &lt;int&gt;
+1       100            0</code></pre>
+</div>
+</div>
+<p>Puedes ver más de esto en la discusión de M. Betancourt en <a href="https://betanalpha.github.io/assets/case_studies/principled_bayesian_workflow#42_Second_Iteration:_If_At_First_You_Don't_Succeed,_Try_Try_Again">aquí</a>.</p>
+</section>
+<section id="tercer-intento" class="level2" data-number="13.7">
+<h2 data-number="13.7" class="anchored" data-anchor-id="tercer-intento"><span class="header-section-number">13.7</span> Tercer intento</h2>
+<p>En este punto, es necesario otra vez regresar al análisis conceptual: <strong>los datos no tienen información acerca de las causas de los ceros</strong>. En primer lugar, podríamos informarnos acerca de qué tan común es que los detectores fallen (o si han existido chequeos recientes que nos den confianza que una proporción razonable está funcionando), o adicionalmente cuál es el rango de tasas mínimas razonables que se espera para el tipo de fuente con el que se está experimentando. En este caso, podríamos evitar las zonas degeneradas y mal identificadas:</p>
+<ul>
+<li>Poniendo una inicial en la tasa de Poisson que no sea muy cercana a cero (para un detector que está funcionando), si tenemos información en este sentido</li>
+<li>Descartando probabilidades extremas de fallas de detección: puede ser muy factible que algunos detectores fallen, pero no que la mayoría falle, y quizá tampoco esperamos que todos estén en perfectas condiciones.</li>
+</ul>
+<p>La continuación de este caso (con otras dos interaciones) puedes seguirla <a href="https://betanalpha.github.io/assets/case_studies/principled_bayesian_workflow#42_Second_Iteration:_If_At_First_You_Don't_Succeed,_Try_Try_Again">en la misma referencia antes citada</a>.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./15-aplicaciones-series.html" class="pagination-link" aria-label="Aplicaciones de modelos de espacio de estados">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Aplicaciones de modelos de espacio de estados</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

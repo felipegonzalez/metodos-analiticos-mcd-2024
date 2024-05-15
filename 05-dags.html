@@ -271,6 +271,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Aplicaciones de modelos de espacio de estados</span></span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./16-mas-flujo-bayesiano.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Más de flujo bayesiano</span></span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -373,8 +379,8 @@ window.Quarto = {
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">150</span>, <span class="at">height =</span> <span class="dv">40</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-e4b41d7038d429ac7371" style="width:100%;height:173px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-e4b41d7038d429ac7371">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir=LR]\n  node [shape=plaintext]\n    X\n    Y\n    Z\n    W\n  edge [minlen = 3]\n   X -> Y\n   Z -> X\n   W -> Y\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-6c1fb83df5db22c71aef" style="width:100%;height:173px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6c1fb83df5db22c71aef">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir=LR]\n  node [shape=plaintext]\n    X\n    Y\n    Z\n    W\n  edge [minlen = 3]\n   X -> Y\n   Z -> X\n   W -> Y\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Nótese que no describimos exactamente cómo son las funciones que relacionan las variables, sino más bien qué variables son causas directas de qué otras. Por ejemplo, aunque en nuestro ejemplo de arriba <span class="math inline">\(Y\)</span> puede estar <em>correlacionado</em> con <span class="math inline">\(Z\)</span>, no hay una causa <em>directa</em> a <span class="math inline">\(Y\)</span>, porque cambios en <span class="math inline">\(Z\)</span> afectan a <span class="math inline">\(X\)</span>, y es el cambio en <span class="math inline">\(X\)</span> que es causa directa de <span class="math inline">\(Y\)</span>.</p>
@@ -431,8 +437,8 @@ Modelos gráficos Y DAGs
 <span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-77be925374f700183225" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-77be925374f700183225">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir=LR]\n  node [shape=circle]\n    U1\n    U2\n    U3\n    U4\n  node [shape=plaintext]\n    S1\n    S2\n    X\n  edge [minlen = 3]\n   X -> S1\n   X -> S2\n   U1 -> S1\n   U2 -> S2\n   S1 -> G\n   S2 -> G\n   D -> G\n   U3 -> D\n   U4 -> X\n{\n  rank = same; S1; S2;U1;U2\n}\n\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-64f7287211e3e0414785" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-64f7287211e3e0414785">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir=LR]\n  node [shape=circle]\n    U1\n    U2\n    U3\n    U4\n  node [shape=plaintext]\n    S1\n    S2\n    X\n  edge [minlen = 3]\n   X -> S1\n   X -> S2\n   U1 -> S1\n   U2 -> S2\n   S1 -> G\n   S2 -> G\n   D -> G\n   U3 -> D\n   U4 -> X\n{\n  rank = same; S1; S2;U1;U2\n}\n\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>En este ejemplos no podemos saber <span class="math inline">\(U1\)</span> y <span class="math inline">\(U2\)</span>, y no nos interesa modelar la física de monedas, manera de lanzarlas, etc. En este ejemplo también no consideraremos qué hace que un día sea soleado o lluvioso (no nos interesa modelar el clima). En este momento, en teoría tenemos <strong>ecuaciones determinísticas</strong> para todas las variables, y si conocemos todas las variables exógenas <span class="math inline">\(U1,U2,U3,U4\)</span> podríamos determinar exactamente lo que va a suceder con la ganancia, por ejemplo, o cualquier otra variable del sistema.</p>
@@ -463,8 +469,8 @@ Modelos gráficos Y DAGs
 <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-95d053a3c109df6f0110" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-95d053a3c109df6f0110">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir=LR]\n  node [shape=circle]\n   \n  node [shape=plaintext]\n    S1\n    S2\n    X\n  edge [minlen = 3]\n   X -> S1\n   X -> S2\n   S1 -> G\n   S2 -> G\n   D -> G\n{\n  rank = same; S1; S2\n}\n\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-95abf09eb1a14e1d5a93" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-95abf09eb1a14e1d5a93">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir=LR]\n  node [shape=circle]\n   \n  node [shape=plaintext]\n    S1\n    S2\n    X\n  edge [minlen = 3]\n   X -> S1\n   X -> S2\n   S1 -> G\n   S2 -> G\n   D -> G\n{\n  rank = same; S1; S2\n}\n\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
@@ -541,11 +547,11 @@ Regla del producto para DAGs
 <pre><code># A tibble: 5 × 5
       x d           s1    s2     g
   &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt; &lt;int&gt; &lt;int&gt;
-1 0.617 soleado      4     2     4
-2 0.534 lluvioso     2     5     7
-3 0.715 soleado      4     2     4
-4 0.185 soleado      1     0     1
-5 0.438 soleado      0     4     0</code></pre>
+1 0.623 lluvioso     4     3     7
+2 0.125 lluvioso     1     0     1
+3 0.433 soleado      2     3     2
+4 0.567 soleado      2     2     2
+5 0.590 soleado      2     5     2</code></pre>
 </div>
 </div>
 </section>
@@ -607,8 +613,8 @@ Independencia condicional
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-ed0ca233a087cb3ff2d7" style="width:100%;height:162px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-ed0ca233a087cb3ff2d7">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    X\n    Y\n    Z\n  edge [minlen = 3]\n   Z -> X\n   Z -> Y\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-932498b8987a39dd9ae6" style="width:100%;height:162px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-932498b8987a39dd9ae6">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    X\n    Y\n    Z\n  edge [minlen = 3]\n   Z -> X\n   Z -> Y\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>En este caso,</p>
@@ -657,8 +663,8 @@ Independencia condicional
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sims_confusor <span class="sc">|&gt;</span> <span class="fu">select</span>(x,y)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       x      y
-x  1.000 -0.424
-y -0.424  1.000</code></pre>
+x  1.000 -0.423
+y -0.423  1.000</code></pre>
 </div>
 </div>
 <p>Sin embargo, si condicionamos a <span class="math inline">\(Z\)</span>, que puede tomar los valores 0 o 1, vemos que <span class="math inline">\(X\)</span> y <span class="math inline">\(Y\)</span> son independientes, o dicho de otra manera, la condicional de <span class="math inline">\(Y\)</span> dada <span class="math inline">\(Z\)</span> y <span class="math inline">\(X\)</span> sólo depende de <span class="math inline">\(Z\)</span>:</p>
@@ -683,15 +689,15 @@ y -0.424  1.000</code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sims_confusor <span class="sc">|&gt;</span> <span class="fu">filter</span>(z <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">select</span>(x,y)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  x y
-x 1 0
-y 0 1</code></pre>
+<pre><code>       x      y
+x  1.000 -0.004
+y -0.004  1.000</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sims_confusor <span class="sc">|&gt;</span> <span class="fu">filter</span>(z <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">|&gt;</span> <span class="fu">select</span>(x,y)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       x      y
-x  1.000 -0.002
-y -0.002  1.000</code></pre>
+x  1.000 -0.008
+y -0.008  1.000</code></pre>
 </div>
 </div>
 <p>Un ejemplo con variables continuas podría ser como sigue:</p>
@@ -791,8 +797,8 @@ y -0.002  1.000</code></pre>
 <span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-dca39ec1f0b26c43d262" style="width:100%;height:162px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-dca39ec1f0b26c43d262">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    M\n    D\n    Edad\n  edge [minlen = 3]\n   Edad -> M\n   Edad -> D\n   M -> D\n{rank=same; M; D;}\n\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-eee9eb0a7da9fad77423" style="width:100%;height:162px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-eee9eb0a7da9fad77423">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    M\n    D\n    Edad\n  edge [minlen = 3]\n   Edad -> M\n   Edad -> D\n   M -> D\n{rank=same; M; D;}\n\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Por la discusión de arriba, es claro que es necesario considerar la edad al casarse si queremos estimar el efecto de tasa de matrimonio en la tasa de divorcio. Es posible que la correlación entre estas dos tasas puede ser explicada solamente por la edad al casarse, y que en realidad al flecha <span class="math inline">\(M\to D\)</span> sea muy débil o inexistente.</p>
@@ -943,8 +949,8 @@ Nota
 <span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-0dc1f6d15ea4740d89a5" style="width:100%;height:162px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-0dc1f6d15ea4740d89a5">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    M\n    D\n    Edad\n  edge [minlen = 3]\n   Edad -> D\n   M -> D\n{rank=same; M; D;}\n\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-6129b71ebd63e23bb3df" style="width:100%;height:162px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6129b71ebd63e23bb3df">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    M\n    D\n    Edad\n  edge [minlen = 3]\n   Edad -> D\n   M -> D\n{rank=same; M; D;}\n\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Es decir, borramos todas las flechas que caen en <span class="math inline">\(M\)</span> (pues la estamos interveniendo al valor que queramos), y luego simulando <span class="math inline">\(D\)</span>.</p>
@@ -960,7 +966,7 @@ Nota
 <pre><code># A tibble: 1 × 2
       q5   q95
    &lt;dbl&gt; &lt;dbl&gt;
-1 -0.277 0.276</code></pre>
+1 -0.272 0.266</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -1012,8 +1018,8 @@ Tip
 <span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">150</span>, <span class="at">height =</span> <span class="dv">20</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-93c93ffb3322122405d7" style="width:100%;height:86px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-93c93ffb3322122405d7">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir=LR]\n  node [shape=plaintext]\n    X\n    Y\n    Z\n  edge [minlen = 3]\n   X -> Z\n   Z -> Y\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-4dcdc87c5ef348bef60b" style="width:100%;height:86px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4dcdc87c5ef348bef60b">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir=LR]\n  node [shape=plaintext]\n    X\n    Y\n    Z\n  edge [minlen = 3]\n   X -> Z\n   Z -> Y\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>En este caso,</p>
@@ -1081,14 +1087,14 @@ Tip
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sims_mediador <span class="sc">|&gt;</span> <span class="fu">filter</span>(z <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">select</span>(x,y)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      x     y
-x  1.00 -0.01
-y -0.01  1.00</code></pre>
+x 1.000 0.006
+y 0.006 1.000</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sims_mediador <span class="sc">|&gt;</span> <span class="fu">filter</span>(z <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">|&gt;</span> <span class="fu">select</span>(x,y)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  x y
-x 1 0
-y 0 1</code></pre>
+<pre><code>       x      y
+x  1.000 -0.001
+y -0.001  1.000</code></pre>
 </div>
 </div>
 <p>Podemos también hacer un ejemplo continuo:</p>
@@ -1182,8 +1188,8 @@ Tip
 <span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-5208330a30ff17ae6255" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-5208330a30ff17ae6255">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape = circle]\n    U\n  node [shape=plaintext]\n  edge [minlen = 3]\n    IntPadres -> NSE\n    NSE -> IntHijos\n    U -> NSE\n    U -> IntHijos\n    IntPadres -> IntHijos\n{rank = same; U}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-dd12a77b102d024443f9" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-dd12a77b102d024443f9">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape = circle]\n    U\n  node [shape=plaintext]\n  edge [minlen = 3]\n    IntPadres -> NSE\n    NSE -> IntHijos\n    U -> NSE\n    U -> IntHijos\n    IntPadres -> IntHijos\n{rank = same; U}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Como el NSE es del hogar (una medida general de estatus social), se consideró en principio como una variable pre-tratamiento a la inteligencia de los niños por la que tradicionalmente se controlaba. Burks notó que hacer esto tenía no era apropiado, pues tiene como consecuencia cortar parte del efecto total de la inteligencia sobre el la inteligencia de los hijos. En otras palabras: la inteligencia de los padres hace más probable mejor NSE, y mejor NSE presenta mejores condiciones de desarrollo para sus hijos. Estatificar por esta variable bloquea este efecto.</p>
@@ -1210,8 +1216,8 @@ Tip
 <span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-f5c4981318423d402f4c" style="width:100%;height:162px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-f5c4981318423d402f4c">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    X\n    Y\n    Z\n  edge [minlen = 3]\n   X -> Z\n   Y -> Z\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-fd41f4c14d7da0a63894" style="width:100%;height:162px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-fd41f4c14d7da0a63894">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    X\n    Y\n    Z\n  edge [minlen = 3]\n   X -> Z\n   Y -> Z\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <ul>
@@ -1252,8 +1258,8 @@ Tip
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sims_colisionador <span class="sc">|&gt;</span> <span class="fu">select</span>(x,y))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            x           y
-x 1.000000000 0.004807866
-y 0.004807866 1.000000000</code></pre>
+x 1.000000000 0.009423479
+y 0.009423479 1.000000000</code></pre>
 </div>
 </div>
 <p>Sin embargo, si condicionamos a <span class="math inline">\(Z\)</span>, que puede tomar los valores 0 o 1:</p>
@@ -1284,8 +1290,8 @@ Las correlaciones condicionales, por ejemplo, no son cero:</p>
 <div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sims_colisionador <span class="sc">|&gt;</span> <span class="fu">filter</span>(z <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">|&gt;</span> <span class="fu">select</span>(x,y)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       x      y
-x  1.000 -0.275
-y -0.275  1.000</code></pre>
+x  1.000 -0.271
+y -0.271  1.000</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Dado Z = 1"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1294,8 +1300,8 @@ y -0.275  1.000</code></pre>
 <div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sims_colisionador <span class="sc">|&gt;</span> <span class="fu">filter</span>(z <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">select</span>(x,y)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      x     y
-x 1.000 0.378
-y 0.378 1.000</code></pre>
+x 1.000 0.375
+y 0.375 1.000</code></pre>
 </div>
 </div>
 <p>Otro ejemplo con variables continuas:</p>
@@ -1374,8 +1380,8 @@ y 0.378 1.000</code></pre>
 <span id="cb67-14"><a href="#cb67-14" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-1251f7af8d9c8f6b293c" style="width:100%;height:162px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-1251f7af8d9c8f6b293c">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    X\n    Y\n    Z\n    A\n  edge [minlen = 3]\n   X -> Z\n   Y -> Z\n   Z -> A\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-c7b4c4b6230dfcd2292c" style="width:100%;height:162px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-c7b4c4b6230dfcd2292c">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    X\n    Y\n    Z\n    A\n  edge [minlen = 3]\n   X -> Z\n   Y -> Z\n   Z -> A\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>En este caso,</p>
@@ -1401,8 +1407,8 @@ y 0.378 1.000</code></pre>
 <span id="cb68-13"><a href="#cb68-13" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
 <span id="cb68-14"><a href="#cb68-14" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="htmlwidget-29de81d6cf0946caf40f" style="width:100%;height:162px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-29de81d6cf0946caf40f">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    X [label = lluvia]\n    Y [label = aspersores]\n    Z [label = humedad]\n    A [label = plantas]\n  edge [minlen = 3]\n   X -> Z\n   Y -> Z\n   Z -> A\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-8f5406dfcc3abe2ac8d0" style="width:100%;height:162px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-8f5406dfcc3abe2ac8d0">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    X [label = lluvia]\n    Y [label = aspersores]\n    Z [label = humedad]\n    A [label = plantas]\n  edge [minlen = 3]\n   X -> Z\n   Y -> Z\n   Z -> A\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <section id="ejemplo-3" class="level3 unnumbered">
@@ -1419,7 +1425,7 @@ y 0.378 1.000</code></pre>
 <span id="cb69-9"><a href="#cb69-9" aria-hidden="true" tabindex="-1"></a><span class="co"># No hay correlación</span></span>
 <span id="cb69-10"><a href="#cb69-10" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sims_colisionador<span class="sc">$</span>x, sims_colisionador<span class="sc">$</span>y)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] -0.004194141</code></pre>
+<pre><code>[1] -0.003722977</code></pre>
 </div>
 </div>
 <p>Sin embargo,</p>
@@ -1427,16 +1433,16 @@ y 0.378 1.000</code></pre>
 <div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sims_colisionador <span class="sc">|&gt;</span> <span class="fu">filter</span>(a <span class="sc">==</span><span class="dv">0</span>) <span class="sc">|&gt;</span> <span class="fu">select</span>(x,y))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           x          y
-x  1.0000000 -0.2878364
-y -0.2878364  1.0000000</code></pre>
+x  1.0000000 -0.2803017
+y -0.2803017  1.0000000</code></pre>
 </div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sims_colisionador <span class="sc">|&gt;</span> <span class="fu">filter</span>(a <span class="sc">==</span><span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">select</span>(x,y))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>          x         y
-x 1.0000000 0.1110827
-y 0.1110827 1.0000000</code></pre>
+x 1.0000000 0.1046638
+y 0.1046638 1.0000000</code></pre>
 </div>
 </div>
 </section>
@@ -1677,8 +1683,8 @@ Cálculo de d-separación
 <span id="cb85-20"><a href="#cb85-20" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-f31f8a892eb696efa077" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-f31f8a892eb696efa077">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    Z \n    W \n    X\n    Y \n    U\n  edge [minlen = 3]\n    Z -> W\n    X -> W\n    X -> Y\n    W -> U\n    S -> Y\n    UZ -> Z\n    V -> Z\n    V -> S\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-4965c9e303927042fbda" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-4965c9e303927042fbda">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    Z \n    W \n    X\n    Y \n    U\n  edge [minlen = 3]\n    Z -> W\n    X -> W\n    X -> Y\n    W -> U\n    S -> Y\n    UZ -> Z\n    V -> Z\n    V -> S\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Consideremos la relación entre Z y Y. Primero vemos que hay dos caminos entre <span class="math inline">\(Z\)</span> y <span class="math inline">\(Y\)</span>, que son <span class="math inline">\(p_1:X\gets V \to S\)</span> y <span class="math inline">\(p_2: Z\to W \gets X \to Y\)</span></p>
@@ -1718,8 +1724,8 @@ Cálculo de d-separación
 <span id="cb86-21"><a href="#cb86-21" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-6d1c9265186ea327ebd6" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-6d1c9265186ea327ebd6">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    Z \n    W \n    X\n    Y \n    U\n    T\n  edge [minlen = 3]\n    T -> Z\n    T -> Y\n    Z -> W\n    X -> W\n    X -> Y\n    W -> U\n    S -> Y\n    UZ -> Z\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-9a343f4de41d126f385d" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-9a343f4de41d126f385d">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=plaintext]\n    Z \n    W \n    X\n    Y \n    U\n    T\n  edge [minlen = 3]\n    T -> Z\n    T -> Y\n    Z -> W\n    X -> W\n    X -> Y\n    W -> U\n    S -> Y\n    UZ -> Z\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
@@ -1756,8 +1762,8 @@ Cálculo de d-separación
 <span id="cb87-25"><a href="#cb87-25" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-414d0b08d96aaed7be07" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-414d0b08d96aaed7be07">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=circle]\n    F1 [label = <F<sub>1<\/sub> > ]\n    F2 [label = <F<sub>2<\/sub> > ]\n  node [shape=plaintext]\n    X1 [label = <X<sub>1<\/sub> > ]\n    X2 [label = <X<sub>2<\/sub> > ]\n    X3 [label = <X<sub>3<\/sub> > ]\n    X4 [label = <X<sub>4<\/sub> > ]\n    X5 [label = <X<sub>5<\/sub> > ]\n  edge [minlen = 3]\n    F1 -> X1\n    F1 -> X2\n    F1 -> X3\n    F1 -> X4\n    F1 -> X5\n    F2 -> X1\n    F2 -> X2\n    F2 -> X3\n    F2 -> X4\n    F2 -> X5\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-7eab4c1be96de99aa18f" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-7eab4c1be96de99aa18f">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n  node [shape=circle]\n    F1 [label = <F<sub>1<\/sub> > ]\n    F2 [label = <F<sub>2<\/sub> > ]\n  node [shape=plaintext]\n    X1 [label = <X<sub>1<\/sub> > ]\n    X2 [label = <X<sub>2<\/sub> > ]\n    X3 [label = <X<sub>3<\/sub> > ]\n    X4 [label = <X<sub>4<\/sub> > ]\n    X5 [label = <X<sub>5<\/sub> > ]\n  edge [minlen = 3]\n    F1 -> X1\n    F1 -> X2\n    F1 -> X3\n    F1 -> X4\n    F1 -> X5\n    F2 -> X1\n    F2 -> X2\n    F2 -> X3\n    F2 -> X4\n    F2 -> X5\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <ul>
@@ -1815,8 +1821,8 @@ Caminos causales
 <span id="cb88-15"><a href="#cb88-15" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)<span class="co">#, width = 200, height = 50)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-d188b0de7d4589d68dc3" style="width:100%;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-d188b0de7d4589d68dc3">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=plaintext]\n    A\n    F\n    G\n    W\n  edge [minlen = 3]\n    A -> F\n    F -> G\n    F -> W\n    G -> W\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-f933f551b77b52ecf33b" style="width:100%;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-f933f551b77b52ecf33b">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape=plaintext]\n    A\n    F\n    G\n    W\n  edge [minlen = 3]\n    A -> F\n    F -> G\n    F -> W\n    G -> W\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Vimos que para calcular el efecto directo de <span class="math inline">\(F\)</span> sobre <span class="math inline">\(W\)</span>, por ejemplo, es necesario bloquear el camino que pasa por <span class="math inline">\(G\)</span> (estratificar por este nodo). Para el efecto total no es necesario condicionar a ningún otro nodo.</p>
@@ -1847,8 +1853,8 @@ Caminos causales
 <span id="cb89-21"><a href="#cb89-21" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)<span class="co">#, width = 200, height = 50)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-eb96b128b0a8c5f7171d" style="width:100%;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-eb96b128b0a8c5f7171d">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape = circle]\n  U\n  node [shape=plaintext]\n    A\n    F\n    G\n    W\n  edge [minlen = 3]\n    A -> F\n    F -> G\n    F -> W\n    G -> W\n    U -> G\n    U -> W\n{rank=same U;G}\n\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-321572ce4e5d8caf0e21" style="width:100%;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-321572ce4e5d8caf0e21">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.3, rankdir = LR]\n  node [shape = circle]\n  U\n  node [shape=plaintext]\n    A\n    F\n    G\n    W\n  edge [minlen = 3]\n    A -> F\n    F -> G\n    F -> W\n    G -> W\n    U -> G\n    U -> W\n{rank=same U;G}\n\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>En este caso:</p>
