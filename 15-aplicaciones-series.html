@@ -380,30 +380,30 @@ window.Quarto = {
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bsts</span>(ent_hosp_ts, spec, <span class="at">niter =</span> <span class="dv">40000</span>, <span class="at">ping =</span> <span class="dv">10000</span>)</span>
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>=-=-=-=-= Iteration 0 Wed May  8 00:41:18 2024 =-=-=-=-=
-=-=-=-=-= Iteration 10000 Wed May  8 00:41:27 2024 =-=-=-=-=
-=-=-=-=-= Iteration 20000 Wed May  8 00:41:36 2024 =-=-=-=-=
-=-=-=-=-= Iteration 30000 Wed May  8 00:41:46 2024 =-=-=-=-=
-=-=-=-=-= Iteration 0 Wed May  8 00:41:55 2024 =-=-=-=-=
-=-=-=-=-= Iteration 10000 Wed May  8 00:42:06 2024 =-=-=-=-=
-=-=-=-=-= Iteration 20000 Wed May  8 00:42:18 2024 =-=-=-=-=
-=-=-=-=-= Iteration 30000 Wed May  8 00:42:30 2024 =-=-=-=-=
-=-=-=-=-= Iteration 0 Wed May  8 00:42:41 2024 =-=-=-=-=
-=-=-=-=-= Iteration 10000 Wed May  8 00:43:07 2024 =-=-=-=-=
-=-=-=-=-= Iteration 20000 Wed May  8 00:43:34 2024 =-=-=-=-=
-=-=-=-=-= Iteration 30000 Wed May  8 00:44:00 2024 =-=-=-=-=
-=-=-=-=-= Iteration 0 Wed May  8 00:44:26 2024 =-=-=-=-=
-=-=-=-=-= Iteration 10000 Wed May  8 00:44:59 2024 =-=-=-=-=
-=-=-=-=-= Iteration 20000 Wed May  8 00:45:31 2024 =-=-=-=-=
-=-=-=-=-= Iteration 30000 Wed May  8 00:46:03 2024 =-=-=-=-=
-=-=-=-=-= Iteration 0 Wed May  8 00:46:36 2024 =-=-=-=-=
-=-=-=-=-= Iteration 10000 Wed May  8 00:47:08 2024 =-=-=-=-=
-=-=-=-=-= Iteration 20000 Wed May  8 00:47:40 2024 =-=-=-=-=
-=-=-=-=-= Iteration 30000 Wed May  8 00:48:12 2024 =-=-=-=-=
-=-=-=-=-= Iteration 0 Wed May  8 00:48:45 2024 =-=-=-=-=
-=-=-=-=-= Iteration 10000 Wed May  8 00:49:30 2024 =-=-=-=-=
-=-=-=-=-= Iteration 20000 Wed May  8 00:50:16 2024 =-=-=-=-=
-=-=-=-=-= Iteration 30000 Wed May  8 00:51:01 2024 =-=-=-=-=</code></pre>
+<pre><code>=-=-=-=-= Iteration 0 Wed May 15 00:31:01 2024 =-=-=-=-=
+=-=-=-=-= Iteration 10000 Wed May 15 00:31:10 2024 =-=-=-=-=
+=-=-=-=-= Iteration 20000 Wed May 15 00:31:19 2024 =-=-=-=-=
+=-=-=-=-= Iteration 30000 Wed May 15 00:31:28 2024 =-=-=-=-=
+=-=-=-=-= Iteration 0 Wed May 15 00:31:37 2024 =-=-=-=-=
+=-=-=-=-= Iteration 10000 Wed May 15 00:31:49 2024 =-=-=-=-=
+=-=-=-=-= Iteration 20000 Wed May 15 00:32:00 2024 =-=-=-=-=
+=-=-=-=-= Iteration 30000 Wed May 15 00:32:12 2024 =-=-=-=-=
+=-=-=-=-= Iteration 0 Wed May 15 00:32:23 2024 =-=-=-=-=
+=-=-=-=-= Iteration 10000 Wed May 15 00:32:49 2024 =-=-=-=-=
+=-=-=-=-= Iteration 20000 Wed May 15 00:33:15 2024 =-=-=-=-=
+=-=-=-=-= Iteration 30000 Wed May 15 00:33:41 2024 =-=-=-=-=
+=-=-=-=-= Iteration 0 Wed May 15 00:34:07 2024 =-=-=-=-=
+=-=-=-=-= Iteration 10000 Wed May 15 00:34:39 2024 =-=-=-=-=
+=-=-=-=-= Iteration 20000 Wed May 15 00:35:11 2024 =-=-=-=-=
+=-=-=-=-= Iteration 30000 Wed May 15 00:35:43 2024 =-=-=-=-=
+=-=-=-=-= Iteration 0 Wed May 15 00:36:15 2024 =-=-=-=-=
+=-=-=-=-= Iteration 10000 Wed May 15 00:36:47 2024 =-=-=-=-=
+=-=-=-=-= Iteration 20000 Wed May 15 00:37:20 2024 =-=-=-=-=
+=-=-=-=-= Iteration 30000 Wed May 15 00:37:52 2024 =-=-=-=-=
+=-=-=-=-= Iteration 0 Wed May 15 00:38:24 2024 =-=-=-=-=
+=-=-=-=-= Iteration 10000 Wed May 15 00:39:09 2024 =-=-=-=-=
+=-=-=-=-= Iteration 20000 Wed May 15 00:39:54 2024 =-=-=-=-=
+=-=-=-=-= Iteration 30000 Wed May 15 00:40:40 2024 =-=-=-=-=</code></pre>
 </div>
 </div>
 <p>En primer lugar, podemos comparar las predicciones a un paso de cada modelo. En este caso, los modelos 3 y 4 son claramente superiores a 1 y 2 en desempeño a un paso. El mejor modelo en desempeño a un paso es el modelo 4, por la tendencia lineal de la serie.</p>
@@ -494,7 +494,7 @@ window.Quarto = {
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(pred<span class="sc">$</span>distribution, <span class="dv">1</span>, sum) <span class="sc">|&gt;</span> <span class="fu">quantile</span>(<span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.50</span>, <span class="fl">0.95</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      5%      50%      95% 
-599971.6 617669.0 635172.4 </code></pre>
+599633.6 617666.4 635369.1 </code></pre>
 </div>
 </div>
 </section>
@@ -742,16 +742,16 @@ Nowcasting
 <span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">state.specification =</span> ss,</span>
 <span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>               <span class="at">niter =</span> <span class="dv">1000</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>=-=-=-=-= Iteration 0 Wed May  8 00:51:56 2024 =-=-=-=-=
-=-=-=-=-= Iteration 100 Wed May  8 00:52:00 2024 =-=-=-=-=
-=-=-=-=-= Iteration 200 Wed May  8 00:52:04 2024 =-=-=-=-=
-=-=-=-=-= Iteration 300 Wed May  8 00:52:07 2024 =-=-=-=-=
-=-=-=-=-= Iteration 400 Wed May  8 00:52:11 2024 =-=-=-=-=
-=-=-=-=-= Iteration 500 Wed May  8 00:52:14 2024 =-=-=-=-=
-=-=-=-=-= Iteration 600 Wed May  8 00:52:18 2024 =-=-=-=-=
-=-=-=-=-= Iteration 700 Wed May  8 00:52:21 2024 =-=-=-=-=
-=-=-=-=-= Iteration 800 Wed May  8 00:52:25 2024 =-=-=-=-=
-=-=-=-=-= Iteration 900 Wed May  8 00:52:29 2024 =-=-=-=-=</code></pre>
+<pre><code>=-=-=-=-= Iteration 0 Wed May 15 00:41:35 2024 =-=-=-=-=
+=-=-=-=-= Iteration 100 Wed May 15 00:41:39 2024 =-=-=-=-=
+=-=-=-=-= Iteration 200 Wed May 15 00:41:43 2024 =-=-=-=-=
+=-=-=-=-= Iteration 300 Wed May 15 00:41:46 2024 =-=-=-=-=
+=-=-=-=-= Iteration 400 Wed May 15 00:41:50 2024 =-=-=-=-=
+=-=-=-=-= Iteration 500 Wed May 15 00:41:54 2024 =-=-=-=-=
+=-=-=-=-= Iteration 600 Wed May 15 00:41:57 2024 =-=-=-=-=
+=-=-=-=-= Iteration 700 Wed May 15 00:42:01 2024 =-=-=-=-=
+=-=-=-=-= Iteration 800 Wed May 15 00:42:05 2024 =-=-=-=-=
+=-=-=-=-= Iteration 900 Wed May 15 00:42:08 2024 =-=-=-=-=</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -803,16 +803,16 @@ Nowcasting
 <span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">data =</span> initial.claims, </span>
 <span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">expected.model.size =</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>=-=-=-=-= Iteration 0 Wed May  8 00:52:33 2024 =-=-=-=-=
-=-=-=-=-= Iteration 100 Wed May  8 00:52:37 2024 =-=-=-=-=
-=-=-=-=-= Iteration 200 Wed May  8 00:52:40 2024 =-=-=-=-=
-=-=-=-=-= Iteration 300 Wed May  8 00:52:44 2024 =-=-=-=-=
-=-=-=-=-= Iteration 400 Wed May  8 00:52:47 2024 =-=-=-=-=
-=-=-=-=-= Iteration 500 Wed May  8 00:52:51 2024 =-=-=-=-=
-=-=-=-=-= Iteration 600 Wed May  8 00:52:55 2024 =-=-=-=-=
-=-=-=-=-= Iteration 700 Wed May  8 00:52:58 2024 =-=-=-=-=
-=-=-=-=-= Iteration 800 Wed May  8 00:53:02 2024 =-=-=-=-=
-=-=-=-=-= Iteration 900 Wed May  8 00:53:05 2024 =-=-=-=-=</code></pre>
+<pre><code>=-=-=-=-= Iteration 0 Wed May 15 00:42:13 2024 =-=-=-=-=
+=-=-=-=-= Iteration 100 Wed May 15 00:42:17 2024 =-=-=-=-=
+=-=-=-=-= Iteration 200 Wed May 15 00:42:20 2024 =-=-=-=-=
+=-=-=-=-= Iteration 300 Wed May 15 00:42:24 2024 =-=-=-=-=
+=-=-=-=-= Iteration 400 Wed May 15 00:42:28 2024 =-=-=-=-=
+=-=-=-=-= Iteration 500 Wed May 15 00:42:31 2024 =-=-=-=-=
+=-=-=-=-= Iteration 600 Wed May 15 00:42:35 2024 =-=-=-=-=
+=-=-=-=-= Iteration 700 Wed May 15 00:42:39 2024 =-=-=-=-=
+=-=-=-=-= Iteration 800 Wed May 15 00:42:42 2024 =-=-=-=-=
+=-=-=-=-= Iteration 900 Wed May 15 00:42:46 2024 =-=-=-=-=</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>model3 <span class="ot">&lt;-</span> <span class="fu">bsts</span>(iclaimsNSA <span class="sc">~</span> .,</span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">state.specification =</span> ss,</span>
@@ -820,16 +820,16 @@ Nowcasting
 <span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">data =</span> initial.claims,</span>
 <span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">expected.model.size =</span> <span class="dv">6</span>)  <span class="co"># Passed to SpikeSlabPrior.</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>=-=-=-=-= Iteration 0 Wed May  8 00:53:09 2024 =-=-=-=-=
-=-=-=-=-= Iteration 100 Wed May  8 00:53:13 2024 =-=-=-=-=
-=-=-=-=-= Iteration 200 Wed May  8 00:53:16 2024 =-=-=-=-=
-=-=-=-=-= Iteration 300 Wed May  8 00:53:20 2024 =-=-=-=-=
-=-=-=-=-= Iteration 400 Wed May  8 00:53:24 2024 =-=-=-=-=
-=-=-=-=-= Iteration 500 Wed May  8 00:53:27 2024 =-=-=-=-=
-=-=-=-=-= Iteration 600 Wed May  8 00:53:31 2024 =-=-=-=-=
-=-=-=-=-= Iteration 700 Wed May  8 00:53:34 2024 =-=-=-=-=
-=-=-=-=-= Iteration 800 Wed May  8 00:53:38 2024 =-=-=-=-=
-=-=-=-=-= Iteration 900 Wed May  8 00:53:42 2024 =-=-=-=-=</code></pre>
+<pre><code>=-=-=-=-= Iteration 0 Wed May 15 00:42:50 2024 =-=-=-=-=
+=-=-=-=-= Iteration 100 Wed May 15 00:42:53 2024 =-=-=-=-=
+=-=-=-=-= Iteration 200 Wed May 15 00:42:57 2024 =-=-=-=-=
+=-=-=-=-= Iteration 300 Wed May 15 00:43:01 2024 =-=-=-=-=
+=-=-=-=-= Iteration 400 Wed May 15 00:43:05 2024 =-=-=-=-=
+=-=-=-=-= Iteration 500 Wed May 15 00:43:08 2024 =-=-=-=-=
+=-=-=-=-= Iteration 600 Wed May 15 00:43:12 2024 =-=-=-=-=
+=-=-=-=-= Iteration 700 Wed May 15 00:43:16 2024 =-=-=-=-=
+=-=-=-=-= Iteration 800 Wed May 15 00:43:19 2024 =-=-=-=-=
+=-=-=-=-= Iteration 900 Wed May 15 00:43:23 2024 =-=-=-=-=</code></pre>
 </div>
 </div>
 <p>Comparamos los modelos con el error de pronóstico a un paso, y el modelo 2 es el de mejor desempeño:</p>
@@ -1081,17 +1081,17 @@ Chain 2 Iteration: 501 / 1000 [ 50%]  (Sampling)
 Chain 3 Iteration: 501 / 1000 [ 50%]  (Sampling) 
 Chain 1 Iteration: 501 / 1000 [ 50%]  (Sampling) 
 Chain 4 Iteration: 1000 / 1000 [100%]  (Sampling) 
-Chain 4 finished in 196.8 seconds.
+Chain 4 finished in 199.9 seconds.
 Chain 2 Iteration: 1000 / 1000 [100%]  (Sampling) 
-Chain 2 finished in 204.1 seconds.
+Chain 2 finished in 206.9 seconds.
 Chain 3 Iteration: 1000 / 1000 [100%]  (Sampling) 
-Chain 3 finished in 207.5 seconds.
+Chain 3 finished in 211.1 seconds.
 Chain 1 Iteration: 1000 / 1000 [100%]  (Sampling) 
-Chain 1 finished in 212.5 seconds.
+Chain 1 finished in 213.1 seconds.
 
 All 4 chains finished successfully.
-Mean chain execution time: 205.2 seconds.
-Total execution time: 212.6 seconds.</code></pre>
+Mean chain execution time: 207.7 seconds.
+Total execution time: 213.3 seconds.</code></pre>
 </div>
 </div>
 <p>Extraemos la componente de interés, la resumimos y la transformamos a porcentaje de preferencia:</p>
@@ -1253,13 +1253,21 @@ Método de Impacto causal
 <div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">886</span>)</span>
 <span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>mod_esp_1 <span class="ot">&lt;-</span> <span class="fu">AddLocalLevel</span>(<span class="fu">list</span>(), y_mod)</span>
 <span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>mod_esp_2 <span class="ot">&lt;-</span> <span class="fu">AddLocalLinearTrend</span>(<span class="fu">list</span>(), y_mod)</span>
-<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>ajuste_pre_1 <span class="ot">&lt;-</span> <span class="fu">bsts</span>(y_mod <span class="sc">~</span> x, mod_esp_1, <span class="at">niter =</span> <span class="dv">5000</span>, <span class="at">ping =</span> <span class="dv">5000</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>ajuste_pre_1 <span class="ot">&lt;-</span> <span class="fu">bsts</span>(y_mod <span class="sc">~</span> x, mod_esp_1, <span class="at">niter =</span> <span class="dv">25000</span>, <span class="at">ping =</span> <span class="dv">5000</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>=-=-=-=-= Iteration 0 Wed May  8 00:57:53 2024 =-=-=-=-=</code></pre>
+<pre><code>=-=-=-=-= Iteration 0 Wed May 15 00:47:37 2024 =-=-=-=-=
+=-=-=-=-= Iteration 5000 Wed May 15 00:47:39 2024 =-=-=-=-=
+=-=-=-=-= Iteration 10000 Wed May 15 00:47:41 2024 =-=-=-=-=
+=-=-=-=-= Iteration 15000 Wed May 15 00:47:44 2024 =-=-=-=-=
+=-=-=-=-= Iteration 20000 Wed May 15 00:47:46 2024 =-=-=-=-=</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>ajuste_pre_2 <span class="ot">&lt;-</span> <span class="fu">bsts</span>(y_mod <span class="sc">~</span> x, mod_esp_2, <span class="at">niter =</span> <span class="dv">5000</span>, <span class="at">ping =</span> <span class="dv">5000</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>ajuste_pre_2 <span class="ot">&lt;-</span> <span class="fu">bsts</span>(y_mod <span class="sc">~</span> x, mod_esp_2, <span class="at">niter =</span> <span class="dv">25000</span>, <span class="at">ping =</span> <span class="dv">5000</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>=-=-=-=-= Iteration 0 Wed May  8 00:57:55 2024 =-=-=-=-=</code></pre>
+<pre><code>=-=-=-=-= Iteration 0 Wed May 15 00:47:48 2024 =-=-=-=-=
+=-=-=-=-= Iteration 5000 Wed May 15 00:47:50 2024 =-=-=-=-=
+=-=-=-=-= Iteration 10000 Wed May 15 00:47:53 2024 =-=-=-=-=
+=-=-=-=-= Iteration 15000 Wed May 15 00:47:55 2024 =-=-=-=-=
+=-=-=-=-= Iteration 20000 Wed May 15 00:47:58 2024 =-=-=-=-=</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">CompareBstsModels</span>(<span class="fu">list</span>(ajuste_pre_1, ajuste_pre_2))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -1299,7 +1307,7 @@ Método de Impacto causal
 <span id="cb79-6"><a href="#cb79-6" aria-hidden="true" tabindex="-1"></a>pred_cf <span class="ot">&lt;-</span> pred_cf[, <span class="dv">71</span><span class="sc">:</span><span class="dv">100</span>]</span>
 <span id="cb79-7"><a href="#cb79-7" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(pred_cf)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 4500   30</code></pre>
+<pre><code>[1] 24500    30</code></pre>
 </div>
 </div>
 <p>Y estimamos el efecto promedio en estos 30 días utilizando el valor observado de <span class="math inline">\(y\)</span> menos las simulaciones correspondientes del contrafactual:</p>
@@ -1308,12 +1316,12 @@ Método de Impacto causal
 <span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>diferencia <span class="ot">&lt;-</span>  <span class="fu">mean</span>(y[<span class="dv">71</span><span class="sc">:</span><span class="dv">100</span>]) <span class="sc">-</span> media_dia_post</span>
 <span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(diferencia)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 9.121521</code></pre>
+<pre><code>[1] 9.212833</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(diferencia, <span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  2.5%  97.5% 
- 3.761 10.112 </code></pre>
+ 6.551 10.340 </code></pre>
 </div>
 </div>
 <p>O más simplemente:</p>
@@ -1325,17 +1333,17 @@ Método de Impacto causal
 
                          Average       Cumulative   
 Actual                   87            2613         
-Prediction (s.d.)        78 (0.39)     2330 (11.67) 
-95% CI                   [77, 78]      [2308, 2353] 
+Prediction (s.d.)        78 (0.63)     2333 (18.96) 
+95% CI                   [77, 79]      [2302, 2378] 
                                                     
-Absolute effect (s.d.)   9.5 (0.39)    283.5 (11.67)
-95% CI                   [8.7, 10]     [260.0, 306] 
+Absolute effect (s.d.)   9.4 (0.63)    280.5 (18.96)
+95% CI                   [7.8, 10]     [235.2, 312] 
                                                     
-Relative effect (s.d.)   12% (0.56%)   12% (0.56%)  
-95% CI                   [11%, 13%]    [11%, 13%]   
+Relative effect (s.d.)   12% (0.9%)    12% (0.9%)   
+95% CI                   [9.9%, 14%]   [9.9%, 14%]  
 
-Posterior tail-area probability p:   0.00025
-Posterior prob. of a causal effect:  99.975%
+Posterior tail-area probability p:   4e-05
+Posterior prob. of a causal effect:  99.99573%
 
 For more details, type: summary(impact, "report")</code></pre>
 </div>
@@ -1360,16 +1368,16 @@ For more details, type: summary(impact, "report")</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Posterior inference {CausalImpact}
 
-                         Average      Cumulative   
-Actual                   87           2613         
-Prediction (s.d.)        78 (0.69)    2335 (20.77) 
-95% CI                   [76, 79]     [2294, 2375] 
-                                                   
-Absolute effect (s.d.)   9.3 (0.69)   278.5 (20.77)
-95% CI                   [8, 11]      [239, 319]   
-                                                   
-Relative effect (s.d.)   12% (1%)     12% (1%)     
-95% CI                   [10%, 14%]   [10%, 14%]   
+                         Average      Cumulative  
+Actual                   87           2613        
+Prediction (s.d.)        78 (0.7)     2335 (20.9) 
+95% CI                   [76, 79]     [2294, 2376]
+                                                  
+Absolute effect (s.d.)   9.3 (0.7)    278.5 (20.9)
+95% CI                   [7.9, 11]    [236.9, 319]
+                                                  
+Relative effect (s.d.)   12% (1%)     12% (1%)    
+95% CI                   [10%, 14%]   [10%, 14%]  
 
 Posterior tail-area probability p:   2e-04
 Posterior prob. of a causal effect:  99.97997%
@@ -1457,7 +1465,7 @@ For more details, type: summary(impact, "report")</code></pre>
 <span id="cb97-8"><a href="#cb97-8" aria-hidden="true" tabindex="-1"></a>                 modelo_ent, <span class="at">data =</span> datos_ent_tbl,</span>
 <span id="cb97-9"><a href="#cb97-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">niter =</span> <span class="dv">5000</span>, <span class="at">ping =</span> <span class="dv">5000</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>=-=-=-=-= Iteration 0 Wed May  8 00:58:02 2024 =-=-=-=-=</code></pre>
+<pre><code>=-=-=-=-= Iteration 0 Wed May 15 00:48:06 2024 =-=-=-=-=</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -1492,7 +1500,7 @@ For more details, type: summary(impact, "report")</code></pre>
 <div class="sourceCode cell-code" id="cb101"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="co"># MAPE</span></span>
 <span id="cb101-2"><a href="#cb101-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(<span class="fu">abs</span>(preds_val<span class="sc">$</span>mean <span class="sc">-</span> drivers_val)<span class="sc">/</span>drivers_val)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.05900544</code></pre>
+<pre><code>[1] 0.05839834</code></pre>
 </div>
 </div>
 <p>Estas son las variables que utilizamos en el modelo (el color indica el signo cuando entra en el modelo):</p>
@@ -1517,7 +1525,7 @@ For more details, type: summary(impact, "report")</code></pre>
 <span id="cb104-7"><a href="#cb104-7" aria-hidden="true" tabindex="-1"></a>ajuste_1 <span class="ot">&lt;-</span> <span class="fu">bsts</span>(y <span class="sc">~</span> kms <span class="sc">+</span> rear <span class="sc">+</span> PetrolPrice, modelo_1, <span class="at">data =</span> datos_mod_tbl,</span>
 <span id="cb104-8"><a href="#cb104-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">niter =</span> <span class="dv">5000</span>, <span class="at">ping =</span> <span class="dv">5000</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>=-=-=-=-= Iteration 0 Wed May  8 00:58:11 2024 =-=-=-=-=</code></pre>
+<pre><code>=-=-=-=-= Iteration 0 Wed May 15 00:48:14 2024 =-=-=-=-=</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -1540,17 +1548,17 @@ For more details, type: summary(impact, "report")</code></pre>
 
                          Average        Cumulative    
 Actual                   1322           30399         
-Prediction (s.d.)        1625 (41)      37386 (945)   
-95% CI                   [1546, 1705]   [35555, 39225]
+Prediction (s.d.)        1625 (40)      37376 (929)   
+95% CI                   [1546, 1708]   [35564, 39284]
                                                       
-Absolute effect (s.d.)   -304 (41)      -6987 (945)   
-95% CI                   [-384, -224]   [-8826, -5156]
+Absolute effect (s.d.)   -303 (40)      -6977 (929)   
+95% CI                   [-386, -225]   [-8885, -5165]
                                                       
-Relative effect (s.d.)   -19% (2.1%)    -19% (2.1%)   
+Relative effect (s.d.)   -19% (2%)      -19% (2%)     
 95% CI                   [-23%, -15%]   [-23%, -15%]  
 
 Posterior tail-area probability p:   0.00021
-Posterior prob. of a causal effect:  99.97921%
+Posterior prob. of a causal effect:  99.97937%
 
 For more details, type: summary(impact, "report")</code></pre>
 </div>
@@ -1578,14 +1586,14 @@ For more details, type: summary(impact, "report")</code></pre>
 
                          Average        Cumulative    
 Actual                   1322           30399         
-Prediction (s.d.)        1610 (45)      37036 (1024)  
-95% CI                   [1523, 1697]   [35040, 39024]
+Prediction (s.d.)        1610 (46)      37036 (1065)  
+95% CI                   [1517, 1707]   [34895, 39271]
                                                       
-Absolute effect (s.d.)   -289 (45)      -6637 (1024)  
-95% CI                   [-375, -202]   [-8625, -4641]
+Absolute effect (s.d.)   -289 (46)      -6637 (1065)  
+95% CI                   [-386, -195]   [-8872, -4496]
                                                       
-Relative effect (s.d.)   -18% (2.3%)    -18% (2.3%)   
-95% CI                   [-22%, -13%]   [-22%, -13%]  
+Relative effect (s.d.)   -18% (2.4%)    -18% (2.4%)   
+95% CI                   [-23%, -13%]   [-23%, -13%]  
 
 Posterior tail-area probability p:   0.00101
 Posterior prob. of a causal effect:  99.8995%

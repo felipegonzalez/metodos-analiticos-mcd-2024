@@ -349,8 +349,8 @@ window.Quarto = {
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">100</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-d05179d8e1251a072977" style="width:100%;height:325px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-d05179d8e1251a072977">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n \n  node [shape = circle]\n    MiasmaPobreza\n  node [shape=plaintext]\n\n  edge [minlen = 3]\n    PurezaAgua -> Colera\n    MiasmaPobreza -> Colera\n    MiasmaPobreza -> PurezaAgua\n  {rank = same; PurezaAgua; Colera}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-da7ae6b389da1d6923d4" style="width:100%;height:325px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-da7ae6b389da1d6923d4">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n \n  node [shape = circle]\n    MiasmaPobreza\n  node [shape=plaintext]\n\n  edge [minlen = 3]\n    PurezaAgua -> Colera\n    MiasmaPobreza -> Colera\n    MiasmaPobreza -> PurezaAgua\n  {rank = same; PurezaAgua; Colera}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Dado este diagrama, como hemos discutido, no podemos identificar el efecto causal de la calidad de suministro de agua en las muertes o infecciones de cólera: podría ser la “miasma” que contamina el agua y enferma a las personas (correlación no causal), por ejemplo, y no hay relación causal entre tomar agua contaminada y cólera.</p>
@@ -381,8 +381,8 @@ window.Quarto = {
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div class="grViz html-widget html-fill-item" id="htmlwidget-d7196e98fa8e29d53f1d" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-d7196e98fa8e29d53f1d">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n \n  node [shape = circle]\n    Miasma\n  node [shape=plaintext]\n\n  edge [minlen = 3]\n    Comp -> PurezaAgua -> Colera\n    Miasma -> PurezaAgua\n    Miasma -> Colera\n  {rank = same; Comp; PurezaAgua; Colera}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-5cc20a54faae937b63a0" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-5cc20a54faae937b63a0">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n \n  node [shape = circle]\n    Miasma\n  node [shape=plaintext]\n\n  edge [minlen = 3]\n    Comp -> PurezaAgua -> Colera\n    Miasma -> PurezaAgua\n    Miasma -> Colera\n  {rank = same; Comp; PurezaAgua; Colera}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Tenemos entonces:</p>
@@ -466,8 +466,8 @@ window.Quarto = {
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width=</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">70</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-f870ec60b9d78cad5d35" style="width:100%;height:227px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-f870ec60b9d78cad5d35">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n \n  node [shape = circle]\n    U\n  node [shape=plaintext]\n\n  edge [minlen = 3]\n    Z -> T -> Y\n    U-> T\n    U-> Y\n  {rank = same; Z;T; Y}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-49243accc140a7ce9439" style="width:100%;height:227px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-49243accc140a7ce9439">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2]\n \n  node [shape = circle]\n    U\n  node [shape=plaintext]\n\n  edge [minlen = 3]\n    Z -> T -> Y\n    U-> T\n    U-> Y\n  {rank = same; Z;T; Y}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -663,10 +663,10 @@ Chain 2 Iteration:  100 / 1500 [  6%]  (Warmup)
 Chain 3 Iteration:  100 / 1500 [  6%]  (Warmup) 
 Chain 1 Iteration:  200 / 1500 [ 13%]  (Warmup) 
 Chain 4 Iteration:  200 / 1500 [ 13%]  (Warmup) 
-Chain 3 Iteration:  200 / 1500 [ 13%]  (Warmup) 
 Chain 2 Iteration:  200 / 1500 [ 13%]  (Warmup) 
-Chain 1 Iteration:  300 / 1500 [ 20%]  (Warmup) 
+Chain 3 Iteration:  200 / 1500 [ 13%]  (Warmup) 
 Chain 4 Iteration:  300 / 1500 [ 20%]  (Warmup) 
+Chain 1 Iteration:  300 / 1500 [ 20%]  (Warmup) 
 Chain 2 Iteration:  300 / 1500 [ 20%]  (Warmup) 
 Chain 3 Iteration:  300 / 1500 [ 20%]  (Warmup) 
 Chain 4 Iteration:  400 / 1500 [ 26%]  (Warmup) 
@@ -677,14 +677,14 @@ Chain 4 Iteration:  500 / 1500 [ 33%]  (Warmup)
 Chain 4 Iteration:  501 / 1500 [ 33%]  (Sampling) 
 Chain 1 Iteration:  500 / 1500 [ 33%]  (Warmup) 
 Chain 1 Iteration:  501 / 1500 [ 33%]  (Sampling) 
-Chain 3 Iteration:  500 / 1500 [ 33%]  (Warmup) 
-Chain 3 Iteration:  501 / 1500 [ 33%]  (Sampling) 
 Chain 2 Iteration:  500 / 1500 [ 33%]  (Warmup) 
 Chain 2 Iteration:  501 / 1500 [ 33%]  (Sampling) 
+Chain 3 Iteration:  500 / 1500 [ 33%]  (Warmup) 
+Chain 3 Iteration:  501 / 1500 [ 33%]  (Sampling) 
 Chain 4 Iteration:  600 / 1500 [ 40%]  (Sampling) 
 Chain 1 Iteration:  600 / 1500 [ 40%]  (Sampling) 
-Chain 3 Iteration:  600 / 1500 [ 40%]  (Sampling) 
 Chain 2 Iteration:  600 / 1500 [ 40%]  (Sampling) 
+Chain 3 Iteration:  600 / 1500 [ 40%]  (Sampling) 
 Chain 4 Iteration:  700 / 1500 [ 46%]  (Sampling) 
 Chain 1 Iteration:  700 / 1500 [ 46%]  (Sampling) 
 Chain 3 Iteration:  700 / 1500 [ 46%]  (Sampling) 
@@ -712,23 +712,23 @@ Chain 2 Iteration: 1200 / 1500 [ 80%]  (Sampling)
 Chain 1 Iteration: 1300 / 1500 [ 86%]  (Sampling) 
 Chain 4 Iteration: 1300 / 1500 [ 86%]  (Sampling) 
 Chain 3 Iteration: 1300 / 1500 [ 86%]  (Sampling) 
-Chain 1 Iteration: 1400 / 1500 [ 93%]  (Sampling) 
 Chain 2 Iteration: 1300 / 1500 [ 86%]  (Sampling) 
+Chain 1 Iteration: 1400 / 1500 [ 93%]  (Sampling) 
 Chain 4 Iteration: 1400 / 1500 [ 93%]  (Sampling) 
 Chain 3 Iteration: 1400 / 1500 [ 93%]  (Sampling) 
-Chain 1 Iteration: 1500 / 1500 [100%]  (Sampling) 
-Chain 1 finished in 56.8 seconds.
 Chain 2 Iteration: 1400 / 1500 [ 93%]  (Sampling) 
+Chain 1 Iteration: 1500 / 1500 [100%]  (Sampling) 
+Chain 1 finished in 57.3 seconds.
 Chain 4 Iteration: 1500 / 1500 [100%]  (Sampling) 
-Chain 4 finished in 58.1 seconds.
+Chain 4 finished in 58.3 seconds.
 Chain 3 Iteration: 1500 / 1500 [100%]  (Sampling) 
-Chain 3 finished in 58.5 seconds.
+Chain 3 finished in 58.7 seconds.
 Chain 2 Iteration: 1500 / 1500 [100%]  (Sampling) 
-Chain 2 finished in 59.3 seconds.
+Chain 2 finished in 59.4 seconds.
 
 All 4 chains finished successfully.
-Mean chain execution time: 58.2 seconds.
-Total execution time: 59.4 seconds.</code></pre>
+Mean chain execution time: 58.4 seconds.
+Total execution time: 59.5 seconds.</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -801,8 +801,8 @@ Total execution time: 59.4 seconds.</code></pre>
 <span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">200</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-b44f1c2615b6e3044c54" style="width:100%;height:650px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-b44f1c2615b6e3044c54">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir=LR]\n  node [shape = circle]\n    U\n    #V\n  node [shape=plaintext]\n    Estatura\n  edge [minlen = 3]\n     U -> Y\n     #V -> Estatura\n     #V -> Y\n    Estatura -> T\n    T -> Y\n    Estatura -> Y\n    U -> Estatura\n{rank = same; U; T}\n{rank = min;  Estatura}\n\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-989c2b9910fe938c7506" style="width:100%;height:650px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-989c2b9910fe938c7506">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir=LR]\n  node [shape = circle]\n    U\n    #V\n  node [shape=plaintext]\n    Estatura\n  edge [minlen = 3]\n     U -> Y\n     #V -> Estatura\n     #V -> Y\n    Estatura -> T\n    T -> Y\n    Estatura -> Y\n    U -> Estatura\n{rank = same; U; T}\n{rank = min;  Estatura}\n\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>Como vimos, hay una variable observable (la estatura) que determina la aplicación del tratamiento, y que se asigna de la siguiente forma:</p>
@@ -833,8 +833,8 @@ Total execution time: 59.4 seconds.</code></pre>
 <span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>,<span class="at">width =</span> <span class="dv">200</span>, <span class="at">height =</span> <span class="dv">200</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="htmlwidget-56417e5f2dd269372b49" style="width:100%;height:650px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-56417e5f2dd269372b49">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir=LR]\n \n  node [shape = circle]\n    U\n  node [shape=plaintext]\n\n  edge [minlen = 3]\n     U -> Y\n     \n    Estatura120 -> T\n    T -> Y\n{rank = same; U; Y}\n{rank = min; T; Estatura120}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-4768b66a090c7093fc29" style="width:100%;height:650px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4768b66a090c7093fc29">{"x":{"diagram":"\ndigraph {\n  graph [ranksep = 0.2, rankdir=LR]\n \n  node [shape = circle]\n    U\n  node [shape=plaintext]\n\n  edge [minlen = 3]\n     U -> Y\n     \n    Estatura120 -> T\n    T -> Y\n{rank = same; U; Y}\n{rank = min; T; Estatura120}\n}\n","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>En este caso, el grupo Estatura120 son aquellos que miden entre 118 y 122, por ejemplo, y estamos suponiendo que el efecto de la variación de la estatura en este grupo es mínimo.</p>
@@ -980,25 +980,25 @@ Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup)
 Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
 Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
 Chain 4 Iteration:    1 / 2000 [  0%]  (Warmup) 
-Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
-Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
 Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
 Chain 3 finished in 2.9 seconds.
+Chain 4 finished in 2.9 seconds.
 Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
 Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
 Chain 1 finished in 3.0 seconds.
 Chain 2 finished in 3.0 seconds.
-Chain 4 finished in 2.9 seconds.
 
 All 4 chains finished successfully.
-Mean chain execution time: 2.9 seconds.
+Mean chain execution time: 3.0 seconds.
 Total execution time: 3.1 seconds.</code></pre>
 </div>
 </div>
